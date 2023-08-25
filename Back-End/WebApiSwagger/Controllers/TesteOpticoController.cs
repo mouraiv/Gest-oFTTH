@@ -5,6 +5,7 @@ using WebApiSwagger.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace WebApiSwagger.Controllers
 {
@@ -122,8 +123,6 @@ namespace WebApiSwagger.Controllers
                             }
                         }
 
-                        Debug.WriteLine("------->",linhasPreenchidas);
-
                         if (linhasPreenchidas < 1)
                         {
                             return BadRequest($"Arquivo de importação está vazio.");
@@ -138,6 +137,15 @@ namespace WebApiSwagger.Controllers
                             var listaModelo = new List<TesteOptico>();
                             for (int row = 8; row <= (linhasPreenchidas + 7); row++)
                             {
+                                //Get valores DataTime String para tratamento
+                                string dataContrucao = worksheet.Cells[row, 12].Value.ToString() ?? "";
+                                DateTime _dataContrucao = DateTime.ParseExact(dataContrucao, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                                string dataTeste = worksheet.Cells[row, 15].Value.ToString() ?? "";
+                                DateTime _dataTeste = DateTime.ParseExact(dataTeste, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                                string dataRecebimento = worksheet.Cells[row, 16].Value.ToString() ?? "";
+                                DateTime _dataRecebimento = DateTime.ParseExact(dataRecebimento, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+
                                 var modelo = new TesteOptico
                                 {
                                     CHAVE = $"{worksheet.Cells[row, 2].Value?.ToString()?.ToUpper()}-{worksheet.Cells[row, 4].Value?.ToString()?.ToUpper()}{worksheet.Cells[row, 8].Value?.ToString()?.ToUpper()}",
@@ -151,10 +159,10 @@ namespace WebApiSwagger.Controllers
                                     Capacidade = worksheet.Cells[row, 9].Value?.ToString()?.ToUpper(),
                                     TotalUMs = worksheet.Cells[row, 10].Value?.ToString()?.ToUpper(),
                                     EstadoCampo = worksheet.Cells[row, 11].Value?.ToString()?.ToUpper(),
-                                    //DataConstrucao = DateTime.FromOADate(double.Parse(worksheet.Cells[row, 12].Value?.ToString()?.ToUpper() ?? "")),
+                                    DataConstrucao = _dataContrucao,
                                     EquipeConstrucao = worksheet.Cells[row, 14].Value?.ToString()?.ToUpper(),
-                                    //DataTeste = DateTime.FromOADate(double.Parse(worksheet.Cells[row, 15].Value?.ToString()?.ToUpper() ?? "")),
-                                    //DataRecebimento = DateTime.FromOADate(double.Parse(worksheet.Cells[row, 16].Value?.ToString()?.ToUpper() ?? "")),
+                                    DataTeste = _dataTeste,
+                                    DataRecebimento = _dataRecebimento,
                                     Tecnico = worksheet.Cells[row, 18].Value?.ToString()?.ToUpper(),  
                                     PosicaoIcxDgo = worksheet.Cells[row, 19].Value?.ToString()?.ToUpper(),
                                     FibraDGO = worksheet.Cells[row, 20].Value?.ToString()?.ToUpper(),
