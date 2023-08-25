@@ -1,0 +1,9 @@
+{
+    "dotnet.defaultSolution": "Back-End/WebApiSwagger.sln",
+    "editor.codeActionsOnSave": {
+        
+        
+        "source.organizeImports": true
+    },
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": false
+}
