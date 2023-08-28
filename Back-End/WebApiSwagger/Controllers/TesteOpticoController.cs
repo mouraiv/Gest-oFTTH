@@ -3,9 +3,8 @@ using WebApiSwagger.Filters;
 using WebApiSwagger.Models;
 using WebApiSwagger.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
-using System.Diagnostics;
 using System.Globalization;
+using WebApiSwagger.Utils;
 
 namespace WebApiSwagger.Controllers
 {
@@ -13,10 +12,12 @@ namespace WebApiSwagger.Controllers
    public class TesteOpticoController : Controller
     {
          private readonly ITesteOpticoRepository _testeOpticoRepository;
+         private readonly UploadXlsx _uploadXlsx;
 
-        public TesteOpticoController(ITesteOpticoRepository testeOpticoRepository)
+        public TesteOpticoController(ITesteOpticoRepository testeOpticoRepository, UploadXlsx uploadXlsx)
         {
             _testeOpticoRepository = testeOpticoRepository;
+            _uploadXlsx = uploadXlsx;
         }
 
         [HttpPost("Cadastrar")]
@@ -69,120 +70,79 @@ namespace WebApiSwagger.Controllers
             }
             
         }
-        [HttpPost("UploadArquivo")]
+
+        [HttpPost("UploadModelo")]
         public async Task<IActionResult> UploadArquivo(IFormFile arquivo)
         {
-            if (arquivo == null || arquivo.Length == 0)
-            {
-                return BadRequest("Nenhum arquivo enviado.");
-            }
-
-            // Verifique a extensão do arquivo
-            if (!Path.GetExtension(arquivo.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
-            {
-                return BadRequest("O arquivo deve estar no formato .xlsx.");
-            }
-
             try
             {
-                using (var stream = new MemoryStream())
+                if (arquivo == null || arquivo.Length == 0)
                 {
-                    
-                    await arquivo.CopyToAsync(stream);
-                    int linhasPreenchidas = 0;
+                    return BadRequest("Nenhum arquivo enviado.");
+                }
+                if (!Path.GetExtension(arquivo.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+                {
+                    return BadRequest("O arquivo deve estar no formato .xlsx.");
+                }
 
-                    using (var package = new ExcelPackage(stream))
+                _uploadXlsx.Carregar(/*Arquivo Xlsx*/ arquivo.OpenReadStream(), /*Index Coluna*/ 2, /*Index Row*/ 8);
+               
+                if (_uploadXlsx.LinhasPreenchidas < 1)
+                {
+                    return BadRequest($"Arquivo de importação está vazio.");           
+                }
+                else if (_uploadXlsx.LinhasPreenchidas > 50 )
+                {
+                    return BadRequest($"Arquivo de importação não podem exceder o limite de 50 linhas.");
+                }
+                else
+                {    
+                    // Mapear as colunas do arquivo XLSX para as propriedades 
+                    var listaModelo = new List<TesteOptico>();
+                    for (int row = 8; row <= (_uploadXlsx.LinhasPreenchidas + 7); row++)
                     {
-                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        //Get valores DataTime String para tratamento
+                        string dataContrucao = _uploadXlsx.Worksheet?.Cells[row, 12].Value.ToString() ?? "";
+                        DateTime _dataContrucao = DateTime.ParseExact(dataContrucao, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        string dataTeste = _uploadXlsx.Worksheet?.Cells[row, 15].Value.ToString() ?? "";
+                        DateTime _dataTeste = DateTime.ParseExact(dataTeste, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        string dataRecebimento = _uploadXlsx.Worksheet?.Cells[row, 16].Value.ToString() ?? "";
+                        DateTime _dataRecebimento = DateTime.ParseExact(dataRecebimento, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
-                        var worksheet = package.Workbook.Worksheets[0];
-
-                        //Validar arquivo xlsx de importar
-                        var totalRows = worksheet.Dimension.End.Row;
-                        var totalColumns = 2;
-                        var totalCells = totalRows * totalColumns;
-                        
-                        //Verificar celulas correspondentes
-                        for (int row = 8; row <= totalRows; row++)
-                        {
-                            bool TamanhoTotalXlsx = false;
-
-                            for (int col = 2; col <= totalColumns; col++)
+                        var modelo = new TesteOptico
                             {
-                                var cellValue = worksheet.Cells[row, col].Value;
-                                if (cellValue != null && !string.IsNullOrWhiteSpace(cellValue.ToString()))
-                                {
-                                    TamanhoTotalXlsx = true;
-                                    break;
-                                }
-                            }
-
-                            if (TamanhoTotalXlsx)
-                            {
-                                linhasPreenchidas++;
-                            }
-                        }
-
-                        if (linhasPreenchidas < 1)
-                        {
-                            return BadRequest($"Arquivo de importação está vazio.");
-                            
-                        }else if (linhasPreenchidas > 50 )
-                        {
-                            return BadRequest($"Arquivo de importação não podem exceder o limite de 50 linhas.");
-                        }
-                        else
-                        {    
-                            // Mapear as colunas do arquivo XLSX para as propriedades 
-                            var listaModelo = new List<TesteOptico>();
-                            for (int row = 8; row <= (linhasPreenchidas + 7); row++)
-                            {
-                                //Get valores DataTime String para tratamento
-                                string dataContrucao = worksheet.Cells[row, 12].Value.ToString() ?? "";
-                                DateTime _dataContrucao = DateTime.ParseExact(dataContrucao, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                                string dataTeste = worksheet.Cells[row, 15].Value.ToString() ?? "";
-                                DateTime _dataTeste = DateTime.ParseExact(dataTeste, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                                string dataRecebimento = worksheet.Cells[row, 16].Value.ToString() ?? "";
-                                DateTime _dataRecebimento = DateTime.ParseExact(dataRecebimento, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
-
-                                var modelo = new TesteOptico
-                                {
-                                    CHAVE = $"{worksheet.Cells[row, 2].Value?.ToString()?.ToUpper()}-{worksheet.Cells[row, 4].Value?.ToString()?.ToUpper()}{worksheet.Cells[row, 8].Value?.ToString()?.ToUpper()}",
-                                    UF = worksheet.Cells[row, 2].Value?.ToString()?.ToUpper(),
-                                    Construtora = worksheet.Cells[row, 3].Value?.ToString()?.ToUpper(),
-                                    Estacao = worksheet.Cells[row, 4].Value?.ToString()?.ToUpper(),
-                                    TipoObra = worksheet.Cells[row, 5].Value?.ToString()?.ToUpper(),
-                                    Cabo = worksheet.Cells[row, 6].Value?.ToString()?.ToUpper(),                           
-                                    Celula = worksheet.Cells[row, 7].Value?.ToString()?.ToUpper(),
-                                    CDO = worksheet.Cells[row, 8].Value?.ToString()?.ToUpper(),  
-                                    Capacidade = worksheet.Cells[row, 9].Value?.ToString()?.ToUpper(),
-                                    TotalUMs = worksheet.Cells[row, 10].Value?.ToString()?.ToUpper(),
-                                    EstadoCampo = worksheet.Cells[row, 11].Value?.ToString()?.ToUpper(),
-                                    DataConstrucao = _dataContrucao,
-                                    EquipeConstrucao = worksheet.Cells[row, 14].Value?.ToString()?.ToUpper(),
-                                    DataTeste = _dataTeste,
-                                    DataRecebimento = _dataRecebimento,
-                                    Tecnico = worksheet.Cells[row, 18].Value?.ToString()?.ToUpper(),  
-                                    PosicaoIcxDgo = worksheet.Cells[row, 19].Value?.ToString()?.ToUpper(),
-                                    FibraDGO = worksheet.Cells[row, 20].Value?.ToString()?.ToUpper(),
-                                    SplitterCEOS = worksheet.Cells[row, 21].Value?.ToString()?.ToUpper(),
-                                    BobinaLancamento = worksheet.Cells[row, 22].Value?.ToString()?.ToUpper(),
-                                    BobinaRecepcao = worksheet.Cells[row, 23].Value?.ToString()?.ToUpper(),
-                                    QuantidadeTeste = worksheet.Cells[row, 24].Value?.ToString()?.ToUpper()      
-                                };
+                                CHAVE = $"{_uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper()}-{_uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper()}{_uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper()}",
+                                UF = _uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper(),
+                                Construtora = _uploadXlsx.Worksheet?.Cells[row, 3].Value?.ToString()?.ToUpper(),
+                                Estacao = _uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper(),
+                                TipoObra = _uploadXlsx.Worksheet?.Cells[row, 5].Value?.ToString()?.ToUpper(),
+                                Cabo = _uploadXlsx.Worksheet?.Cells[row, 6].Value?.ToString()?.ToUpper(),                           
+                                Celula = _uploadXlsx.Worksheet?.Cells[row, 7].Value?.ToString()?.ToUpper(),
+                                CDO = _uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper(),  
+                                Capacidade = _uploadXlsx.Worksheet?.Cells[row, 9].Value?.ToString()?.ToUpper(),
+                                TotalUMs = _uploadXlsx.Worksheet?.Cells[row, 10].Value?.ToString()?.ToUpper(),
+                                EstadoCampo = _uploadXlsx.Worksheet?.Cells[row, 11].Value?.ToString()?.ToUpper(),
+                                DataConstrucao = _dataContrucao,
+                                EquipeConstrucao = _uploadXlsx.Worksheet?.Cells[row, 14].Value?.ToString()?.ToUpper(),
+                                DataTeste = _dataTeste,
+                                DataRecebimento = _dataRecebimento,
+                                Tecnico = _uploadXlsx.Worksheet?.Cells[row, 18].Value?.ToString()?.ToUpper(),  
+                                PosicaoIcxDgo = _uploadXlsx.Worksheet?.Cells[row, 19].Value?.ToString()?.ToUpper(),
+                                FibraDGO = _uploadXlsx.Worksheet?.Cells[row, 20].Value?.ToString()?.ToUpper(),
+                                SplitterCEOS = _uploadXlsx.Worksheet?.Cells[row, 21].Value?.ToString()?.ToUpper(),
+                                BobinaLancamento = _uploadXlsx.Worksheet?.Cells[row, 22].Value?.ToString()?.ToUpper(),
+                                BobinaRecepcao = _uploadXlsx.Worksheet?.Cells[row, 23].Value?.ToString()?.ToUpper(),
+                                QuantidadeTeste = _uploadXlsx.Worksheet?.Cells[row, 24].Value?.ToString()?.ToUpper()      
+                            };
 
                                 listaModelo.Add(modelo);
-                            }
-                            // Salvar os dados no banco de dados
-                            foreach (var optico in listaModelo)
-                            {
-                                await _testeOpticoRepository.Inserir(optico);
-                            }
-
-                            return Ok("Arquivo importado com sucesso.");
-                        }
                     }
+                    // Salvar os dados no banco de dados
+                    foreach (var optico in listaModelo)
+                    {
+                        await _testeOpticoRepository.Inserir(optico);
+                    }
+                    return Ok("Arquivo importado com sucesso.");
                 }
             }
             catch (Exception ex)

@@ -1,11 +1,16 @@
-//Importar Namespace
 using Microsoft.OpenApi.Models;
 using WebApiSwagger.Context;
 using WebApiSwagger.Repository;
 using WebApiSwagger.Repository.Interface;
+using WebApiSwagger.Utils;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddScoped<IEnderecoTotalRepository, EnderecoTotalRepository>();
+builder.Services.AddScoped<ITesteOpticoRepository, TesteOpticoRepository>();
+builder.Services.AddSingleton<UploadXlsx>();
 
 builder.Services.AddCors(options =>
 {
@@ -17,8 +22,6 @@ builder.Services.AddCors(options =>
                                 .AllowAnyMethod();
         });
 });
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -46,9 +49,6 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<AppDbContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext")));      
-
-builder.Services.AddScoped<IEnderecoTotalRepository, EnderecoTotalRepository>();
-builder.Services.AddScoped<ITesteOpticoRepository, TesteOpticoRepository>();
 
 var app = builder.Build();
 

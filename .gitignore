@@ -1,0 +1,11 @@
+Back-End/.vscode/
+Back-End/WebApiSwagger/bin/
+Back-End/WebApiSwagger/obj/
+
+Back-End/WebApiSwagger/Downloads/
+Back-End/WebApiSwagger/Uploads/
+
+*.dll
+*.exe
+*.log
+*.temp
