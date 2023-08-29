@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "gb5yp1uxt49rQ3mc1j3kmiKQiR0JsdQeNo/4VxlIhxGJDhvpL72nWzuZa4tyD6UIsypZjl/SEr6heADYRlS9ZA==",
+  "dgSpecHash": "38lLPHwHIT/zGZu/yGkPNCemrnWh8LH7+UxnP+bOMHnEqNtf0pNQSb9lFbXhVr8r2pHKnP0gv/schfbLkH+RUw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
+  "projectFilePath": "c:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\wesley.moura\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

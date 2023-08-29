@@ -4418,11 +4418,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\WebApiSwagger.csproj",
+      "projectUniqueName": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
       "projectName": "WebApiSwagger",
-      "projectPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\WebApiSwagger.csproj",
+      "projectPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
       "packagesPath": "C:\\Users\\wesley.moura\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\obj\\",
+      "outputPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\wesley.moura\\AppData\\Roaming\\NuGet\\NuGet.Config",

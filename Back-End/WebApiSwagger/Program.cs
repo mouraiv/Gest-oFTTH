@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IEnderecoTotalRepository, EnderecoTotalRepository>();
 builder.Services.AddScoped<ITesteOpticoRepository, TesteOpticoRepository>();
 builder.Services.AddSingleton<UploadXlsx>();
+builder.Services.AddSingleton<Visualizador>();
 
 builder.Services.AddCors(options =>
 {
@@ -57,7 +58,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(options =>
     {
-        options.SerializeAsV2 = true;
+        options.SerializeAsV2 = false;
     });
 
     // Use SwaggerUI
