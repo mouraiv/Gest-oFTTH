@@ -91,5 +91,25 @@ namespace WebApiSwagger.Controllers
                 return BadRequest("Erro na visualização" + ex.Message);                
             }
         }
+
+        [HttpDelete("DeletarImagem")]
+        public IActionResult DeletarImagem(string uf, string unidade, string cdo, string imageName)
+        { 
+            try
+            {
+                bool delete = _visualizador.DeletaImagem(uf, unidade, cdo, imageName);
+
+                if (delete == false)
+                {
+                    return NotFound("Nehuma Imagem.");
+                }
+
+                return Ok("Imagem excluída com sucesso.");
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Erro ao excluir" + ex.Message);             
+            }
+        }
     }
 }

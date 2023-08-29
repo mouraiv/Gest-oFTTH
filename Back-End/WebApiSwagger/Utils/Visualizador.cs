@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-
 namespace WebApiSwagger.Utils
 {
     public class Visualizador
     {
-        public string? FilePath { get; set; }
-        public List<string> Arquivos { get; set; } = new List<string>();
+       readonly string pastaDoProjeto = $"{Directory.GetCurrentDirectory()}\\Uploads\\Anexos";
 
         public void UploadImagem
          (  List<IFormFile> path,
@@ -17,18 +14,17 @@ namespace WebApiSwagger.Utils
         {
             try
             {
-                string pastaDoProjeto = Directory.GetCurrentDirectory();
-                FilePath = $"{pastaDoProjeto}\\Uploads\\Anexos\\{uf.ToUpper()}\\{unidade.ToUpper()}\\TESTE_OPTICO\\";
+                string caminho = $"{pastaDoProjeto}\\{uf.ToUpper()}\\{unidade.ToUpper()}\\TESTE_OPTICO\\";
 
                 foreach (var file in path)
                 {
                     if (file != null && file.Length > 0)
                     {
-                        
+
                         // Verifica se a pasta de destino já existe
                         var folderPath = cdoia != null ?
-                            Path.Combine(FilePath, cdo.ToUpper() + "." + cdoia) :
-                            Path.Combine(FilePath, cdo.ToUpper());
+                            Path.Combine(caminho, cdo.ToUpper() + "." + cdoia) :
+                            Path.Combine(caminho, cdo.ToUpper());
 
                         if (!Directory.Exists(folderPath))
                         {
@@ -62,10 +58,9 @@ namespace WebApiSwagger.Utils
         {
             try
             {
-                string pastaDoProjeto = Directory.GetCurrentDirectory();
-                string filePath = $"{pastaDoProjeto}\\Uploads\\Anexos\\{uf}\\{unidade}\\TESTE_OPTICO\\{cdo}\\";
+                string caminho = $"{pastaDoProjeto}\\{uf}\\{unidade}\\TESTE_OPTICO\\{cdo}\\";
 
-                Arquivos = Directory.GetFiles(filePath, "*", SearchOption.AllDirectories)
+                var Arquivos = Directory.GetFiles(caminho, "*", SearchOption.AllDirectories)
                             .Where(file => extensoes.Contains(Path.GetExtension(file)))
                             .ToList();
 
@@ -74,6 +69,27 @@ namespace WebApiSwagger.Utils
             catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro ao carregar a visualização: " + ex.Message);
+            }
+        }
+
+        public bool DeletaImagem(string uf, string unidade, string cdo, string imageName){
+
+            string caminho = $"{pastaDoProjeto}\\{uf.ToUpper()}\\{unidade.ToUpper()}\\TESTE_OPTICO\\{cdo.ToUpper()}\\";
+            string imagePath = Path.Combine(caminho, imageName);
+
+             if (!Directory.Exists(caminho) || !File.Exists(imagePath))
+            {
+                return false;
+            }
+
+            try
+            {
+                File.Delete(imagePath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao excluir a imagem: {ex.Message}");
             }
         }
     }
