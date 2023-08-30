@@ -38,7 +38,7 @@ namespace WebApiSwagger.Controllers
                 
                 return Ok(
                     new {
-                            Paginação = _paginacao,
+                            Paginacao = _paginacao,
                             Resultado = resultado
                         });
             }

@@ -223,7 +223,7 @@ namespace WebApiSwagger.Controllers
         {
             try
             {
-                 _paginacao.Pagina = pagina ?? 1;
+                _paginacao.Pagina = pagina ?? 1;
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = pagina + 100 ?? 100;
 
@@ -238,7 +238,7 @@ namespace WebApiSwagger.Controllers
                 
                 return Ok(
                     new {
-                            Paginação = _paginacao,
+                            Paginacao = _paginacao,
                             Resultado = resultado
                         });
             }

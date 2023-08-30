@@ -108,7 +108,6 @@ namespace WebApiSwagger.Repository
             {
                 throw new Exception("Ocorreu um erro ao deletar: " + ex.Message);
             }
-            
         }
        
         public async Task<IEnumerable<TesteOptico>> Listar(FiltroTesteOptico filtro, Paginacao paginacao)
