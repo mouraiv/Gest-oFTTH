@@ -1,10 +1,12 @@
-namespace WebApiSwagger.Utils
-{
-    public class Visualizador
-    {
-       readonly string pastaDoProjeto = $"{Directory.GetCurrentDirectory()}\\Uploads\\Anexos";
+using WebApiSwagger.Repository.Interface;
 
-        public void UploadImagem
+namespace WebApiSwagger.Repository
+{
+    public class BaseRepository : IBaseRepository
+    {
+        readonly string pastaDoProjeto = $"{Directory.GetCurrentDirectory()}\\Uploads\\Anexos";
+
+        public void UploadArquivo
          (  List<IFormFile> path,
             string uf, 
             string unidade, 
@@ -49,7 +51,7 @@ namespace WebApiSwagger.Utils
             }
         }
 
-        public List<string> CarregarVisualizador
+        public List<string> ListarArquivo
         (   string uf, 
             string unidade, 
             string cdo, 
@@ -72,7 +74,7 @@ namespace WebApiSwagger.Utils
             }
         }
 
-        public bool DeletaImagem(string uf, string unidade, string cdo, string imageName){
+        public bool DeletaArquivo(string uf, string unidade, string cdo, string imageName){
 
             string caminho = $"{pastaDoProjeto}\\{uf.ToUpper()}\\{unidade.ToUpper()}\\TESTE_OPTICO\\{cdo.ToUpper()}\\";
             string imagePath = Path.Combine(caminho, imageName);

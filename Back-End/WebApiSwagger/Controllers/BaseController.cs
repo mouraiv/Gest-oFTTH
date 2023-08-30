@@ -1,20 +1,24 @@
+using WebApiSwagger.Repository.Interface;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSwagger.Utils;
+
 
 namespace WebApiSwagger.Controllers
 {
     [Route("Base")]
     public class BaseController : Controller
     {
-        private readonly Visualizador _visualizador;
+        private readonly IBaseRepository _baseRepository;
+        private readonly ConversorDwg _conversorDwg;
 
-        public BaseController(Visualizador visualizador)
+        public BaseController(IBaseRepository baseRepository, ConversorDwg conversorDwg)
         {
-            _visualizador = visualizador;
+            _baseRepository = baseRepository;
+            _conversorDwg = conversorDwg;
         }
 
-        [HttpGet("DownloadsModelo")]
-        public IActionResult DownloadsModelo()
+        [HttpGet("DownloadArquivo")]
+        public IActionResult DownloadArquivo()
         {
             try
             {
@@ -50,9 +54,9 @@ namespace WebApiSwagger.Controllers
             }
         }
 
-        [HttpPost("UploadImagem")]
+        [HttpPost("UploadArquivo")]
         [Consumes("multipart/form-data")]
-        public IActionResult UploadImagem(List<IFormFile> path, string uf, string unidade, string cdo, string cdoia)
+        public IActionResult UploadArquivo(List<IFormFile> path, string uf, string unidade, string cdo, string cdoia)
         {
             try
             {
@@ -61,7 +65,7 @@ namespace WebApiSwagger.Controllers
                     return NotFound("Nenhuma imagem foi enviada.");
                 }
 
-                _visualizador.UploadImagem(path, uf, unidade, cdo, cdoia);
+                _baseRepository.UploadArquivo(path, uf, unidade, cdo, cdoia);
 
                 return Ok("Upload concluído com sucesso.");
             }
@@ -76,7 +80,7 @@ namespace WebApiSwagger.Controllers
         { 
             try
             {
-                var imagems = _visualizador.CarregarVisualizador(uf, unidade, cdo, new string[] { ".jpg", ".png", ".jfif", ".bmp" });  
+                var imagems = _baseRepository.ListarArquivo(uf, unidade, cdo, new string[] { ".jpg", ".png", ".jfif", ".bmp", ".dwg" });  
 
                 if (imagems.Count == 0){
 
@@ -92,12 +96,34 @@ namespace WebApiSwagger.Controllers
             }
         }
 
-        [HttpDelete("DeletarImagem")]
-        public IActionResult DeletarImagem(string uf, string unidade, string cdo, string imageName)
+        [HttpGet("VisualizarDwg")]
+        public IActionResult VisualizarDwg(string dwg)
         { 
             try
             {
-                bool delete = _visualizador.DeletaImagem(uf, unidade, cdo, imageName);
+                if (string.IsNullOrEmpty(dwg)){
+
+                    return NotFound("Nehum Arquivo.");
+                }
+
+                _conversorDwg.InputFilePath = dwg;
+
+                _conversorDwg.ConvertFileInBackground();
+
+                return File(_conversorDwg.OutputFilePath, "application/pdf"); 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Erro na visualização" + ex.Message);                
+            }
+        }
+
+        [HttpDelete("DeletarArquivo")]
+        public IActionResult DeletarArquivo(string uf, string unidade, string cdo, string imageName)
+        { 
+            try
+            {
+                bool delete = _baseRepository.DeletaArquivo(uf, unidade, cdo, imageName);
 
                 if (delete == false)
                 {

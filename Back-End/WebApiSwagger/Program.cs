@@ -10,8 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<IEnderecoTotalRepository, EnderecoTotalRepository>();
 builder.Services.AddScoped<ITesteOpticoRepository, TesteOpticoRepository>();
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddSingleton<UploadXlsx>();
-builder.Services.AddSingleton<Visualizador>();
+builder.Services.AddSingleton<ConversorDwg>();
 
 builder.Services.AddCors(options =>
 {

@@ -44,6 +44,10 @@
               "target": "Package",
               "version": "[6.2.8, )"
             },
+            "GroupDocs.Conversion": {
+              "target": "Package",
+              "version": "[23.7.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.1, )"
