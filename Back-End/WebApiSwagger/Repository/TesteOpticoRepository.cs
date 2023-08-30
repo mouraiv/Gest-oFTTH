@@ -3,6 +3,7 @@ using WebApiSwagger.Models;
 using WebApiSwagger.Repository.Interface;
 using WebApiSwagger.Filters;
 using Microsoft.EntityFrameworkCore;
+using WebApiSwagger.Utils;
 
 namespace WebApiSwagger.Repository
 {
@@ -110,7 +111,7 @@ namespace WebApiSwagger.Repository
             
         }
        
-        public async Task<IEnumerable<TesteOptico>> Listar(FiltroTesteOptico filtro)
+        public async Task<IEnumerable<TesteOptico>> Listar(FiltroTesteOptico filtro, Paginacao paginacao)
         {
             try
             {
@@ -152,6 +153,12 @@ namespace WebApiSwagger.Repository
                 {
                     query = query.Where(p => p.DataRecebimento == filtro.DataRecebimento);
                 }
+
+                paginacao.Total = await query.CountAsync();
+
+                query = query
+                    .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
+                    .Take(paginacao.Tamanho);
 
                 return await query.ToListAsync();
             }

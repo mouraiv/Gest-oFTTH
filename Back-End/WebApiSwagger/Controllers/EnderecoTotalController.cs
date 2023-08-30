@@ -1,6 +1,7 @@
 using WebApiSwagger.Repository.Interface;
 using WebApiSwagger.Filters;
 using Microsoft.AspNetCore.Mvc;
+using WebApiSwagger.Utils;
 
 namespace WebApiSwagger.Controllers
 {
@@ -8,25 +9,38 @@ namespace WebApiSwagger.Controllers
     public class EnderecoTotalController : Controller
     {
         private readonly IEnderecoTotalRepository _enderecoTotalRepository;
+        private readonly Paginacao _paginacao;
 
-        public EnderecoTotalController(IEnderecoTotalRepository enderecoTotalRepository)
+        public EnderecoTotalController(IEnderecoTotalRepository enderecoTotalRepository, Paginacao paginacao)
         {
             _enderecoTotalRepository = enderecoTotalRepository;
+            _paginacao = paginacao;
+
         }
 
         [HttpGet("Listar")]
-        public async Task<IActionResult> Listar(FiltroEnderecoTotal filtro)
+        public async Task<IActionResult> Listar(FiltroEnderecoTotal filtro, int? pagina)
         {
             try
             {
-                var resultado = await _enderecoTotalRepository.Listar(filtro);
+                _paginacao.Pagina = pagina ?? 1;
+                _paginacao.Tamanho = 100;
+                _paginacao.PaginasCorrentes = pagina + 100 ?? 100;
+
+                var resultado = await _enderecoTotalRepository.Listar(filtro,_paginacao);
+
+                _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
 
                 if (resultado == null)
                 {
                     return NotFound("Nenhum resultado."); 
                 }
                 
-                return Ok(resultado);
+                return Ok(
+                    new {
+                            Paginação = _paginacao,
+                            Resultado = resultado
+                        });
             }
             catch (Exception ex)
             {

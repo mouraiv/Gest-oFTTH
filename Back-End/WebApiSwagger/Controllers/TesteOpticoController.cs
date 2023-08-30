@@ -13,11 +13,13 @@ namespace WebApiSwagger.Controllers
     {
          private readonly ITesteOpticoRepository _testeOpticoRepository;
          private readonly UploadXlsx _uploadXlsx;
+         private readonly Paginacao _paginacao;
 
-        public TesteOpticoController(ITesteOpticoRepository testeOpticoRepository, UploadXlsx uploadXlsx)
+        public TesteOpticoController(ITesteOpticoRepository testeOpticoRepository, UploadXlsx uploadXlsx, Paginacao paginacao)
         {
             _testeOpticoRepository = testeOpticoRepository;
             _uploadXlsx = uploadXlsx;
+            _paginacao = paginacao;
         }
 
         [HttpPost("Cadastrar")]
@@ -217,18 +219,28 @@ namespace WebApiSwagger.Controllers
             
         }
         [HttpGet("Listar")]
-        public async Task<IActionResult> Listar(FiltroTesteOptico filtro)
+        public async Task<IActionResult> Listar(FiltroTesteOptico filtro, int? pagina)
         {
             try
             {
-                var resultado = await _testeOpticoRepository.Listar(filtro);
+                 _paginacao.Pagina = pagina ?? 1;
+                _paginacao.Tamanho = 100;
+                _paginacao.PaginasCorrentes = pagina + 100 ?? 100;
+
+                var resultado = await _testeOpticoRepository.Listar(filtro, _paginacao);
+
+                _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
 
                 if (resultado == null)
                 {
                     return NotFound("Nenhum resultado."); 
                 }
                 
-                return Ok(resultado);
+                return Ok(
+                    new {
+                            Paginação = _paginacao,
+                            Resultado = resultado
+                        });
             }
             catch (Exception ex)
             {

@@ -65,6 +65,14 @@ namespace WebApiSwagger.Controllers
                     return NotFound("Nenhuma imagem foi enviada.");
                 }
 
+                foreach (var file in path)
+                {
+                    if (file.Length > 100 * 1024 * 1024) // Verifica se o tamanho do arquivo é maior que 100MB
+                    {
+                        return BadRequest("Um ou mais arquivos excedem o tamanho máximo permitido (100MB).");
+                    }
+                }
+
                 _baseRepository.UploadArquivo(path, uf, unidade, cdo, cdoia);
 
                 return Ok("Upload concluído com sucesso.");
