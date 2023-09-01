@@ -82,7 +82,7 @@ namespace WebApiSwagger.Repository
             }
             catch (Exception ex)
             {  
-                throw new Exception("Ocorreu um erro ao inserir: " + ex.Message);
+                throw new Exception("Ocorreu um erro ao inserir: " + ex.Message + ", " + ex.InnerException?.Message);
             }
         }
     }

@@ -4,7 +4,7 @@ namespace WebApiSwagger.Models
 {
     public class Usuario
     {
-         [Key]
+        [Key]
         public int Id_Usuario {get; set;}
         public string? Login {get; set;}
         public string? Senha {get; set;}

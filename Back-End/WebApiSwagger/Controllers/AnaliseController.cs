@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiSwagger.Controllers
 {
-    [Route("Api/TesteOptico")]
+    [Route("Api/Analise")]
    public class AnaliseController : Controller
     {
          private readonly IAnaliseRepository _analiseRepository;
@@ -58,7 +58,7 @@ namespace WebApiSwagger.Controllers
                     CDOIAStatus = analise.CDOIAStatus,
                     CDOIAObs = analise.CDOIAObs,
                     Id_Tecnico = analise.Id_Tecnico,
-                    Id_TesteOptico = analise.Id_TesteOptico,
+                    Id_TesteOptico = _analiseRepository.CarregarId(id).Result.Id_TesteOptico,
                     Id_Validacao = analise.Id_Validacao
                 };
 
