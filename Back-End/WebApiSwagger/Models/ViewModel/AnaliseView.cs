@@ -3,7 +3,7 @@ namespace WebApiSwagger.Models.ViewModel
     public class AnaliseView
     {
         public string? Status {get; set;}
-        public string? DataAnalise {get; set;}
+        public DateTime? DataAnalise {get; set;}
         public string? AnaliseObservacao {get; set;}
         public string? CDOIA {get; set;}
         public string? CDOIAStatus {get; set;}

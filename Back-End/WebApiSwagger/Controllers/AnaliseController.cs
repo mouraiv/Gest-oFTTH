@@ -13,7 +13,6 @@ namespace WebApiSwagger.Controllers
         public AnaliseController(IAnaliseRepository analiseRepository)
         {
             _analiseRepository = analiseRepository;
-
         }
 
         [HttpPost("Cadastrar")]
@@ -24,7 +23,7 @@ namespace WebApiSwagger.Controllers
                 var modelo = new Analise{
 
                     Status = analise.Status,
-                    DataAnalise = analise.DataAnalise,
+                    DataAnalise =  DateTime.Now,
                     AnaliseObservacao = analise.AnaliseObservacao,
                     CDOIA = analise.CDOIA,
                     CDOIAStatus = analise.CDOIAStatus,
