@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiSwagger.Context;
 using WebApiSwagger.Models;
+using WebApiSwagger.Repository.Interface;
 
 namespace WebApiSwagger.Repository
 {
-    public class UsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
         private readonly AppDbContext _context;
         public UsuarioRepository (AppDbContext context)

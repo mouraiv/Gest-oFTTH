@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiSwagger.Controllers
 {
+    [ApiController]
     [Route("Api/Analise")]
    public class AnaliseController : Controller
     {
-         private readonly IAnaliseRepository _analiseRepository;
+        private readonly IAnaliseRepository _analiseRepository;
   
         public AnaliseController(IAnaliseRepository analiseRepository)
         {

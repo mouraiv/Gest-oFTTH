@@ -8,6 +8,7 @@ using WebApiSwagger.Utils;
 
 namespace WebApiSwagger.Controllers
 {
+     [ApiController]
     [Route("Api/TesteOptico")]
    public class TesteOpticoController : Controller
     {
@@ -137,7 +138,7 @@ namespace WebApiSwagger.Controllers
                                 QuantidadeTeste = _uploadXlsx.Worksheet?.Cells[row, 24].Value?.ToString()?.ToUpper()      
                             };
 
-                                listaModelo.Add(modelo);
+                            listaModelo.Add(modelo);
                     }
                     // Salvar os dados no banco de dados
                     foreach (var optico in listaModelo)

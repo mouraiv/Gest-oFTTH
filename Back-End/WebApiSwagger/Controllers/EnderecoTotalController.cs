@@ -5,6 +5,7 @@ using WebApiSwagger.Utils;
 
 namespace WebApiSwagger.Controllers
 {
+     [ApiController]
     [Route("Api/EnderecoTotal")]
     public class EnderecoTotalController : Controller
     {

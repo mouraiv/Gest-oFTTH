@@ -5,7 +5,8 @@ using WebApiSwagger.Utils;
 
 namespace WebApiSwagger.Controllers
 {
-    [Route("Base")]
+    [ApiController]
+    [Route("Api/Base")]
     public class BaseController : Controller
     {
         private readonly IBaseRepository _baseRepository;

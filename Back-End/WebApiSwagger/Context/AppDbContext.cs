@@ -87,7 +87,9 @@ namespace WebApiSwagger.Context
 
             modelBuilder.Entity<EnderecoTotal>()
                 .Property(e => e.Longitude)
-                .HasColumnType("decimal(9, 6)");              
+                .HasColumnType("decimal(9, 6)");
+
+            modelBuilder.Entity<Usuario>();                  
 
             base.OnModelCreating(modelBuilder);
         }
