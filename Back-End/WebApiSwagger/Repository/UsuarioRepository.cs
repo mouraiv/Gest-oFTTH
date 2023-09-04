@@ -85,6 +85,7 @@ namespace WebApiSwagger.Repository
              try
             {
                 return await _context.Usuarios
+                    .Include(u => u.GetTecnico)
                         .ToListAsync();             
             }
             catch (Exception ex)

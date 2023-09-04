@@ -79,13 +79,13 @@ namespace WebApiSwagger.Context
 
             modelBuilder.Entity<Tecnico>()
                  .HasOne(p => p.GetCargo)
-                 .WithOne()
-                 .HasForeignKey<Tecnico>(p => p.Id_Tecnico);
+                 .WithMany()
+                 .HasForeignKey(p => p.Id_Cargo);
 
             modelBuilder.Entity<Tecnico>()
                  .HasOne(p => p.GetEmpresa)
-                 .WithOne()
-                 .HasForeignKey<Tecnico>(p => p.Id_Empresa); 
+                 .WithMany()
+                 .HasForeignKey(p => p.Id_Empresa); 
 
             modelBuilder.Entity<EnderecoTotal>()
                 .Property(e => e.Latitude)
