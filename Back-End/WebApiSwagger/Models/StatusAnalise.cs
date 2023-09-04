@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace End.WebApiSwagger.Models
+namespace WebApiSwagger.Models
 {
     public class StatusAnalise
     {

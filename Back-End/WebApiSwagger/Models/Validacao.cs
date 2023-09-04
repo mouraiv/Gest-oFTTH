@@ -4,7 +4,7 @@ namespace WebApiSwagger.Models
 {
     public class Validacao
     {
-         [Key]
+        [Key]
         public int Id_Validacao {get; set;}
         public string? Nome {get; set;}
     }

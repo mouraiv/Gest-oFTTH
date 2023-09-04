@@ -6,14 +6,14 @@ namespace WebApiSwagger.Models
     {
         [Key]
         public int Id_Analise {get; set;}
-        public string? Status {get; set;}
         public DateTime? DataAnalise {get; set;}
         public string? AnaliseObservacao {get; set;}
         public string? CDOIA {get; set;}
         public string? CDOIAStatus {get; set;}
         public string? CDOIAObs {get; set;}
 
-
+        public int? Id_StatusAnalise {get; set;}
+        public StatusAnalise? GetStatusAnalise {get; set;}
         public int? Id_Tecnico {get; set;}
         public Tecnico? GetTecnico {get; set;}
         public int? Id_TesteOptico {get; set;}

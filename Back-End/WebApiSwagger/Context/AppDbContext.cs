@@ -18,6 +18,7 @@ namespace WebApiSwagger.Context
         public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
         public DbSet<TesteOptico> TestesOpticos => Set<TesteOptico>();
         public DbSet<Usuario> Usuarios => Set<Usuario>();
+         public DbSet<StatusAnalise> StatusAnalises => Set<StatusAnalise>();
         public DbSet<Validacao> Validacoes => Set<Validacao>();
 
         public override int SaveChanges()
@@ -64,7 +65,12 @@ namespace WebApiSwagger.Context
             modelBuilder.Entity<Analise>()
                 .HasOne(c => c.GetValidacao)
                 .WithMany()
-                .HasForeignKey(c => c.Id_Validacao);                                    
+                .HasForeignKey(c => c.Id_Validacao);
+
+            modelBuilder.Entity<Analise>()
+                .HasOne(c => c.GetStatusAnalise)
+                .WithMany()
+                .HasForeignKey(c => c.Id_StatusAnalise);                                         
 
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)

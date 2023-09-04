@@ -23,7 +23,7 @@ namespace WebApiSwagger.Controllers
             {
                 var modelo = new Analise{
 
-                    Status = analise.Status,
+                    Id_StatusAnalise = analise.Id_StatusAnalise,
                     DataAnalise =  DateTime.Now,
                     AnaliseObservacao = analise.AnaliseObservacao,
                     CDOIA = analise.CDOIA,
@@ -52,7 +52,7 @@ namespace WebApiSwagger.Controllers
             {
                 var modelo = new Analise{
 
-                    Status = analise.Status,
+                    Id_StatusAnalise = analise.Id_StatusAnalise,
                     DataAnalise = analise.DataAnalise,
                     AnaliseObservacao = analise.AnaliseObservacao,
                     CDOIA = analise.CDOIA,

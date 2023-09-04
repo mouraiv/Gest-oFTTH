@@ -54,7 +54,7 @@ namespace WebApiSwagger.Repository
                 db.Id_TesteOptico = analise.Id_TesteOptico;
                 db.Id_Tecnico = analise.Id_Tecnico;
                 db.DataAnalise = analise.DataAnalise;
-                db.Status = analise.Status;
+                db.Id_StatusAnalise = analise.Id_StatusAnalise;
                 db.AnaliseObservacao = analise.AnaliseObservacao;
                 db.CDOIA = analise.CDOIA;
                 db.CDOIAStatus = analise.CDOIAStatus;

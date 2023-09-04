@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7/j5Kq2vLhqgs9UL9f8uJ6EFYZoWImEXJ0EG4Y7AMmQk+z/8LPF2H0Co3XJ+vgT3HgPsKWBDZwju9fxfDABc9g==",
+  "dgSpecHash": "elezzmZ6G0bPD9CF1sxMszG73rlolRRxvoJtUcnFgge8GDRZQifjAvVYfoKRjAgRqfadl2ZVSpHaZuqCZfuFIA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
+  "projectFilePath": "c:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\wesley.moura\\.nuget\\packages\\aspose.drawing.common\\23.5.0\\aspose.drawing.common.23.5.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
