@@ -5,6 +5,8 @@ Back-End/WebApiSwagger/obj/
 Back-End/WebApiSwagger/Downloads/
 Back-End/WebApiSwagger/Uploads/
 
+Front-End/gestao-ftth-react/node-modules/
+
 *.dll
 *.exe
 *.log
