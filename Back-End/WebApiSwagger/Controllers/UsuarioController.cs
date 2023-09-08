@@ -26,7 +26,6 @@ namespace WebApiSwagger.Controllers
                     Senha = Usuario.Senha,
                     Tipo = Usuario.Tipo,
                     Publico = Usuario.Publico,
-                    Id_Tecnico = Usuario.Id_Tecnico,
                 };
 
                 var resultado = await _UsuarioRepository.Inserir(modelo);
@@ -50,7 +49,6 @@ namespace WebApiSwagger.Controllers
                     Senha = Usuario.Senha,
                     Tipo = Usuario.Tipo,
                     Publico = Usuario.Publico,
-                    Id_Tecnico = _UsuarioRepository.CarregarId(id).Result.Id_Tecnico,
                 };
 
                 var resultado = await _UsuarioRepository.Editar(id, modelo);
@@ -74,7 +72,7 @@ namespace WebApiSwagger.Controllers
             }
             catch (Exception ex)
             {
-               return BadRequest("Ocorreu um erro ao deletar: " + ex.Message);
+                return BadRequest("Ocorreu um erro ao deletar: " + ex.Message);
             }
             
         }

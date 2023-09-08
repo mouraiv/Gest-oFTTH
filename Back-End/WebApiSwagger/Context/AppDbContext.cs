@@ -75,7 +75,7 @@ namespace WebApiSwagger.Context
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)
                  .WithOne()
-                 .HasForeignKey<Usuario>(p => p.Id_Usuario);
+                 .HasForeignKey<Tecnico>(p => p.Id_Tecnico);
 
             modelBuilder.Entity<Tecnico>()
                  .HasOne(p => p.GetCargo)

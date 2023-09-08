@@ -53,7 +53,6 @@ namespace WebApiSwagger.Repository
                 db.Email = Tecnico.Email;
                 db.Id_Cargo = Tecnico.Id_Cargo;
                 db.Id_Empresa = Tecnico.Id_Empresa;
-                db.Id_Tecnico = Tecnico.Id_Tecnico;
             
                 _context.Tecnicos.Update(db);
                 await _context.SaveChangesAsync();
