@@ -1,13 +1,7 @@
-import './App.css'
+import React from "react"
 
-function App() {
-  return (
-    <>
-      <div>
-      <h1>Gestão FTTH</h1>
-      </div>
-    </>
-  )
+import AppRoutes from "./Routes"
+
+export default function App() {
+	return <AppRoutes />
 }
-
-export default App
