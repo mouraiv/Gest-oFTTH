@@ -8,10 +8,15 @@ export const GlobalStyle = globalCss({
             color: '#13293d' 
         }   
 });
-
 export const Template = styled("div", {
-	    backgroundColor: 'whitesmoke',
+	backgroundColor: 'whitesmoke',
+        height: '100vh',
         display: 'grid',
-        gridTemplateAreas: "'header' 'content' 'footer'",
-        gridTemplateRows: '50px calc(100vh - 100px) 50px'
+        gridTemplateAreas: '"header" "content" "footer"',
+        gridTemplateRows: '40px 1fr 40px',
+});
+
+export const Content = styled("div", {
+        gridArea :'content',
+        margin: '1rem',
 });

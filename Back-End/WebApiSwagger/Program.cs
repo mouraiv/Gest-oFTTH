@@ -4,6 +4,10 @@ using WebApiSwagger.Repository;
 using WebApiSwagger.Repository.Interface;
 using WebApiSwagger.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +29,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
         {
-            policy.WithOrigins("http://localhost:5226")
+            policy.WithOrigins("http://localhost:5226","http://localhost:5173")
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
         });
@@ -56,7 +60,27 @@ builder.Services.AddSwaggerGen(options =>
             });
 
 builder.Services.AddDbContext<AppDbContext>
-    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext")));      
+    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext")));
+
+var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Secret").Value ?? "");    
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("E8c6jFXyTh#9Qaw$M*d5nJL2zR@WvbUZ")),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});    
 
 var app = builder.Build();
 
@@ -75,8 +99,6 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty;
     });
 }
-
-//app.UseHttpsRedirection();
 
 app.UseCors();
 

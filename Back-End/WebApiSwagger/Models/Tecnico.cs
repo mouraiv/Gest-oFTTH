@@ -10,9 +10,9 @@ namespace WebApiSwagger.Models
         public string? Email {get; set;}
 
         public int? Id_Cargo {get; set;}
-        public Cargo? GetCargo {get; set;}
+        public Cargo GetCargo {get; set;} = null!;
         public int? Id_Empresa {get; set;}
-        public Empresa? GetEmpresa {get; set;}
+        public Empresa GetEmpresa {get; set;} = null!;
 
     }
 }

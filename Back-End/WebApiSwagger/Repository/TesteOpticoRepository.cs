@@ -116,7 +116,7 @@ namespace WebApiSwagger.Repository
             {
                 var query = _context.TestesOpticos
                     .Include(p => p.GetTecnico)
-                        .AsQueryable();
+                    .AsQueryable();
 
                 if (!string.IsNullOrEmpty(filtro.UF))
                 {

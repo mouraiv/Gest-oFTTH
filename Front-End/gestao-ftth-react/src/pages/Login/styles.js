@@ -24,7 +24,7 @@ export const Input = styled("input", {
 });
 
 export const Button = styled("button", {
-    width: '258px',
+    width: '252px',
     height: '30px',
     marginBottom: '2rem',
     background: '#13293d',

@@ -1,14 +1,16 @@
 import { styled } from "@stitches/react"
 
 export const FooterStyle = styled("footer", {
-    display:"grid",
+    display: 'grid',
+    gridArea: "footer",
     background: '#13293d',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '50px',
-});
+    height: '45px',
 
-export const Text = styled("p", {
-    color: '#ffffff',
-    fontSize: '14px'
+    "p":{
+        fontSize: '0.8rem',
+        fontWeight: 'normal',
+        color : "#ffffff"  
+    }
 });

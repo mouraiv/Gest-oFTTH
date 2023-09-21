@@ -220,7 +220,7 @@ namespace WebApiSwagger.Controllers
             
         }
         [HttpGet("Listar")]
-        public async Task<IActionResult> Listar(FiltroTesteOptico filtro, int? pagina)
+        public async Task<IActionResult> Listar([FromQuery] FiltroTesteOptico filtro, int? pagina)
         {
             try
             {
@@ -228,7 +228,34 @@ namespace WebApiSwagger.Controllers
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = pagina + 100 ?? 100;
 
-                var resultado = await _testeOpticoRepository.Listar(filtro, _paginacao);
+                var lista = await _testeOpticoRepository.Listar(filtro, _paginacao);
+                var resultado = new List<object>();
+
+                foreach(var optico in lista){
+                    DateTime? dataRecebimento = optico.DataRecebimento;
+                    DateTime? dataConstrucao = optico.DataConstrucao;
+                    DateTime? dataTeste = optico.DataTeste;
+
+                    string dataRecebimentoBr = dataRecebimento != null ? dataRecebimento.Value.ToString("dd-MM-yyyy") : "";
+                    string dataConstrucaoBr = dataConstrucao != null ? dataConstrucao.Value.ToString("dd-MM-yyyy") : "";
+                    string dataTesteBr = dataTeste != null ? dataTeste.Value.ToString("dd-MM-yyyy") : "";
+
+                    var modelo = new {
+                        UF = optico.UF,
+                        Construtora = optico.Construtora,
+                        Estacao = optico.Estacao,
+                        DataRecebimento = dataRecebimentoBr,
+                        DataConstrucao = dataConstrucao,
+                        DataTeste = dataTeste,
+                        CDO = optico.CDO,
+                        Cabo = optico.Cabo,
+                        Celula = optico.Celula,
+                        TotalUMs = optico.TotalUMs,
+                        Tecnico = optico.Tecnico,
+                        getAnalise = optico.Analises
+                    };
+                    resultado.Add(modelo);
+                };
 
                 _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
 
@@ -251,7 +278,7 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpGet("ListaUnica/{coluna}")]
-        public async Task<IActionResult> ListaUnica(string coluna)
+        public async Task<IActionResult> ListaUnica([FromQuery] string coluna)
         {
             try
             {

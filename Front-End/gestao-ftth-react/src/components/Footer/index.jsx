@@ -1,10 +1,12 @@
-import { FooterStyle, Text } from "./style";
+import { FooterStyle } from "./style";
 
 export default function Footer() {
       return (
+        <>
         <FooterStyle>
-          <Text>Logictel S/A - @2023</Text>
+          <p>Logictel S/A - @2023</p>
         </FooterStyle>
+        </>
       )
   }
   

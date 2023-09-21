@@ -92,5 +92,24 @@ namespace WebApiSwagger.Repository
                 throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
             }
         }
+
+        public async Task<Usuario> VerificarUsuario(string login)
+        {
+            try
+            {
+                return await _context.Usuarios
+                            .Include(p => p.GetTecnico)
+                            .ThenInclude(p => p.GetCargo)
+                            .Include(p => p.GetTecnico)
+                            .ThenInclude(p => p.GetEmpresa)
+                           .Where(p => p.Login == login)
+                           .FirstOrDefaultAsync() ?? new Usuario();
+            }
+            catch (Exception ex)  
+            {
+                throw new Exception("Ocorreu um erro ao verificar o usuário: " + ex.Message);
+            }
+        }
+
     }
 }

@@ -4,6 +4,7 @@ namespace WebApiSwagger.Models.ViewModel
     {
         public string? Login {get; set;}
         public string? Senha {get; set;}
+        public string? Token {get; set;}
         public int? Tipo {get; set;}
         public int? Publico {get; set;}
     }

@@ -20,7 +20,7 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpGet("Listar")]
-        public async Task<IActionResult> Listar(FiltroEnderecoTotal filtro, int? pagina)
+        public async Task<IActionResult> Listar([FromQuery]FiltroEnderecoTotal filtro, int? pagina)
         {
             try
             {

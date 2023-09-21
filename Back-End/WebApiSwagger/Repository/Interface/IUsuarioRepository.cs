@@ -7,6 +7,7 @@ namespace WebApiSwagger.Repository.Interface
         Task<Usuario> Inserir(Usuario Usuario);
         Task<Usuario> Editar(int id, Usuario Usuario);
         Task<bool> Deletar(int id);
+        Task<Usuario> VerificarUsuario(string login);
         Task<Usuario> CarregarId(int id);
         Task<IEnumerable<Usuario>> Listar();
     }
