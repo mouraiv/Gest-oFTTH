@@ -4,6 +4,7 @@ using WebApiSwagger.Repository.Interface;
 using WebApiSwagger.Filters;
 using Microsoft.EntityFrameworkCore;
 using WebApiSwagger.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiSwagger.Repository
 {
@@ -138,23 +139,23 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.CDO == filtro.CDO);
                 }
 
-                if (filtro.Tecnico != null)
+                if (!string.IsNullOrEmpty(filtro.DataTeste) && filtro.DataTeste.Length == 10)
                 {
-                    query = query.Where(p => p.Id_Tecnico == filtro.Tecnico);
+                    query = query.Where(p => p.DataTeste == DateTime.Parse(filtro.DataTeste));
                 }
 
-                if (filtro.DataTeste != null)
+                if (!string.IsNullOrEmpty(filtro.DataConstrucao) && filtro.DataConstrucao.Length == 10)
                 {
-                    query = query.Where(p => p.DataTeste == filtro.DataTeste);
+                    query = query.Where(p => p.DataConstrucao == DateTime.Parse(filtro.DataConstrucao));
                 }
 
-                if (filtro.DataRecebimento != null)
+                if (!string.IsNullOrEmpty(filtro.DataRecebimento) && filtro.DataRecebimento.Length == 10)
                 {
-                    query = query.Where(p => p.DataRecebimento == filtro.DataRecebimento);
+                    query = query.Where(p => p.DataRecebimento == DateTime.Parse(filtro.DataRecebimento));
                 }
 
                 paginacao.Total = await query.CountAsync();
-
+            
                 query = query
                     .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                     .Take(paginacao.Tamanho);
@@ -167,7 +168,7 @@ namespace WebApiSwagger.Repository
             }
             
         }
-        public async Task<List<string?>> ListaUnica(string coluna)
+        public async Task<List<string?>> ListaUnica([FromQuery]string coluna)
         {
             try
             {
@@ -179,14 +180,17 @@ namespace WebApiSwagger.Repository
                     return new List<string?>();
                 }
 
-                var valoresUnicos = await _context.TestesOpticos
-                                        .Include(p => p.GetTecnico)
-                                        .Distinct()
-                                        .ToListAsync();
+                var valores = await _context.TestesOpticos
+                    .Select(x => propriedade.GetValue(x).ToString())
+                    .ToListAsync();
 
-                var resultado = valoresUnicos.Select(x => propriedade.GetValue(x)?.ToString());
+                var valoresUnicos = valores
+                    .GroupBy(x => x)
+                    .Select(group => group.Key)
+                    .ToList();
 
-                return (List<string?>)resultado;
+            return valoresUnicos;
+            
             }
             catch (Exception ex)
             {

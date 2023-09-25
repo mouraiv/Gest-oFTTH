@@ -1,7 +1,8 @@
 import api from '../services/api';
 
-export const getTesteOptico = async (pagina) => {
-  const response = await api.get(`/TesteOptico/Listar?pagina=${pagina}`, {
+export const getTesteOptico = async (filtro) => {
+  const response = await api.get('/TesteOptico/Listar', {
+    params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
@@ -22,5 +23,15 @@ export const updateTesteOptico = async (user) => {
 
 export const deleteTesteOptico = async (id) => {
   const response = await api.delete(`/TesteOptico/Deletar/${id}`);
+  return response.data;
+};
+
+export const DropTesteOptico = async (coluna) => {
+  const response = await api.get("/TesteOptico/ListaUnica", {
+    params: {coluna},
+    headers:{
+      'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
+    },
+  });
   return response.data;
 };

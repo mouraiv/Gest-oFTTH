@@ -220,13 +220,13 @@ namespace WebApiSwagger.Controllers
             
         }
         [HttpGet("Listar")]
-        public async Task<IActionResult> Listar([FromQuery] FiltroTesteOptico filtro, int? pagina)
+        public async Task<IActionResult> Listar([FromQuery] FiltroTesteOptico filtro)
         {
             try
             {
-                _paginacao.Pagina = pagina ?? 1;
+                _paginacao.Pagina = filtro.Pagina ?? 1;
                 _paginacao.Tamanho = 100;
-                _paginacao.PaginasCorrentes = pagina + 100 ?? 100;
+                _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 
                 var lista = await _testeOpticoRepository.Listar(filtro, _paginacao);
                 var resultado = new List<object>();
@@ -245,8 +245,8 @@ namespace WebApiSwagger.Controllers
                         Construtora = optico.Construtora,
                         Estacao = optico.Estacao,
                         DataRecebimento = dataRecebimentoBr,
-                        DataConstrucao = dataConstrucao,
-                        DataTeste = dataTeste,
+                        DataConstrucao = dataConstrucaoBr,
+                        DataTeste = dataTesteBr,
                         CDO = optico.CDO,
                         Cabo = optico.Cabo,
                         Celula = optico.Celula,
@@ -277,7 +277,7 @@ namespace WebApiSwagger.Controllers
             
         }
 
-        [HttpGet("ListaUnica/{coluna}")]
+        [HttpGet("ListaUnica")]
         public async Task<IActionResult> ListaUnica([FromQuery] string coluna)
         {
             try
