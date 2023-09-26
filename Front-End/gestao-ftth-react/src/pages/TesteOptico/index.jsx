@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { GlobalStyle, Template, Content } from "../../GlobalStyle"
-import { Filter } from './styles';
-import { getTesteOptico, DropTesteOptico } from "../../api/testeOptico";
-import { DateMask } from "../../components/TextInput/mask/index"
+import React, { useEffect, useState } from 'react';
+import { Content, GlobalStyle, Template } from "../../GlobalStyle";
+import { DropTesteOptico, getTesteOptico } from "../../api/testeOptico";
+import ButtonDefaut from '../../components/Button/ButtonDefaut';
+import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';
-import Spinner from '../../components/Spinner';
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-import DropBox from '../../components/dropbox';
+import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
-import ButtonSearch from '../../components/buttonSearch';
+import { DateMask } from "../../components/TextInput/mask/index";
+import DropBox from '../../components/dropbox';
+import { Filter } from './styles';
 
 function TesteOptico() {
   GlobalStyle();
@@ -48,7 +49,7 @@ function TesteOptico() {
     const _dateInputTeste = dateInputTeste.replace(/\D/g, '-');
     const _dateInputConstrucao = dateInputConstrucao.replace(/\D/g, '-');
 
-    let filtro = {
+    const filtro = {
       pagina : currentPage,
       UF : uf,
       Construtora : construtora,
@@ -59,6 +60,8 @@ function TesteOptico() {
       DataConstrucao : _dateInputConstrucao
     };
 
+    console.log(filtro)
+
     const data = await getTesteOptico(filtro).finally(() => {
       setLoading(true)
     });
@@ -66,16 +69,16 @@ function TesteOptico() {
   }
 
   // Função para avançar para a próxima página
-  const nextPage = async () => {
+  const nextPage = () => {
     setLoading(false);
-    await fetchTesteOptico();
+    fetchTesteOptico();
     setCurrentPage(currentPage + 1);
   };
 
   // Função para retroceder para a página anterior
-  const prevPage = async () => {
+  const prevPage = () => {
     setLoading(false);
-    await fetchTesteOptico();
+    fetchTesteOptico();
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
@@ -84,12 +87,13 @@ function TesteOptico() {
   useEffect(() => {
     fetchTesteOptico();
     
-  }, [currentPage]);
+  }, [ loading ]);
 
   useEffect(() => {
-    fetchDropConstrutora("Construtora")
-    fetchDropEstacao("Estacao")
-    fetchDropUf("UF")
+    fetchDropConstrutora("Construtora");
+    fetchDropEstacao("Estacao");
+    fetchDropUf("UF");
+    fetchTesteOptico();
     setCurrentPage(1);
         
   }, []);
@@ -150,16 +154,30 @@ function TesteOptico() {
     fetchTesteOptico();
   };
 
+  const limparFiltro = () => {
+    setLoading(false);
+    setUf("");
+    setConstrutora("");
+    setEstacao("");
+    setCdoInput("");
+    setDateInputRecebimento("");
+    setDateInputConstrucao("");
+    setDateInputTeste("");
+    fetchTesteOptico();
+    setCurrentPage(1);
+
+  };
+
   return (
       <>
       <Template>
         <Header title={"Teste Óptico"} />
           <Content>
             <Filter>
-              <DropBox label={"UF"} event={handleUf} lista={dropUf} /> 
-              <DropBox label={"Construtora"} event={handleConstrutora} lista={dropConstrutora} />
-              <DropBox label={"Estação"} event={handleEstacao} lista={dropEstacao} />   
-              <TextInput label={"CDO"} event={handleCdo} />
+              <DropBox label={"UF"} event={handleUf} lista={dropUf} text={uf} /> 
+              <DropBox label={"Construtora"} event={handleConstrutora} lista={dropConstrutora} text={construtora} />
+              <DropBox label={"Estação"} event={handleEstacao} lista={dropEstacao} text={estacao} />   
+              <TextInput label={"CDO"} event={handleCdo} text={cdoInput} />
               <TextInput 
                 label={"Data Recebimento"} 
                 event={handleDateRecebimento} 
@@ -178,7 +196,8 @@ function TesteOptico() {
                 text={dateInputTeste}
                 placeholder={"__/__/____"} 
               />
-              <ButtonSearch event={submit} />          
+              <ButtonSearch event={submit} />
+              <ButtonDefaut event={limparFiltro} text={"Limpar"} />          
             </Filter>
             { testeOptico.resultado !== undefined ? (
               loading ? (  

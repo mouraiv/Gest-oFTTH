@@ -1,11 +1,11 @@
 import { Drop, Label, FormGroup } from "./style";
 
-export default function DropBox({label, event, lista}) {
+export default function DropBox({label, event, lista, text}) {
       return (
         <>
           <FormGroup>
           <Label>{label}</Label>
-          <Drop onChange={event}>
+          <Drop onChange={event} value={text}>
           { lista.length !== 0 ? ( 
           <>
           <option value="">- Selecionar -</option>
