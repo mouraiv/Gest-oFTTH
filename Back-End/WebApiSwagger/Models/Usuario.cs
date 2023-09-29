@@ -10,6 +10,6 @@ namespace WebApiSwagger.Models
         public string? Senha {get; set;}
         public int? Tipo {get; set;}
         public int? Publico {get; set;}
-        public Tecnico? GetTecnico {get; set;}
+        public Tecnico GetTecnico {get; set;} =null!;
     }
 }

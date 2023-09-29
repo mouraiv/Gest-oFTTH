@@ -5,11 +5,13 @@ import { useAuth } from "../../contexts/auth"
 import { useNavigate } from 'react-router-dom';
 import Header from "../../components/Header"
 import Footer from "../../components/Footer"
+import Spinner from "../../components/Spinner";
+import StatusInforme from "../../components/StatusInforme";
 
 function Login() {
     GlobalStyle();
 
-    const {Login} = useAuth();
+    const {Login, status, loading} = useAuth();
     const navigate = useNavigate();
       
     async function handleLogin() {
@@ -26,6 +28,8 @@ function Login() {
         <Template>
           <Header />
             <Container>
+              { !loading ? (<Spinner />) :(
+               status ? (
               <Div>
                 <div>
                   <Title>Gestão FTTH | Acessar</Title>
@@ -38,6 +42,9 @@ function Login() {
                   <Button onClick={handleLogin}>Entrar</Button>
                 </div>
               </Div>
+              ):( <StatusInforme text={"-- Servidor offline ou em manutenção --"} />)
+              )
+              }
               </Container>
             <Footer />
           </Template>

@@ -241,6 +241,7 @@ namespace WebApiSwagger.Controllers
                     string dataTesteBr = dataTeste != null ? dataTeste.Value.ToString("dd-MM-yyyy") : "";
 
                     var modelo = new {
+                        Id = optico.Id_TesteOptico,
                         UF = optico.UF,
                         Construtora = optico.Construtora,
                         Estacao = optico.Estacao,
@@ -275,6 +276,27 @@ namespace WebApiSwagger.Controllers
                return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
             }
             
+        }
+
+        [HttpGet("Detalhe")]
+        public async Task<IActionResult> Detalhe([FromQuery] int id)
+        {
+            try
+            {
+                var resultado = await _testeOpticoRepository.CarregarId(id);
+
+                if (resultado == null)
+                {
+                    return NotFound("Nenhum resultado."); 
+                }
+                
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Ocorreu um erro ao carregar: " + ex.Message);
+            }
+
         }
 
         [HttpGet("ListaUnica")]

@@ -3,6 +3,7 @@ import { styled } from "@stitches/react"
 export const Container = styled("div", {
     marginTop: '1.7rem',
     marginLeft: '1rem',
+    marginRight: '1rem',
 
     "button":{
         backgroundColor: '#13293d',

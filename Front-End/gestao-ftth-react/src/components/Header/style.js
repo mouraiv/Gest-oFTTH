@@ -15,7 +15,7 @@ export const HeaderStyleUser = styled("header", {
 
     ".logoContainer" : {
         display: "flex",
-        width: '290px',
+        width: 'auto',
     },
     ".title" : {
        fontSize: '1rem',
@@ -45,7 +45,7 @@ export const HeaderStyleUser = styled("header", {
         fontWeight: 'normal',
         color : "#ffffff" 
     },
-    img : {
+    "img" : {
         marginTop: '0.2rem',
         marginLeft: '0.5rem',
         width: '110px'

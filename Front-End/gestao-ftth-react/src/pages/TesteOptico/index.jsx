@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { DropTesteOptico, getTesteOptico } from "../../api/testeOptico";
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
@@ -10,7 +11,7 @@ import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import { DateMask } from "../../components/TextInput/mask/index";
 import DropBox from '../../components/dropbox';
-import { Filter } from './styles';
+import { Filter, ButtonImport, SubMenu } from './styles';
 
 function TesteOptico() {
   GlobalStyle();
@@ -28,6 +29,8 @@ function TesteOptico() {
   const [dateInputRecebimento, setDateInputRecebimento] = useState('');
   const [dateInputTeste, setDateInputTeste] = useState('');
   const [dateInputConstrucao, setDateInputConstrucao] = useState('');
+
+  const navigate = useNavigate();
 
   async function fetchDropConstrutora(coluna){
     const data = await DropTesteOptico(coluna);
@@ -59,8 +62,6 @@ function TesteOptico() {
       DataRecebimento : _dateInputRecebimento,
       DataConstrucao : _dateInputConstrucao
     };
-
-    console.log(filtro)
 
     const data = await getTesteOptico(filtro).finally(() => {
       setLoading(true)
@@ -99,7 +100,7 @@ function TesteOptico() {
   }, []);
 
   const columns = [
-    { key: 'rowIndex', name: '#' },
+    { key: 'id', name: 'ID' },
     { key: 'uf', name: 'UF' },
     { key: 'construtora', name: 'CONSTRUTORA' },
     { key: 'estacao', name: 'ESTACÃO' },
@@ -148,6 +149,10 @@ function TesteOptico() {
     setDateInputConstrucao(formattedDate);
   };
 
+  const handleImportar = () => {
+    navigate('/TesteOptico/Importar');
+  };
+
   const submit = () => {
     setLoading(false);
     setCurrentPage(1);
@@ -173,6 +178,9 @@ function TesteOptico() {
       <Template>
         <Header title={"Teste Óptico"} />
           <Content>
+            <SubMenu>
+              <ButtonImport onClick={handleImportar} >Importar Xlsx</ButtonImport>
+             </SubMenu>
             <Filter>
               <DropBox label={"UF"} event={handleUf} lista={dropUf} text={uf} /> 
               <DropBox label={"Construtora"} event={handleConstrutora} lista={dropConstrutora} text={construtora} />

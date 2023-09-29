@@ -35,3 +35,22 @@ export const DropTesteOptico = async (coluna) => {
   });
   return response.data;
 };
+
+export const DetalheTesteOptico = async (id) => {
+  const response = await api.get("/TesteOptico/Detalhe", {
+    params: {id},
+    headers:{
+      'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
+    },
+  });
+  return response.data;
+};
+
+export const ImportarArquivo = async (arquivo) => {
+  
+  const formData = new FormData();
+  formData.append('arquivo', arquivo);
+
+  const response = await api.post('/TesteOptico/UploadModelo', formData);
+  return response.data;
+}; 

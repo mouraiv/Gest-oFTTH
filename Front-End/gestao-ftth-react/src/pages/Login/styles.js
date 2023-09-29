@@ -30,6 +30,11 @@ export const Button = styled("button", {
     background: '#13293d',
     color: '#ffffff',
     border: 0,
+    cursor: 'pointer',
+
+    '&:active':{
+        backgroundColor: '#5D6D7E',
+    }
 });
 
 export const Title = styled("p", {

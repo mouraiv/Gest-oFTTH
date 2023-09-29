@@ -1,18 +1,35 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-
-import api from '../services/api'
+import api from "../services/api";
+import { VerificarUsuario } from "../api/usuario";
 
 const AuthContext = createContext({
     user: {},
     Login: async (data) => {},
     Logout: () => {},
+    status: true,
+    loading: false,
     isTokenExpired: () => false, // Função para verificar se o token está expirado
   });
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({});
+    const [status, setStatus] = useState();
+    const [loading, setLoading] = useState();
 
+    async function ServerStatus(){
+      await VerificarUsuario({login: ''}) 
+        .then(() => {
+          // O servidor respondeu, então está online
+          setStatus(true);
+        })
+        .catch(() => {
+          // Não foi possível conectar ao servidor, então está offline
+          setStatus(false);
+        }).finally(() => { setLoading(true)});
+      }
+            
     useEffect(()=>{
+      ServerStatus();
       const storagedUser = JSON.parse(sessionStorage.getItem('@App:user'));
       const storagedToken = sessionStorage.getItem('@App:token');
       api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
@@ -20,14 +37,14 @@ export const AuthProvider = ({ children }) => {
     },[]);   
   
     async function Login(data) {
-      await api.post('/Usuario/Verificar', data)
+      await VerificarUsuario(data)
       .then(response => {
-        setUser(response.data);
-        api.defaults.headers.Authorization = `Bearer ${response.data.token}`;
-        sessionStorage.setItem('@App:user', JSON.stringify(response.data));
-        sessionStorage.setItem('@App:token', response.data.token);
+        setUser(response);
+        api.defaults.headers.Authorization = `Bearer ${response.token}`;
+        sessionStorage.setItem('@App:user', JSON.stringify(response));
+        sessionStorage.setItem('@App:token', response.token);
       })
-      .catch(error => console.error('Erro de conexão:', error));
+      .catch(error => console.error('Erro de conexão: ' + error));
     }
   
     function Logout() {
@@ -45,7 +62,7 @@ export const AuthProvider = ({ children }) => {
     }
   
     return (
-      <AuthContext.Provider value={{ user ,Login, Logout, isTokenExpired }}>
+      <AuthContext.Provider value={{ user, Login, Logout, status, loading, isTokenExpired }}>
         {children}
       </AuthContext.Provider>
     );
