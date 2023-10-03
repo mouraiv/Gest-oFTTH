@@ -18,7 +18,6 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.Analises
-                            .Include(p => p.GetTecnico)
                             .Where(p => p.Id_Analise == id)
                             .FirstOrDefaultAsync() ?? new Analise();    
             }
@@ -52,14 +51,13 @@ namespace WebApiSwagger.Repository
                 Analise db = await CarregarId(id);
 
                 db.Id_TesteOptico = analise.Id_TesteOptico;
-                db.Id_Tecnico = analise.Id_Tecnico;
+                db.Analista = analise.Analista;
+                db.Status = analise.Status;
                 db.DataAnalise = analise.DataAnalise;
-                db.Id_StatusAnalise = analise.Id_StatusAnalise;
                 db.AnaliseObservacao = analise.AnaliseObservacao;
                 db.CDOIA = analise.CDOIA;
                 db.CDOIAStatus = analise.CDOIAStatus;
                 db.CDOIAObs = analise.CDOIAObs;
-                db.Id_Validacao = analise.Id_Validacao; 
                 
                 _context.Analises.Update(db);
                 await _context.SaveChangesAsync();

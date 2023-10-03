@@ -35,10 +35,7 @@ namespace WebApiSwagger.Models
         public string? PosicaoIcxDgo {get; set;}
         public string? SplitterCEOS {get; set;}
         public string? FibraDGO {get; set;}
-
-        public int? Id_Tecnico {get; set;}
-        public Tecnico? GetTecnico {get; set;} = null!;
-        public ICollection<Analise> Analises {get;} = new List<Analise>();
+        public ICollection<Analise> Analises {get; set;} = new List<Analise>();
 
     }
 }

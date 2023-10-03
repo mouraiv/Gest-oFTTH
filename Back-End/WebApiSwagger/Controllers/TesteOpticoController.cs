@@ -59,7 +59,6 @@ namespace WebApiSwagger.Controllers
                     PosicaoIcxDgo = testeOptico.PosicaoIcxDgo,
                     SplitterCEOS = testeOptico.SplitterCEOS,
                     FibraDGO = testeOptico.FibraDGO,
-                    Id_Tecnico = testeOptico.Id_Tecnico,
 
                 };
 
@@ -190,7 +189,6 @@ namespace WebApiSwagger.Controllers
                     PosicaoIcxDgo = testeOptico.PosicaoIcxDgo,
                     SplitterCEOS = testeOptico.SplitterCEOS,
                     FibraDGO = testeOptico.FibraDGO,
-                    Id_Tecnico = testeOptico.Id_Tecnico,
 
                 };
 

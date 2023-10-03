@@ -49,7 +49,6 @@ namespace WebApiSwagger.Repository
                 db.PosicaoIcxDgo = testeOptico.PosicaoIcxDgo;
                 db.SplitterCEOS = testeOptico.SplitterCEOS;
                 db.FibraDGO = testeOptico.FibraDGO;
-                db.Id_Tecnico = testeOptico.Id_Tecnico;
 
                 _context.TestesOpticos.Update(db);
                 await _context.SaveChangesAsync();
@@ -83,7 +82,6 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.TestesOpticos
-                        .Include(p => p.GetTecnico)
                             .Where(p => p.Id_TesteOptico == id)
                             .FirstOrDefaultAsync() ?? new TesteOptico();    
             }
@@ -116,7 +114,6 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = _context.TestesOpticos
-                    .Include(p => p.GetTecnico)
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(filtro.UF))

@@ -22,16 +22,15 @@ namespace WebApiSwagger.Controllers
             try
             {
                 var modelo = new Analise{
-
-                    Id_StatusAnalise = analise.Id_StatusAnalise,
+                    
+                    Analista = analise.Analista,
+                    Status = analise.Status,
                     DataAnalise =  DateTime.Now,
                     AnaliseObservacao = analise.AnaliseObservacao,
                     CDOIA = analise.CDOIA,
                     CDOIAStatus = analise.CDOIAStatus,
                     CDOIAObs = analise.CDOIAObs,
-                    Id_Tecnico = analise.Id_Tecnico,
                     Id_TesteOptico = analise.Id_TesteOptico,
-                    Id_Validacao = analise.Id_Validacao
                 };
 
                 var resultado = await _analiseRepository.Inserir(modelo);
@@ -52,15 +51,15 @@ namespace WebApiSwagger.Controllers
             {
                 var modelo = new Analise{
 
-                    Id_StatusAnalise = analise.Id_StatusAnalise,
-                    DataAnalise = analise.DataAnalise,
+                    Analista = analise.Analista,
+                    Status = analise.Status,
+                    DataAnalise =  DateTime.Now,
                     AnaliseObservacao = analise.AnaliseObservacao,
                     CDOIA = analise.CDOIA,
                     CDOIAStatus = analise.CDOIAStatus,
                     CDOIAObs = analise.CDOIAObs,
-                    Id_Tecnico = analise.Id_Tecnico,
                     Id_TesteOptico = _analiseRepository.CarregarId(id).Result.Id_TesteOptico,
-                    Id_Validacao = analise.Id_Validacao
+
                 };
 
                 var resultado = await _analiseRepository.Editar(id, modelo);

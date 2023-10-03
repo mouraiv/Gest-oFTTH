@@ -18,8 +18,11 @@ namespace WebApiSwagger.Context
         public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
         public DbSet<TesteOptico> TestesOpticos => Set<TesteOptico>();
         public DbSet<Usuario> Usuarios => Set<Usuario>();
-         public DbSet<StatusAnalise> StatusAnalises => Set<StatusAnalise>();
-        public DbSet<Validacao> Validacoes => Set<Validacao>();
+        public DbSet<StatusAnalise> StatusAnalises => Set<StatusAnalise>();
+        public DbSet<Gestao> Gestoes => Set<Gestao>();
+        public DbSet<StatusControle> StatusControles => Set<StatusControle>();
+        public DbSet<StatusNetwin> StatusNetwins => Set<StatusNetwin>();
+        public DbSet<StatusProjeto> StatusProjetos => Set<StatusProjeto>();
 
         public override int SaveChanges()
         {
@@ -47,30 +50,10 @@ namespace WebApiSwagger.Context
                  .WithOne()
                  .HasForeignKey<EnderecoTotal>(p => p.Id_EnderecoTotal);
 
-             modelBuilder.Entity<TesteOptico>()
-                .HasOne(c => c.GetTecnico)
-                .WithMany()
-                .HasForeignKey(c => c.Id_Tecnico);
-
             modelBuilder.Entity<Analise>()
                 .HasOne(c => c.GetTesteOptico)
                 .WithMany(c => c.Analises)
-                .HasForeignKey(c => c.Id_TesteOptico);
-
-            modelBuilder.Entity<Analise>()
-                .HasOne(c => c.GetTecnico)
-                .WithMany()
-                .HasForeignKey(c => c.Id_Tecnico);
-
-            modelBuilder.Entity<Analise>()
-                .HasOne(c => c.GetValidacao)
-                .WithMany()
-                .HasForeignKey(c => c.Id_Validacao);
-
-            modelBuilder.Entity<Analise>()
-                .HasOne(c => c.GetStatusAnalise)
-                .WithMany()
-                .HasForeignKey(c => c.Id_StatusAnalise);                                         
+                .HasForeignKey(c => c.Id_TesteOptico);                                       
 
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)

@@ -31,7 +31,5 @@ namespace WebApiSwagger.Models.ViewModel
         public string? PosicaoIcxDgo {get; set;}
         public string? SplitterCEOS {get; set;}
         public string? FibraDGO {get; set;}
-
-        public int? Id_Tecnico {get; set;}
     }
 }
