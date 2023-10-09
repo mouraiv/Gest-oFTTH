@@ -10,6 +10,7 @@ namespace WebApiSwagger.Filters
         public string? DataTeste { get; set; }
         public string? DataRecebimento { get; set; }
         public string? DataConstrucao { get; set; }
+        public int? Sel {get; set;}
 
     }
 }

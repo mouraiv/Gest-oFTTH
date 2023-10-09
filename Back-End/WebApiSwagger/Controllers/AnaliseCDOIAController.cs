@@ -5,22 +5,22 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApiSwagger.Controllers
 {
     [ApiController]
-    [Route("Api/Validacao")]
-    public class ValidacaoController : Controller
+    [Route("Api/AnaliseCDOIA")]
+   public class AnaliseCDOIAController : Controller
     {
-        private readonly IValidacaoRepository _ValidacaoRepository;
+        private readonly IAnaliseCDOIARepository _AnaliseCDOIARepository;
   
-        public ValidacaoController(IValidacaoRepository ValidacaoRepository)
+        public AnaliseCDOIAController(IAnaliseCDOIARepository AnaliseCDOIARepository)
         {
-            _ValidacaoRepository = ValidacaoRepository;
+            _AnaliseCDOIARepository = AnaliseCDOIARepository;
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<IActionResult> Cadastrar(Validacao Validacao)
+        public async Task<IActionResult> Cadastrar(AnaliseCDOIA AnaliseCDOIA)
         {
             try
             {
-                var resultado = await _ValidacaoRepository.Inserir(Validacao);
+                var resultado = await _AnaliseCDOIARepository.Inserir(AnaliseCDOIA);
                           
                 return Ok("Cadastrado com Sucesso");    
             }
@@ -32,11 +32,12 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpPut("Atualizar/{id}")]
-        public async Task<IActionResult> Atualizar(int id, Validacao Validacao)
+        public async Task<IActionResult> Atualizar(int id, AnaliseCDOIA AnaliseCDOIA)
         {
             try
             {
-                var resultado = await _ValidacaoRepository.Editar(id, Validacao);
+                
+                var resultado = await _AnaliseCDOIARepository.Editar(id, AnaliseCDOIA);
                           
                 return Ok("Atualizado com Sucesso");    
             }
@@ -51,7 +52,7 @@ namespace WebApiSwagger.Controllers
         {
             try
             {
-                var resultado = await _ValidacaoRepository.Deletar(id);
+                var resultado = await _AnaliseCDOIARepository.Deletar(id);
 
                 return Ok("Deletado com sucesso!");
             }
@@ -66,7 +67,7 @@ namespace WebApiSwagger.Controllers
         {
             try
             {
-                var resultado = await _ValidacaoRepository.Listar();
+                var resultado = await _AnaliseCDOIARepository.Listar();
 
                 if (resultado == null)
                 {
@@ -83,3 +84,4 @@ namespace WebApiSwagger.Controllers
         }
     }
 }
+       

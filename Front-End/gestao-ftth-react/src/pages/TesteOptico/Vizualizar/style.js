@@ -2,10 +2,11 @@ import { styled } from "@stitches/react";
 
 export const TableGrid = styled("table", {
     borderCollapse: 'collapse',
-    minWidth: '800px',
+    minWidth: '650px',
     fontSize: '0.7rem',
     textAlign: 'center',
     whiteSpace: 'nowrap',
+    marginTop: '2rem',
 
     "thead":{
         backgroundColor: '#13293d',

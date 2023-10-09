@@ -14,12 +14,11 @@ namespace WebApiSwagger.Context
         public DbSet<Analise> Analises => Set<Analise>();
         public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<EnderecoTotal> EnderecosTotais => Set<EnderecoTotal>();
-        public DbSet<Ligacao> Ligacoes => Set<Ligacao>();
         public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
         public DbSet<TesteOptico> TestesOpticos => Set<TesteOptico>();
         public DbSet<Usuario> Usuarios => Set<Usuario>();
         public DbSet<StatusAnalise> StatusAnalises => Set<StatusAnalise>();
-        public DbSet<Gestao> Gestoes => Set<Gestao>();
+        public DbSet<AnaliseCDOIA> AnaliseCDOIAs => Set<AnaliseCDOIA>();
         public DbSet<StatusControle> StatusControles => Set<StatusControle>();
         public DbSet<StatusNetwin> StatusNetwins => Set<StatusNetwin>();
         public DbSet<StatusProjeto> StatusProjetos => Set<StatusProjeto>();
@@ -44,17 +43,16 @@ namespace WebApiSwagger.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-            modelBuilder.Entity<EnderecoTotal>()
-                 .HasOne(p => p.GetLigacao)
-                 .WithOne()
-                 .HasForeignKey<EnderecoTotal>(p => p.Id_EnderecoTotal);
+            modelBuilder.Entity<TesteOptico>()
+                .HasMany(t => t.Analises)
+                .WithOne()
+                .HasForeignKey(a => a.Id_TesteOptico);
 
             modelBuilder.Entity<Analise>()
-                .HasOne(c => c.GetTesteOptico)
-                .WithMany(c => c.Analises)
-                .HasForeignKey(c => c.Id_TesteOptico);                                       
-
+                .HasMany(a => a.AnaliseCDOIAs)
+                .WithOne()
+                .HasForeignKey(ac => ac.Id_Analise);
+                                  
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)
                  .WithOne()
@@ -70,15 +68,13 @@ namespace WebApiSwagger.Context
                  .WithMany()
                  .HasForeignKey(p => p.Id_Empresa); 
 
-            modelBuilder.Entity<EnderecoTotal>()
+           /* modelBuilder.Entity<EnderecoTotal>()
                 .Property(e => e.Latitude)
                 .HasColumnType("decimal(9, 6)"); 
 
             modelBuilder.Entity<EnderecoTotal>()
                 .Property(e => e.Longitude)
-                .HasColumnType("decimal(9, 6)");
-
-            modelBuilder.Entity<Usuario>();                  
+                .HasColumnType("decimal(9, 6)");*/
 
             base.OnModelCreating(modelBuilder);
         }

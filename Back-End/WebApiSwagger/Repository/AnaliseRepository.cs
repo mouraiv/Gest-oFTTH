@@ -55,9 +55,6 @@ namespace WebApiSwagger.Repository
                 db.Status = analise.Status;
                 db.DataAnalise = analise.DataAnalise;
                 db.AnaliseObservacao = analise.AnaliseObservacao;
-                db.CDOIA = analise.CDOIA;
-                db.CDOIAStatus = analise.CDOIAStatus;
-                db.CDOIAObs = analise.CDOIAObs;
                 
                 _context.Analises.Update(db);
                 await _context.SaveChangesAsync();

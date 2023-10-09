@@ -15,7 +15,7 @@ namespace WebApiSwagger.Models
         public string? Cabo {get; set;}
         public string? Celula {get; set;}
         public string? Capacidade {get; set;}
-        public string? TotalUMs {get; set;}
+        public int? TotalUMs {get; set;}
         public string? Endereco {get; set;}
         public string? EstadoCampo {get; set;}
         public string? EstadoProjeto {get; set;}
@@ -23,6 +23,7 @@ namespace WebApiSwagger.Models
         public DateTime? AceitacaoData {get; set;}
         public string? AceitacaoMesRef {get; set;}
         public string? TesteObservacao {get; set;}
+        public string? Viabilidade {get; set;}
         public string? Meta {get; set;}
         public DateTime? DataConstrucao {get; set;}
         public string? EquipeConstrucao {get; set;} 
@@ -35,7 +36,7 @@ namespace WebApiSwagger.Models
         public string? PosicaoIcxDgo {get; set;}
         public string? SplitterCEOS {get; set;}
         public string? FibraDGO {get; set;}
-        public ICollection<Analise> Analises {get; set;} = new List<Analise>();
-
+        public int? Sel {get; set;}
+        public ICollection<Analise> Analises {get;} = new List<Analise>();
     }
 }

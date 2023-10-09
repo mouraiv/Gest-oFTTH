@@ -11,6 +11,17 @@ export const getTesteOptico = async (filtro) => {
   return response.data;
 };
 
+export const getControleCdo = async (filtro) => {
+  const response = await api.get('/TesteOptico/ControleCdo', {
+    params: filtro,
+    headers:{
+      'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
+    },
+  });
+
+  return response.data;
+};
+
 export const createTesteOptico = async (user) => {
   const response = await api.post('/TesteOptico/Cadastrar', user);
   return response.data;

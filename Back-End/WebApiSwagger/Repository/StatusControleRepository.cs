@@ -50,9 +50,6 @@ namespace WebApiSwagger.Repository
                 StatusControle db = await CarregarId(id);
 
                 db.Nome = StatusControle.Nome;
-                db.Email = StatusControle.Email;
-                db.Id_Cargo = StatusControle.Id_Cargo;
-                db.Id_Empresa = StatusControle.Id_Empresa;
             
                 _context.StatusControles.Update(db);
                 await _context.SaveChangesAsync();

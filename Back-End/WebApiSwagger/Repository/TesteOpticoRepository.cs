@@ -21,7 +21,6 @@ namespace WebApiSwagger.Repository
             {
                 TesteOptico db = await CarregarId(id);
 
-                db.CHAVE = testeOptico.CHAVE;
                 db.UF = testeOptico.UF;
                 db.Construtora = testeOptico.Construtora;
                 db.Estacao = testeOptico.Estacao;
@@ -45,10 +44,10 @@ namespace WebApiSwagger.Repository
                 db.DataRecebimento = testeOptico.DataRecebimento;
                 db.BobinaLancamento = testeOptico.BobinaLancamento;
                 db.BobinaRecepcao = testeOptico.BobinaRecepcao;
-                db.QuantidadeTeste = testeOptico.QuantidadeTeste;
                 db.PosicaoIcxDgo = testeOptico.PosicaoIcxDgo;
                 db.SplitterCEOS = testeOptico.SplitterCEOS;
                 db.FibraDGO = testeOptico.FibraDGO;
+                db.Sel = testeOptico.Sel;
 
                 _context.TestesOpticos.Update(db);
                 await _context.SaveChangesAsync();
@@ -82,6 +81,8 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.TestesOpticos
+                            .Include(p => p.Analises)
+                            .ThenInclude(p => p.AnaliseCDOIAs)
                             .Where(p => p.Id_TesteOptico == id)
                             .FirstOrDefaultAsync() ?? new TesteOptico();    
             }
@@ -114,6 +115,8 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = _context.TestesOpticos
+                    .Include(p => p.Analises)
+                    .ThenInclude(p => p.AnaliseCDOIAs)
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(filtro.UF))
@@ -194,6 +197,44 @@ namespace WebApiSwagger.Repository
                 throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
             }
            
+        }
+
+        public async Task<bool> Unique(string uf, string estacao, string cdo)
+        {
+            try
+            {
+
+                bool resultado = await _context.TestesOpticos.AnyAsync(p => p.UF == uf && p.Estacao == estacao && p.CDO == cdo);    
+                
+                return resultado;
+            
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<TesteOptico>> ControlerCdo(FiltroTesteOptico filtro, Paginacao paginacao)
+        {
+             try
+            {
+                var query = _context.TestesOpticos
+                    .Where(p => p.Sel > 0)
+                    .AsQueryable();
+
+                paginacao.Total = await query.CountAsync();
+            
+                query = query
+                    .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
+                    .Take(paginacao.Tamanho);
+
+                return await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao Listar: " + ex.Message);
+            }
         }
     }
 }

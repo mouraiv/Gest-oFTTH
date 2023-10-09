@@ -28,3 +28,17 @@ export const Content = styled("div", {
         flexDirection: 'column',
         alignItems: 'center'
 });
+
+export const RotuloTitulo = styled("div", {
+        display: 'grid',
+        justifyContent: 'center',
+        fontWeight: '400',
+        width: '100%',
+        backgroundColor: '#13293d',
+        
+        'p':{
+                padding: '0.3rem',
+                color: '#ffffff'
+           }
+    });
+    

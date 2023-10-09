@@ -101,6 +101,7 @@ namespace WebApiSwagger.Controllers
                 {    
                     // Mapear as colunas do arquivo XLSX para as propriedades 
                     var listaModelo = new List<TesteOptico>();
+                    int modeloOut = 0;
                     for (int row = 8; row <= (_uploadXlsx.LinhasPreenchidas + 7); row++)
                     {
                         //Get valores DataTime String para tratamento
@@ -111,18 +112,26 @@ namespace WebApiSwagger.Controllers
                         string dataRecebimento = _uploadXlsx.Worksheet?.Cells[row, 16].Value.ToString() ?? "";
                         DateTime _dataRecebimento = DateTime.ParseExact(dataRecebimento, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
+                        var _uf = _uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper();
+                        var _estacao = _uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper();
+                        var _cdo = _uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper();
+
+                        bool unique = await _testeOpticoRepository.Unique(_uf ?? "", _estacao ?? "", _cdo ?? "");
+
+                        if(!unique){
+
                         var modelo = new TesteOptico
                             {
                                 CHAVE = $"{_uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper()}-{_uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper()}{_uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper()}",
-                                UF = _uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper(),
+                                UF = _uf,
                                 Construtora = _uploadXlsx.Worksheet?.Cells[row, 3].Value?.ToString()?.ToUpper(),
-                                Estacao = _uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper(),
+                                Estacao = _estacao,
                                 TipoObra = _uploadXlsx.Worksheet?.Cells[row, 5].Value?.ToString()?.ToUpper(),
                                 Cabo = _uploadXlsx.Worksheet?.Cells[row, 6].Value?.ToString()?.ToUpper(),                           
                                 Celula = _uploadXlsx.Worksheet?.Cells[row, 7].Value?.ToString()?.ToUpper(),
-                                CDO = _uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper(),  
+                                CDO = _cdo,  
                                 Capacidade = _uploadXlsx.Worksheet?.Cells[row, 9].Value?.ToString()?.ToUpper(),
-                                TotalUMs = _uploadXlsx.Worksheet?.Cells[row, 10].Value?.ToString()?.ToUpper(),
+                                TotalUMs = int.Parse(_uploadXlsx.Worksheet?.Cells[row, 10].Value?.ToString() ?? ""),
                                 EstadoCampo = _uploadXlsx.Worksheet?.Cells[row, 11].Value?.ToString()?.ToUpper(),
                                 DataConstrucao = _dataContrucao,
                                 EquipeConstrucao = _uploadXlsx.Worksheet?.Cells[row, 14].Value?.ToString()?.ToUpper(),
@@ -134,17 +143,36 @@ namespace WebApiSwagger.Controllers
                                 SplitterCEOS = _uploadXlsx.Worksheet?.Cells[row, 21].Value?.ToString()?.ToUpper(),
                                 BobinaLancamento = _uploadXlsx.Worksheet?.Cells[row, 22].Value?.ToString()?.ToUpper(),
                                 BobinaRecepcao = _uploadXlsx.Worksheet?.Cells[row, 23].Value?.ToString()?.ToUpper(),
-                                QuantidadeTeste = _uploadXlsx.Worksheet?.Cells[row, 24].Value?.ToString()?.ToUpper()      
+                                QuantidadeTeste = _uploadXlsx.Worksheet?.Cells[row, 24].Value?.ToString()?.ToUpper(),
+                                Sel = 1      
                             };
 
                             listaModelo.Add(modelo);
+                        }else{
+                            modeloOut += 1;
+                        }
                     }
                     // Salvar os dados no banco de dados
                     foreach (var optico in listaModelo)
                     {
-                        await _testeOpticoRepository.Inserir(optico);
+                        await _testeOpticoRepository.Inserir(optico);                        
                     }
-                    return Ok("Arquivo importado com sucesso.");
+
+                    return Ok(
+                        listaModelo.Count != 0 ?
+                            listaModelo.Count > 1 ?
+                                modeloOut != 0 ?
+                                    modeloOut > 1 ?
+                                    $"{listaModelo.Count} Novas CDOs importadas com sucesso. {modeloOut} CDOs já constam na base dados."
+                                    : $"{listaModelo.Count} Novas CDOs importadas com sucesso. 1 CDO já consta na base de dados."
+                                : $"{listaModelo.Count} Novas CDOs importadas com sucesso."    
+                            :
+                            modeloOut != 0 ?
+                                    modeloOut > 1 ?
+                                    $"{listaModelo.Count} Nova CDO importadas com sucesso. {modeloOut} CDOs já constam na base dados."
+                                    : $"{listaModelo.Count} Nova CDO importadas com sucesso. 1 CDO já consta na base de dados."
+                                : $"{listaModelo.Count} Nova CDO importadas com sucesso." 
+                        : "Todoas as CDOs já constam na base de dados. Nenhuma nova CDO importada.");    
                 }
             }
             catch (Exception ex)
@@ -160,7 +188,6 @@ namespace WebApiSwagger.Controllers
             {
                 var modelo = new TesteOptico{
 
-                    CHAVE = testeOptico.CHAVE,
                     UF = testeOptico.UF,
                     Construtora = testeOptico.Construtora,
                     Estacao = testeOptico.Estacao,
@@ -185,7 +212,6 @@ namespace WebApiSwagger.Controllers
                     DataRecebimento = testeOptico.DataRecebimento,
                     BobinaLancamento = testeOptico.BobinaLancamento,
                     BobinaRecepcao = testeOptico.BobinaRecepcao,
-                    QuantidadeTeste = testeOptico.QuantidadeTeste,
                     PosicaoIcxDgo = testeOptico.PosicaoIcxDgo,
                     SplitterCEOS = testeOptico.SplitterCEOS,
                     FibraDGO = testeOptico.FibraDGO,
@@ -251,6 +277,7 @@ namespace WebApiSwagger.Controllers
                         Celula = optico.Celula,
                         TotalUMs = optico.TotalUMs,
                         Tecnico = optico.Tecnico,
+                        Sel = optico.Sel,
                         getAnalise = optico.Analises
                     };
                     resultado.Add(modelo);
@@ -272,6 +299,66 @@ namespace WebApiSwagger.Controllers
             catch (Exception ex)
             {
                return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
+            }
+            
+        }
+
+        [HttpGet("ControleCdo")]
+        public async Task<IActionResult> ControleCdo([FromQuery] FiltroTesteOptico filtro)
+        {
+            try
+            {
+                _paginacao.Pagina = filtro.Pagina ?? 1;
+                _paginacao.Tamanho = 100;
+                _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
+
+                var lista = await _testeOpticoRepository.ControlerCdo(filtro, _paginacao);
+                var resultado = new List<object>();
+
+                foreach(var optico in lista){
+                    DateTime? dataRecebimento = optico.DataRecebimento;
+                    DateTime? dataConstrucao = optico.DataConstrucao;
+                    DateTime? dataTeste = optico.DataTeste;
+
+                    string dataRecebimentoBr = dataRecebimento != null ? dataRecebimento.Value.ToString("dd-MM-yyyy") : "";
+                    string dataConstrucaoBr = dataConstrucao != null ? dataConstrucao.Value.ToString("dd-MM-yyyy") : "";
+                    string dataTesteBr = dataTeste != null ? dataTeste.Value.ToString("dd-MM-yyyy") : "";
+
+                    var modelo = new {
+                        Id = optico.Id_TesteOptico,
+                        UF = optico.UF,
+                        Construtora = optico.Construtora,
+                        Estacao = optico.Estacao,
+                        DataRecebimento = dataRecebimentoBr,
+                        DataConstrucao = dataConstrucaoBr,
+                        DataTeste = dataTesteBr,
+                        CDO = optico.CDO,
+                        Cabo = optico.Cabo,
+                        Celula = optico.Celula,
+                        TotalUMs = optico.TotalUMs,
+                        Tecnico = optico.Tecnico,
+                        Sel = optico.Sel,
+                        getAnalise = optico.Analises
+                    };
+                    resultado.Add(modelo);
+                };
+
+                _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
+
+                if (resultado == null)
+                {
+                    return NotFound("Nenhum resultado."); 
+                }
+                
+                return Ok(
+                    new {
+                            Paginacao = _paginacao,
+                            Resultado = resultado
+                        });
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Ocorreu um erro ao listar: " + ex.InnerException);
             }
             
         }

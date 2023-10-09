@@ -49,10 +49,9 @@ namespace WebApiSwagger.Repository
             {
                 StatusNetwin db = await CarregarId(id);
 
-                db.Nome = StatusNetwin.Nome;
-                db.Email = StatusNetwin.Email;
-                db.Id_Cargo = StatusNetwin.Id_Cargo;
-                db.Id_Empresa = StatusNetwin.Id_Empresa;
+                db.Codigo = StatusNetwin.Codigo;
+                db.Tipo = StatusNetwin.Tipo;
+                db.Descricao = StatusNetwin.Descricao;
             
                 _context.StatusNetwins.Update(db);
                 await _context.SaveChangesAsync();

@@ -50,9 +50,6 @@ namespace WebApiSwagger.Repository
                 StatusProjeto db = await CarregarId(id);
 
                 db.Nome = StatusProjeto.Nome;
-                db.Email = StatusProjeto.Email;
-                db.Id_Cargo = StatusProjeto.Id_Cargo;
-                db.Id_Empresa = StatusProjeto.Id_Empresa;
             
                 _context.StatusProjetos.Update(db);
                 await _context.SaveChangesAsync();

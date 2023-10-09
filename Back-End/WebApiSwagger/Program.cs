@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +20,11 @@ builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 builder.Services.AddScoped<ICargoRepository, CargoRepository>();
 builder.Services.AddScoped<ITecnicoRepository, TecnicoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<IGestaoRepository, GestaoRepository>();
 builder.Services.AddScoped<IStatusAnaliseRepository, StatusAnaliseRepository>();
 builder.Services.AddScoped<IStatusNetwinRepository, StatusNetwinRepository>();
 builder.Services.AddScoped<IStatusControleRepository, StatusControleRepository>();
 builder.Services.AddScoped<IStatusProjetoRepository, StatusProjetoRepository>();
+builder.Services.AddScoped<IAnaliseCDOIARepository, AnaliseCDOIARepository>();
 builder.Services.AddSingleton<UploadXlsx>();
 builder.Services.AddSingleton<ConversorDwg>();
 builder.Services.AddSingleton<Paginacao>();
@@ -40,7 +41,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
             {
@@ -72,8 +73,8 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
+
+}).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
@@ -84,7 +85,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = false,
         ValidateAudience = false
     };
-});    
+});
 
 var app = builder.Build();
 

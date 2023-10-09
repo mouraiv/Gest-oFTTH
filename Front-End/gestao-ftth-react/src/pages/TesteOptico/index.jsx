@@ -70,16 +70,16 @@ function TesteOptico() {
   }
 
   // Função para avançar para a próxima página
-  const nextPage = () => {
+  const nextPage = async () => {
     setLoading(false);
-    fetchTesteOptico();
+    await fetchTesteOptico();
     setCurrentPage(currentPage + 1);
   };
 
   // Função para retroceder para a página anterior
-  const prevPage = () => {
+  const prevPage = async () => {
     setLoading(false);
-    fetchTesteOptico();
+    await fetchTesteOptico();
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
@@ -153,13 +153,13 @@ function TesteOptico() {
     navigate('/TesteOptico/Importar');
   };
 
-  const submit = () => {
+  const submit = async () => {
     setLoading(false);
     setCurrentPage(1);
-    fetchTesteOptico();
+    await fetchTesteOptico();
   };
 
-  const limparFiltro = () => {
+  const limparFiltro = async () => {
     setLoading(false);
     setUf("");
     setConstrutora("");
@@ -168,7 +168,7 @@ function TesteOptico() {
     setDateInputRecebimento("");
     setDateInputConstrucao("");
     setDateInputTeste("");
-    fetchTesteOptico();
+    await fetchTesteOptico();
     setCurrentPage(1);
 
   };
@@ -215,7 +215,8 @@ function TesteOptico() {
               paginacao={testeOptico.paginacao}
               pagina={currentPage}
               left={prevPage}
-              right={nextPage} 
+              right={nextPage}
+              atualizar={fetchTesteOptico} 
             />
               ):(<Spinner />)
             ) : ( <Spinner /> )

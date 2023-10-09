@@ -2,7 +2,7 @@ namespace WebApiSwagger.Models.ViewModel
 {
     public class TesteOpticoView
     {
-         public string? CHAVE {get; set;}
+        public string? CHAVE {get; set;}
         public string? UF {get; set;}
         public string? Construtora {get; set;}
         public string? Estacao {get; set;}
@@ -11,7 +11,7 @@ namespace WebApiSwagger.Models.ViewModel
         public string? Cabo {get; set;}
         public string? Celula {get; set;}
         public string? Capacidade {get; set;}
-        public string? TotalUMs {get; set;}
+        public int? TotalUMs {get; set;}
         public string? Endereco {get; set;}
         public string? EstadoCampo {get; set;}
         public string? EstadoProjeto {get; set;}
@@ -31,5 +31,6 @@ namespace WebApiSwagger.Models.ViewModel
         public string? PosicaoIcxDgo {get; set;}
         public string? SplitterCEOS {get; set;}
         public string? FibraDGO {get; set;}
+        public int? Sel {get; set;}
     }
 }

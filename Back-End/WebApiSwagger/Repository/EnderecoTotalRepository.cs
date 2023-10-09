@@ -15,13 +15,12 @@ namespace WebApiSwagger.Repository
             _context = context;
         }
 
-        public async Task<EnderecoTotal> CarregarId(int id)
+        public async Task<EnderecoTotal> CarregarId(FiltroEnderecoTotalAny filtro)
         {
             try
             {
                 return await _context.EnderecosTotais
-                      .Include(p => p.GetLigacao)
-                           .Where(p => p.Id_EnderecoTotal == id)
+                           .Where(p => p.UF == filtro.UF && p.Estacao == filtro.Estacao && p.NomeCdo == filtro.CDO)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
             }
             catch (Exception ex)
@@ -35,7 +34,6 @@ namespace WebApiSwagger.Repository
               try
             {
                 var query = _context.EnderecosTotais
-                        .Include(p => p.GetLigacao)
                         .AsQueryable();
 
                 if (!string.IsNullOrEmpty(filtro.UF))
@@ -43,9 +41,9 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.UF == filtro.UF);
                 }
 
-                if (!string.IsNullOrEmpty(filtro.Unidade))
+                if (!string.IsNullOrEmpty(filtro.Estacao))
                 {
-                    query = query.Where(p => p.Unidade == filtro.Unidade);
+                    query = query.Where(p => p.Estacao == filtro.Estacao);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.Municipio))
@@ -55,32 +53,27 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.CodSurvey))
                 {
-                    query = query.Where(p => p.CodSurvey == filtro.CodSurvey);
+                    query = query.Where(p => p.Cod_Survey == filtro.CodSurvey);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.CDO))
                 {
-                    query = query.Where(p => p.CDO == filtro.CDO);
-                }
-
-                if (filtro.Cabo != null)
-                {
-                    query = query.Where(p => p.GetLigacao.Cabo == filtro.Cabo);
-                }
-
-                if (!string.IsNullOrEmpty(filtro.Celula))
-                {
-                    query = query.Where(p => p.GetLigacao.Celula == filtro.Celula);
+                    query = query.Where(p => p.NomeCdo == filtro.CDO);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.EstadoOperacional))
                 {
-                    query = query.Where(p => p.GetLigacao.EstadoOperacional == filtro.EstadoOperacional);
+                    query = query.Where(p => p.EstadoOperacional == filtro.EstadoOperacional);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.EstadoControle))
                 {
-                    query = query.Where(p => p.GetLigacao.EstadoControle == filtro.EstadoControle);
+                    query = query.Where(p => p.EstadoControle == filtro.EstadoControle);
+                }
+
+                if (!string.IsNullOrEmpty(filtro.EstadoProjeto))
+                {
+                    query = query.Where(p => p.EstadoProjeto == filtro.EstadoProjeto);
                 }
    
                 paginacao.Total = await query.CountAsync();

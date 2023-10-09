@@ -5,20 +5,20 @@ using WebApiSwagger.Repository.Interface;
 
 namespace WebApiSwagger.Repository
 {
-    public class GestaoRepository : IGestaoRepository
+    public class AnaliseCDOIARepository : IAnaliseCDOIARepository
     {
         private readonly AppDbContext _context;
-        public GestaoRepository (AppDbContext context)
+        public AnaliseCDOIARepository (AppDbContext context)
         {
             _context = context;
         }
-        public async Task<Gestao> CarregarId(int id)
+        public async Task<AnaliseCDOIA> CarregarId(int id)
         {
             try
             {
-                return await _context.Gestoes
-                           .Where(p => p.Id_Gestao == id)
-                           .FirstOrDefaultAsync() ?? new Gestao(); 
+                return await _context.AnaliseCDOIAs
+                           .Where(p => p.Id_AnaliseCDOIA == id)
+                           .FirstOrDefaultAsync() ?? new AnaliseCDOIA(); 
             }
             catch (Exception ex)
             {  
@@ -30,9 +30,9 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                Gestao db = await CarregarId(id);
+                AnaliseCDOIA db = await CarregarId(id);
 
-                _context.Gestoes.Remove(db);
+                _context.AnaliseCDOIAs.Remove(db);
                 await _context.SaveChangesAsync();
                 return true;
 
@@ -43,18 +43,17 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public async Task<Gestao> Editar(int id, Gestao Gestao)
+        public async Task<AnaliseCDOIA> Editar(int id, AnaliseCDOIA AnaliseCDOIA)
         {
             try
             {
-                Gestao db = await CarregarId(id);
+                AnaliseCDOIA db = await CarregarId(id);
 
-                db.Nome = Gestao.Nome;
-                db.Email = Gestao.Email;
-                db.Id_Cargo = Gestao.Id_Cargo;
-                db.Id_Empresa = Gestao.Id_Empresa;
+                db.CDOIA = AnaliseCDOIA.CDOIA;
+                db.CDOIAStatus = AnaliseCDOIA.CDOIAStatus;
+                db.CDOIAObservacao = AnaliseCDOIA.CDOIAObservacao;
             
-                _context.Gestoes.Update(db);
+                _context.AnaliseCDOIAs.Update(db);
                 await _context.SaveChangesAsync();
 
                 return db;
@@ -65,13 +64,13 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public async Task<Gestao> Inserir(Gestao Gestao)
+        public async Task<AnaliseCDOIA> Inserir(AnaliseCDOIA AnaliseCDOIA)
         {
             try
             {
-                _context.Gestoes.Add(Gestao);
+                _context.AnaliseCDOIAs.Add(AnaliseCDOIA);
                 await _context.SaveChangesAsync();
-                return Gestao;    
+                return AnaliseCDOIA;    
             }
             catch (Exception ex)
             {  
@@ -79,13 +78,11 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public async Task<IEnumerable<Gestao>> Listar()
+        public async Task<IEnumerable<AnaliseCDOIA>> Listar()
         {
              try
             {
-                return await _context.Gestoes
-                    .Include(p => p.GetEmpresa)
-                    .Include(p => p.GetCargo)
+                return await _context.AnaliseCDOIAs
                         .ToListAsync();             
             }
             catch (Exception ex)

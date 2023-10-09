@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 import { TableGrid } from "./style";
 import { DetalheTesteOptico } from "../../../api/testeOptico";
+import { getEnderecoTotalAny } from "../../../api/enterecoTotais"
 import { Content, GlobalStyle, Template } from "../../../GlobalStyle";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
@@ -11,19 +12,36 @@ function Vizualizar(){
     const { id } = useParams();
     const [loading, setLoading] = useState();
     const [testeOptico, setTesteOptico] = useState({});
+    const [uf, setUf] = useState();
+    const [estacao, setEstacao] = useState();
+    const [cdo, setCdo] = useState({});
+    const [enderecoTotal, setEnderecoTotal] = useState({});
 
     async function fetchTesteOptico() {
-        const data = await DetalheTesteOptico(id).finally(() => {
+        const data = await DetalheTesteOptico(id);
+        setUf(data.uf);
+        setEstacao(data.estacao);
+        setCdo(data.cdo);
+        setTesteOptico(data);
+    }
+
+    async function fetchEnderecoTotalAny() {
+        const filtro = {
+            UF : uf,
+            Estacao : estacao,
+            CDO: cdo,          
+        };
+
+        const data = await getEnderecoTotalAny(filtro).finally(() => {
           setLoading(true)
         });
-        setTesteOptico(data);
+        setEnderecoTotal(data);
     }
 
     useEffect(() => {
         fetchTesteOptico();
+        fetchEnderecoTotalAny();
     }, [loading]);
-
-    console.log(testeOptico)
 
     GlobalStyle();
     return(

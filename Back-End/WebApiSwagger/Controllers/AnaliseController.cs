@@ -27,9 +27,6 @@ namespace WebApiSwagger.Controllers
                     Status = analise.Status,
                     DataAnalise =  DateTime.Now,
                     AnaliseObservacao = analise.AnaliseObservacao,
-                    CDOIA = analise.CDOIA,
-                    CDOIAStatus = analise.CDOIAStatus,
-                    CDOIAObs = analise.CDOIAObs,
                     Id_TesteOptico = analise.Id_TesteOptico,
                 };
 
@@ -55,9 +52,6 @@ namespace WebApiSwagger.Controllers
                     Status = analise.Status,
                     DataAnalise =  DateTime.Now,
                     AnaliseObservacao = analise.AnaliseObservacao,
-                    CDOIA = analise.CDOIA,
-                    CDOIAStatus = analise.CDOIAStatus,
-                    CDOIAObs = analise.CDOIAObs,
                     Id_TesteOptico = _analiseRepository.CarregarId(id).Result.Id_TesteOptico,
 
                 };

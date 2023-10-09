@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
-import { Content, GlobalStyle, Template } from '../../../GlobalStyle';
-import { getTesteOptico, ImportarArquivo } from "../../../api/testeOptico";
+import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
+import { getControleCdo, ImportarArquivo, deleteTesteOptico } from "../../../api/testeOptico";
 import { DownloadArquivo } from "../../../api/base";
+import DataGridTable from '../../../components/DataGrid';
 import { ImportArea, InputImport, ButtonUpload, ButtonDownload, LinhaVertical } from "./style";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
@@ -11,7 +12,8 @@ import Spinner from '../../../components/Spinner';
 function ImportFile(){
     const [testeOptico, setTesteOptico] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
-    const [loading, setLoading] = useState();
+    const [loading, setLoading] = useState(false);
+    const [loadingInput, setLoadingInput] = useState(false);
     const [file, setFile] = useState(null);
 
     const navigate = useNavigate();
@@ -19,10 +21,11 @@ function ImportFile(){
     async function fetchDownloadModelo(){
         await DownloadArquivo();
     }
-    
-      async function fetchUpaloadArquivo(arquivo){
-        const data = await ImportarArquivo(arquivo);
-        console.log(data)
+
+    async function fetchUpaloadArquivo(arquivo){
+        const data = await ImportarArquivo(arquivo).finally(() => {
+          setLoadingInput(true)
+        });
     }
 
     async function fetchTesteOptico() {    
@@ -34,26 +37,27 @@ function ImportFile(){
           CDO: '',
           DataTeste : '',
           DataRecebimento : '',
-          DataConstrucao : ''
+          DataConstrucao : '',
+          Set : 1
         };
     
-        const data = await getTesteOptico(filtro).finally(() => {
+        const data = await getControleCdo(filtro).finally(() => {
           setLoading(true)
         });
         setTesteOptico(data);
       }
     
       // Função para avançar para a próxima página
-      const nextPage = () => {
+      const nextPage = async () => {
         setLoading(false);
-        fetchTesteOptico();
+        await fetchTesteOptico();
         setCurrentPage(currentPage + 1);
       };
     
       // Função para retroceder para a página anterior
-      const prevPage = () => {
+      const prevPage = async () => {
         setLoading(false);
-        fetchTesteOptico();
+        await fetchTesteOptico();
         if (currentPage > 1) {
           setCurrentPage(currentPage - 1);
         }
@@ -62,7 +66,7 @@ function ImportFile(){
       useEffect(() => {
         fetchTesteOptico();
         
-      }, [ loading ]);
+      }, [ loading, loadingInput ]);
     
       useEffect(() => {
         fetchTesteOptico();
@@ -89,14 +93,15 @@ function ImportFile(){
         setFile(event.target.files[0]);
       };
 
-      const handleUpload = () => {
+      const handleUpload = async () => {
         fetchUpaloadArquivo(file)
+        setLoading(false);
+        await fetchTesteOptico();
       };
     
-      const downloadModelo = ()=> {
-        fetchDownloadModelo();
+      const downloadModelo = async ()=> {
+        await fetchDownloadModelo();
       }
-    
 
     GlobalStyle();
     return(
@@ -110,6 +115,21 @@ function ImportFile(){
                 <LinhaVertical />
                 <ButtonDownload onClick={downloadModelo} >Download Modelo</ButtonDownload>
             </ImportArea>
+            <RotuloTitulo><p>-- Controle de CDOs --</p></RotuloTitulo>
+            { testeOptico.resultado !== undefined ? (
+              loading || loadingInput ? (  
+            <DataGridTable 
+              columns={columns} 
+              rows={testeOptico.resultado} 
+              paginacao={testeOptico.paginacao}
+              pagina={currentPage}
+              left={prevPage}
+              right={nextPage}
+              atualizar={fetchTesteOptico}
+            />
+              ):(<Spinner />)
+            ) : ( <Spinner /> )
+            }
         </Content>
         <Footer />
         </Template>
