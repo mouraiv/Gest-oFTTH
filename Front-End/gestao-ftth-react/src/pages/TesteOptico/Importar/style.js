@@ -20,6 +20,8 @@ export const ImportArea = styled("div", {
         width: '110px',
         height: '29px',
         color: '#13293d',
+        cursor: 'pointer',
+
     },
 
     'input[type=file]::file-selector-button:active' : {
@@ -36,7 +38,6 @@ export const InputImport = styled("input", {
     width: '350px',
     height: '29px',
     color: '#5D6D7E',
-
    
 });
 
@@ -50,6 +51,8 @@ export const ButtonUpload = styled("button", {
     width: '80px',
     height: '30px',
     color: '#13293d',
+    cursor: 'pointer',
+
 
     '&:active' : {
         backgroundColor: '#5D6D7E',   
@@ -66,6 +69,8 @@ export const ButtonDownload = styled("button", {
     width: '130px',
     height: '30px',
     color: '#13293d',
+    cursor: 'pointer',
+
 
     '&:active' : {
         backgroundColor: '#5D6D7E',   

@@ -9,6 +9,8 @@ export const ButtonConfirma = styled("button", {
     width: '100px',
     height: '30px',
     color: '#ffffff',
+    cursor: 'pointer',
+
 
     '&:active' : {
         backgroundColor: '#5D6D7E',   
@@ -25,6 +27,7 @@ export const ButtonCancelar = styled("button", {
     width: '100px',
     height: '30px',
     color: '#13293d',
+    cursor: 'pointer',
 
     '&:active' : {
         backgroundColor: '#5D6D7E',   

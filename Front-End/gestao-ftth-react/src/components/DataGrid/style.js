@@ -83,6 +83,7 @@ export const Button = styled("button", {
     color: '#13293d',
     textDecoration: 'underline',
     cursor: 'pointer',
+    
     "&:active":{
         color: '#FFFFF',
         textDecoration: 'none'

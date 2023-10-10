@@ -47,7 +47,7 @@ function TesteOptico() {
     setDropUf(data);
   }
 
-  async function fetchTesteOptico() {
+  async function fetchTesteOptico () {
     const _dateInputRecebimento = dateInputRecebimento.replace(/\D/g, '-');
     const _dateInputTeste = dateInputTeste.replace(/\D/g, '-');
     const _dateInputConstrucao = dateInputConstrucao.replace(/\D/g, '-');
@@ -63,41 +63,36 @@ function TesteOptico() {
       DataConstrucao : _dateInputConstrucao
     };
 
-    const data = await getTesteOptico(filtro).finally(() => {
-      setLoading(true)
-    });
+    const data = await getTesteOptico(filtro).finally(() => setLoading(true));
+
     setTesteOptico(data);
   }
 
   // Função para avançar para a próxima página
-  const nextPage = async () => {
-    setLoading(false);
-    await fetchTesteOptico();
+  const nextPage = () => {
     setCurrentPage(currentPage + 1);
+    setLoading(false);
   };
 
   // Função para retroceder para a página anterior
-  const prevPage = async () => {
-    setLoading(false);
-    await fetchTesteOptico();
+  const prevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
+    setLoading(false);
   };
-
-  useEffect(() => {
-    fetchTesteOptico();
-    
-  }, [ loading ]);
 
   useEffect(() => {
     fetchDropConstrutora("Construtora");
     fetchDropEstacao("Estacao");
     fetchDropUf("UF");
-    fetchTesteOptico();
-    setCurrentPage(1);
-        
-  }, []);
+  },[])
+
+  useEffect(() => {
+    if(!loading){
+      fetchTesteOptico();
+    }
+  }, [loading, currentPage]);
 
   const columns = [
     { key: 'id', name: 'ID' },
@@ -156,7 +151,6 @@ function TesteOptico() {
   const submit = async () => {
     setLoading(false);
     setCurrentPage(1);
-    await fetchTesteOptico();
   };
 
   const limparFiltro = async () => {
@@ -168,7 +162,6 @@ function TesteOptico() {
     setDateInputRecebimento("");
     setDateInputConstrucao("");
     setDateInputTeste("");
-    await fetchTesteOptico();
     setCurrentPage(1);
 
   };
@@ -179,7 +172,7 @@ function TesteOptico() {
         <Header title={"Teste Óptico"} />
           <Content>
             <SubMenu>
-              <ButtonImport onClick={handleImportar} >Importar Xlsx</ButtonImport>
+              <ButtonImport onClick={handleImportar} >Controler CDOs</ButtonImport>
              </SubMenu>
             <Filter>
               <DropBox label={"UF"} event={handleUf} lista={dropUf} text={uf} /> 
