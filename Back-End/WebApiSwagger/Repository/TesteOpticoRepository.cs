@@ -199,15 +199,21 @@ namespace WebApiSwagger.Repository
            
         }
 
-        public async Task<bool> Unique(string uf, string estacao, string cdo)
+        public async Task<TesteOptico> Unique(string uf, string estacao, string cdo)
         {
             try
             {
 
-                bool resultado = await _context.TestesOpticos.AnyAsync(p => p.UF == uf && p.Estacao == estacao && p.CDO == cdo);    
-                
-                return resultado;
-            
+                return await _context.TestesOpticos
+                .Where(p => p.UF == uf && p.Estacao == estacao && p.CDO == cdo)
+                .Select(p => new TesteOptico{
+                    Id_TesteOptico = p.Id_TesteOptico,
+                    UF = p.UF,
+                    Estacao = p.Estacao,
+                    CDO = p.CDO
+                })
+                .FirstOrDefaultAsync() ?? new TesteOptico();    
+                            
             }
             catch (Exception ex)
             {

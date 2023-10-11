@@ -22,15 +22,11 @@ export default function DataGrid({
   const navigate = useNavigate();
 
   const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [testeOptico, setTesteOptico] = useState({});
   const [id, setId] = useState();
 
-  async function fetchDelete(id){
+  async function fetchDelete(){
     if(id !== undefined){
-      const data = await deleteTesteOptico(id).finally(() => {
-        setLoading(true)
-      });
+        const data = await deleteTesteOptico(id);
     }
   }
 
@@ -45,19 +41,20 @@ export default function DataGrid({
   }
 
   const ExcluirFecth = async () => {
-    await fetchDelete(id)
+    await fetchDelete();
     setVisible(false);
     atualizar();
   }
 
-
-  
   return (
     <>
     <DialogAlert 
             visibleDiag={visible} 
             visibleHide={() => setVisible(false)}
             header={<h4>Atenção</h4>}
+            colorType={'#3d1313'}
+            ConfirmaButton={true}
+            textCloseButton={'Cancelar'}
             text={
               <>
               <p>Esta ação é irreversível</p>

@@ -116,10 +116,6 @@ namespace WebApiSwagger.Controllers
                         var _estacao = _uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper();
                         var _cdo = _uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper();
 
-                        bool unique = await _testeOpticoRepository.Unique(_uf ?? "", _estacao ?? "", _cdo ?? "");
-
-                        if(!unique){
-
                         var modelo = new TesteOptico
                             {
                                 CHAVE = $"{_uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper()}-{_uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper()}{_uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper()}",
@@ -148,14 +144,20 @@ namespace WebApiSwagger.Controllers
                             };
 
                             listaModelo.Add(modelo);
-                        }else{
-                            modeloOut += 1;
-                        }
+                       
                     }
                     // Salvar os dados no banco de dados
                     foreach (var optico in listaModelo)
                     {
-                        await _testeOpticoRepository.Inserir(optico);                        
+                        var unique = await _testeOpticoRepository.Unique(optico.UF ?? "", optico.Estacao ?? "", optico.CDO ?? "");
+                        
+                        if(unique.UF != optico.UF && unique.Estacao != optico.Estacao && unique.CDO != optico.CDO){    
+                            await _testeOpticoRepository.Inserir(optico);
+                        }else{
+                            await _testeOpticoRepository.Editar(unique.Id_TesteOptico, optico);
+                            modeloOut += 1;
+                        }
+                                                
                     }
 
                     return Ok(
@@ -163,16 +165,16 @@ namespace WebApiSwagger.Controllers
                             listaModelo.Count > 1 ?
                                 modeloOut != 0 ?
                                     modeloOut > 1 ?
-                                    $"{listaModelo.Count} Novas CDOs importadas com sucesso. {modeloOut} CDOs já constam na base dados."
-                                    : $"{listaModelo.Count} Novas CDOs importadas com sucesso. 1 CDO já consta na base de dados."
+                                    $"{listaModelo.Count} Novas CDOs importadas com sucesso. {modeloOut} CDOs já constam na base dados e foram atualizadas."
+                                    : $"{listaModelo.Count} Novas CDOs importadas com sucesso. 1 CDO já consta na base de dados e foi atualizada"
                                 : $"{listaModelo.Count} Novas CDOs importadas com sucesso."    
                             :
                             modeloOut != 0 ?
                                     modeloOut > 1 ?
-                                    $"{listaModelo.Count} Nova CDO importadas com sucesso. {modeloOut} CDOs já constam na base dados."
-                                    : $"{listaModelo.Count} Nova CDO importadas com sucesso. 1 CDO já consta na base de dados."
+                                    $"{listaModelo.Count} Nova CDO importadas com sucesso. {modeloOut} CDOs já constam na base dados e foram atualizadas."
+                                    : $"{listaModelo.Count} Nova CDO importadas com sucesso. 1 CDO já consta na base de dados e foi atualizada."
                                 : $"{listaModelo.Count} Nova CDO importadas com sucesso." 
-                        : "Todoas as CDOs já constam na base de dados. Nenhuma nova CDO importada.");    
+                        : "Todas as CDOs já constam na base de dados e foram atualizadas.");    
                 }
             }
             catch (Exception ex)

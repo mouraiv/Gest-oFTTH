@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
 import { getControleCdo, ImportarArquivo, deleteTesteOptico } from "../../../api/testeOptico";
@@ -8,24 +8,29 @@ import { ImportArea, InputImport, ButtonUpload, ButtonDownload, LinhaVertical } 
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
+import DialogAlert from "../../../components/Dialog";
+//import { useForm } from "react-hook-form";
 
 function ImportFile(){
     const [testeOptico, setTesteOptico] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
-    const [loadingInput, setLoadingInput] = useState(false);
     const [file, setFile] = useState(null);
+    const [visible, setVisible] = useState(false);
+    const [mensagem, setMensagem] = useState("");
+    const [dialogAviso, setDialogAviso] = useState()
 
+    //const { register, handleSubmit } = useForm();
     const navigate = useNavigate();
+    const inputRef = useRef(null);
 
     async function fetchDownloadModelo(){
         await DownloadArquivo();
     }
 
     async function fetchUpaloadArquivo(arquivo){
-        const data = await ImportarArquivo(arquivo).finally(() => {
-          setLoadingInput(true)
-        });
+        const data = await ImportarArquivo(arquivo).finally(() => setLoading(true));
+        setMensagem(data);
     }
 
     async function fetchTesteOptico() {    
@@ -45,35 +50,30 @@ function ImportFile(){
           setLoading(true)
         });
         setTesteOptico(data);
+
       }
     
       // Função para avançar para a próxima página
       const nextPage = async () => {
-        setLoading(false);
-        await fetchTesteOptico();
         setCurrentPage(currentPage + 1);
+        setLoading(false);
       };
     
       // Função para retroceder para a página anterior
       const prevPage = async () => {
-        setLoading(false);
-        await fetchTesteOptico();
         if (currentPage > 1) {
           setCurrentPage(currentPage - 1);
         }
+        setLoading(false);
       };
-    
+     
       useEffect(() => {
-        fetchTesteOptico();
-        
-      }, [ loading, loadingInput ]);
-    
-      useEffect(() => {
-        fetchTesteOptico();
-        setCurrentPage(1);
+        if(!loading){
+          fetchTesteOptico();
+        }
             
-      }, []);
-    
+      }, [loading]);
+
       const columns = [
         { key: 'id', name: 'ID' },
         { key: 'uf', name: 'UF' },
@@ -94,13 +94,30 @@ function ImportFile(){
       };
 
       const handleUpload = async () => {
-        fetchUpaloadArquivo(file)
-        setLoading(false);
-        await fetchTesteOptico();
+        if(file){
+          await fetchUpaloadArquivo(file)
+          setDialogAviso(false);
+          setVisible(true);
+          setLoading(false);
+        }else{
+          setDialogAviso(true);
+          setMensagem("Nenhum arquivo selecionado.");
+          setVisible(true);
+        }
       };
     
       const downloadModelo = async ()=> {
         await fetchDownloadModelo();
+      }
+
+      const fetchLoading = () => {
+        setLoading(false);
+      }
+
+      const ExcluirFecth = async () => {
+        inputRef.current.value = null;
+        setFile(null)
+        setVisible(false);
       }
 
     GlobalStyle();
@@ -109,15 +126,49 @@ function ImportFile(){
         <Template>
         <Header title={"Teste Óptico - Importação"} />
         <Content>
+          { dialogAviso ? (
+            <DialogAlert 
+                  visibleDiag={visible} 
+                  visibleHide={() => setVisible(false)}
+                  header={<h4>Aviso</h4>}
+                  colorType={'#ff0000'}
+                  ConfirmaButton={false}
+                  textCloseButton={'Ok'}
+                  text={
+                    <>
+                    <p>{mensagem}</p>
+                    </>
+                  }
+                  buttonConfirmar={() => ExcluirFecth()} 
+              />
+              ):(
+                <DialogAlert 
+                  visibleDiag={visible} 
+                  visibleHide={() => setVisible(false)}
+                  header={<h4>Atenção</h4>}
+                  colorType={'#13293d'}
+                  ConfirmaButton={true}
+                  textCloseButton={'Cancelar'}
+                  text={
+                    <>
+                    <p>{mensagem}</p>
+                    </>
+                  }
+                  buttonConfirmar={() => ExcluirFecth()} 
+                />
+              )
+            }
             <ImportArea>
-                <InputImport onChange={handleFileChange} type="file" />
+                <InputImport onChange={handleFileChange} type="file"
+                ref={inputRef} 
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
                 <ButtonUpload onClick={handleUpload} >Upload</ButtonUpload>
                 <LinhaVertical />
                 <ButtonDownload onClick={downloadModelo} >Download Modelo</ButtonDownload>
             </ImportArea>
             <RotuloTitulo><p>-- Controle de CDOs --</p></RotuloTitulo>
             { testeOptico.resultado !== undefined ? (
-              loading || loadingInput ? (  
+              loading ? (  
             <DataGridTable 
               columns={columns} 
               rows={testeOptico.resultado} 
@@ -125,7 +176,7 @@ function ImportFile(){
               pagina={currentPage}
               left={prevPage}
               right={nextPage}
-              atualizar={fetchTesteOptico}
+              atualizar={fetchLoading}
             />
               ):(<Spinner />)
             ) : ( <Spinner /> )

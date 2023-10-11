@@ -148,12 +148,12 @@ function TesteOptico() {
     navigate('/TesteOptico/Importar');
   };
 
-  const submit = async () => {
+  const submit = () => {
     setLoading(false);
     setCurrentPage(1);
   };
 
-  const limparFiltro = async () => {
+  const limparFiltro = () => {
     setLoading(false);
     setUf("");
     setConstrutora("");
@@ -165,6 +165,10 @@ function TesteOptico() {
     setCurrentPage(1);
 
   };
+
+  const fetchLoading = () => {
+    setLoading(false);
+  }
 
   return (
       <>
@@ -209,7 +213,7 @@ function TesteOptico() {
               pagina={currentPage}
               left={prevPage}
               right={nextPage}
-              atualizar={fetchTesteOptico} 
+              atualizar={fetchLoading} 
             />
               ):(<Spinner />)
             ) : ( <Spinner /> )
