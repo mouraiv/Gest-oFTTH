@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
-import { useNavigate } from 'react-router-dom';
-import { useParams } from "react-router-dom";
-import { ButtonCancelar, ButtonConfirma, FooterButton, TableGrid } from "./style";
+import { useParams, useNavigate } from "react-router-dom";
+import { ButtonCancelar, ButtonConfirma, ButtonImagem, FooterButton, TableGrid } from "./style";
 import { DetalheTesteOptico } from "../../../api/testeOptico";
 import { getEnderecoTotalAny } from "../../../api/enterecoTotais"
 import { Content, GlobalStyle, Template } from "../../../GlobalStyle";
@@ -42,7 +41,11 @@ function Vizualizar(){
     },[])
 
     const handleVoltar = () => {
-        navigate('/TesteOptico');
+        navigate(-1); 
+    };
+
+    const handleImagens = () => {
+        navigate('/TesteOptico/Imagem'); 
     };
 
     GlobalStyle();
@@ -52,7 +55,16 @@ function Vizualizar(){
         <Header title={"Teste Óptico - Visualizar"} />
         <Content>
         { loading ? (
-            <>  
+            <>
+            <div style={{
+                 display:'flex',
+                 minWidth: '650px', 
+                 justifyContent: 'flex-start', 
+                 alignItems: 'flex-end',
+                 marginTop: '1.5rem',
+            }}>
+                <ButtonImagem onClick={handleImagens}>Imagens</ButtonImagem>
+            </div>  
             <TableGrid>
                 <thead>
                     <tr>

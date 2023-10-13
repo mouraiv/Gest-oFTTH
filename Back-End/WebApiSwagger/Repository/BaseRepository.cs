@@ -1,3 +1,6 @@
+using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
+using WebApiSwagger.Filters;
 using WebApiSwagger.Repository.Interface;
 
 namespace WebApiSwagger.Repository
@@ -5,18 +8,17 @@ namespace WebApiSwagger.Repository
     public class BaseRepository : IBaseRepository
     {
         readonly string pastaDoProjeto = $"{Directory.GetCurrentDirectory()}\\Uploads\\Anexos";
-
-        public void UploadArquivo
-         (  List<IFormFile> path,
-            string uf, 
-            string unidade, 
-            string cdo,
-            string cdoia
-        )
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public BaseRepository(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+        
+        public void UploadArquivo(List<IFormFile> path, [FromQuery] FiltroImagem filter)
         {
             try
             {
-                string caminho = $"{pastaDoProjeto}\\{uf.ToUpper()}\\{unidade.ToUpper()}\\TESTE_OPTICO\\";
+                string caminho = $"{pastaDoProjeto}\\{filter.UF?.ToUpper()}\\{filter.Estacao?.ToUpper()}\\TESTE_OPTICO\\";
 
                 foreach (var file in path)
                 {
@@ -24,9 +26,9 @@ namespace WebApiSwagger.Repository
                     {
 
                         // Verifica se a pasta de destino já existe
-                        var folderPath = cdoia != null ?
-                            Path.Combine(caminho, cdo.ToUpper() + "." + cdoia) :
-                            Path.Combine(caminho, cdo.ToUpper());
+                        var folderPath = filter.CDOIA != null ?
+                            Path.Combine(caminho, filter.CDO?.ToUpper() + "." + filter.CDOIA) :
+                            Path.Combine(caminho, filter.CDO?.ToUpper() ?? "");
 
                         if (!Directory.Exists(folderPath))
                         {
@@ -51,21 +53,22 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public List<string> ListarArquivo
-        (   string uf, 
-            string unidade, 
-            string cdo, 
-            string[] extensoes
-        )
+        public List<string> ListarArquivo(FiltroImagem filter, string[] extensoes)
         {
             try
             {
-                string caminho = $"{pastaDoProjeto}\\{uf}\\{unidade}\\TESTE_OPTICO\\{cdo}\\";
+                var request = _httpContextAccessor.HttpContext?.Request;
+                var scheme = request?.Scheme;
+                var host = request?.Host.Value;
 
-                var Arquivos = Directory.GetFiles(caminho, "*", SearchOption.AllDirectories)
-                            .Where(file => extensoes.Contains(Path.GetExtension(file)))
-                            .ToList();
+                string caminhoRelativo = $"Uploads\\Anexos\\{filter.UF?.ToUpper()}\\{filter.Estacao?.ToUpper()}\\TESTE_OPTICO\\{filter.CDO?.ToUpper()}\\";
+                string caminhoFisico = Path.Combine(Environment.CurrentDirectory, caminhoRelativo);
 
+                var Arquivos = Directory.GetFiles(caminhoFisico, "*", SearchOption.AllDirectories)
+                    .Where(file => extensoes.Contains(Path.GetExtension(file)))
+                    .Select(file => Path.Combine($"{scheme}://{host}", caminhoRelativo, Path.GetFileName(file)))
+                    .ToList();
+                
                 return Arquivos;             
             }
             catch (Exception ex)
@@ -74,10 +77,10 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public bool DeletaArquivo(string uf, string unidade, string cdo, string imageName){
+        public bool DeletaArquivo(FiltroImagem filter){
 
-            string caminho = $"{pastaDoProjeto}\\{uf.ToUpper()}\\{unidade.ToUpper()}\\TESTE_OPTICO\\{cdo.ToUpper()}\\";
-            string imagePath = Path.Combine(caminho, imageName);
+            string caminho = $"{pastaDoProjeto}\\{filter.UF?.ToUpper()}\\{filter.Estacao?.ToUpper()}\\TESTE_OPTICO\\{filter.CDO?.ToUpper()}\\";
+            string imagePath = Path.Combine(caminho, filter.ImageName ?? "");
 
              if (!Directory.Exists(caminho) || !File.Exists(imagePath))
             {

@@ -1,6 +1,7 @@
 using WebApiSwagger.Repository.Interface;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSwagger.Utils;
+using WebApiSwagger.Filters;
 
 
 namespace WebApiSwagger.Controllers
@@ -11,7 +12,6 @@ namespace WebApiSwagger.Controllers
     {
         private readonly IBaseRepository _baseRepository;
         private readonly ConversorDwg _conversorDwg;
-
         public BaseController(IBaseRepository baseRepository, ConversorDwg conversorDwg)
         {
             _baseRepository = baseRepository;
@@ -57,7 +57,7 @@ namespace WebApiSwagger.Controllers
 
         [HttpPost("UploadArquivo")]
         [Consumes("multipart/form-data")]
-        public IActionResult UploadArquivo(List<IFormFile> path, string uf, string unidade, string cdo, string cdoia)
+        public IActionResult UploadArquivo(List<IFormFile> path, [FromQuery] FiltroImagem filter)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace WebApiSwagger.Controllers
                     }
                 }
 
-                _baseRepository.UploadArquivo(path, uf, unidade, cdo, cdoia);
+                _baseRepository.UploadArquivo(path, filter);
 
                 return Ok("Upload concluído com sucesso.");
             }
@@ -85,11 +85,11 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpGet("VisualizarImagem")]
-        public IActionResult VisualizarImagem(string uf, string unidade, string cdo)
+        public IActionResult VisualizarImagem([FromQuery] FiltroImagem filter)
         { 
             try
             {
-                var imagems = _baseRepository.ListarArquivo(uf, unidade, cdo, new string[] { ".jpg", ".png", ".jfif", ".bmp", ".dwg" });  
+                var imagems = _baseRepository.ListarArquivo(filter, new string[] { ".jpg", ".png", ".jfif", ".bmp", ".dwg" });  
 
                 if (imagems.Count == 0){
 
@@ -128,11 +128,11 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpDelete("DeletarArquivo")]
-        public IActionResult DeletarArquivo(string uf, string unidade, string cdo, string imageName)
+        public IActionResult DeletarArquivo([FromQuery] FiltroImagem filter)
         { 
             try
             {
-                bool delete = _baseRepository.DeletaArquivo(uf, unidade, cdo, imageName);
+                bool delete = _baseRepository.DeletaArquivo(filter);
 
                 if (delete == false)
                 {

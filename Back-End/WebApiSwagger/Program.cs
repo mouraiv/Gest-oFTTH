@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using System.Text.Json.Serialization;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IStatusNetwinRepository, StatusNetwinRepository>();
 builder.Services.AddScoped<IStatusControleRepository, StatusControleRepository>();
 builder.Services.AddScoped<IStatusProjetoRepository, StatusProjetoRepository>();
 builder.Services.AddScoped<IAnaliseCDOIARepository, AnaliseCDOIARepository>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<UploadXlsx>();
 builder.Services.AddSingleton<ConversorDwg>();
 builder.Services.AddSingleton<Paginacao>();
@@ -36,13 +38,17 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("http://localhost:5226","http://localhost:5173")
                                 .AllowAnyHeader()
-                                .AllowAnyMethod();
+                                .AllowAnyMethod()
+                                .AllowCredentials();
         });
 });
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddDirectoryBrowser();
+
 builder.Services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -106,6 +112,21 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, @"Uploads")),
+    RequestPath = "/Uploads"
+});
+
+app.UseDirectoryBrowser(new DirectoryBrowserOptions()
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
+        RequestPath = new PathString("/Uploads")
+});
+
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

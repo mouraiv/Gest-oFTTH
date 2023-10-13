@@ -6,7 +6,6 @@ export const TableGrid = styled("table", {
     fontSize: '0.7rem',
     textAlign: 'center',
     whiteSpace: 'nowrap',
-    marginTop: '2rem',
 
     "thead":{
         backgroundColor: '#13293d',
@@ -75,5 +74,22 @@ export const ButtonCancelar = styled("button", {
 
     '&:active' : {
         backgroundColor: '#5D6D7E',   
+    }
+});
+
+export const ButtonImagem = styled("button", {
+    border: '1px solid #5D6D7E',
+    borderRadius: '0.3rem',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    marginLeft:'0.5rem',
+    marginBottom: '0.7rem',
+    width: '100px',
+    height: '30px',
+    color: '#13293d',
+    cursor: 'pointer',
+
+    '&:active' : {
+        backgroundColor: '#D6DBDF',   
     }
 });

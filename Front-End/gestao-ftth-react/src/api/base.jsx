@@ -25,3 +25,11 @@ try {
   }
 };
 
+export const getVisualizarArquivo = async (filtro) => {
+  const response = await api.get('/Base/VisualizarImagem', {
+    params: filtro,
+  });
+
+  return response.data;
+};
+
