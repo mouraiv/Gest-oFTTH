@@ -6,8 +6,7 @@ export const ImportArea = styled("div", {
     width: '100%',
     fontSize: '0.8rem',
     fontWeight: '700',
-    paddingBottom: '0.7rem',
-    paddingTop: '1rem',
+    paddingTop: '2rem',
 
     'input[type=file]::file-selector-button':{
         backgroundColor: '#D6DBDF',
@@ -21,7 +20,6 @@ export const ImportArea = styled("div", {
         height: '29px',
         color: '#13293d',
         cursor: 'pointer',
-
     },
 
     'input[type=file]::file-selector-button:active' : {
@@ -53,7 +51,6 @@ export const ButtonUpload = styled("button", {
     color: '#13293d',
     cursor: 'pointer',
 
-
     '&:active' : {
         backgroundColor: '#5D6D7E',   
     }
@@ -61,23 +58,63 @@ export const ButtonUpload = styled("button", {
 
 export const ImagemArea = styled("div", {
     display: 'flex',
-    backgroundColor: 'red',
+    backgroundColor: 'none',
     width: '100%',
+    fontSize: '0.7rem',
+    textDecoration: 'none',
+    fontWeight: '600',
+
+    "li":{
+        margin: '0.5rem',
+        listStyleType:'none',
+        cursor: 'pointer',
+        paddingBottom: '0.4rem',
+        borderBottom: '1px solid '
+    },
 
     ".menuImagem":{
-        backgroundColor:'Aqua',
+        backgroundColor:'#d6dbdf',
         borderRadius: '0.5rem',
         height:'auto',
         width: '180px',
-        marginTop: '0.3rem',
-        marginBottom: '0.3rem'
+        marginTop: '0.5rem',
+        marginBottom: '0.3rem',
+    },
+
+    '.propImagem':{
+        display: 'flex',
+        justifyContent: 'end',
+        padding: '0.5rem',
+        position: 'absolute',
+        borderTopLeftRadius: '0.5rem',
+        borderTopRightRadius: '0.5rem',
+        backgroundColor:'rgb(0 ,0, 0, 0.8)',
+        textDecoration: 'underline',
+        color: '#ffffff',
+        height: '18px',
+        left: '0',
+        right: '0',
+    },
+
+    '.propImagem a':{
+        textDecoration: 'underline',
+        color: '#ffffff',
+        cursor: 'pointer'
+    },
+
+    '.propImagem a:hover':{
+        color: 'blue',
     },
 
     ".displayImagem":{
         maxWidth: '100%',
-        padding: '0.8rem',
-        backgroundColor: 'Blue',
+        margin: '0.6rem',
+        position: 'relative',
     },
+
+    "img":{
+        borderRadius: '0.5rem',
+    }
 
 });
 

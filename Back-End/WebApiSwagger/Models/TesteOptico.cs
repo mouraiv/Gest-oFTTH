@@ -37,6 +37,8 @@ namespace WebApiSwagger.Models
         public string? SplitterCEOS {get; set;}
         public string? FibraDGO {get; set;}
         public int? Sel {get; set;}
+        public int? Id_EnderecoTotal { get; set; }
+        public EnderecoTotal EnderecosTotais { get; set; } = null!;
         public ICollection<Analise> Analises {get;} = new List<Analise>();
     }
 }

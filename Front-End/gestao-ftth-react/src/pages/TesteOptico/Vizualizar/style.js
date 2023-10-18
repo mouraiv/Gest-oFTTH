@@ -2,10 +2,8 @@ import { styled } from "@stitches/react";
 
 export const TableGrid = styled("table", {
     borderCollapse: 'collapse',
-    minWidth: '650px',
     fontSize: '0.7rem',
     textAlign: 'center',
-    whiteSpace: 'nowrap',
 
     "thead":{
         backgroundColor: '#13293d',
@@ -20,9 +18,11 @@ export const TableGrid = styled("table", {
         paddingRight: '0.5rem',
     },
     "td":{
+        width: '350px',
         paddingLeft: '0.5rem',
         fontWeight: '700',
         border: '1px solid #D6DBDF',
+        wordWrap: 'break-word'
     },
     "th, td": {
         height: '25px',
@@ -33,7 +33,7 @@ export const TableGrid = styled("table", {
 export const FooterButton = styled("div", {
     display:'flex',
     backgroundColor: '#d6dbdf',
-    minWidth: '650px', 
+    minWidth: '720px', 
     justifyContent: 'flex-end', 
     alignItems: 'flex-end',
     marginTop: '1.5rem',

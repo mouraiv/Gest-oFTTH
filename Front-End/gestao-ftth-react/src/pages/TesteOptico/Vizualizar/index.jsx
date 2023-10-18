@@ -11,28 +11,29 @@ import Spinner from '../../../components/Spinner';
 function Vizualizar(){
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
+    const [uf, setUf] = useState();
+    const [estacao, setEstacao] = useState();
+    const [cdo, setCdo] = useState();
     const [testeOptico, setTesteOptico] = useState({});
     const [enderecoTotal, setEnderecoTotal] = useState({});
 
     const navigate = useNavigate()
 
-    async function fetchEnderecoTotalAny( uf, estacao, cdo) {
-        const filtro = {
-            UF : uf,
-            Estacao : estacao,
-            CDO: cdo,          
-        };
-        return getEnderecoTotalAny(filtro);
+    async function fetchEnderecoTotalAny() {
+        return getEnderecoTotalAny(id);
     }
 
     useEffect(() => {
         DetalheTesteOptico(id).then((dataTesteOptico) => {
             setTesteOptico(dataTesteOptico);
+                setUf(dataTesteOptico.uf);
+                setEstacao(dataTesteOptico.estacao);
+                setCdo(dataTesteOptico.cdo);
         
             fetchEnderecoTotalAny(
-                dataTesteOptico.uf,
-                dataTesteOptico.estacao,
-                dataTesteOptico.cdo
+                uf,
+                estacao,
+                cdo
             ).then((dataEnderecoTotal) => {
                 setEnderecoTotal(dataEnderecoTotal);
                 setLoading(true);
@@ -45,7 +46,7 @@ function Vizualizar(){
     };
 
     const handleImagens = () => {
-        navigate('/TesteOptico/Imagem'); 
+        navigate(`/TesteOptico/Imagem/${uf}/${estacao}/${cdo}`); 
     };
 
     GlobalStyle();
@@ -58,7 +59,7 @@ function Vizualizar(){
             <>
             <div style={{
                  display:'flex',
-                 minWidth: '650px', 
+                 minWidth: '720px', 
                  justifyContent: 'flex-start', 
                  alignItems: 'flex-end',
                  marginTop: '1.5rem',

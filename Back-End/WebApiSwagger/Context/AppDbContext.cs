@@ -5,9 +5,17 @@ namespace WebApiSwagger.Context
 {
     public class AppDbContext : DbContext
     {
+        public static readonly ILoggerFactory MyLoggerFactory
+        = LoggerFactory.Create(builder => { builder.AddConsole(); });
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             //Database.SetCommandTimeout(1800);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+        optionsBuilder.UseLoggerFactory(MyLoggerFactory) 
+            .EnableSensitiveDataLogging(); 
         }
 
         public DbSet<Cargo> Cargos => Set<Cargo>();
@@ -43,6 +51,11 @@ namespace WebApiSwagger.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<TesteOptico>()
+                .HasOne(t => t.EnderecosTotais)
+                .WithMany()
+                .HasForeignKey(p => p.Id_EnderecoTotal);
+                
             modelBuilder.Entity<TesteOptico>()
                 .HasMany(t => t.Analises)
                 .WithOne()

@@ -66,7 +66,11 @@ namespace WebApiSwagger.Repository
 
                 var Arquivos = Directory.GetFiles(caminhoFisico, "*", SearchOption.AllDirectories)
                     .Where(file => extensoes.Contains(Path.GetExtension(file)))
-                    .Select(file => Path.Combine($"{scheme}://{host}", caminhoRelativo, Path.GetFileName(file)))
+                    .Select(file =>
+                    { 
+                        var relativePath = file.Replace(caminhoFisico, string.Empty).Replace("\\", "/");
+                        return $"{scheme}://{host}/{caminhoRelativo}{relativePath}";
+                    })
                     .ToList();
                 
                 return Arquivos;             

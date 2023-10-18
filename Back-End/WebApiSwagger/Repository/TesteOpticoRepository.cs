@@ -81,6 +81,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.TestesOpticos
+                            .Include(p => p.EnderecosTotais)
                             .Include(p => p.Analises)
                             .ThenInclude(p => p.AnaliseCDOIAs)
                             .Where(p => p.Id_TesteOptico == id)
@@ -88,7 +89,7 @@ namespace WebApiSwagger.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
+                throw new Exception("Ocorreu um erro ao carregar: " + ex.InnerException);
             }
             
         }

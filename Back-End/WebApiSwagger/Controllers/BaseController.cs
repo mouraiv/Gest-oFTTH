@@ -89,7 +89,7 @@ namespace WebApiSwagger.Controllers
         { 
             try
             {
-                var imagems = _baseRepository.ListarArquivo(filter, new string[] { ".jpg", ".png", ".jfif", ".bmp", ".dwg" });  
+                var imagems = _baseRepository.ListarArquivo(filter, new string[] { ".jpg", ".jpeg", ".png", ".jfif", ".bmp", ".dwg" });  
 
                 if (imagems.Count == 0){
 

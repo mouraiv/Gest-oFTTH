@@ -9,7 +9,6 @@ import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
 import DialogAlert from "../../../components/Dialog";
-//import { useForm } from "react-hook-form";
 
 function ImportFile(){
     const [testeOptico, setTesteOptico] = useState({});
@@ -114,7 +113,7 @@ function ImportFile(){
         setLoading(false);
       }
 
-      const ExcluirFecth = async () => {
+      const ExcluirFecth = () => {
         inputRef.current.value = null;
         setFile(null)
         setVisible(false);

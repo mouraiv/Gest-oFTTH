@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
 import { getVisualizarArquivo } from "../../../api/base";
 import { ImportArea, InputImport, ButtonUpload, ImagemArea } from "./style";
@@ -14,12 +14,10 @@ function Imagem(){
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState(null);
     const [visible, setVisible] = useState(false);
-    const [uf, setUf] = useState();
-    const [estacao, setEstacao] = useState();
-    const [cdo, setCdo] = useState();
+    const { uf, estacao, cdo } = useParams();
     const [cdoia, setCdoia] = useState();
     const [imageName, setImageName] = useState();
-    const [urlImage, setUrlImage] = useState(null);
+    const [urlImage, setUrlImage] = useState("");
     const [mensagem, setMensagem] = useState();
     const [dialogAviso, setDialogAviso] = useState()
 
@@ -33,9 +31,9 @@ function Imagem(){
 
     async function fetchVizualizarArquivo() {
       const filtro = {
-          UF : 'rj',
+          UF : uf,
           Estacao : 'bot',
-          CDO: 'cdoe-8204',
+          CDO: cdo,
           CDOIA: cdoia,
           ImageName: imageName,
       };
@@ -65,6 +63,29 @@ function Imagem(){
         { key: 'tecnico', name: 'TECNICO' },
       ];
 
+      function groupUrlsByFolders(testeOptico) {
+        const groupedUrls = {};
+      
+        testeOptico.forEach((url) => {
+          const parts = url.split("\\");
+          let currentGroup = groupedUrls;
+
+          // Ignoramos o primeiro e o último elemento, pois são partes da URL fixas
+          for (let i = 6; i < parts.length; i++) {
+            const folder = parts[i].split('/')[0];
+            currentGroup[folder] = currentGroup[folder] || {};
+            currentGroup = currentGroup[folder];
+          }
+      
+          currentGroup.urls = currentGroup.urls || [];
+          currentGroup.urls.push(url);
+        });
+
+        return groupedUrls;
+      }
+
+      const groupedTesteOptico = groupUrlsByFolders(testeOptico);
+
       const handleFileChange = (event) => {
         setFile(event.target.files[0]);
       };
@@ -81,10 +102,12 @@ function Imagem(){
           setVisible(true);
         }
       };
+
+      const Delete = () => {
+        setVisible(true);
+      }
     
-      const ExcluirFecth = async () => {
-        inputRef.current.value = null;
-        setFile(null)
+      const ExcluirFecth = () => {
         setVisible(false);
       }
 
@@ -123,7 +146,9 @@ function Imagem(){
                   textCloseButton={'Cancelar'}
                   text={
                     <>
-                    <p>{mensagem}</p>
+                      <p>Esta ação é irreversível</p>
+                      <p></p>
+                      <p>Tem certeza que gostaria de excluir esse imagem?</p>
                     </>
                   }
                   buttonConfirmar={() => ExcluirFecth()} 
@@ -133,25 +158,47 @@ function Imagem(){
             <ImportArea>
                 <InputImport onChange={handleFileChange} type="file"
                 ref={inputRef} 
-                accept="" />
+                accept=".jpg, .jpeg, .png, .jfif, .bmp, .dwg" />
                 <ButtonUpload onClick={handleUpload} >Upload</ButtonUpload>
             </ImportArea>
-            <RotuloTitulo><p>-- Controle de CDOs --</p></RotuloTitulo>
+            <RotuloTitulo><p>{uf} - {estacao}- {cdo}</p></RotuloTitulo>
             <ImagemArea>
+            {testeOptico[0] != undefined ? (
+              <>
               <div className="menuImagem">
-                {testeOptico.map((url, index) => (
-                  <div key={index}>
-                    <ul>
-                      <li onClick={() => handleButtonClick(url)}>
+             {Object.keys(groupedTesteOptico).map((folderName, folderIndex) => (
+                <div key={folderIndex}>
+                  <div style={{
+                    backgroundColor:'#13293d',
+                    color: '#ffffff',
+                    padding: '0.3rem'
+                  }}>{folderName}</div>
+                  <ul>
+                    {groupedTesteOptico[folderName]?.urls?.map((url, urlIndex) => (
+                      <li key={urlIndex} onClick={() => handleButtonClick(url)}>
                         {url.replace(/^.*[\\\/]/, '')}
                       </li>
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            <div className="displayImagem">
-              {urlImage && <img src={urlImage} alt="Imagem Selecionada" />}
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
+            <div className="displayImagem">
+              {
+                urlImage && urlImage.replace(/^.*[\\\/]/, '').match(/\.[0-9a-z]+$/i)[0] != '.dwg' ?
+               (
+                <>
+                  <div className="propImagem"><a onClick={Delete}>DELETAR</a></div>
+                  <img src={urlImage} alt={`Imagem_${urlImage}`} />
+                </>
+               ) : (<p>DWG</p>)
+              }
+            </div>
+            </>
+          ):(<p style={{
+            padding: '0.5rem',
+            fontSize: '0.8rem'
+          }}>Nenhum resultado</p>)}
           </ImagemArea>
         </Content>
             <Footer />

@@ -50,11 +50,11 @@ namespace WebApiSwagger.Controllers
            
         }
         [HttpGet("Carregar")]
-        public async Task<IActionResult> Carregar([FromQuery] FiltroEnderecoTotalAny filtro)
+        public async Task<IActionResult> Carregar([FromQuery] int id)
         {
             try
             {
-                var resultado = await _enderecoTotalRepository.CarregarId(filtro);
+                var resultado = await _enderecoTotalRepository.CarregarId(id);
 
                 if (resultado == null)
                 {

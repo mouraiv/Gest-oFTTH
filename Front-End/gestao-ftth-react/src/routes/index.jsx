@@ -15,7 +15,7 @@ export default function AppRoutes(){
                     <Route path="/TesteOptico" element={<TesteOptico />} />
                     <Route path="/TesteOptico/Importar" element={<ImportFile />} />
                     <Route path="/TesteOptico/Visualizar/:id" element={<Vizualizar />} />
-                    <Route path="/TesteOptico/Imagem" element={<Imagem />} />
+                    <Route path="/TesteOptico/Imagem/:uf/:estacao/:cdo" element={<Imagem />} />
                 </Route>
                 <Route path="/" element={<Login />} />
             </Routes>

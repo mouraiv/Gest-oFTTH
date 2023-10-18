@@ -381,7 +381,7 @@ namespace WebApiSwagger.Controllers
             }
             catch (Exception ex)
             {
-               return BadRequest("Ocorreu um erro ao carregar: " + ex.Message);
+               return BadRequest("Ocorreu um erro ao carregar: " + ex.InnerException);
             }
 
         }

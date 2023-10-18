@@ -15,12 +15,12 @@ namespace WebApiSwagger.Repository
             _context = context;
         }
 
-        public async Task<EnderecoTotal> CarregarId(FiltroEnderecoTotalAny filtro)
+        public async Task<EnderecoTotal> CarregarId(int? id_EnderecoTotal)
         {
             try
             {
                 return await _context.EnderecosTotais
-                           .Where(p => p.UF == filtro.UF && p.Estacao == filtro.Estacao && p.NomeCdo == filtro.CDO)
+                           .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
             }
             catch (Exception ex)
