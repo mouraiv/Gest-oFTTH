@@ -22,7 +22,7 @@ export default function Header({title}) {
           <HeaderStyleUser>
             <div className="logoContainer">
               <div className="logo">
-                <img src="../../../public/imagens/logictel.png" />
+                <img src="/public/imagens/logictel.png" />
               </div>
               <div>
                 <p className="title">| {title}</p>

@@ -6,7 +6,7 @@ export const ImportArea = styled("div", {
     width: '100%',
     fontSize: '0.8rem',
     fontWeight: '700',
-    paddingTop: '2rem',
+    paddingTop: '1.5rem',
 
     'input[type=file]::file-selector-button':{
         backgroundColor: '#D6DBDF',
@@ -28,25 +28,32 @@ export const ImportArea = styled("div", {
 
 });
 
-export const InputImport = styled("input", {
+export const ButtonUpload = styled("button", {
+    backgroundColor: '#13293d',
     border: '1px solid #5D6D7E',
+    marginLeft: '0.5rem',
     borderRadius: '0.3rem',
     fontSize: '0.8rem',
     fontWeight: '500',
-    width: '350px',
-    height: '29px',
-    color: '#5D6D7E',
-   
+    width: '130px',
+    height: '30px',
+    color: '#ffffff',
+    cursor: 'pointer',
+
+
+    '&:active' : {
+        backgroundColor: '#5D6D7E',   
+    }
 });
 
-export const ButtonUpload = styled("button", {
+export const ButtonDWG = styled("button", {
     backgroundColor: '#D6DBDF',
     border: '1px solid #5D6D7E',
     borderRadius: '0.3rem',
     fontSize: '0.8rem',
     fontWeight: '500',
     marginLeft:'0.5rem',
-    width: '80px',
+    width: '150px',
     height: '30px',
     color: '#13293d',
     cursor: 'pointer',
@@ -73,12 +80,19 @@ export const ImagemArea = styled("div", {
     },
 
     ".menuImagem":{
-        backgroundColor:'#d6dbdf',
-        borderRadius: '0.5rem',
         height:'auto',
         width: '180px',
         marginTop: '0.5rem',
-        marginBottom: '0.3rem',
+        
+    },
+
+    ".menuContainer":{
+        backgroundColor:'#d6dbdf',
+        paddingBottom: '0.3rem',
+    },
+
+    ".folder_0" : {
+        display: 'none'
     },
 
     '.propImagem':{
@@ -88,7 +102,7 @@ export const ImagemArea = styled("div", {
         position: 'absolute',
         borderTopLeftRadius: '0.5rem',
         borderTopRightRadius: '0.5rem',
-        backgroundColor:'rgb(0 ,0, 0, 0.8)',
+        backgroundColor:'rgb(0 ,0, 0, 0.6)',
         textDecoration: 'underline',
         color: '#ffffff',
         height: '18px',

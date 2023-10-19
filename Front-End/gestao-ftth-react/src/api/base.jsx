@@ -33,3 +33,10 @@ export const getVisualizarArquivo = async (filtro) => {
   return response.data;
 };
 
+export const deleteImagem = async (url) => {
+  const response = await api.delete("Base/DeletarArquivo", {
+    params:{url}
+  });
+  return response.data;
+};
+

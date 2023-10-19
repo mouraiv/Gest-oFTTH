@@ -81,19 +81,19 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public bool DeletaArquivo(FiltroImagem filter){
+        public bool DeletaArquivo(string url){
 
-            string caminho = $"{pastaDoProjeto}\\{filter.UF?.ToUpper()}\\{filter.Estacao?.ToUpper()}\\TESTE_OPTICO\\{filter.CDO?.ToUpper()}\\";
-            string imagePath = Path.Combine(caminho, filter.ImageName ?? "");
+            string _url = url.Replace("/","\\");
+            string caminho = $"{pastaDoProjeto}\\{_url}";
 
-             if (!Directory.Exists(caminho) || !File.Exists(imagePath))
+             if (!File.Exists(caminho))
             {
                 return false;
             }
 
             try
             {
-                File.Delete(imagePath);
+                File.Delete(caminho);
                 return true;
             }
             catch (Exception ex)

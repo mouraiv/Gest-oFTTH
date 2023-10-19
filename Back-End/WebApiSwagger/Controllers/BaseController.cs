@@ -106,7 +106,7 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpGet("VisualizarDwg")]
-        public IActionResult VisualizarDwg(string dwg)
+        public IActionResult VisualizarDwg([FromQuery] string dwg)
         { 
             try
             {
@@ -128,11 +128,11 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpDelete("DeletarArquivo")]
-        public IActionResult DeletarArquivo([FromQuery] FiltroImagem filter)
+        public IActionResult DeletarArquivo([FromQuery] string url)
         { 
             try
             {
-                bool delete = _baseRepository.DeletaArquivo(filter);
+                bool delete = _baseRepository.DeletaArquivo(url);
 
                 if (delete == false)
                 {
