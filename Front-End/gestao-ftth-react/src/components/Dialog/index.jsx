@@ -19,7 +19,6 @@ export default function DialogAlert({
             paddingLeft: '0.5rem',
             wordBreak: 'break-word'
         }}>{header}</div>} visible={visibleDiag} style={{ 
-              maxWidth: '35vw', 
               border: `1px solid ${colorType}`, 
               padding:'1rem',
               marginTop: '1rem',

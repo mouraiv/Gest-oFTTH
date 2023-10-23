@@ -40,3 +40,16 @@ export const deleteImagem = async (url) => {
   return response.data;
 };
 
+// Função para fazer o upload de um arquivo para o backend
+export const fazerUploadDeArquivo = async (file, filtro) => {
+    const formData = new FormData();
+    formData.append("path", file);
+
+    const response = await api.post("Base/UploadArquivo", formData, {
+      params: filtro,
+    });
+
+    return response;
+};
+
+

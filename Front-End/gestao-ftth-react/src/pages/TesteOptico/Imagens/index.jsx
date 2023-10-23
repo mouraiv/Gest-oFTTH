@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
-import { getVisualizarArquivo, deleteImagem } from "../../../api/base";
-import { ImportArea, ButtonUpload, ImagemArea, ButtonDWG } from "./style";
+import { getVisualizarArquivo, deleteImagem, fazerUploadDeArquivo } from "../../../api/base";
+import { ImportArea, NavArea, ButtonImport, InputImport, ButtonUpload, ImagemArea, ButtonDWG, ImputError, MsgError, MsgSucess } from "./style";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
@@ -12,21 +12,47 @@ function Imagem(){
     const [testeOptico, setTesteOptico] = useState([]);
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [visibleImport, setVisibleImport] = useState(false);
     const { uf, estacao, cdo } = useParams();
+    const [cdoia, setCdoia] = useState();
     const [urlImage, setUrlImage] = useState("");
     const [url, setUrl] = useState("");
-    const [mensagem, setMensagem] = useState();
+    const [arquivo, setArquivo] = useState(null);
+    const [mensagem, setMensagem] = useState({tipo: "", msg: ""});
+    const [inputMensagem, setInputMensagem] = useState({tipo: "", msg: ""});
 
+    const inputFile= useRef();
+    const inputRef = useRef();
     const navigate = useNavigate();
 
-    async function fetchUpaloadArquivo(arquivo){
-        const data = await ImportarArquivo(arquivo).finally(() => setLoading(true));
-        setMensagem(data);
+    async function fetchUploadImage(){
+        const filtro = {
+          UF : uf,
+          Estacao : 'bot',
+          CDO: cdo,
+          CDOIA: cdoia,
+          ImageName: arquivo.name
+        };
+        
+        const response = await fazerUploadDeArquivo(arquivo, filtro).finally(() => setLoading(true));
+        console.log(response.statusText)
+        if (response.statusText == 'OK') {
+          setMensagem({tipo: 'error', msg: ''});
+          setMensagem({tipo: 'sucesso', msg: response.data}); 
+
+          setTimeout(() => { 
+            setMensagem({tipo: 'defaut', msg: ''});
+          }, 10000);
+
+        } else {
+          setMensagem({tipo: 'error', msg: response.data});
+          
+        }
     }
 
     async function fetchDeletaArquivo(){
       const data = await deleteImagem(url).finally(() => setLoading(true));
-      setMensagem(data);
+      setMensagem({tipo: 'sucesso', msg: data});
     }
 
     async function fetchVizualizarArquivo() {
@@ -89,7 +115,33 @@ function Imagem(){
       };
 
       const handleImportar = () => {
-        navigate('/TesteOptico/Imagem/Importar');
+        setMensagem(""),
+        setVisibleImport(true);
+      };
+
+      const handleFileChange = (event) => {
+        setArquivo(event.target.files[0]); // Atualiza o estado com o arquivo selecionado pelo usuário
+      };
+
+      const handleChangeCdoia = (event) => {
+        const _cdoia = `${cdo}.${event.target.value}`;
+        setCdoia(_cdoia);
+      }
+    
+      const handleUpload = async () => {
+        
+        if (arquivo) {
+          // Faz o upload do arquivo usando a função fazerUploadDeArquivo
+          await fetchUploadImage();
+          inputFile.current.value = null;
+          inputRef.current.value = null
+          setArquivo(null);
+          setInputMensagem({})
+          setCdoia("");
+          setLoading(false);
+        } else {
+          setInputMensagem({tipo: 'error', msg: 'Nenhum arquivo selecionado.'});
+        }
       };
 
     GlobalStyle();
@@ -98,6 +150,56 @@ function Imagem(){
         <Template>
         <Header title={"Teste Óptico - Imagem"} />
         <Content>
+                <DialogAlert 
+                  visibleDiag={visibleImport} 
+                  visibleHide={() => setVisibleImport(false)}
+                  header={<h4>Importação de Imagens</h4>}
+                  colorType={'#13293d'}
+                  ConfirmaButton={false}
+                  textCloseButton={'Fechar'}
+                  text={
+                    <>
+                    { mensagem.tipo == 'sucesso' &&
+                      <MsgSucess>
+                        <p>{mensagem.msg}</p>
+                      </MsgSucess> }{ 
+                      mensagem.tipo == 'error' &&
+                      <MsgError>
+                        <p>{mensagem.msg}</p>
+                      </MsgError>
+                     }
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      border: '1px solid #5D6D7E',
+                      backgroundColor: '#E5E8E8',
+                      padding: '1rem'
+                    }}>
+                      { cdo.replace(/-.*$/, '') == 'CDOI' ?
+                        <div>
+                          {cdo}. <input ref={inputRef} onChange={handleChangeCdoia} style={{
+                            width:'40px',
+                            paddingLeft:'0.5rem',
+                            fontWeight: '600',
+                            fontSize:'0.9rem'
+                          }} />
+                        </div> : <div>{cdo}</div>
+                      }
+                      <ImportArea>
+                        <InputImport onChange={handleFileChange} type="file"
+                        ref={inputFile} 
+                        accept=".jpg, .jpeg, .png, .jfif, .tiff, .bmp, .dwg" />
+                        <ButtonUpload onClick={handleUpload} >Upload</ButtonUpload>
+                      </ImportArea>
+                       { inputMensagem.tipo == 'error' &&
+                        <ImputError>
+                          <p>{inputMensagem.msg}</p>
+                        </ImputError>
+                        }
+                    </div>
+                    </>
+                  }
+                />
                 <DialogAlert 
                   visibleDiag={visible} 
                   visibleHide={() => setVisible(false)}
@@ -114,9 +216,9 @@ function Imagem(){
                   }
                   buttonConfirmar={() => ExcluirFecth()} 
                 />
-            <ImportArea>
-                <ButtonUpload onClick={handleImportar} >Importar</ButtonUpload>
-            </ImportArea>
+            <NavArea>
+                <ButtonImport onClick={handleImportar} >Importar</ButtonImport>
+            </NavArea>
             <RotuloTitulo><p>{uf} - {estacao}- {cdo}</p></RotuloTitulo>
             <ImagemArea>
               {loading ? (

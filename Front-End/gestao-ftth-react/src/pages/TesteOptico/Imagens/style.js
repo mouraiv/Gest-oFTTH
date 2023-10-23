@@ -1,6 +1,6 @@
 import { styled } from "@stitches/react";
 
-export const ImportArea = styled("div", {
+export const NavArea = styled("div", {
     display: "flex",
     height: '60px',
     width: '100%',
@@ -28,7 +28,7 @@ export const ImportArea = styled("div", {
 
 });
 
-export const ButtonUpload = styled("button", {
+export const ButtonImport = styled("button", {
     backgroundColor: '#13293d',
     border: '1px solid #5D6D7E',
     marginLeft: '0.5rem',
@@ -130,6 +130,99 @@ export const ImagemArea = styled("div", {
         borderRadius: '0.5rem',
     }
 
+});
+
+export const ImportArea = styled("div", {
+    display: "flex",
+    alignItems: 'flex-end',
+    height: '60px',
+    width: '100%',
+    fontSize: '0.8rem',
+    fontWeight: '700',
+    paddingBottom: '0.3rem',
+    paddingTop: '0.5rem',
+
+    'input[type=file]::file-selector-button':{
+        backgroundColor: '#D6DBDF',
+        border: 'none',
+        borderRight: '1px solid #5D6D7E',
+        borderTopLeftRadius: '0.3rem',
+        borderBottomLeftRadius: '0.3rem',
+        fontSize: '0.8rem',
+        fontWeight: '500',
+        width: '110px',
+        height: '29px',
+        color: '#13293d',
+        cursor: 'pointer',
+
+    },
+
+    'input[type=file]::file-selector-button:active' : {
+        backgroundColor: '#5D6D7E',   
+    }
+
+});
+
+export const InputImport = styled("input", {
+    border: '1px solid #5D6D7E',
+    borderRadius: '0.3rem',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    width: '350px',
+    height: '29px',
+    color: '#5D6D7E',
+    backgroundColor: '#ffffff'
+});
+
+export const ButtonUpload = styled("button", {
+    backgroundColor: '#D6DBDF',
+    border: '1px solid #5D6D7E',
+    borderRadius: '0.3rem',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    marginLeft:'0.5rem',
+    width: '80px',
+    height: '30px',
+    color: '#13293d',
+    cursor: 'pointer',
+
+    '&:active' : {
+        backgroundColor: '#5D6D7E',   
+    }
+});
+
+export const MsgSucess = styled("div", {
+    border: '1px solid green',
+    padding: '0.3rem',
+    backgroundColor: '#E9F7EF',
+    marginBottom: '0.8rem',
+    
+    "p" : {
+        color: 'green',
+        fontSize: '0.7rem',
+        fontWeight: '700'
+    }
+});
+
+export const MsgError = styled("div", {
+    border: '1px solid red',
+    padding: '0.3rem',
+    backgroundColor: '#FDEDEC',
+    marginBottom: '0.8rem',
+    
+    "p" : {
+        color: 'red',
+        fontSize: '0.7rem',
+        fontWeight: '700'
+    }
+});
+
+export const ImputError = styled("div", {    
+    "p" : {
+        color: 'red',
+        fontSize: '0.7rem',
+        fontWeight: '700'
+    }
 });
 
 

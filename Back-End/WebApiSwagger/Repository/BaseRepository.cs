@@ -18,7 +18,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                string caminho = $"{pastaDoProjeto}\\{filter.UF?.ToUpper()}\\{filter.Estacao?.ToUpper()}\\TESTE_OPTICO\\";
+                string caminho = $"{pastaDoProjeto}\\{filter.UF?.ToUpper()}\\{filter.Estacao?.ToUpper()}\\TESTE_OPTICO\\{filter.CDO?.ToUpper()}\\";
 
                 foreach (var file in path)
                 {
@@ -27,8 +27,8 @@ namespace WebApiSwagger.Repository
 
                         // Verifica se a pasta de destino já existe
                         var folderPath = filter.CDOIA != null ?
-                            Path.Combine(caminho, filter.CDO?.ToUpper() + "." + filter.CDOIA) :
-                            Path.Combine(caminho, filter.CDO?.ToUpper() ?? "");
+                            Path.Combine(caminho.Replace($"{filter.CDOIA?.ToUpper()}\\",""), filter.CDOIA?.ToUpper() ?? "") :
+                            Path.Combine(caminho.Replace($"{filter.CDO?.ToUpper()}\\",""), filter.CDO?.ToUpper() ?? "");
 
                         if (!Directory.Exists(folderPath))
                         {
