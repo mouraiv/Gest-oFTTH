@@ -5,5 +5,6 @@ namespace WebApiSwagger.Models.ViewModel
         public DateTime? DataValidacao {get; set;}
         public string? Tecnico {get; set;}
         public int? Id_TesteOptico {get; set;}
+        public string? Status {get; set;}
     }
 }

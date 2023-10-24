@@ -8,7 +8,7 @@ export const getTesteOptico = async (filtro) => {
     },
   });
 
-  return response.data;
+  return response;
 };
 
 export const getControleCdo = async (filtro) => {
@@ -44,7 +44,7 @@ export const DropTesteOptico = async (coluna) => {
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
   });
-  return response.data;
+  return response;
 };
 
 export const DetalheTesteOptico = async (id) => {

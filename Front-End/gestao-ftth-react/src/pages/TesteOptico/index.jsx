@@ -26,46 +26,74 @@ function TesteOptico() {
   const [currentPage, setCurrentPage] = useState(1);
   const [cdoInput, setCdoInput] = useState('');
   const [loading, setLoading] = useState();
+  const [dropLoading, setDropLoading] = useState();
   const [dateInputRecebimento, setDateInputRecebimento] = useState('');
   const [dateInputTeste, setDateInputTeste] = useState('');
   const [dateInputConstrucao, setDateInputConstrucao] = useState('');
 
   const navigate = useNavigate();
 
-  async function fetchDropConstrutora(coluna){
-    const data = await DropTesteOptico(coluna);
-    setDropConstrutora(data);
-  }
+  async function fetchDropFilter () {
+    
+    try {
+      const uf = await DropTesteOptico("UF");
 
-  async function fetchDropEstacao(coluna){
-    const data = await DropTesteOptico(coluna);
-    setDropEstacao(data);
-  }
+      if(uf.status == 200) {
+        setDropUf(uf.data);
 
-  async function fetchDropUf(coluna){
-    const data = await DropTesteOptico(coluna);
-    setDropUf(data);
+        const construtora = await DropTesteOptico("Construtora");
+
+        if(construtora.status == 200) {
+          setDropConstrutora(construtora.data);
+        }
+
+        const estacao = await DropTesteOptico("Estacao");
+
+        if(estacao.status == 200) {
+          setDropEstacao(estacao.data);
+        }
+      }
+      
+    } catch (error) {
+      setDropLoading(true);
+      
+    } finally {
+      setDropLoading(true);
+
+    }
   }
 
   async function fetchTesteOptico () {
-    const _dateInputRecebimento = dateInputRecebimento.replace(/\D/g, '-');
-    const _dateInputTeste = dateInputTeste.replace(/\D/g, '-');
-    const _dateInputConstrucao = dateInputConstrucao.replace(/\D/g, '-');
 
-    const filtro = {
-      pagina : currentPage,
-      UF : uf,
-      Construtora : construtora,
-      Estacao : estacao,
-      CDO: cdoInput,
-      DataTeste : _dateInputTeste,
-      DataRecebimento : _dateInputRecebimento,
-      DataConstrucao : _dateInputConstrucao
-    };
+    try {
+      const _dateInputRecebimento = dateInputRecebimento.replace(/\D/g, '-');
+      const _dateInputTeste = dateInputTeste.replace(/\D/g, '-');
+      const _dateInputConstrucao = dateInputConstrucao.replace(/\D/g, '-');
 
-    const data = await getTesteOptico(filtro).finally(() => setLoading(true));
+      const filtro = {
+        pagina : currentPage,
+        UF : uf,
+        Construtora : construtora,
+        Estacao : estacao,
+        CDO: cdoInput,
+        DataTeste : _dateInputTeste,
+        DataRecebimento : _dateInputRecebimento,
+        DataConstrucao : _dateInputConstrucao
+      };
 
-    setTesteOptico(data);
+      const response = await getTesteOptico(filtro);
+
+      if(response.status == 200) {
+        setTesteOptico(response.data);
+      }
+
+    } catch (error) {
+      setLoading(true)
+      
+    } finally {
+      setLoading(true)
+    }
+
   }
 
   // Função para avançar para a próxima página
@@ -83,15 +111,13 @@ function TesteOptico() {
   };
 
   useEffect(() => {
-    fetchDropConstrutora("Construtora");
-    fetchDropEstacao("Estacao");
-    fetchDropUf("UF");
-  },[])
+    fetchDropFilter()
+
+  },[dropLoading])
 
   useEffect(() => {
-    if(!loading){
-      fetchTesteOptico();
-    }
+    fetchTesteOptico();
+
   }, [loading, currentPage]);
 
   const columns = [

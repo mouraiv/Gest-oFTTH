@@ -43,15 +43,14 @@ export const FooterButton = styled("div", {
 
 export const ButtonConfirma = styled("button", {
     backgroundColor: '#13293d',
-    border: '1px solid #5D6D7E',
+    border: 'none',
     borderRadius: '0.3rem',
     marginRight:'0.5rem',
     marginBottom: '0.7rem',
     fontSize: '0.8rem',
-    fontWeight: '500',
     minWidth: '100px',
     height: '30px',
-    color: '#ffffff',
+    color: '#FFFFFF',
     cursor: 'pointer',
 
     '&:active' : {
@@ -114,8 +113,8 @@ export const ButtonImagem = styled("button", {
 });
 
 export const ButtonValidar = styled("button", {
-    border: '1px solid #7D6608',
-    backgroundColor: '#FCF3CF',
+    border: '1px solid #145A32',
+    backgroundColor: '#D4EFDF',
     borderRadius: '0.3rem',
     fontSize: '0.8rem',
     fontWeight: '500',
@@ -123,7 +122,7 @@ export const ButtonValidar = styled("button", {
     marginBottom: '0.7rem',
     width: '100px',
     height: '30px',
-    color: '#7D6608',
+    color: '#145A32',
     cursor: 'pointer',
 
     '&:active' : {

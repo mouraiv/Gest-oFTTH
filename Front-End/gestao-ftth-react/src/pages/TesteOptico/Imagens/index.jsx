@@ -16,7 +16,7 @@ function Imagem(){
     const { uf, estacao, cdo } = useParams();
     const [cdoia, setCdoia] = useState();
     const [urlImage, setUrlImage] = useState("");
-    const [url, setUrl] = useState("");
+    const [url, setUrl] = useState();
     const [arquivo, setArquivo] = useState(null);
     const [mensagem, setMensagem] = useState({tipo: "", msg: ""});
     const [inputMensagem, setInputMensagem] = useState({tipo: "", msg: ""});
@@ -98,7 +98,7 @@ function Imagem(){
       const groupedTesteOptico = groupUrlsByFolders(testeOptico);
 
       const Delete = () => {
-        setUrl(urlImage.replace("http://localhost:5226/Uploads\\Anexos\\",""));
+        setUrl(urlImage.replace("https://localhost:7155/Uploads\\Anexos\\",""));
         setVisible(true);
       }
     

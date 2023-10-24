@@ -24,7 +24,9 @@ namespace WebApiSwagger.Controllers
                 var modelo = new Validacao {
                     DataValidacao = Validacao.DataValidacao,
                     Tecnico = Validacao.Tecnico,
-                    Id_TesteOptico = Validacao.Id_TesteOptico
+                    Id_TesteOptico = Validacao.Id_TesteOptico,
+                    Status = Validacao.Status
+                    
                 };
 
                 var resultado = await _ValidacaoRepository.Inserir(modelo);

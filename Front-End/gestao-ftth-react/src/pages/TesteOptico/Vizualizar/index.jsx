@@ -28,30 +28,30 @@ function Vizualizar(){
 
             const _dataAtual = dataAtual.toISOString();
 
-            const validacao = {
-                DataValidacao: _dataAtual,
-                Tecnico: user.nome,
-                Id_TesteOptico: id
-            }
-    
             const testeOpticoData = {
                 id_TesteOptico: id,
                 ...testeOptico
             }
+
             testeOpticoData.sel = sel;
+
+            const validacao = {
+                DataValidacao: _dataAtual,
+                Tecnico: user.nome,
+                Id_TesteOptico: id,
+                Status: sel == 0 ? "VALIDADO" : "NÃO VALIDADO"
+            }
+
     
             const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
     
             if (testeOpticoResponse.status === 200) {
-                const validacaoResponse = await createValidacao(validacao);
-    
-                if (validacaoResponse.status === 200) {
-                    console.log(validacaoResponse.data);
-                }
+                await createValidacao(validacao);
             }
+
         } catch (error) {
-            console.log(validacaoResponse.data);
             setLoading(true);
+
         } finally {
             setLoading(true);
         }
