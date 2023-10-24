@@ -23,6 +23,7 @@ namespace WebApiSwagger.Context
         public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<EnderecoTotal> EnderecosTotais => Set<EnderecoTotal>();
         public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
+        public DbSet<Validacao> Validacoes => Set<Validacao>();
         public DbSet<TesteOptico> TestesOpticos => Set<TesteOptico>();
         public DbSet<Usuario> Usuarios => Set<Usuario>();
         public DbSet<StatusAnalise> StatusAnalises => Set<StatusAnalise>();
@@ -55,6 +56,11 @@ namespace WebApiSwagger.Context
                 .HasOne(t => t.EnderecosTotais)
                 .WithMany()
                 .HasForeignKey(p => p.Id_EnderecoTotal);
+
+            modelBuilder.Entity<TesteOptico>()
+                .HasMany(p => p.Validacoes) 
+                .WithOne()
+                .HasForeignKey(v => v.Id_TesteOptico);   
                 
             modelBuilder.Entity<TesteOptico>()
                 .HasMany(t => t.Analises)

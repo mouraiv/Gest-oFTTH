@@ -217,6 +217,7 @@ namespace WebApiSwagger.Controllers
                     PosicaoIcxDgo = testeOptico.PosicaoIcxDgo,
                     SplitterCEOS = testeOptico.SplitterCEOS,
                     FibraDGO = testeOptico.FibraDGO,
+                    Sel = testeOptico.Sel
 
                 };
 
@@ -280,7 +281,8 @@ namespace WebApiSwagger.Controllers
                         TotalUMs = optico.TotalUMs,
                         Tecnico = optico.Tecnico,
                         Sel = optico.Sel,
-                        getAnalise = optico.Analises
+                        getAnalise = optico.Analises,
+                        getValidacao = optico.Validacoes
                     };
                     resultado.Add(modelo);
                 };

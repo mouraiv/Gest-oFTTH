@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
+import { Content, GlobalStyle, RotuloTitulo, Template, ImputError, MsgError, MsgSucess } from '../../../GlobalStyle';
 import { getVisualizarArquivo, deleteImagem, fazerUploadDeArquivo } from "../../../api/base";
-import { ImportArea, NavArea, ButtonImport, InputImport, ButtonUpload, ImagemArea, ButtonDWG, ImputError, MsgError, MsgSucess } from "./style";
+import { ImportArea, NavArea, ButtonImport, InputImport, ButtonUpload, ImagemArea, ButtonDWG} from "./style";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
@@ -35,7 +35,6 @@ function Imagem(){
         };
         
         const response = await fazerUploadDeArquivo(arquivo, filtro).finally(() => setLoading(true));
-        console.log(response.statusText)
         if (response.statusText == 'OK') {
           setMensagem({tipo: 'error', msg: ''});
           setMensagem({tipo: 'sucesso', msg: response.data}); 
@@ -144,6 +143,17 @@ function Imagem(){
         }
       };
 
+      const subpasta = (folder) => {
+        const suaString = folder;
+        const padrao = /^\d+-\w+\.\w+$/;
+
+        if (padrao.test(suaString)) {
+          return true;
+        } else {
+          return false
+        }
+      }
+
     GlobalStyle();
     return(
         <>
@@ -241,7 +251,7 @@ function Imagem(){
                               {Object.keys(groupedTesteOptico[folderName]).map(
                                 (subFolderName, subFolderIndex) => (
                                   <div key={subFolderIndex}>
-                                    <div className={`folder_${subFolderIndex}`}
+                                    <div className={ `${subpasta(subFolderName) && "folder_0"}`}
                                       style={{
                                         backgroundColor: '#13293d',
                                         color: '#ffffff',

@@ -191,39 +191,7 @@ export const ButtonUpload = styled("button", {
     }
 });
 
-export const MsgSucess = styled("div", {
-    border: '1px solid green',
-    padding: '0.3rem',
-    backgroundColor: '#E9F7EF',
-    marginBottom: '0.8rem',
-    
-    "p" : {
-        color: 'green',
-        fontSize: '0.7rem',
-        fontWeight: '700'
-    }
-});
 
-export const MsgError = styled("div", {
-    border: '1px solid red',
-    padding: '0.3rem',
-    backgroundColor: '#FDEDEC',
-    marginBottom: '0.8rem',
-    
-    "p" : {
-        color: 'red',
-        fontSize: '0.7rem',
-        fontWeight: '700'
-    }
-});
-
-export const ImputError = styled("div", {    
-    "p" : {
-        color: 'red',
-        fontSize: '0.7rem',
-        fontWeight: '700'
-    }
-});
 
 
 

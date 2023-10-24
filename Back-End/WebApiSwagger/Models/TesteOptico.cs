@@ -40,5 +40,6 @@ namespace WebApiSwagger.Models
         public int? Id_EnderecoTotal { get; set; }
         public EnderecoTotal EnderecosTotais { get; set; } = null!;
         public ICollection<Analise> Analises {get;} = new List<Analise>();
+        public ICollection<Validacao> Validacoes {get;} = new List<Validacao>();
     }
 }

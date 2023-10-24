@@ -1,45 +1,93 @@
 import React, {useState, useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ButtonCancelar, ButtonConfirma, ButtonImagem, FooterButton, TableGrid } from "./style";
-import { DetalheTesteOptico } from "../../../api/testeOptico";
+import { ButtonCancelar, ButtonConfirma, ButtonValidar, ButtonImagem, FooterButton, TableGrid, ButtonReValidar, ButtonEditar } from "./style";
+import { DetalheTesteOptico, updateTesteOptico } from "../../../api/testeOptico";
 import { getEnderecoTotalAny } from "../../../api/enterecoTotais"
 import { Content, GlobalStyle, Template } from "../../../GlobalStyle";
+import { createValidacao } from '../../../api/validacao';
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
+import { useAuth } from "../../../contexts/auth";
 
 function Vizualizar(){
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [uf, setUf] = useState();
+    const [dataAtual, setDataAtual] = useState(new Date());
     const [estacao, setEstacao] = useState();
     const [cdo, setCdo] = useState();
     const [testeOptico, setTesteOptico] = useState({});
     const [enderecoTotal, setEnderecoTotal] = useState({});
 
     const navigate = useNavigate()
+    const { user } = useAuth();
+    
+    async function fetchValidar(sel) {
+        try {
 
-    async function fetchEnderecoTotalAny() {
-        return getEnderecoTotalAny(id);
+            const _dataAtual = dataAtual.toISOString();
+
+            const validacao = {
+                DataValidacao: _dataAtual,
+                Tecnico: user.nome,
+                Id_TesteOptico: id
+            }
+    
+            const testeOpticoData = {
+                id_TesteOptico: id,
+                ...testeOptico
+            }
+            testeOpticoData.sel = sel;
+    
+            const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
+    
+            if (testeOpticoResponse.status === 200) {
+                const validacaoResponse = await createValidacao(validacao);
+    
+                if (validacaoResponse.status === 200) {
+                    console.log(validacaoResponse.data);
+                }
+            }
+        } catch (error) {
+            console.log(validacaoResponse.data);
+            setLoading(true);
+        } finally {
+            setLoading(true);
+        }
+    }
+
+    async function fecthDetalheTesteOptico(){
+        try {
+            const detalheTesteOptico = await DetalheTesteOptico(id);
+
+            if(detalheTesteOptico.status == 200) {
+                setTesteOptico(detalheTesteOptico.data);
+                setCdo(detalheTesteOptico.data.cdo);
+                setEstacao(detalheTesteOptico.data.estacao);
+                setUf(detalheTesteOptico.data.uf);
+
+                const detalheEnderecoTotal = await getEnderecoTotalAny(
+                    detalheTesteOptico.data.id_EnderecoTotal
+                );
+
+                setEnderecoTotal(detalheEnderecoTotal);
+
+            }
+
+        } catch (error) {
+            console.log(error)
+            setLoading(true);
+            
+        } finally {
+            setLoading(true);
+        }
     }
 
     useEffect(() => {
-        DetalheTesteOptico(id).then((dataTesteOptico) => {
-            setTesteOptico(dataTesteOptico);
-                setUf(dataTesteOptico.uf);
-                setEstacao(dataTesteOptico.estacao);
-                setCdo(dataTesteOptico.cdo);
-        
-            fetchEnderecoTotalAny(
-                uf,
-                estacao,
-                cdo
-            ).then((dataEnderecoTotal) => {
-                setEnderecoTotal(dataEnderecoTotal);
-                setLoading(true);
-            });    
-        });
-    },[])
+        fecthDetalheTesteOptico();
+
+    },[loading])
 
     const handleVoltar = () => {
         navigate(-1); 
@@ -48,6 +96,16 @@ function Vizualizar(){
     const handleImagens = () => {
         navigate(`/TesteOptico/Imagem/${uf}/${estacao}/${cdo}`); 
     };
+
+    const handleValidar = async() => {
+        await fetchValidar(0);
+        setLoading(false);
+    }
+
+    const handleRevalidar = async() => {
+        await fetchValidar(1);
+        setLoading(false);
+    }
 
     GlobalStyle();
     return(
@@ -70,6 +128,17 @@ function Vizualizar(){
                 <thead>
                     <tr>
                         <th colSpan={3}>-- TESTE ÓPTICO | FICHA TÉCNICA --</th>
+                    </tr>
+                    <tr>
+                    <th style={testeOptico.sel == 0 ? {
+                        backgroundColor: '#D4EFDF',
+                        color: '#145A32',
+                        border: '1px solid #145A32'
+                    } : {
+                        backgroundColor: '#E6B0AA',
+                        color: '#641E16',
+                        border: '1px solid #641E16'
+                    }} colSpan={3}> {testeOptico.sel == 0 ? "VALIDADO" : "NÃO VALIDADO"} </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -152,8 +221,23 @@ function Vizualizar(){
                 </tbody>
             </TableGrid>
             <FooterButton>
-                <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-                <ButtonConfirma>Analisar</ButtonConfirma>
+                <div style={{width: '100%'}}>
+                    <>
+                    {testeOptico.sel == 1 ? (
+                        <ButtonValidar onClick={handleValidar}>Validar</ButtonValidar>
+                        ) : (
+                        <ButtonReValidar onClick={handleRevalidar}>Re-Validar</ButtonReValidar>
+                    )}
+                    </>
+                </div>
+                    <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
+                    
+                    { testeOptico.sel == 1 &&
+                    <>
+                    <ButtonEditar>Editar</ButtonEditar>
+                    <ButtonConfirma>Analisar</ButtonConfirma>
+                    </>
+                    }
             </FooterButton>
             </>
             ):(<Spinner />)

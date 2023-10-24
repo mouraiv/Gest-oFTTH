@@ -81,6 +81,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.TestesOpticos
+                            .Include(p => p.Validacoes)
                             .Include(p => p.EnderecosTotais)
                             .Include(p => p.Analises)
                             .ThenInclude(p => p.AnaliseCDOIAs)
@@ -116,6 +117,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = _context.TestesOpticos
+                    .Include(p => p.Validacoes)
                     .Include(p => p.Analises)
                     .ThenInclude(p => p.AnaliseCDOIAs)
                     .AsQueryable();

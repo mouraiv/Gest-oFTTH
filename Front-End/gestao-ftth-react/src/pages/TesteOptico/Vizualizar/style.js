@@ -49,9 +49,27 @@ export const ButtonConfirma = styled("button", {
     marginBottom: '0.7rem',
     fontSize: '0.8rem',
     fontWeight: '500',
-    width: '100px',
+    minWidth: '100px',
     height: '30px',
     color: '#ffffff',
+    cursor: 'pointer',
+
+    '&:active' : {
+        backgroundColor: '#5D6D7E',   
+    }
+});
+
+export const ButtonEditar = styled("button", {
+    backgroundColor: '#AEB6BF',
+    border: '1px solid #17202A',
+    borderRadius: '0.3rem',
+    marginRight:'0.5rem',
+    marginBottom: '0.7rem',
+    fontSize: '0.8rem',
+    fontWeight: '600',
+    minWidth: '100px',
+    height: '30px',
+    color: '#17202A',
     cursor: 'pointer',
 
     '&:active' : {
@@ -67,7 +85,7 @@ export const ButtonCancelar = styled("button", {
     fontWeight: '500',
     marginRight:'0.5rem',
     marginBottom: '0.7rem',
-    width: '100px',
+    minWidth: '100px',
     height: '30px',
     color: '#13293d',
     cursor: 'pointer',
@@ -75,6 +93,7 @@ export const ButtonCancelar = styled("button", {
     '&:active' : {
         backgroundColor: '#5D6D7E',   
     }
+
 });
 
 export const ButtonImagem = styled("button", {
@@ -91,5 +110,41 @@ export const ButtonImagem = styled("button", {
 
     '&:active' : {
         backgroundColor: '#D6DBDF',   
+    }
+});
+
+export const ButtonValidar = styled("button", {
+    border: '1px solid #7D6608',
+    backgroundColor: '#FCF3CF',
+    borderRadius: '0.3rem',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    marginLeft:'0.5rem',
+    marginBottom: '0.7rem',
+    width: '100px',
+    height: '30px',
+    color: '#7D6608',
+    cursor: 'pointer',
+
+    '&:active' : {
+        backgroundColor: '#F7DC6F',   
+    }
+});
+
+export const ButtonReValidar = styled("button", {
+    border: '1px solid #7B241C',
+    backgroundColor: '#F2D7D5',
+    borderRadius: '0.3rem',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    marginLeft:'0.5rem',
+    marginBottom: '0.7rem',
+    width: '100px',
+    height: '30px',
+    color: '#7B241C',
+    cursor: 'pointer',
+
+    '&:active' : {
+        backgroundColor: '#D98880',   
     }
 });
