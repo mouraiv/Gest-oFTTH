@@ -35,8 +35,12 @@ namespace WebApiSwagger.Repository
                             Directory.CreateDirectory(folderPath); // Cria a pasta se não existir
                         }
 
+                        // Obtém a extensão do arquivo original
+                        var fileExtension = Path.GetExtension(file.FileName);
+
                         //Renomear aquivos para uptload
-                        string name = $"{DateTime.Now.Ticks}-{file.FileName}";
+                        string name = filter.CDOIA != null ? $"{filter.CDOIA?.ToUpper()}_{DateTime.Now.Ticks}{fileExtension}" :
+                        $"{filter.CDO?.ToUpper()}_{DateTime.Now.Ticks}{fileExtension}";
 
                         // Salva o arquivo no diretório criado
                         var filePath = Path.Combine(folderPath, name);

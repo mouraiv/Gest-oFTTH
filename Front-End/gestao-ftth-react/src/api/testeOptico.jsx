@@ -19,7 +19,7 @@ export const getControleCdo = async (filtro) => {
     },
   });
 
-  return response.data;
+  return response;
 };
 
 export const createTesteOptico = async (testeOptico) => {
@@ -63,5 +63,5 @@ export const ImportarArquivo = async (arquivo) => {
   formData.append('arquivo', arquivo);
 
   const response = await api.post('/TesteOptico/UploadModelo', formData);
-  return response.data;
+  return response;
 }; 

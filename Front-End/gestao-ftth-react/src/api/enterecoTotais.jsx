@@ -8,5 +8,5 @@ export const getEnderecoTotalAny = async (id) => {
     },
   });
 
-  return response.data;
+  return response;
 };

@@ -70,6 +70,8 @@ export const ImagemArea = styled("div", {
     fontSize: '0.7rem',
     textDecoration: 'none',
     fontWeight: '600',
+    wordBreak: 'break-all',
+    
 
     "li":{
         margin: '0.5rem',

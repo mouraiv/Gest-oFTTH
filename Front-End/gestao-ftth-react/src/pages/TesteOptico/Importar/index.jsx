@@ -28,11 +28,27 @@ function ImportFile(){
     }
 
     async function fetchUpaloadArquivo(arquivo){
-        const data = await ImportarArquivo(arquivo).finally(() => setLoading(true));
-        setMensagem(data);
+      try {
+        const importar = await ImportarArquivo(arquivo);
+
+        if(importar.status == 200) {
+          setMensagem(importar.data);
+
+        } else {
+          setMensagem(importar.data);
+
+        }
+        
+      } catch (error) {
+        setLoading(true);
+        
+      } finally {
+        setLoading(true);
+      }
     }
 
-    async function fetchTesteOptico() {    
+    async function fetchTesteOptico() {
+      try {
         const filtro = {
           pagina : currentPage,
           UF : '',
@@ -45,11 +61,21 @@ function ImportFile(){
           Set : 1
         };
     
-        const data = await getControleCdo(filtro).finally(() => {
-          setLoading(true)
-        });
-        setTesteOptico(data);
+        const response = await getControleCdo(filtro);
 
+        if(response.status == 200) {
+          setTesteOptico(response.data);
+
+        }
+
+        } catch (error) {
+          setLoading(true);
+          
+        } finally {
+          setLoading(true);
+
+        }    
+        
       }
     
       // Função para avançar para a próxima página
@@ -67,10 +93,8 @@ function ImportFile(){
       };
      
       useEffect(() => {
-        if(!loading){
           fetchTesteOptico();
-        }
-            
+
       }, [loading]);
 
       const columns = [

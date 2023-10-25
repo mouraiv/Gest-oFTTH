@@ -71,7 +71,9 @@ function Vizualizar(){
                     detalheTesteOptico.data.id_EnderecoTotal
                 );
 
-                setEnderecoTotal(detalheEnderecoTotal);
+                if(detalheEnderecoTotal.status == 200) {
+                    setEnderecoTotal(detalheEnderecoTotal.data);
+                }
 
             }
 

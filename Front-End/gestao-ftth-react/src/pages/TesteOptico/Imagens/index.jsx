@@ -16,7 +16,6 @@ function Imagem(){
     const { uf, estacao, cdo } = useParams();
     const [cdoia, setCdoia] = useState();
     const [urlImage, setUrlImage] = useState("");
-    const [url, setUrl] = useState();
     const [arquivo, setArquivo] = useState(null);
     const [mensagem, setMensagem] = useState({tipo: "", msg: ""});
     const [inputMensagem, setInputMensagem] = useState({tipo: "", msg: ""});
@@ -26,6 +25,8 @@ function Imagem(){
     const navigate = useNavigate();
 
     async function fetchUploadImage(){
+
+      try{
         const filtro = {
           UF : uf,
           Estacao : 'bot',
@@ -33,42 +34,78 @@ function Imagem(){
           CDOIA: cdoia,
           ImageName: arquivo.name
         };
-        
-        const response = await fazerUploadDeArquivo(arquivo, filtro).finally(() => setLoading(true));
-        if (response.statusText == 'OK') {
-          setMensagem({tipo: 'error', msg: ''});
-          setMensagem({tipo: 'sucesso', msg: response.data}); 
 
-          setTimeout(() => { 
-            setMensagem({tipo: 'defaut', msg: ''});
-          }, 10000);
+        const response = await fazerUploadDeArquivo(arquivo, filtro);
+
+        if (response.status == 200) {
+          setMensagem({tipo: 'error', msg: ''});
+          setMensagem({tipo: 'sucesso', msg: response.data});
 
         } else {
           setMensagem({tipo: 'error', msg: response.data});
           
         }
+
+      }catch(error){
+        setLoading(true);
+
+      } finally {
+        setLoading(true);
+
+      }
     }
 
     async function fetchDeletaArquivo(){
-      const data = await deleteImagem(url).finally(() => setLoading(true));
-      setMensagem({tipo: 'sucesso', msg: data});
+      try {
+        const _url = urlImage.replace("http://localhost:5226/Uploads\\Anexos\\","");
+        console.log
+        const response = await deleteImagem(_url);
+
+        if(response.status == 200) {
+          setMensagem({tipo: 'sucesso', msg: response.data});
+          setTesteOptico([]);
+
+        } else {
+          setMensagem({tipo: 'error', msg: response.data});
+
+        }
+
+      } catch (error) {
+        setLoading(true)
+        
+      } finally {
+        setLoading(true)
+
+      }
     }
 
     async function fetchVizualizarArquivo() {
-      const filtro = {
-          UF : uf,
-          Estacao : 'bot',
-          CDO: cdo,
-      };
-      const data = await getVisualizarArquivo(filtro).finally(() => setLoading(true));
+      
+        try {
+          const filtro = {
+            UF : uf,
+            Estacao : 'bot',
+            CDO: cdo,
+          };
 
-      setTesteOptico(data)
+          const response = await getVisualizarArquivo(filtro);
+         
+          if(response.status == 200) {
+            setTesteOptico(response.data)
 
+          }
+
+         }catch(error){
+          setLoading(true);
+        
+        } finally {
+          setLoading(true)
+        }
       }
     
       useEffect(() => {
           fetchVizualizarArquivo();
-        
+          
       }, [loading]);
 
       function groupUrlsByFolders(testeOptico) {
@@ -98,15 +135,14 @@ function Imagem(){
       const groupedTesteOptico = groupUrlsByFolders(testeOptico);
 
       const Delete = () => {
-        setUrl(urlImage.replace("https://localhost:7155/Uploads\\Anexos\\",""));
         setVisible(true);
       }
     
       const ExcluirFecth = async () => {
         await fetchDeletaArquivo();
         setUrlImage("");
-        setLoading(false);
         setVisible(false);
+        setLoading(false);
       }
 
       const handleButtonClick = (url) => {
@@ -119,7 +155,7 @@ function Imagem(){
       };
 
       const handleFileChange = (event) => {
-        setArquivo(event.target.files[0]); // Atualiza o estado com o arquivo selecionado pelo usuário
+        setArquivo(event.target.files[0]); 
       };
 
       const handleChangeCdoia = (event) => {
@@ -130,14 +166,19 @@ function Imagem(){
       const handleUpload = async () => {
         
         if (arquivo) {
-          // Faz o upload do arquivo usando a função fazerUploadDeArquivo
           await fetchUploadImage();
-          inputFile.current.value = null;
-          inputRef.current.value = null
+          
+          if (inputFile.current) {
+            inputFile.current.value = null;
+          }
+          
+          inputRef.current ? (inputRef.current.value = null) : null;
+          
           setArquivo(null);
-          setInputMensagem({})
+          setInputMensagem({});
           setCdoia("");
           setLoading(false);
+
         } else {
           setInputMensagem({tipo: 'error', msg: 'Nenhum arquivo selecionado.'});
         }
@@ -145,7 +186,7 @@ function Imagem(){
 
       const subpasta = (folder) => {
         const suaString = folder;
-        const padrao = /^\d+-\w+\.\w+$/;
+        const padrao = /^[A-Za-z]+-\d+_\d+\.[A-Za-z]+$/;
 
         if (padrao.test(suaString)) {
           return true;

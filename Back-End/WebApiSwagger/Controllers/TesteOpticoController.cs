@@ -165,15 +165,15 @@ namespace WebApiSwagger.Controllers
                             listaModelo.Count > 1 ?
                                 modeloOut != 0 ?
                                     modeloOut > 1 ?
-                                    $"{listaModelo.Count} Novas CDOs importadas com sucesso. {modeloOut} CDOs já constam na base dados e foram atualizadas."
-                                    : $"{listaModelo.Count} Novas CDOs importadas com sucesso. 1 CDO já consta na base de dados e foi atualizada"
-                                : $"{listaModelo.Count} Novas CDOs importadas com sucesso."    
+                                    $"{listaModelo.Count} CDOs importadas com sucesso. {modeloOut} CDOs já constam na base dados e foram atualizadas."
+                                    : $"{listaModelo.Count} CDOs importadas com sucesso. 1 CDO já consta na base de dados e foi atualizada"
+                                : $"{listaModelo.Count} CDOs importadas com sucesso."    
                             :
                             modeloOut != 0 ?
                                     modeloOut > 1 ?
-                                    $"{listaModelo.Count} Nova CDO importadas com sucesso. {modeloOut} CDOs já constam na base dados e foram atualizadas."
-                                    : $"{listaModelo.Count} Nova CDO importadas com sucesso. 1 CDO já consta na base de dados e foi atualizada."
-                                : $"{listaModelo.Count} Nova CDO importadas com sucesso." 
+                                    $"{listaModelo.Count} CDO importadas com sucesso. {modeloOut} CDOs já constam na base dados e foram atualizadas."
+                                    : $"{listaModelo.Count} CDO importadas com sucesso. 1 CDO já consta na base de dados e foi atualizada."
+                                : $"{listaModelo.Count} CDO importadas com sucesso." 
                         : "Todas as CDOs já constam na base de dados e foram atualizadas.");    
                 }
             }

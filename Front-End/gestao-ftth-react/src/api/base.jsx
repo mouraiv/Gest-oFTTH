@@ -30,14 +30,14 @@ export const getVisualizarArquivo = async (filtro) => {
     params: filtro,
   });
 
-  return response.data;
+  return response;
 };
 
 export const deleteImagem = async (url) => {
   const response = await api.delete("Base/DeletarArquivo", {
     params:{url}
   });
-  return response.data;
+  return response;
 };
 
 // Função para fazer o upload de um arquivo para o backend
