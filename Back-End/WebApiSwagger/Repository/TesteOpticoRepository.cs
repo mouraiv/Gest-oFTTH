@@ -117,6 +117,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = _context.TestesOpticos
+                    .Where(p => p.Sel == 0)
                     .Include(p => p.Validacoes)
                     .Include(p => p.Analises)
                     .ThenInclude(p => p.AnaliseCDOIAs)

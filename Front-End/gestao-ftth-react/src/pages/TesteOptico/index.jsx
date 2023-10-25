@@ -237,6 +237,7 @@ function TesteOptico() {
               rows={testeOptico.resultado} 
               paginacao={testeOptico.paginacao}
               pagina={currentPage}
+              sel={testeOptico.sel}
               left={prevPage}
               right={nextPage}
               atualizar={fetchLoading} 

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Input } from "./styles";
 import { DetalheTesteOptico, updateTesteOptico } from "../../../api/testeOptico";
-import { GlobalStyle, Template } from "../../../GlobalStyle";
+import { GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../../GlobalStyle";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Spinner from "../../../components/Spinner";
@@ -10,6 +10,7 @@ import Spinner from "../../../components/Spinner";
 
 function Editar() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [testeOptico, setTesteOptico] = useState({});
 
@@ -56,9 +57,12 @@ function Editar() {
 
     useEffect(() => {
         fecthDetalheTesteOptico();
-        console.log(testeOptico)
 
-    },[loading])
+    },[loading]);
+
+    const handleVoltar = () => {
+        navigate(-1); 
+    };
 
     GlobalStyle();
 
@@ -187,6 +191,10 @@ function Editar() {
                             <label>OBSERVAÇÃO:</label>
                             <textarea defaultValue={testeOptico.testeObservacao} style={{width: '490PX'}} />
                         </div>
+                    </div>
+                    <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '0.8rem'}}>
+                        <ButtonCancelar onClick={handleVoltar}>Cancelar</ButtonCancelar>
+                        <ButtonConfirma onClick={null}>Editar</ButtonConfirma>
                     </div>
                 </div>
               </Container>

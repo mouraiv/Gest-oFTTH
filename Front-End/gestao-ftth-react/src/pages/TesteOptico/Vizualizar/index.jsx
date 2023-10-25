@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ButtonCancelar, ButtonConfirma, ButtonValidar, ButtonImagem, FooterButton, TableGrid, ButtonReValidar, ButtonEditar } from "./style";
+import { ButtonValidar, ButtonImagem, FooterButton, TableGrid, ButtonReValidar, ButtonEditar } from "./style";
 import { DetalheTesteOptico, updateTesteOptico } from "../../../api/testeOptico";
 import { getEnderecoTotalAny } from "../../../api/enterecoTotais"
-import { Content, GlobalStyle, Template } from "../../../GlobalStyle";
+import { Content, GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../../GlobalStyle";
 import { createValidacao } from '../../../api/validacao';
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
@@ -20,7 +20,7 @@ function Vizualizar(){
     const [testeOptico, setTesteOptico] = useState({});
     const [enderecoTotal, setEnderecoTotal] = useState({});
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { user } = useAuth();
     
     async function fetchValidar(sel) {
@@ -107,6 +107,10 @@ function Vizualizar(){
     const handleRevalidar = async() => {
         await fetchValidar(1);
         setLoading(false);
+    }
+
+    const HandleEditar = () => {
+        navigate(`/TesteOptico/Editar/${id}`);
     }
 
     GlobalStyle();
@@ -236,7 +240,7 @@ function Vizualizar(){
                     
                     { testeOptico.sel == 1 &&
                     <>
-                    <ButtonEditar>Editar</ButtonEditar>
+                    <ButtonEditar onClick={HandleEditar}>Editar</ButtonEditar>
                     <ButtonConfirma>Analisar</ButtonConfirma>
                     </>
                     }

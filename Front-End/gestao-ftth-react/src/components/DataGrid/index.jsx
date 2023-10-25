@@ -12,7 +12,7 @@ export default function DataGrid({
   pagina, 
   left, 
   right,
-  editar,
+  sel,
   atualizar
 }) {
   const _paginasCorrente = paginacao.total < paginacao.paginasCorrentes ? paginacao.total : paginacao.paginasCorrentes; 
@@ -20,7 +20,7 @@ export default function DataGrid({
   const _pagina = pagina == 1 ? 1 : (((pagina * 100) - 100) + 1);
 
   const navigate = useNavigate();
-
+  
   const [visible, setVisible] = useState(false);
   const [id, setId] = useState();
 
@@ -33,6 +33,11 @@ export default function DataGrid({
   const handleVisualizar = (id) => {
     setId(id);
     navigate(`/TesteOptico/Visualizar/${id}`);
+  }
+
+  const HandleEditar = (id) => {
+    setId(id);
+    navigate(`/TesteOptico/Editar/${id}`);
   }
 
   const HandleExcluir = (id) => {
@@ -91,12 +96,13 @@ export default function DataGrid({
                     <td key={column.key}>{row[column.key] || "-"}</td>
                   ))}
                   <td>
-                    {/* Botão Detalhe */}
                     <Button onClick={() => handleVisualizar(row.id)} >Visualizar</Button>
-                    {/* Botão Editar */}
-                    <Button onClick={editar} >Editar</Button>
-                    {/* Botão Excluir */}
-                    <Button onClick={() => HandleExcluir(row.id)} >Excluir</Button>
+                    { row.sel == 1 &&
+                    <>
+                      <Button onClick={() => HandleEditar(row.id)} >Editar</Button>
+                      <Button onClick={() => HandleExcluir(row.id)} >Excluir</Button>
+                    </>
+                    }
                   </td>
                 </tr>
               ))

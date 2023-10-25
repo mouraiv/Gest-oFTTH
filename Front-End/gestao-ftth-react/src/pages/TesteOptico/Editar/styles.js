@@ -33,3 +33,4 @@ export const Input = styled("input", {
     padding: '0.3rem',
     fontWeight: '600'
 });
+
