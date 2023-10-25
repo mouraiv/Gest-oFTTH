@@ -7,6 +7,7 @@ import Login from '../pages/Login';
 import ImportFile from "../pages/TesteOptico/Importar";
 import Imagem from "../pages/TesteOptico/Imagens";
 import Editar from "../pages/TesteOptico/Editar";
+import Analise from "../pages/Analise";
 
 export default function AppRoutes(){
     return (
@@ -18,6 +19,7 @@ export default function AppRoutes(){
                     <Route path="/TesteOptico/Importar" element={<ImportFile />} />
                     <Route path="/TesteOptico/Visualizar/:id" element={<Vizualizar />} />
                     <Route path="/TesteOptico/Imagem/:uf/:estacao/:cdo" element={<Imagem />} />
+                    <Route path="/Analise" element={<Analise />} />
                 </Route>
                 <Route path="/" element={<Login />} />
             </Routes>

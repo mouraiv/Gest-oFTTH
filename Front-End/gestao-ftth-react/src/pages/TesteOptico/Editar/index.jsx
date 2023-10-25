@@ -13,6 +13,7 @@ function Editar() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [testeOptico, setTesteOptico] = useState({});
+    const [formValues, setFormValues] = useState({});
 
     async function fetchUpdateTesteOptico() {
         try {
@@ -37,6 +38,8 @@ function Editar() {
             setLoading(true);
         }
     }
+
+    console.log(testeOptico);
 
     async function fecthDetalheTesteOptico(){
         try {
@@ -64,6 +67,11 @@ function Editar() {
         navigate(-1); 
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setTesteOptico({ ...testeOptico, [name]: value });
+    };
+
     GlobalStyle();
 
     return (
@@ -75,121 +83,121 @@ function Editar() {
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>UF:</label>
-                            <Input defaultValue={testeOptico.uf} style={{width: '230px'}} />
+                            <Input name="uf" onChange={handleInputChange} defaultValue={testeOptico.uf} style={{width: '230px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>CONSTRUTORA:</label>
-                            <Input defaultValue={testeOptico.construtora} style={{width: '230px'}} />
+                            <Input name="construtora" onChange={handleInputChange} defaultValue={testeOptico.construtora} style={{width: '230px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>ESTAÇÃO:</label>
-                            <Input defaultValue={testeOptico.estacao} style={{width: '230px'}} />
+                            <Input name="estacao" onChange={handleInputChange} defaultValue={testeOptico.estacao} style={{width: '230px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>TIPO OBRA:</label>
-                            <Input defaultValue={testeOptico.tipoObra} style={{width: '230px'}} />
+                            <Input name="tipoObra" onChange={handleInputChange} defaultValue={testeOptico.tipoObra} style={{width: '230px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>CDO:</label>
-                            <Input defaultValue={testeOptico.cdo} style={{width: '230px'}} />
+                            <Input name="cdo" onChange={handleInputChange} defaultValue={testeOptico.cdo} style={{width: '230px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>CAPACIDADE:</label>
-                            <Input defaultValue={testeOptico.capacidade} style={{width: '230px'}} />
+                            <Input name="capacidade" onChange={handleInputChange} defaultValue={testeOptico.capacidade} style={{width: '230px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>CABO:</label>
-                            <Input defaultValue={testeOptico.cabo} style={{width: '145px'}} />
+                            <Input name="cabo" onChange={handleInputChange} defaultValue={testeOptico.cabo} style={{width: '145px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>CELULA:</label>
-                            <Input defaultValue={testeOptico.celula} style={{width: '145px'}} />
+                            <Input name="celula" onChange={handleInputChange} defaultValue={testeOptico.celula} style={{width: '145px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>UMS:</label>
-                            <Input defaultValue={testeOptico.totalUMs} style={{width: '144px'}} />
+                            <Input name="totalUMs" onChange={handleInputChange} defaultValue={testeOptico.totalUMs} style={{width: '144px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>ENDEREÇO:</label>
-                            <Input defaultValue={testeOptico.endereco} style={{width: '490PX'}} />
+                            <Input name="endereco" onChange={handleInputChange} defaultValue={testeOptico.endereco} style={{width: '490PX'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>ESTADO CAMPO:</label>
-                            <Input defaultValue={testeOptico.estadoCampo} style={{width: '230px'}} />
+                            <Input name="estadoCampo" onChange={handleInputChange} defaultValue={testeOptico.estadoCampo} style={{width: '230px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>ESTADO PROJETO:</label>
-                            <Input defaultValue={testeOptico.estadoProjeto} style={{width: '230px'}} />
+                            <Input name="estadoProjeto" onChange={handleInputChange} defaultValue={testeOptico.estadoProjeto} style={{width: '230px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>ESTADO CONTROLE:</label>
-                            <Input defaultValue={testeOptico.estadoControle} style={{width: '230px'}} />
+                            <Input name="estadoControle" onChange={handleInputChange} defaultValue={testeOptico.estadoControle} style={{width: '230px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>DATA CONSTRUÇÃO:</label>
-                            <Input placeholder="__/__/____" defaultValue={testeOptico.dataConstrucao} style={{width: '230px'}} />
+                            <Input name="dataConstrucao" onChange={handleInputChange} placeholder="__/__/____" defaultValue={testeOptico.dataConstrucao} style={{width: '230px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>DATA TESTE:</label>
-                            <Input placeholder="__/__/____" defaultValue={testeOptico.dataTeste} style={{width: '230px'}} />
+                            <Input name="dataTeste" onChange={handleInputChange} placeholder="__/__/____" defaultValue={testeOptico.dataTeste} style={{width: '230px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>DATA RECEBIMENTO:</label>
-                            <Input placeholder="__/__/____" defaultValue={testeOptico.dataRecebimento} style={{width: '230px'}} />
+                            <Input name="dataRecebimento" onChange={handleInputChange} placeholder="__/__/____" defaultValue={testeOptico.dataRecebimento} style={{width: '230px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>TÉCNICO:</label>
-                            <Input defaultValue={testeOptico.tecnico} style={{width: '230px'}} />
+                            <Input name="tecnico" onChange={handleInputChange} defaultValue={testeOptico.tecnico} style={{width: '230px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>EQUIPE DE CONSTRUÇÃO:</label>
-                            <Input defaultValue={testeOptico.equipeConstrucao} style={{width: '230px'}} />
+                            <Input name="equipeConstrucao" onChange={handleInputChange} defaultValue={testeOptico.equipeConstrucao} style={{width: '230px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>BOBINA LANÇAMENTO:</label>
-                            <Input defaultValue={testeOptico.bobinaLancamento} style={{width: '145px'}} />
+                            <Input name="bobinaLancamento" onChange={handleInputChange} defaultValue={testeOptico.bobinaLancamento} style={{width: '145px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>BOBINA RECEPÇÃO:</label>
-                            <Input defaultValue={testeOptico.bobinaRecepcao} style={{width: '145px'}} />
+                            <Input name="bobinaRecepcao" onChange={handleInputChange} defaultValue={testeOptico.bobinaRecepcao} style={{width: '145px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>POSIÇÃO ICX / DGO:</label>
-                            <Input defaultValue={testeOptico.posicaoIcxDgo} style={{width: '144px'}} />
+                            <Input name="posicaoIcxDgo" onChange={handleInputChange} defaultValue={testeOptico.posicaoIcxDgo} style={{width: '144px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>SPLITTER CEOS:</label>
-                            <Input defaultValue={testeOptico.splitterCEOS} style={{width: '230px'}} />
+                            <Input name="splitterCEOS" onChange={handleInputChange} defaultValue={testeOptico.splitterCEOS} style={{width: '230px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>FIBRA DGO:</label>
-                            <Input defaultValue={testeOptico.fibraDGO} style={{width: '230px'}} />
+                            <Input name="fibraDGO" onChange={handleInputChange} defaultValue={testeOptico.fibraDGO} style={{width: '230px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>OBSERVAÇÃO:</label>
-                            <textarea defaultValue={testeOptico.testeObservacao} style={{width: '490PX'}} />
+                            <textarea name="testeObservacao" onChange={handleInputChange} defaultValue={testeOptico.testeObservacao} style={{width: '490PX'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '0.8rem'}}>
