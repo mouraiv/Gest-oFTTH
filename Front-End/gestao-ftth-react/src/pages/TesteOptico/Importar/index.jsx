@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from "react";
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
-import { getControleCdo, ImportarArquivo, deleteTesteOptico } from "../../../api/testeOptico";
+import { getControleCdo, ImportarArquivo} from "../../../api/testeOptico";
 import { DownloadArquivo } from "../../../api/base";
 import DataGridTable from '../../../components/DataGrid';
 import { ImportArea, InputImport, ButtonUpload, ButtonDownload, LinhaVertical } from "./style";
@@ -34,12 +34,10 @@ function ImportFile(){
         if(importar.status == 200) {
           setMensagem(importar.data);
 
-        } else {
-          setMensagem(importar.data);
-
-        }
+        } 
         
       } catch (error) {
+        setMensagem("Erro ao realizar upload.");
         setLoading(true);
         
       } finally {
@@ -69,6 +67,9 @@ function ImportFile(){
         }
 
         } catch (error) {
+          setDialogAviso(true);
+          setMensagem(`Erro ao carregar.`)
+          setVisible(true);
           setLoading(true);
           
         } finally {
@@ -153,7 +154,7 @@ function ImportFile(){
             <DialogAlert 
                   visibleDiag={visible} 
                   visibleHide={() => setVisible(false)}
-                  header={<h4>Aviso</h4>}
+                  header={<h4>Atenção</h4>}
                   colorType={'#ff0000'}
                   ConfirmaButton={false}
                   textCloseButton={'Ok'}
@@ -168,7 +169,7 @@ function ImportFile(){
                 <DialogAlert 
                   visibleDiag={visible} 
                   visibleHide={() => setVisible(false)}
-                  header={<h4>Atenção</h4>}
+                  header={<h4>Aviso</h4>}
                   colorType={'#13293d'}
                   ConfirmaButton={true}
                   textCloseButton={'Cancelar'}

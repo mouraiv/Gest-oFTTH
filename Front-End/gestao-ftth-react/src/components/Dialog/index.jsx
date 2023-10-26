@@ -17,7 +17,6 @@ export default function DialogAlert({
         <Dialog header={<div style={{
             borderLeft: `5px solid ${colorType}`, 
             paddingLeft: '0.5rem',
-            wordBreak: 'break-word'
         }}>{header}</div>} visible={visibleDiag} style={{ 
               border: `1px solid ${colorType}`, 
               padding:'1rem',
@@ -28,7 +27,9 @@ export default function DialogAlert({
               closable={false}
               position={'top'}
               contentStyle={{
+                width: '450px',
                 marginTop: '1rem',
+                wordBreak: 'break-all'
               }}
               maskStyle={{
                 backgroundColor: 'rgba(93,109,126, 0.6)',

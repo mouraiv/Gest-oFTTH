@@ -6,6 +6,7 @@ import { GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../../
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Spinner from "../../../components/Spinner";
+import DialogAlert from "../../../components/Dialog";
 
 
 function Editar() {
@@ -13,7 +14,9 @@ function Editar() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [testeOptico, setTesteOptico] = useState({});
-    const [formValues, setFormValues] = useState({});
+    const [visible, setVisible] = useState(false);
+    const [mensagem, setMensagem] = useState("");
+    const [dialogAviso, setDialogAviso] = useState()
 
     async function fetchUpdateTesteOptico() {
         try {
@@ -22,16 +25,27 @@ function Editar() {
                 id_TesteOptico: id,
                 ...testeOptico
             }
-
-            
+         
             const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
     
-            if (testeOpticoResponse.status === 200) {
-                console.log(testeOpticoResponse.data)
+            if (testeOpticoResponse.status == 200) {
+                setDialogAviso(false);
+                setMensagem(testeOpticoResponse.data)
+                setVisible(true);
+                
+                const detalheTesteOptico = await DetalheTesteOptico(id);
+
+                if(detalheTesteOptico.status == 200) {
+                    setTesteOptico(detalheTesteOptico.data);
+
+                }
+
             }
 
         } catch (error) {
-            console.log(testeOpticoResponse.data)
+            setDialogAviso(true);
+            setMensagem(`Erro ao editar.`)
+            setVisible(true);
             setLoading(true);
 
         } finally {
@@ -39,18 +53,19 @@ function Editar() {
         }
     }
 
-    console.log(testeOptico);
-
     async function fecthDetalheTesteOptico(){
         try {
             const detalheTesteOptico = await DetalheTesteOptico(id);
 
-            if(detalheTesteOptico.status == 200) {
+            if(detalheTesteOptico.status <= 200) {
                 setTesteOptico(detalheTesteOptico.data);
+
             }
 
         } catch (error) {
-            console.log(error)
+            setDialogAviso(true);
+            setMensagem(`Não foi possível carregar.`)
+            setVisible(true);
             setLoading(true);
             
         } finally {
@@ -61,7 +76,7 @@ function Editar() {
     useEffect(() => {
         fecthDetalheTesteOptico();
 
-    },[loading]);
+    },[]);
 
     const handleVoltar = () => {
         navigate(-1); 
@@ -72,6 +87,21 @@ function Editar() {
         setTesteOptico({ ...testeOptico, [name]: value });
     };
 
+    const camposObrigatorios = ['uf', 'construtora', 'estacao', 'cdo',
+                                'cabo', 'celula', 'totalUMs', 'dataTeste', 'dataRecebimento', 'tecnico'];
+
+    const handleEdite = () => {
+        const camposVazios = camposObrigatorios.filter(campo => !testeOptico[campo]);
+        if (camposVazios.length > 0) {
+            setDialogAviso(true);
+            setMensagem(`Preencha os campos obrigatórios: ${camposVazios.join(', ')}`);
+            setVisible(true);
+        } else {
+            fetchUpdateTesteOptico();
+            setLoading(false);
+        }
+    }
+
     GlobalStyle();
 
     return (
@@ -79,6 +109,37 @@ function Editar() {
         <Template>
           <Header title={"Teste Óptico - Editar"} />
             <Container>
+                { dialogAviso ? (
+                <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Atenção</h4>}
+                    colorType={'#ff0000'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Ok'}
+                    text={
+                        <>
+                        <p>{mensagem}</p>
+                        </>
+                    }
+                />
+                ):(
+                    <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Aviso</h4>}
+                    colorType={'#13293d'}
+                    ConfirmaButton={false}
+                    textCloseButton={'OK'}
+                    text={
+                        <>
+                        <p>{mensagem}</p>
+                        </>
+                    }
+                    />
+                )
+                }
+                { loading ? (
                 <div className="formulario">
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
@@ -201,10 +262,12 @@ function Editar() {
                         </div>
                     </div>
                     <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '0.8rem'}}>
-                        <ButtonCancelar onClick={handleVoltar}>Cancelar</ButtonCancelar>
-                        <ButtonConfirma onClick={null}>Editar</ButtonConfirma>
+                        <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
+                        <ButtonConfirma onClick={handleEdite}>Editar</ButtonConfirma>
                     </div>
                 </div>
+                ):(<Spinner />)
+                }
               </Container>
             <Footer />
           </Template>

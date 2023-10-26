@@ -12,6 +12,7 @@ import TextInput from '../../components/TextInput';
 import { DateMask } from "../../components/TextInput/mask/index";
 import DropBox from '../../components/dropbox';
 import { Filter, ButtonImport, SubMenu } from './styles';
+import DialogAlert from "../../components/Dialog";
 
 function TesteOptico() {
   GlobalStyle();
@@ -30,6 +31,8 @@ function TesteOptico() {
   const [dateInputRecebimento, setDateInputRecebimento] = useState('');
   const [dateInputTeste, setDateInputTeste] = useState('');
   const [dateInputConstrucao, setDateInputConstrucao] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [mensagem, setMensagem] = useState("");
 
   const navigate = useNavigate();
 
@@ -88,7 +91,9 @@ function TesteOptico() {
       }
 
     } catch (error) {
-      setLoading(true)
+      setMensagem(`Erro ao carregar.`)
+      setVisible(true);
+      setLoading(true);
       
     } finally {
       setLoading(true)
@@ -201,6 +206,19 @@ function TesteOptico() {
       <Template>
         <Header title={"Teste Óptico"} />
           <Content>
+          <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Atenção</h4>}
+                    colorType={'#ff0000'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Ok'}
+                    text={
+                        <>
+                        <p>{mensagem}</p>
+                        </>
+                    }
+                />
             <SubMenu>
               <ButtonImport onClick={handleImportar} >Controler CDOs</ButtonImport>
              </SubMenu>

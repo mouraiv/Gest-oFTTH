@@ -41,12 +41,12 @@ function Imagem(){
           setMensagem({tipo: 'error', msg: ''});
           setMensagem({tipo: 'sucesso', msg: response.data});
 
-        } else {
-          setMensagem({tipo: 'error', msg: response.data});
-          
-        }
+        } 
 
       }catch(error){
+        setDialogAviso(true);
+        setMensagem({tipo: 'error', msg: "Erro ao realizar o upload."});
+        setVisible(true);
         setLoading(true);
 
       } finally {
@@ -57,7 +57,7 @@ function Imagem(){
 
     async function fetchDeletaArquivo(){
       try {
-        const _url = urlImage.replace("http://localhost:5226/Uploads\\Anexos\\","");
+        const _url = urlImage.replace("https://localhost:7155/Uploads\\Anexos\\","");
         console.log
         const response = await deleteImagem(_url);
 
@@ -65,13 +65,13 @@ function Imagem(){
           setMensagem({tipo: 'sucesso', msg: response.data});
           setTesteOptico([]);
 
-        } else {
-          setMensagem({tipo: 'error', msg: response.data});
-
         }
 
       } catch (error) {
-        setLoading(true)
+        setDialogAviso(true);
+        setMensagem({tipo: 'error', msg: "Erro ao deletar."});
+        setVisible(true);
+        setLoading(true);
         
       } finally {
         setLoading(true)

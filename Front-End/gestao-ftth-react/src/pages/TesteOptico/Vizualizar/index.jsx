@@ -9,6 +9,7 @@ import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
 import { useAuth } from "../../../contexts/auth";
+import DialogAlert from "../../../components/Dialog";
 
 function Vizualizar(){
     const { id } = useParams();
@@ -19,6 +20,9 @@ function Vizualizar(){
     const [cdo, setCdo] = useState();
     const [testeOptico, setTesteOptico] = useState({});
     const [enderecoTotal, setEnderecoTotal] = useState({});
+    const [visible, setVisible] = useState(false);
+    const [mensagem, setMensagem] = useState("");
+    
 
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -34,6 +38,7 @@ function Vizualizar(){
             }
 
             testeOpticoData.sel = sel;
+            testeOpticoData.aceitacaoData = sel == 0 ? _dataAtual : null;
 
             const validacao = {
                 DataValidacao: _dataAtual,
@@ -50,6 +55,8 @@ function Vizualizar(){
             }
 
         } catch (error) {
+            setMensagem(`Erro ao validar.`);
+            setVisible(true);
             setLoading(true);
 
         } finally {
@@ -78,7 +85,8 @@ function Vizualizar(){
             }
 
         } catch (error) {
-            console.log(error)
+            setMensagem(`Erro ao carregar.`)
+            setVisible(true);
             setLoading(true);
             
         } finally {
@@ -109,16 +117,25 @@ function Vizualizar(){
         setLoading(false);
     }
 
-    const HandleEditar = () => {
-        navigate(`/TesteOptico/Editar/${id}`);
-    }
-
     GlobalStyle();
     return(
         <>
         <Template>
         <Header title={"Teste Óptico - Visualizar"} />
         <Content>
+        <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Atenção</h4>}
+                    colorType={'#ff0000'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Ok'}
+                    text={
+                        <>
+                        <p>{mensagem}</p>
+                        </>
+                    }
+                />
         { loading ? (
             <>
             <div style={{
@@ -240,7 +257,6 @@ function Vizualizar(){
                     
                     { testeOptico.sel == 1 &&
                     <>
-                    <ButtonEditar onClick={HandleEditar}>Editar</ButtonEditar>
                     <ButtonConfirma>Analisar</ButtonConfirma>
                     </>
                     }
