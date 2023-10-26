@@ -1,36 +1,76 @@
-import { styled } from "@stitches/react"
+import { styled } from "@stitches/react";
 
-export const Container = styled("div", {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+export const TableGrid = styled("table", {
+    fontSize: '0.7rem',
+    textAlign: 'center',
 
-    '.formulario' : {
-        backgroundColor: '#D6DBDF',
-        margin: '1rem',
-        padding: '0.8rem'
+    "thead":{
+        backgroundColor: '#13293d',
+        border: '1px solid #13293d',
+    },
+    "tbody tr:nth-child(even)":{
+        backgroundColor: '#D6DBDF'
+    },
+    "th":{
+        color: 'White',
+        paddingLeft: '0.5rem',
+        paddingRight: '0.5rem',
+    },
+    "td":{
+        width: '350px',
+        paddingLeft: '0.5rem',
+        fontWeight: '700',
+        border: '1px solid #D6DBDF',
+        wordWrap: 'break-word'
+    },
+    "th, td": {
+        height: '25px',
     },
 
-    'label':{
-        fontSize: '0.7rem',
-        fontWeight: '700'
-    },
+});
 
-    'textarea': {
-        height: '40px',
-        resize: 'none',
-        border: '1px solid',
-        borderColor: '#13293d',
-        padding: '0.3rem',
-        fontWeight: '600'
+export const FooterButton = styled("div", {
+    display:'flex',
+    backgroundColor: '#d6dbdf',
+    minWidth: '720px', 
+    justifyContent: 'flex-end', 
+    alignItems: 'flex-end',
+    marginTop: '1.5rem',
+    paddingTop: '1rem'
+
+});
+
+export const ButtonImagem = styled("button", {
+    border: '1px solid #5D6D7E',
+    borderRadius: '0.3rem',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    marginLeft:'0.5rem',
+    marginBottom: '0.7rem',
+    width: '100px',
+    height: '30px',
+    color: '#13293d',
+    cursor: 'pointer',
+
+    '&:active' : {
+        backgroundColor: '#D6DBDF',   
     }
 });
 
-export const Input = styled("input", {
-    height: '12px',
-    border: '1px solid',
-    borderColor: '#13293d',
-    padding: '0.3rem',
-    fontWeight: '600'
+export const Button = styled("button", {
+    backgroundColor: 'transparent',
+    padding: '0rem',
+    border: 'none',
+    borderRadius: '0.2rem',
+    marginLeft: '0.8rem',
+    fontSize: '0.8rem',
+    height: '23px',
+    color: '#13293d',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    
+    "&:active":{
+        color: '#FFFFF',
+        textDecoration: 'none'
+    }
 });
-

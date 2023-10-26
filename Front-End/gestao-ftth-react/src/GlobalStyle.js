@@ -6,6 +6,7 @@ export const GlobalStyle = globalCss({
             padding: '0px',
             fontFamily: 'Segoe UI',
             color: '#13293d', 
+            borderCollapse: 'collapse',
         },
         'body':{
             backgroundColor: 'whitesmoke', 

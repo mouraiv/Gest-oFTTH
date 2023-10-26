@@ -117,6 +117,10 @@ function Vizualizar(){
         setLoading(false);
     }
 
+    const handleAnalise = () => {
+        navigate(`/Analise/${id}`); 
+    };
+
     GlobalStyle();
     return(
         <>
@@ -257,7 +261,7 @@ function Vizualizar(){
                     
                     { testeOptico.sel == 1 &&
                     <>
-                    <ButtonConfirma>Analisar</ButtonConfirma>
+                    <ButtonConfirma onClick={handleAnalise}>Analisar</ButtonConfirma>
                     </>
                     }
             </FooterButton>
