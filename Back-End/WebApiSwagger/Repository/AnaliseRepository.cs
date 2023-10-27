@@ -63,7 +63,7 @@ namespace WebApiSwagger.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocorreu um erro ao editar: " + ex.Message);
+                throw new Exception("Ocorreu um erro ao editar: " + ex.InnerException);
             }
         }
 

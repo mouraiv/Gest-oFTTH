@@ -51,7 +51,7 @@ namespace WebApiSwagger.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Ocorreu um erro ao atualizar: " + ex.Message);
+                return BadRequest("Ocorreu um erro ao atualizar: " + ex.InnerException);
             }
             
         }

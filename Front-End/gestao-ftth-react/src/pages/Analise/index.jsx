@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, ButtonImagem, FooterButton, TableGrid} from "./styles";
-import { DetalheTesteOptico, updateTesteOptico } from "../../api/testeOptico";
+import { DetalheTesteOptico} from "../../api/testeOptico";
+import { updateAnalise, createAnalise } from "../../api/analise";
 import { getEnderecoTotalAny } from "../../api/enterecoTotais"
 import { Content, GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../GlobalStyle";
-import { createValidacao } from '../../api/validacao';
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import Spinner from '../../components/Spinner';
@@ -15,7 +15,7 @@ function Vizualizar(){
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [uf, setUf] = useState();
-    const [dataAtual, setDataAtual] = useState(new Date());
+    const [dataAtual] = useState(new Date());
     const [estacao, setEstacao] = useState();
     const [cdo, setCdo] = useState();
     const [testeOptico, setTesteOptico] = useState({});
@@ -24,46 +24,95 @@ function Vizualizar(){
     const [visualizarAnalise, setVisualizarAnalise] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [dialogAviso, setDialogAviso] = useState();
+    const [dialogEdit, setDialogEdit] = useState(false);
+    const [statusAnalise, setStatusAnalise] = useState("");
+    const [inputValue, setInputValue] = useState({analiseObservacao:"", status: ""});
 
     const navigate = useNavigate();
     const { user } = useAuth();
-    
+
     async function fetchValidar(sel) {
         try {
-
             const _dataAtual = dataAtual.toISOString();
+            
+            const analiseData = {
+                ...testeOptico.analises[0]
+            };
 
-            const testeOpticoData = {
-                id_TesteOptico: id,
-                ...testeOptico
-            }
+            const _analiseObservacao = analiseData.analiseObservacao.replace(';.','');
 
-            testeOpticoData.sel = sel;
-            testeOpticoData.aceitacaoData = sel == 0 ? _dataAtual : null;
+            if(dialogEdit) {
+              const observacao = _analiseObservacao.split(';');
+              const index = (observacao.length - 1);
+              observacao[index] = inputValue.analiseObservacao;
+              const _observacao = observacao.join(';');
 
-            const validacao = {
-                DataValidacao: _dataAtual,
-                Tecnico: user.nome,
-                Id_TesteOptico: id,
-                Status: sel == 0 ? "VALIDADO" : "NÃO VALIDADO"
-            }
+              analiseData.analiseObservacao = ` ${_observacao}`;
 
+              const analiseResponse = await updateAnalise(analiseData);
     
-            const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
-    
-            if (testeOpticoResponse.status === 200) {
-                await createValidacao(validacao);
-            }
+              if (analiseResponse.status === 200) {
+                  console.log("Validado com sucesso")
+              };
 
+            } else {
+              analiseData.analista = user.nome.toUpperCase();
+              analiseData.status = statusAnalise == 'APROVADO' ? 'REPROVADO' : 'APROVADO';
+              analiseData.dataAnalise = _dataAtual;
+
+              if(inputValue.analiseObservacao != "") {
+                analiseData.analiseObservacao = `${_analiseObservacao}; ${inputValue.analiseObservacao}`;
+
+                const analiseResponse = await updateAnalise(analiseData);
+    
+                if (analiseResponse.status === 200) {
+                    console.log("Validado com sucesso")
+                };
+                    
+              } 
+
+            }
+                        
+            
         } catch (error) {
             setDialogAviso(true);
-            setMensagem(`Erro ao validar.`);
+            setMensagem(`Erro ao validar`);
             setVisible(true);
             setLoading(true);
 
         } finally {
             setLoading(true);
         }
+    }
+
+    async function fetchInsertValidar(status) {
+      try {
+          const _dataAtual = dataAtual.toISOString();
+
+          const analiseInsert = {
+            status: status,
+            analista: user.nome.toUpperCase(),
+            dataAnalise: _dataAtual,
+            analiseObservacao: inputValue.analiseObservacao,
+            id_TesteOptico: id,
+          }
+
+          console.log(analiseInsert);
+          /*const analiseResponse = await createAnalise(analiseInsert);
+  
+          if (analiseResponse.status === 200) {
+            console.log("Validado com sucesso")
+          }*/           
+          
+      } catch (error) {
+          setDialogAviso(true);
+          setMensagem(`Erro ao validar`);
+          setVisible(true);
+          setLoading(true);
+
+      } finally {
+          setLoading(true);
+      }
     }
 
     async function fecthDetalheTesteOptico(){
@@ -76,6 +125,21 @@ function Vizualizar(){
                 setEstacao(detalheTesteOptico.data.estacao);
                 setUf(detalheTesteOptico.data.uf);
 
+                let status = detalheTesteOptico.data.analises.length;
+
+                if(status > 0) {
+                setStatusAnalise(detalheTesteOptico.data.analises[0].status);
+
+                let obs = detalheTesteOptico.data.analises[0].analiseObservacao.split(';');
+                let _obs = obs[obs.length - 1];
+
+                setInputValue(
+                    {
+                      analiseObservacao: `${_obs}`, 
+                      status: `${obs.length > 1 ? "RE-TESTE" : "TESTADO"}`
+                    }
+                  );
+
                 const detalheEnderecoTotal = await getEnderecoTotalAny(
                     detalheTesteOptico.data.id_EnderecoTotal
                 );
@@ -83,11 +147,12 @@ function Vizualizar(){
                 if(detalheEnderecoTotal.status == 200) {
                     setEnderecoTotal(detalheEnderecoTotal.data);
                 }
+              }
             }
 
         } catch (error) {
             setDialogAviso(true);
-            setMensagem(`Erro ao carregar.`)
+            setMensagem(`Erro ao carregar.${error}`)
             setVisible(true);
             setLoading(true);
             
@@ -120,6 +185,7 @@ function Vizualizar(){
     
     
     const Adicionar = () => {
+      setDialogEdit(false);
       setDialogAviso(false);
       setVisible(true);
     };
@@ -127,6 +193,32 @@ function Vizualizar(){
     const AnaliseDetalhe = () => {
       setVisualizarAnalise(true);
     };
+
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setInputValue({analiseObservacao: value});
+    };
+
+    const handleEdit = (e) => {
+      setDialogEdit(true);
+      setVisible(true);
+    };
+
+    const ConfirmarAnalise = (e, buttonName) => {
+      console.log(statusAnalise);
+      const { name, value } = e.target;
+      console.log(e);
+      if(statusAnalise == ""){
+        fetchInsertValidar("APROVADO");
+        //setVisible(false);
+        setLoading(false);
+
+      }else{
+        fetchValidar();
+        setVisible(false);
+        setLoading(false);
+      }
+    }
 
     GlobalStyle();
     return(
@@ -178,13 +270,171 @@ function Vizualizar(){
                     <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
-                    header={<h4>Aviso</h4>}
+                    header={<h4>Analise</h4>}
                     colorType={'#13293d'}
-                    ConfirmaButton={false}
-                    textCloseButton={'OK'}
+                    ConfirmaButton={true}
+                    textCloseButton={'Cancelar'}
+                    buttonConfirmar={ConfirmarAnalise}
                     text={
                         <>
-                        <p>{mensagem}</p>
+                        { !dialogEdit ?
+                        ( 
+                          statusAnalise != "" ? (
+                          <div>
+                            {statusAnalise != 'APROVADO' ? (
+                            <div style={
+                                {
+                                  display: 'flex',
+                                  width: '430px',
+                                  marginLeft: '0.5rem',
+                                  fontSize: '0.8rem', 
+                                  fontWeight: '700', 
+                                  justifyContent: 'center', 
+                                  padding: '0.2rem',
+                                  backgroundColor: '#D4EFDF',
+                                  color: '#145A32',
+                                  border: '1px solid #145A32'
+                                }
+                              }>APROVADO</div>
+                              ) : (
+                                <div style={
+                                  {
+                                    display: 'flex',
+                                    width: '430px',
+                                    marginLeft: '0.5rem',
+                                    fontSize: '0.8rem', 
+                                    fontWeight: '700', 
+                                    justifyContent: 'center', 
+                                    padding: '0.2rem',
+                                    backgroundColor: '#E6B0AA',
+                                    color: '#641E16',
+                                    border: '1px solid #641E16'
+                                  }
+                                }>REPROVADO</div>
+                              )
+                              }
+                            <div style={{display: 'flex'}}>
+                              <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
+                                <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
+                                <textarea onChange={handleInputChange} name="testeObservacao" style={
+                                  {
+                                    width: '430px', 
+                                    height: '100px', 
+                                    resize: 'none',
+                                    padding: '0.3rem',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '600'
+                                  }
+                                }
+                                />
+                            </div>
+                            </div>
+                          </div>
+                          ):(
+                            <div>
+                            {statusAnalise == 'APROVADO' ? (
+                            <div style={
+                                {
+                                  display: 'flex',
+                                  width: '430px',
+                                  marginLeft: '0.5rem',
+                                  fontSize: '0.8rem', 
+                                  fontWeight: '700', 
+                                  justifyContent: 'center', 
+                                  padding: '0.2rem',
+                                  backgroundColor: '#D4EFDF',
+                                  color: '#145A32',
+                                  border: '1px solid #145A32'
+                                }
+                              }>APROVADO</div>
+                              ) : (
+                                <div style={
+                                  {
+                                    display: 'flex',
+                                    width: '430px',
+                                    marginLeft: '0.5rem',
+                                    fontSize: '0.8rem', 
+                                    fontWeight: '700', 
+                                    justifyContent: 'center', 
+                                    padding: '0.2rem',
+                                    backgroundColor: '#E6B0AA',
+                                    color: '#641E16',
+                                    border: '1px solid #641E16'
+                                  }
+                                }>REPROVADO</div>
+                              )
+                              }
+                            <div style={{display: 'flex'}}>
+                              <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
+                                <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
+                                <textarea onChange={handleInputChange} name="testeObservacao" style={
+                                  {
+                                    width: '430px', 
+                                    height: '100px', 
+                                    resize: 'none',
+                                    padding: '0.3rem',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '600'
+                                  }
+                                }
+                                />
+                            </div>
+                            </div>
+                          </div>
+                          )
+                        ) : (
+                          <div>
+                            {statusAnalise == 'APROVADO' ? (
+                            <div style={
+                                {
+                                  display: 'flex',
+                                  width: '430px',
+                                  marginLeft: '0.5rem',
+                                  fontSize: '0.8rem', 
+                                  fontWeight: '700', 
+                                  justifyContent: 'center', 
+                                  padding: '0.2rem',
+                                  backgroundColor: '#D4EFDF',
+                                  color: '#145A32',
+                                  border: '1px solid #145A32'
+                                }
+                              }>APROVADO</div>
+                              ) : (
+                                <div style={
+                                  {
+                                    display: 'flex',
+                                    width: '430px',
+                                    marginLeft: '0.5rem',
+                                    fontSize: '0.8rem', 
+                                    fontWeight: '700', 
+                                    justifyContent: 'center', 
+                                    padding: '0.2rem',
+                                    backgroundColor: '#E6B0AA',
+                                    color: '#641E16',
+                                    border: '1px solid #641E16'
+                                  }
+                                }>REPROVADO</div>
+                              )
+                              }
+                            <div style={{display: 'flex'}}>
+                              <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
+                                <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
+                                <textarea onChange={handleInputChange} defaultValue={`${inputValue.analiseObservacao}`} name="testeObservacao" style={
+                                  {
+                                    width: '430px', 
+                                    height: '100px', 
+                                    resize: 'none',
+                                    padding: '0.3rem',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '600'
+                                  }
+                                }
+                                />
+                            </div>
+                            </div>
+                          </div>
+                        )
+                        }
                         </>
                     }
                     />
@@ -206,19 +456,31 @@ function Vizualizar(){
                     <tr>
                         <th colSpan={3}>-- ANALISE {uf} - {estacao} - {cdo} --</th>
                     </tr>
+                    { statusAnalise != "" ? (
                     <tr>
-                    <th style={testeOptico.analises[0].status == 'APROVADO' ? {
-                        backgroundColor: '#D4EFDF',
-                        color: '#145A32',
-                        border: '1px solid #145A32'
-                    } : {
-                        backgroundColor: '#E6B0AA',
-                        color: '#641E16',
-                        border: '1px solid #641E16'
-                    }} colSpan={3}> {testeOptico.analises[0].status} </th>
-                    </tr>
+                      <th style={statusAnalise == 'APROVADO' ? {
+                          backgroundColor: '#D4EFDF',
+                          color: '#145A32',
+                          border: '1px solid #145A32'
+                        } : {
+                            backgroundColor: '#E6B0AA',
+                            color: '#641E16',
+                            border: '1px solid #641E16'
+                        }} colSpan={3}> {statusAnalise} </th>
+                      </tr>
+                    ) : (null)
+                    }
                 </thead>
                 <tbody>
+                        <tr>
+                          { statusAnalise != "" ? (
+                            <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>{inputValue.status}</td> 
+                          ): ( 
+                            <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>TESTE</td>
+                          )
+                          }
+                            <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>ANALISTA : {user.nome.toUpperCase() ?? '-------'}</td>
+                        </tr>
                         <tr>
                             <td>{testeOptico.uf ?? '-------'} - {enderecoTotal.estado ?? '-------'}</td>
                             <td>{testeOptico.construtora ?? '-------'}</td>
@@ -245,8 +507,7 @@ function Vizualizar(){
                           </td>
                         </tr>
                         <tr>
-                            <td>{testeOptico.cdo ?? '-------'}</td>
-                            <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>ANALISTA : {user.nome.toUpperCase() ?? '-------'}</td>
+                          <td colSpan={2}>{testeOptico.cdo ?? '-------'}</td>
                         </tr>
                         <tr>
                             <td colSpan={2}>Codigo: {enderecoTotal.cod_Viabilidade ?? '-------'} | {enderecoTotal.tipoViabilidade ?? '-------'}</td>
@@ -256,12 +517,13 @@ function Vizualizar(){
                             <table style={{width: '100%', fontSize: '0.6rem', marginTop: '0.5rem', marginBottom: '0.8rem'}}>
                               <thead>
                                 <tr>
-                                <th colSpan={4}>HISTÓRICO ANÁLISE</th>
+                                <th colSpan={5}>HISTÓRICO ANÁLISE</th>
                                 </tr>
                                 <tr style={{backgroundColor:'#34495E'}}>
                                   <th>ANALISTA</th>
                                   <th>DATA ANALISE</th>
                                   <th>STATUS</th>
+                                  <th>OBSERVAÇÃO</th>
                                   <th># AÇÕES #</th>
                                 </tr>
                               </thead>
@@ -274,7 +536,12 @@ function Vizualizar(){
                                     <td>{analise.status}</td>
                                     <td>
                                       <>
-                                        <Button onClick={AnaliseDetalhe} >Observações</Button>
+                                        <Button style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={AnaliseDetalhe} >OBSERVAÇÕES</Button>
+                                      </> 
+                                    </td> 
+                                    <td>
+                                      <>
+                                        <Button onClick={handleEdit} >Editar</Button>
                                       </> 
                                     </td> 
                                   </tr>
@@ -307,11 +574,15 @@ function Vizualizar(){
             </TableGrid>
             <FooterButton>
               <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-              {testeOptico.analises[0].status == 'REPROVADO' ? (
-                <ButtonConfirma style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
+              {statusAnalise == 'REPROVADO' ? (
+                <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={(e) => Adicionar(e)} >APROVAR</ButtonConfirma>
               ) :(
-                <ButtonConfirma style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
+                <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={(e) => Adicionar(e)} >REPROVAR</ButtonConfirma>
               )}
+              { statusAnalise == "" ? (
+                  <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={(e) => Adicionar(e)} >APROVAR</ButtonConfirma>
+              ) : (null)
+              }
             </FooterButton>
             </>
             ):(<Spinner />)
