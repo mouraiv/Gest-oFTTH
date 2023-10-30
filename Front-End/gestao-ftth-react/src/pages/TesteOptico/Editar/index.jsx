@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Input } from "./styles";
-import { DetalheTesteOptico, updateTesteOptico } from "../../../api/testeOptico";
+import { DetalheTesteOptico, updateTesteOptico, DropTesteOptico } from "../../../api/testeOptico";
 import { GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../../GlobalStyle";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Spinner from "../../../components/Spinner";
 import DialogAlert from "../../../components/Dialog";
+import DropBox from '../../../components/dropbox';
 
 
 function Editar() {
@@ -16,7 +17,43 @@ function Editar() {
     const [testeOptico, setTesteOptico] = useState({});
     const [visible, setVisible] = useState(false);
     const [mensagem, setMensagem] = useState("");
-    const [dialogAviso, setDialogAviso] = useState()
+    const [dialogAviso, setDialogAviso] = useState();
+    const [dropConstrutora, setDropConstrutora] = useState([]);
+    const [construtora, setConstrutora] = useState("");
+    const [dropEstacao, setDropEstacao] = useState([]);
+    const [estacao, setEstacao] = useState("");
+    const [dropUf, setDropUf] = useState([]);
+    const [uf, setUf] = useState("");
+
+    async function fetchDropFilter () {
+    
+        try {
+          const uf = await DropTesteOptico("UF");
+    
+          if(uf.status == 200) {
+            setDropUf(uf.data);
+    
+            const construtora = await DropTesteOptico("Construtora");
+    
+            if(construtora.status == 200) {
+              setDropConstrutora(construtora.data);
+            }
+    
+            const estacao = await DropTesteOptico("Estacao");
+    
+            if(estacao.status == 200) {
+              setDropEstacao(estacao.data);
+            }
+          }
+          
+        } catch (error) {
+          setLoading(true);
+          
+        } finally {
+          setLoading(true);
+    
+        }
+      }
 
     async function fetchUpdateTesteOptico() {
         try {
@@ -25,6 +62,10 @@ function Editar() {
                 id_TesteOptico: id,
                 ...testeOptico
             }
+
+            testeOpticoData.uf = uf;
+            testeOpticoData.construtora = construtora;
+            testeOpticoData.estacao = estacao;
          
             const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
     
@@ -74,6 +115,7 @@ function Editar() {
     }
 
     useEffect(() => {
+        fetchDropFilter();
         fecthDetalheTesteOptico();
 
     },[]);
@@ -101,6 +143,21 @@ function Editar() {
             setLoading(false);
         }
     }
+
+    const handleUf = (event) => {
+        const input = event.target.value;
+        setUf(input);
+      };
+    
+      const handleConstrutora = (event) => {
+        const input = event.target.value;
+        setConstrutora(input);
+      };
+    
+      const handleEstacao = (event) => {
+        const input = event.target.value;
+        setEstacao(input);
+      };
 
     GlobalStyle();
 
@@ -143,18 +200,15 @@ function Editar() {
                 <div className="formulario">
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
-                            <label>UF:</label>
-                            <Input name="uf" onChange={handleInputChange} defaultValue={testeOptico.uf} style={{width: '230px'}} />
+                            <DropBox width={"240px"} height={"24px"} valueDefaut={testeOptico.uf} label={"UF"} event={handleUf} lista={dropUf} text={uf} /> 
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
-                            <label>CONSTRUTORA:</label>
-                            <Input name="construtora" onChange={handleInputChange} defaultValue={testeOptico.construtora} style={{width: '230px'}} />
+                            <DropBox width={"240px"} height={"24px"} valueDefaut={testeOptico.construtora} label={"CONSTRUTORA:"} event={handleConstrutora} lista={dropConstrutora} text={construtora} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
-                            <label>ESTAÇÃO:</label>
-                            <Input name="estacao" onChange={handleInputChange} defaultValue={testeOptico.estacao} style={{width: '230px'}} />
+                            <DropBox width={"240px"} height={"24px"} valueDefaut={testeOptico.estacao} label={"ESTAÇÃO:"} event={handleEstacao} lista={dropEstacao} text={estacao} /> 
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>TIPO OBRA:</label>

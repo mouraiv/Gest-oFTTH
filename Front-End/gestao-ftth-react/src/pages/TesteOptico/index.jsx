@@ -223,9 +223,15 @@ function TesteOptico() {
               <ButtonImport onClick={handleImportar} >Controler CDOs</ButtonImport>
              </SubMenu>
             <Filter>
-              <DropBox label={"UF"} event={handleUf} lista={dropUf} text={uf} /> 
-              <DropBox label={"Construtora"} event={handleConstrutora} lista={dropConstrutora} text={construtora} />
-              <DropBox label={"Estação"} event={handleEstacao} lista={dropEstacao} text={estacao} />   
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={dropUf} text={uf} />
+              </div>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Construtora"} event={handleConstrutora} lista={dropConstrutora} text={construtora} />
+              </div> 
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao} text={estacao} />
+              </div>   
               <TextInput label={"CDO"} event={handleCdo} text={cdoInput} />
               <TextInput 
                 label={"Data Recebimento"} 
