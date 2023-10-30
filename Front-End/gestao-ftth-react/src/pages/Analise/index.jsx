@@ -171,10 +171,9 @@ function Vizualizar(){
     }
 
     useEffect(() => {
-        console.log(testeOptico.analises);
         fecthDetalheTesteOptico();
 
-    },[loading])
+    },[loading, statusAnalise])
 
     const handleVoltar = () => {
         navigate(-1); 
@@ -298,7 +297,7 @@ function Vizualizar(){
                         ( 
                           statusAnalise != "" ? (
                           <div>
-                            {statusAnalise != 'APROVADO' ? (
+                            {name == 'aprovado' ? (
                             <div style={
                                 {
                                   display: 'flex',
@@ -349,7 +348,7 @@ function Vizualizar(){
                           </div>
                           ):(
                             <div>
-                            {statusAnalise == 'APROVADO' ? (
+                            {name == 'aprovado' ? (
                             <div style={
                                 {
                                   display: 'flex',
@@ -401,7 +400,7 @@ function Vizualizar(){
                           )
                         ) : (
                           <div>
-                            {statusAnalise == 'APROVADO' ? (
+                            {name == 'aprovado' ? (
                             <div style={
                                 {
                                   display: 'flex',
