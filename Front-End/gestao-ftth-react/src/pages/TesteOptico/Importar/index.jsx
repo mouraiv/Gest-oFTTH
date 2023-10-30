@@ -18,10 +18,11 @@ function ImportFile(){
     const [visible, setVisible] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [dialogAviso, setDialogAviso] = useState()
+    const [event, setEvent] = useState({});
 
-    //const { register, handleSubmit } = useForm();
     const navigate = useNavigate();
     const inputRef = useRef(null);
+    const { name } = event.target ?? "";
 
     async function fetchDownloadModelo(){
         await DownloadArquivo();
@@ -117,7 +118,9 @@ function ImportFile(){
         setFile(event.target.files[0]);
       };
 
-      const handleUpload = async () => {
+      const handleUpload = async (e) => {
+        setEvent(e);
+
         if(file){
           await fetchUpaloadArquivo(file)
           setDialogAviso(false);
@@ -166,6 +169,21 @@ function ImportFile(){
                   buttonConfirmar={() => ExcluirFecth()} 
               />
               ):(
+                name == 'upload' ? (
+                  <DialogAlert 
+                  visibleDiag={visible} 
+                  visibleHide={() => setVisible(false)}
+                  header={<h4>Aviso</h4>}
+                  colorType={'#13293d'}
+                  ConfirmaButton={false}
+                  textCloseButton={'Ok'}
+                  text={
+                    <>
+                    <p>{mensagem}</p>
+                    </>
+                  }
+                 />
+                ):(
                 <DialogAlert 
                   visibleDiag={visible} 
                   visibleHide={() => setVisible(false)}
@@ -180,13 +198,14 @@ function ImportFile(){
                   }
                   buttonConfirmar={() => ExcluirFecth()} 
                 />
+                )
               )
             }
             <ImportArea>
                 <InputImport onChange={handleFileChange} type="file"
                 ref={inputRef} 
                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-                <ButtonUpload onClick={handleUpload} >Upload</ButtonUpload>
+                <ButtonUpload name="upload" onClick={handleUpload} >Upload</ButtonUpload>
                 <LinhaVertical />
                 <ButtonDownload onClick={downloadModelo} >Download Modelo</ButtonDownload>
             </ImportArea>

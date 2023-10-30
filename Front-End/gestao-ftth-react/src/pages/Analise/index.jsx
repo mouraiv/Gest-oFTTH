@@ -26,7 +26,7 @@ function Vizualizar(){
     const [dialogAviso, setDialogAviso] = useState();
     const [dialogEdit, setDialogEdit] = useState(false);
     const [statusAnalise, setStatusAnalise] = useState("");
-    const [event, setEvent] = useState("");
+    const [event, setEvent] = useState({});
     const [inputValue, setInputValue] = useState({analiseObservacao:"", status: ""});
 
     const navigate = useNavigate();
