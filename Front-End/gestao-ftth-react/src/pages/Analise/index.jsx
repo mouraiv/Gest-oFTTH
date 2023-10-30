@@ -26,12 +26,14 @@ function Vizualizar(){
     const [dialogAviso, setDialogAviso] = useState();
     const [dialogEdit, setDialogEdit] = useState(false);
     const [statusAnalise, setStatusAnalise] = useState("");
+    const [event, setEvent] = useState("");
     const [inputValue, setInputValue] = useState({analiseObservacao:"", status: ""});
 
     const navigate = useNavigate();
     const { user } = useAuth();
+    const{ name } = event.target ?? "";
 
-    async function fetchValidar(sel) {
+    async function fetchValidar() {
         try {
             const _dataAtual = dataAtual.toISOString();
             
@@ -39,7 +41,7 @@ function Vizualizar(){
                 ...testeOptico.analises[0]
             };
 
-            const _analiseObservacao = analiseData.analiseObservacao.replace(';.','');
+            const _analiseObservacao = analiseData.analiseObservacao != null ? analiseData.analiseObservacao.replace(';.','') : "";
 
             if(dialogEdit) {
               const observacao = _analiseObservacao.split(';');
@@ -54,21 +56,31 @@ function Vizualizar(){
               if (analiseResponse.status === 200) {
                   console.log("Validado com sucesso")
               };
-
+            
             } else {
               analiseData.analista = user.nome.toUpperCase();
               analiseData.status = statusAnalise == 'APROVADO' ? 'REPROVADO' : 'APROVADO';
               analiseData.dataAnalise = _dataAtual;
 
-              if(inputValue.analiseObservacao != "") {
-                analiseData.analiseObservacao = `${_analiseObservacao}; ${inputValue.analiseObservacao}`;
+              if(_analiseObservacao != "") {      
+                       
+                if (inputValue.analiseObservacao != "") {analiseData.analiseObservacao = `${_analiseObservacao}; ${inputValue.analiseObservacao}`};
 
                 const analiseResponse = await updateAnalise(analiseData);
     
                 if (analiseResponse.status === 200) {
                     console.log("Validado com sucesso")
                 };
-                    
+                  
+              }else{
+                if (inputValue.analiseObservacao != "") {analiseData.analiseObservacao = `${inputValue.analiseObservacao}`};
+
+                const analiseResponse = await updateAnalise(analiseData);
+    
+                if (analiseResponse.status === 200) {
+                    console.log("Validado com sucesso")
+                };
+
               } 
 
             }
@@ -90,6 +102,7 @@ function Vizualizar(){
           const _dataAtual = dataAtual.toISOString();
 
           const analiseInsert = {
+            CHAVE: '',
             status: status,
             analista: user.nome.toUpperCase(),
             dataAnalise: _dataAtual,
@@ -97,12 +110,11 @@ function Vizualizar(){
             id_TesteOptico: id,
           }
 
-          console.log(analiseInsert);
-          /*const analiseResponse = await createAnalise(analiseInsert);
+          const analiseResponse = await createAnalise(analiseInsert);
   
           if (analiseResponse.status === 200) {
             console.log("Validado com sucesso")
-          }*/           
+          }           
           
       } catch (error) {
           setDialogAviso(true);
@@ -151,9 +163,6 @@ function Vizualizar(){
             }
 
         } catch (error) {
-            setDialogAviso(true);
-            setMensagem(`Erro ao carregar.${error}`)
-            setVisible(true);
             setLoading(true);
             
         } finally {
@@ -162,6 +171,7 @@ function Vizualizar(){
     }
 
     useEffect(() => {
+        console.log(testeOptico.analises);
         fecthDetalheTesteOptico();
 
     },[loading])
@@ -176,7 +186,7 @@ function Vizualizar(){
 
     const Observacao = () => {
       if (testeOptico.analises && testeOptico.analises.length > 0) {
-        const observacoes = testeOptico.analises.map(analise => analise.analiseObservacao);
+        const observacoes = testeOptico.analises.map(analise => analise.analiseObservacao ?? "");
         const _observacoes = observacoes.map(obs => obs.replace(';.','').split(';'));
         return _observacoes;
       }
@@ -184,7 +194,9 @@ function Vizualizar(){
     };
     
     
-    const Adicionar = () => {
+    const Adicionar = (e) => {
+      setInputValue({analiseObservacao:"", status: ""});
+      setEvent(e);
       setDialogEdit(false);
       setDialogAviso(false);
       setVisible(true);
@@ -195,23 +207,28 @@ function Vizualizar(){
     };
 
     const handleInputChange = (e) => {
-      const { name, value } = e.target;
+      const { value } = e.target;
       setInputValue({analiseObservacao: value});
     };
 
-    const handleEdit = (e) => {
+    const handleEdit = () => {
       setDialogEdit(true);
       setVisible(true);
     };
 
-    const ConfirmarAnalise = (e, buttonName) => {
-      console.log(statusAnalise);
-      const { name, value } = e.target;
-      console.log(e);
-      if(statusAnalise == ""){
-        fetchInsertValidar("APROVADO");
-        //setVisible(false);
-        setLoading(false);
+    const ConfirmarAnalise = () => {
+      if(statusAnalise == "") {
+        if(name == 'aprovado') {
+          fetchInsertValidar("APROVADO");
+          setVisible(false);
+          setLoading(false);
+
+        }else{
+          fetchInsertValidar("REPROVADO");
+          setVisible(false);
+          setLoading(false);
+
+        }
 
       }else{
         fetchValidar();
@@ -575,12 +592,12 @@ function Vizualizar(){
             <FooterButton>
               <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
               {statusAnalise == 'REPROVADO' ? (
-                <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={(e) => Adicionar(e)} >APROVAR</ButtonConfirma>
+                <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
               ) :(
-                <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={(e) => Adicionar(e)} >REPROVAR</ButtonConfirma>
+                <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
               )}
               { statusAnalise == "" ? (
-                  <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={(e) => Adicionar(e)} >APROVAR</ButtonConfirma>
+                  <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
               ) : (null)
               }
             </FooterButton>
