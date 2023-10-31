@@ -50,9 +50,11 @@ namespace WebApiSwagger.Repository
                 AnaliseCDOIA db = await CarregarId(id);
 
                 db.CDOIA = AnaliseCDOIA.CDOIA;
+                db.Analista = AnaliseCDOIA.Analista;
+                db.DataAnalise = AnaliseCDOIA.DataAnalise;
                 db.CDOIAStatus = AnaliseCDOIA.CDOIAStatus;
                 db.CDOIAObservacao = AnaliseCDOIA.CDOIAObservacao;
-            
+                
                 _context.AnaliseCDOIAs.Update(db);
                 await _context.SaveChangesAsync();
 

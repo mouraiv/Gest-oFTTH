@@ -6,19 +6,15 @@ export const TableGrid = styled("table", {
 
     "thead":{
         backgroundColor: '#13293d',
-        border: '1px solid #13293d',
     },
     "tbody tr:nth-child(even)":{
         backgroundColor: '#D6DBDF'
     },
     "th":{
         color: 'White',
-        paddingLeft: '0.5rem',
-        paddingRight: '0.5rem',
     },
     "td":{
         width: '350px',
-        paddingLeft: '0.5rem',
         fontWeight: '700',
         border: '1px solid #D6DBDF',
         wordWrap: 'break-word'
@@ -29,10 +25,30 @@ export const TableGrid = styled("table", {
 
 });
 
+export const ButtonCdoia = styled("button", {
+    fontSize: '0.6rem',
+    border: '1px solid #13293d',
+    borderRadius: '0.2rem',
+    backgroundColor: '#D4AC0D',
+    marginTop: '0.3rem',
+    marginLeft: '0.3rem',
+    marginRight: '0.3rem',
+    marginBottom: '1rem',
+    fontWeight: '800',
+    width: '95%',
+    height: '25px',
+    color: '#13293d',
+    cursor: 'pointer',
+
+    '&:active' : {
+        backgroundColor: '#F9E79F',   
+    }
+});
+
 export const FooterButton = styled("div", {
     display:'flex',
     backgroundColor: '#d6dbdf',
-    minWidth: '720px', 
+    minWidth: '704px', 
     justifyContent: 'flex-end', 
     alignItems: 'flex-end',
     marginTop: '1.5rem',
@@ -62,7 +78,6 @@ export const Button = styled("button", {
     padding: '0rem',
     border: 'none',
     borderRadius: '0.2rem',
-    marginLeft: '0.8rem',
     fontSize: '0.8rem',
     height: '23px',
     color: '#13293d',

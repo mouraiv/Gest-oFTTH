@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, ButtonImagem, FooterButton, TableGrid} from "./styles";
+import { Button, ButtonImagem, FooterButton, ButtonCdoia, TableGrid} from "./styles";
 import { DetalheTesteOptico} from "../../api/testeOptico";
 import { updateAnalise, createAnalise } from "../../api/analise";
 import { getEnderecoTotalAny } from "../../api/enterecoTotais"
@@ -27,6 +27,7 @@ function Vizualizar(){
     const [dialogEdit, setDialogEdit] = useState(false);
     const [statusAnalise, setStatusAnalise] = useState("");
     const [event, setEvent] = useState({});
+    const [cdoia, setCdoia] = useState({});
     const [inputValue, setInputValue] = useState({analiseObservacao:"", status: ""});
 
     const navigate = useNavigate();
@@ -136,6 +137,7 @@ function Vizualizar(){
                 setCdo(detalheTesteOptico.data.cdo);
                 setEstacao(detalheTesteOptico.data.estacao);
                 setUf(detalheTesteOptico.data.uf);
+                setCdoia(detalheTesteOptico.data.analises[0].analiseCDOIAs ?? {})
 
                 let status = detalheTesteOptico.data.analises.length;
 
@@ -477,11 +479,13 @@ function Vizualizar(){
                       <th style={statusAnalise == 'APROVADO' ? {
                           backgroundColor: '#D4EFDF',
                           color: '#145A32',
-                          border: '1px solid #145A32'
+                          borderTop: '1px solid #145A32',
+                          borderBottom: '1px solid #145A32'
                         } : {
                             backgroundColor: '#E6B0AA',
                             color: '#641E16',
-                            border: '1px solid #641E16'
+                            borderTop: '1px solid #641E16',
+                            borderBottom: '1px solid #641E16'
                         }} colSpan={3}> {statusAnalise} </th>
                       </tr>
                     ) : (null)
@@ -536,10 +540,10 @@ function Vizualizar(){
                                 <th colSpan={5}>HISTÓRICO ANÁLISE</th>
                                 </tr>
                                 <tr style={{backgroundColor:'#34495E'}}>
-                                  <th>ANALISTA</th>
-                                  <th>DATA ANALISE</th>
-                                  <th>STATUS</th>
-                                  <th>OBSERVAÇÃO</th>
+                                  <th style={{width: '25%'}}>ANALISTA</th>
+                                  <th style={{width: '15%'}}>DATA ANALISE</th>
+                                  <th style={{width: '15%'}}>STATUS</th>
+                                  <th style={{width: '20%'}}>OBSERVAÇÃO</th>
                                   <th># AÇÕES #</th>
                                 </tr>
                               </thead>
@@ -585,6 +589,56 @@ function Vizualizar(){
                         <tr>
                             <td>Quantidade Teste: {testeOptico.quantidadeDeTeste ?? '-------'}</td>
                             <td>Fibra DGO: {testeOptico.fibraDGO ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan={2} style={{padding: '0'}}>
+                            <table style={{width: '100%', fontSize: '0.6rem', marginTop: '0.5rem', marginBottom: '0.8rem'}}>
+                              <thead>
+                                <tr>
+                                <th colSpan={6}>ANÁLISE CDOIAS</th>
+                                </tr>
+                                <tr style={{backgroundColor:'#34495E'}}>
+                                  <th style={{width: '20%'}}>CDOIA</th>
+                                  <th style={{width: '20%'}}>ANALISTA</th>
+                                  <th style={{width: '15%'}}>DATA ANALISE</th>
+                                  <th style={{width: '8%'}}>STATUS</th>
+                                  <th style={{width: '15%'}}>OBSERVAÇÃO</th>
+                                  <th># AÇÕES #</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <>
+                                    <div>
+                                      <ButtonCdoia onClick={handleEdit} >ADICIONAR</ButtonCdoia>
+                                    </div>
+                                    </>
+                                  </td>
+                                </tr>
+                              {cdoia.map((analise, index) => (
+                                  <tr key={index} style={analise.cdoiaStatus == 'OK' ?
+                                  {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
+                                    <td>{cdo}.{analise.cdoia}</td>
+                                    <td>{analise.analista ?? "--"}</td>
+                                    <td>{analise.dataAnalise == null ? "--" : new Date(analise.dataAnalise).toLocaleDateString()}</td>
+                                    <td>{analise.cdoiaStatus}</td>
+                                    <td>
+                                      <>
+                                        <Button style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={AnaliseDetalhe} >OBSERVAÇÕES</Button>
+                                      </> 
+                                     </td> 
+                                     <td>
+                                      <>
+                                        <Button style={{marginLeft:'0.5rem', marginRight: '0.5rem'}} onClick={handleEdit} >Editar</Button>
+                                        <Button onClick={handleEdit} >Excluir</Button>
+                                      </> 
+                                    </td> 
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </td>
                         </tr>
                 </tbody>
             </TableGrid>
