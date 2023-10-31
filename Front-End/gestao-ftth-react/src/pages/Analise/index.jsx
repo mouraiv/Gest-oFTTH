@@ -24,7 +24,6 @@ function Vizualizar(){
     const [visualizarAnalise, setVisualizarAnalise] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [dialogAviso, setDialogAviso] = useState();
-    const [dialogEdit, setDialogEdit] = useState(false);
     const [statusAnalise, setStatusAnalise] = useState("");
     const [event, setEvent] = useState({});
     const [cdoia, setCdoia] = useState({});
@@ -32,19 +31,18 @@ function Vizualizar(){
 
     const navigate = useNavigate();
     const { user } = useAuth();
+    const _dataAtual = dataAtual.toISOString();
     const{ name } = event.target ?? "";
 
     async function fetchValidar() {
         try {
-            const _dataAtual = dataAtual.toISOString();
-            
             const analiseData = {
                 ...testeOptico.analises[0]
             };
 
             const _analiseObservacao = analiseData.analiseObservacao != null ? analiseData.analiseObservacao.replace(';.','') : "";
 
-            if(dialogEdit) {
+            if(name == 'editar') {
               const observacao = _analiseObservacao.split(';');
               const index = (observacao.length - 1);
               observacao[index] = inputValue.analiseObservacao;
@@ -60,7 +58,7 @@ function Vizualizar(){
             
             } else {
               analiseData.analista = user.nome.toUpperCase();
-              analiseData.status = statusAnalise == 'APROVADO' ? 'REPROVADO' : 'APROVADO';
+              analiseData.status = statusAnalise.status == 'APROVADO' ? 'REPROVADO' : 'APROVADO';
               analiseData.dataAnalise = _dataAtual;
 
               if(_analiseObservacao != "") {      
@@ -70,7 +68,7 @@ function Vizualizar(){
                 const analiseResponse = await updateAnalise(analiseData);
     
                 if (analiseResponse.status === 200) {
-                    console.log("Validado com sucesso")
+                    console.log("Validado com sucesso");
                 };
                   
               }else{
@@ -79,7 +77,7 @@ function Vizualizar(){
                 const analiseResponse = await updateAnalise(analiseData);
     
                 if (analiseResponse.status === 200) {
-                    console.log("Validado com sucesso")
+                    console.log("Validado com sucesso");
                 };
 
               } 
@@ -137,12 +135,12 @@ function Vizualizar(){
                 setCdo(detalheTesteOptico.data.cdo);
                 setEstacao(detalheTesteOptico.data.estacao);
                 setUf(detalheTesteOptico.data.uf);
-                setCdoia(detalheTesteOptico.data.analises[0].analiseCDOIAs ?? {})
+                setCdoia(detalheTesteOptico.data.analises[0].analiseCDOIAs ?? null)
 
                 let status = detalheTesteOptico.data.analises.length;
 
                 if(status > 0) {
-                setStatusAnalise(detalheTesteOptico.data.analises[0].status);
+                setStatusAnalise(detalheTesteOptico.data.analises[0] ?? null);
 
                 let obs = detalheTesteOptico.data.analises[0].analiseObservacao.split(';');
                 let _obs = obs[obs.length - 1];
@@ -175,7 +173,7 @@ function Vizualizar(){
     useEffect(() => {
         fecthDetalheTesteOptico();
 
-    },[loading, statusAnalise])
+    },[loading])
 
     const handleVoltar = () => {
         navigate(-1); 
@@ -198,12 +196,12 @@ function Vizualizar(){
     const Adicionar = (e) => {
       setInputValue({analiseObservacao:"", status: ""});
       setEvent(e);
-      setDialogEdit(false);
       setDialogAviso(false);
       setVisible(true);
     };
 
-    const AnaliseDetalhe = () => {
+    const AnaliseDetalhe = (e) => {
+      setEvent(e);
       setVisualizarAnalise(true);
     };
 
@@ -212,30 +210,54 @@ function Vizualizar(){
       setInputValue({analiseObservacao: value});
     };
 
-    const handleEdit = () => {
-      setDialogEdit(true);
+    const handleEdit = (e) => {
+      setEvent(e);
       setVisible(true);
     };
+    
+    const handleAdicionarCdoia = (e) => {
+      setEvent(e);
+      setVisible(true);
+
+    }
+
+    const handleEditarCdoia = (e) => {
+      setEvent(e);
+      setVisible(true);
+
+    }
+
+    const handleExcluirCdoia = (e) => {
+      setEvent(e);
+      setVisible(true);
+
+    }
+
+    const handleObservacaoCdoia = (e) => {
+      setEvent(e);
+      setVisible(true);
+
+    }
 
     const ConfirmarAnalise = () => {
       if(statusAnalise == "") {
         if(name == 'aprovado') {
           fetchInsertValidar("APROVADO");
           setVisible(false);
-          setLoading(false);
 
         }else{
           fetchInsertValidar("REPROVADO");
           setVisible(false);
-          setLoading(false);
 
         }
 
       }else{
         fetchValidar();
         setVisible(false);
-        setLoading(false);
       }
+
+      setLoading(false);
+
     }
 
     GlobalStyle();
@@ -244,33 +266,40 @@ function Vizualizar(){
         <Template>
         <Header title={"Analise"} />
         <Content>
-        <DialogAlert 
+        { loading ? (
+            <>
+            { name == 'observacao' ? (
+                <DialogAlert 
                     visibleDiag={visualizarAnalise} 
                     visibleHide={() => setVisualizarAnalise(false)}
-                    header={<h4>Análise Observações</h4>}
+                    header={<h4>Observações</h4>}
                     colorType={'#13293d'}
                     ConfirmaButton={false}
                     textCloseButton={'Ok'}
-                    text={
-                        <>
-                        <TableGrid style={{
-                          width: '100%',
-                          fontSize: '0.7rem'
-                        }}>
-                          <tbody>
-                            {Observacao().map((observacaoArray, outerIndex) => (
-                              observacaoArray.map((observacao, innerIndex) => (
-                                <tr key={`${outerIndex}-${innerIndex}`}>
-                                  <td style={{padding:'0.5rem'}}>{observacao}</td>
-                                </tr>
-                              ))
-                            ))}
-                          </tbody>
-                        </TableGrid>
-                        </>
-                    }
-                />
-        { dialogAviso ? (
+                      text={
+                              <>
+                              <TableGrid style={{
+                                  width: '100%',
+                                  fontSize: '0.7rem'
+                                }}>
+                                <tbody>
+                                  {Observacao().map((observacaoArray, outerIndex) => (
+                                    observacaoArray.map((observacao, innerIndex) => (
+                                      <tr key={`${outerIndex}-${innerIndex}`}>
+                                        <td style={{padding:'0.5rem'}}>{observacao}</td>
+                                      </tr>
+                                    ))
+                                  ))}
+                                  </tbody>
+                                  </TableGrid>
+                                </>
+                              }
+                  />
+
+            ):(null)
+            }
+
+            { dialogAviso ? ( 
                 <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
@@ -279,28 +308,42 @@ function Vizualizar(){
                     ConfirmaButton={false}
                     textCloseButton={'Ok'}
                     text={
-                        <>
-                        <p>{mensagem}</p>
-                        </>
-                    }
+                          <>
+                            <p>{mensagem}</p>
+                          </>
+                          }   
                 />
-                ):(
-                    <DialogAlert 
+            ) : (null)
+            }
+
+            { name == 'editar' ? (
+                <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
-                    header={<h4>Analise</h4>}
+                    header={<h4>Editar Observação</h4>}
                     colorType={'#13293d'}
                     ConfirmaButton={true}
                     textCloseButton={'Cancelar'}
                     buttonConfirmar={ConfirmarAnalise}
                     text={
-                        <>
-                        { !dialogEdit ?
-                        ( 
-                          statusAnalise != "" ? (
-                          <div>
-                            {name == 'aprovado' ? (
-                            <div style={
+                      <>
+                      { statusAnalise.status == "APROVADO" ? (
+                          <div style={
+                              {
+                                display: 'flex',
+                                width: '430px',
+                                marginLeft: '0.5rem',
+                                fontSize: '0.8rem', 
+                                fontWeight: '700', 
+                                justifyContent: 'center', 
+                                padding: '0.2rem',
+                                backgroundColor: '#D4EFDF',
+                                color: '#145A32',
+                                border: '1px solid #145A32'
+                              }
+                            }>APROVADO</div>
+                            ) : (
+                              <div style={
                                 {
                                   display: 'flex',
                                   width: '430px',
@@ -309,49 +352,131 @@ function Vizualizar(){
                                   fontWeight: '700', 
                                   justifyContent: 'center', 
                                   padding: '0.2rem',
-                                  backgroundColor: '#D4EFDF',
-                                  color: '#145A32',
-                                  border: '1px solid #145A32'
+                                  backgroundColor: '#E6B0AA',
+                                  color: '#641E16',
+                                  border: '1px solid #641E16'
                                 }
-                              }>APROVADO</div>
-                              ) : (
-                                <div style={
-                                  {
-                                    display: 'flex',
-                                    width: '430px',
-                                    marginLeft: '0.5rem',
-                                    fontSize: '0.8rem', 
-                                    fontWeight: '700', 
-                                    justifyContent: 'center', 
-                                    padding: '0.2rem',
-                                    backgroundColor: '#E6B0AA',
-                                    color: '#641E16',
-                                    border: '1px solid #641E16'
-                                  }
-                                }>REPROVADO</div>
-                              )
+                              }>REPROVADO</div>
+                            )
+                            }
+                          <div style={{display: 'flex'}}>
+                            <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
+                              <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
+                              <textarea onChange={handleInputChange} defaultValue={`${inputValue.analiseObservacao}`} name="testeObservacao" style={
+                                {
+                                  width: '430px', 
+                                  height: '100px', 
+                                  resize: 'none',
+                                  padding: '0.3rem',
+                                  fontSize: '0.9rem',
+                                  fontWeight: '600'
+                                }
                               }
-                            <div style={{display: 'flex'}}>
-                              <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
-                                <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
-                                <textarea onChange={handleInputChange} name="testeObservacao" style={
-                                  {
-                                    width: '430px', 
-                                    height: '100px', 
-                                    resize: 'none',
-                                    padding: '0.3rem',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600'
-                                  }
-                                }
-                                />
-                            </div>
-                            </div>
+                              />
                           </div>
-                          ):(
-                            <div>
-                            {name == 'aprovado' ? (
-                            <div style={
+                          </div>
+                      </>
+                          }   
+                 />
+            ):(null)
+            }
+
+            { name == 'adicionarCdoia' ? (
+                <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Adicionar CDOIA</h4>}
+                    colorType={'#13293d'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Ok'}
+                    text={
+                          <>
+                            <p>Adicionar CDOIA</p>
+                          </>
+                          }   
+                 />
+            ):(null)
+            }
+
+            { name == 'observacaoCdoia' ? (
+                <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Observações CDOIA</h4>}
+                    colorType={'#13293d'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Ok'}
+                    text={
+                          <>
+                            <p>Observacao CDOIA</p>
+                          </>
+                          }   
+                 />
+            ):(null)
+            }
+
+            { name == 'editarCdoia' ? (
+                <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Editar Observação CDOIA</h4>}
+                    colorType={'#13293d'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Ok'}
+                    text={
+                          <>
+                            <p>Editar Observacao CDOIA</p>
+                          </>
+                          }   
+                 />
+            ):(null)
+            }
+
+            { name == 'excluirCdoia' ? (
+                <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Excluir CDOIA</h4>}
+                    colorType={'#13293d'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Ok'}
+                    text={
+                          <>
+                            <p>Excluir CDOIA</p>
+                          </>
+                          }   
+                 />
+            ):(null)
+            }
+
+            { statusAnalise.id_Analise != undefined && (name == "aprovado" || name == "reprovado") ? (
+                <DialogAlert 
+                visibleDiag={visible} 
+                visibleHide={() => { setVisible(false)}}
+                header={<h4>Analisar</h4>}
+                colorType={'#13293d'}
+                ConfirmaButton={true}
+                textCloseButton={'Cancelar'}
+                buttonConfirmar={ConfirmarAnalise}
+                text={
+                    <>
+                      { statusAnalise.status != "APROVADO" ? (
+                          <div style={
+                              {
+                                display: 'flex',
+                                width: '430px',
+                                marginLeft: '0.5rem',
+                                fontSize: '0.8rem', 
+                                fontWeight: '700', 
+                                justifyContent: 'center', 
+                                padding: '0.2rem',
+                                backgroundColor: '#D4EFDF',
+                                color: '#145A32',
+                                border: '1px solid #145A32'
+                              }
+                            }>APROVADO</div>
+                            ) : (
+                              <div style={
                                 {
                                   display: 'flex',
                                   width: '430px',
@@ -360,50 +485,63 @@ function Vizualizar(){
                                   fontWeight: '700', 
                                   justifyContent: 'center', 
                                   padding: '0.2rem',
-                                  backgroundColor: '#D4EFDF',
-                                  color: '#145A32',
-                                  border: '1px solid #145A32'
+                                  backgroundColor: '#E6B0AA',
+                                  color: '#641E16',
+                                  border: '1px solid #641E16'
                                 }
-                              }>APROVADO</div>
-                              ) : (
-                                <div style={
-                                  {
-                                    display: 'flex',
-                                    width: '430px',
-                                    marginLeft: '0.5rem',
-                                    fontSize: '0.8rem', 
-                                    fontWeight: '700', 
-                                    justifyContent: 'center', 
-                                    padding: '0.2rem',
-                                    backgroundColor: '#E6B0AA',
-                                    color: '#641E16',
-                                    border: '1px solid #641E16'
-                                  }
-                                }>REPROVADO</div>
-                              )
+                              }>REPROVADO</div>
+                            )
+                            }
+                          <div style={{display: 'flex'}}>
+                            <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
+                              <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
+                              <textarea onChange={handleInputChange} name="testeObservacao" style={
+                                {
+                                  width: '430px', 
+                                  height: '100px', 
+                                  resize: 'none',
+                                  padding: '0.3rem',
+                                  fontSize: '0.9rem',
+                                  fontWeight: '600'
+                                }
                               }
-                            <div style={{display: 'flex'}}>
-                              <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
-                                <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
-                                <textarea onChange={handleInputChange} name="testeObservacao" style={
-                                  {
-                                    width: '430px', 
-                                    height: '100px', 
-                                    resize: 'none',
-                                    padding: '0.3rem',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600'
-                                  }
-                                }
-                                />
-                            </div>
-                            </div>
+                              />
                           </div>
-                          )
-                        ) : (
-                          <div>
-                            {name == 'aprovado' ? (
-                            <div style={
+                          </div>
+                      </>
+                      }   
+                />
+            ) : (null)
+            }
+
+            { statusAnalise.id_Analise == undefined ? (
+                <DialogAlert 
+                visibleDiag={visible} 
+                visibleHide={() => setVisible(false)}
+                header={<h4>Analisar</h4>}
+                colorType={'#13293d'}
+                ConfirmaButton={true}
+                textCloseButton={'Cancelar'}
+                buttonConfirmar={ConfirmarAnalise}
+                text={
+                    <>
+                      {  name == 'aprovado' ? (
+                          <div style={
+                              {
+                                display: 'flex',
+                                width: '430px',
+                                marginLeft: '0.5rem',
+                                fontSize: '0.8rem', 
+                                fontWeight: '700', 
+                                justifyContent: 'center', 
+                                padding: '0.2rem',
+                                backgroundColor: '#D4EFDF',
+                                color: '#145A32',
+                                border: '1px solid #145A32'
+                              }
+                            }>APROVADO</div>
+                            ) : (
+                              <div style={
                                 {
                                   display: 'flex',
                                   width: '430px',
@@ -412,54 +550,35 @@ function Vizualizar(){
                                   fontWeight: '700', 
                                   justifyContent: 'center', 
                                   padding: '0.2rem',
-                                  backgroundColor: '#D4EFDF',
-                                  color: '#145A32',
-                                  border: '1px solid #145A32'
+                                  backgroundColor: '#E6B0AA',
+                                  color: '#641E16',
+                                  border: '1px solid #641E16'
                                 }
-                              }>APROVADO</div>
-                              ) : (
-                                <div style={
-                                  {
-                                    display: 'flex',
-                                    width: '430px',
-                                    marginLeft: '0.5rem',
-                                    fontSize: '0.8rem', 
-                                    fontWeight: '700', 
-                                    justifyContent: 'center', 
-                                    padding: '0.2rem',
-                                    backgroundColor: '#E6B0AA',
-                                    color: '#641E16',
-                                    border: '1px solid #641E16'
-                                  }
-                                }>REPROVADO</div>
-                              )
+                              }>REPROVADO</div>
+                            )
+                            }
+                          <div style={{display: 'flex'}}>
+                            <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
+                              <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
+                              <textarea onChange={handleInputChange} name="testeObservacao" style={
+                                {
+                                  width: '430px', 
+                                  height: '100px', 
+                                  resize: 'none',
+                                  padding: '0.3rem',
+                                  fontSize: '0.9rem',
+                                  fontWeight: '600'
+                                }
                               }
-                            <div style={{display: 'flex'}}>
-                              <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
-                                <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
-                                <textarea onChange={handleInputChange} defaultValue={`${inputValue.analiseObservacao}`} name="testeObservacao" style={
-                                  {
-                                    width: '430px', 
-                                    height: '100px', 
-                                    resize: 'none',
-                                    padding: '0.3rem',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600'
-                                  }
-                                }
-                                />
-                            </div>
-                            </div>
+                              />
                           </div>
-                        )
-                        }
-                        </>
-                    }
-                    />
-                )
-                }
-            { loading ? (
-            <>
+                          </div>
+                      </>
+                      }   
+                />
+            ) : (null)
+            }
+            
             <div style={{
                  display:'flex',
                  minWidth: '720px', 
@@ -476,7 +595,7 @@ function Vizualizar(){
                     </tr>
                     { statusAnalise != "" ? (
                     <tr>
-                      <th style={statusAnalise == 'APROVADO' ? {
+                      <th style={statusAnalise.status == 'APROVADO' ? {
                           backgroundColor: '#D4EFDF',
                           color: '#145A32',
                           borderTop: '1px solid #145A32',
@@ -486,7 +605,7 @@ function Vizualizar(){
                             color: '#641E16',
                             borderTop: '1px solid #641E16',
                             borderBottom: '1px solid #641E16'
-                        }} colSpan={3}> {statusAnalise} </th>
+                        }} colSpan={3}> {statusAnalise.status} </th>
                       </tr>
                     ) : (null)
                     }
@@ -556,12 +675,12 @@ function Vizualizar(){
                                     <td>{analise.status}</td>
                                     <td>
                                       <>
-                                        <Button style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={AnaliseDetalhe} >OBSERVAÇÕES</Button>
+                                        <Button name="observacao" style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={AnaliseDetalhe} >OBSERVAÇÕES</Button>
                                       </> 
                                     </td> 
                                     <td>
                                       <>
-                                        <Button onClick={handleEdit} >Editar</Button>
+                                        <Button name="editar" onClick={handleEdit} >Editar</Button>
                                       </> 
                                     </td> 
                                   </tr>
@@ -611,31 +730,32 @@ function Vizualizar(){
                                   <td>
                                     <>
                                     <div>
-                                      <ButtonCdoia onClick={handleEdit} >ADICIONAR</ButtonCdoia>
+                                      <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>
                                     </div>
                                     </>
                                   </td>
                                 </tr>
-                              {cdoia.map((analise, index) => (
+                              {statusAnalise != "" ? (cdoia.map((analise, index) => (
                                   <tr key={index} style={analise.cdoiaStatus == 'OK' ?
                                   {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
-                                    <td>{cdo}.{analise.cdoia}</td>
+                                    <td>{cdo}.{analise.cdoia ?? "--"}</td>
                                     <td>{analise.analista ?? "--"}</td>
                                     <td>{analise.dataAnalise == null ? "--" : new Date(analise.dataAnalise).toLocaleDateString()}</td>
-                                    <td>{analise.cdoiaStatus}</td>
+                                    <td>{analise.cdoiaStatus ?? "--"}</td>
                                     <td>
                                       <>
-                                        <Button style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={AnaliseDetalhe} >OBSERVAÇÕES</Button>
+                                        <Button name="observacaoCdoia" style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={handleObservacaoCdoia} >OBSERVAÇÕES</Button>
                                       </> 
                                      </td> 
                                      <td>
                                       <>
-                                        <Button style={{marginLeft:'0.5rem', marginRight: '0.5rem'}} onClick={handleEdit} >Editar</Button>
-                                        <Button onClick={handleEdit} >Excluir</Button>
+                                        <Button name="editarCdoia" style={{marginLeft:'0.5rem', marginRight: '0.5rem'}} onClick={handleEditarCdoia} >Editar</Button>
+                                        <Button name="excluirCdoia" onClick={handleExcluirCdoia} >Excluir</Button>
                                       </> 
                                     </td> 
                                   </tr>
-                                ))}
+                                ))
+                              ) :  (<tr></tr>)}
                               </tbody>
                             </table>
                           </td>
@@ -644,13 +764,19 @@ function Vizualizar(){
             </TableGrid>
             <FooterButton>
               <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-              {statusAnalise == 'REPROVADO' ? (
-                <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
-              ) :(
-                <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
-              )}
-              { statusAnalise == "" ? (
+              { statusAnalise.status == undefined ? (
+                <>
                   <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
+                  <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
+                </>  
+              ) : (null)
+              }
+              { statusAnalise.id_Analise != undefined ? (
+                statusAnalise.status != "APROVADO" ? (
+                <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
+                ) : (
+                  <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
+                )
               ) : (null)
               }
             </FooterButton>
