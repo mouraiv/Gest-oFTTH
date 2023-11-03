@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, ButtonImagem, FooterButton, ButtonCdoia, TableGrid} from "./styles";
 import { DetalheTesteOptico} from "../../api/testeOptico";
-import { updateAnalise, createAnalise } from "../../api/analise";
+import { updateAnalise, createAnalise, deleteAnalise } from "../../api/analise";
 import { updateAnaliseCdoia, createAnaliseCdoia, deleteAnaliseCdoia } from "../../api/cdoia";
 import { getEnderecoTotalAny } from "../../api/enterecoTotais"
 import { Content, GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../GlobalStyle";
@@ -29,7 +29,7 @@ function Vizualizar(){
     const [statusAnalise, setStatusAnalise] = useState("");
     const [event, setEvent] = useState({});
     const [cdoia, setCdoia] = useState({});
-    const [inputCdoia, setInputCdoia] = useState();
+    const [inputCdoia, setInputCdoia] = useState("1");
     const [inputValue, setInputValue] = useState({analiseObservacao:"", status: ""});
     const [selectedOption, setSelectedOption] = useState("OK");
 
@@ -47,10 +47,10 @@ function Vizualizar(){
             };
 
             const _analiseObservacao = analiseData.analiseObservacao != null ? analiseData.analiseObservacao.replace(';.','') : "";
-
+            const observacao = _analiseObservacao.split(';');
+            const index = (observacao.length - 1); //ultima ocorrência
+            
             if(name == 'editar') {
-              const observacao = _analiseObservacao.split(';');
-              const index = (observacao.length - 1);
               observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}`;
               const _observacao = observacao.join(';');
 
@@ -61,17 +61,22 @@ function Vizualizar(){
               analiseData.status = statusAnalise.status == 'APROVADO' ? 'REPROVADO' : 'APROVADO';
               analiseData.dataAnalise = _dataAtual;
 
-              if(_analiseObservacao != "") {      
-                       
-                if (inputValue.analiseObservacao != "") {analiseData.analiseObservacao = `${_analiseObservacao};[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}`};
-                      
+              console.log(statusAnalise.dataAnalise +" | "+ _dataAtual)
+
+              if(new Date(statusAnalise.dataAnalise).toLocaleDateString() == new Date(_dataAtual).toLocaleDateString()){
+                if(inputValue.analiseObservacao != "") {
+                observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}`;
+                const _observacao = observacao.join(';');
+                analiseData.analiseObservacao = `${_observacao}`;
+
+                }
+
               }else{
-                if (inputValue.analiseObservacao != "") {analiseData.analiseObservacao = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}`};
+                analiseData.analiseObservacao = inputValue.analiseObservacao != "" ? `${analiseData.analiseObservacao};[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}` : "";
 
-              } 
-
+              }
             }
-
+            
             const analiseResponse = await updateAnalise(analiseData);
     
             if (analiseResponse.status === 200) {
@@ -118,6 +123,25 @@ function Vizualizar(){
       }
     }
 
+    async function fetchDeleteCdo(){
+      try {
+        const response = await deleteAnalise(currentCdoia.idAnalise);
+
+        if(response.status == 200) {
+          setStatusAnalise({});
+          console.log("Excluido com sucesso");
+        }
+        
+      } catch (error) {
+        setDialogAviso(true);
+        setMensagem(`Erro ao excluir`);
+        setLoading(true);
+
+      } finally {
+        setLoading(true);
+      }
+    }
+
     async function fetchInsertValidarCdoia() {
       try {
           const analiseInsert = {
@@ -125,7 +149,7 @@ function Vizualizar(){
             cdoiaStatus: selectedOption,
             analista: user.nome.toUpperCase(),
             dataAnalise: _dataAtual,
-            cdoiaObservacao: inputValue.analiseObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao}` : "",
+            cdoiaObservacao: inputValue.analiseObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}` : "",
             id_Analise: statusAnalise.id_Analise
           }
 
@@ -159,7 +183,7 @@ function Vizualizar(){
             analiseData.analista = user.nome.toUpperCase();
             analiseData.cdoiaStatus = currentCdoia.cdoiaStatus;
             analiseData.dataAnalise = _dataAtual;
-            analiseData.cdoiaObservacao = currentCdoia.cdoiaObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${currentCdoia.cdoiaObservacao}` : "";
+            analiseData.cdoiaObservacao = currentCdoia.cdoiaObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${currentCdoia.cdoiaObservacao.replace(removeDateObs,"")}` : "";
 
             console.log(analiseData);
 
@@ -243,6 +267,7 @@ function Vizualizar(){
     }
 
     useEffect(() => {
+        console.log(Object.keys(statusAnalise).length);
         fecthDetalheTesteOptico();
 
     },[loading])
@@ -334,6 +359,20 @@ function Vizualizar(){
 
     }
 
+    const handleExcluirCdo = (e, id) => {
+      setCurrentCdoia({idAnalise: id, idAnaliseCdoia: 0});
+      setEvent(e);
+      setVisible(true);
+
+    }
+
+    const ConfirmarExluirCdo = () => {
+      fetchDeleteCdo();
+      setVisible(false);
+      setLoading(false);
+
+    }
+
     const handleObservacaoCdoia = (e, cdoiaObservacao) => {
       setCurrentCdoia({cdoiaObservacao: cdoiaObservacao});
       setEvent(e);
@@ -363,10 +402,23 @@ function Vizualizar(){
     }
 
     const ConfirmarAnaliseCdoia = () => {
-      fetchInsertValidarCdoia();
-      setVisible(false);
-      setLoading(false);
+      const _cdoiaRepeat = cdoia.filter(p => p.cdoia == inputCdoia)
+      .map(value => value.cdoia);
 
+      console.log(_cdoiaRepeat)
+      
+      if(_cdoiaRepeat.length > 0){
+        setMensagem(`${cdo}.${inputCdoia} já existe.`)
+        setInputCdoia("1")
+
+      }else{
+        setMensagem("");
+        fetchInsertValidarCdoia();
+        setInputCdoia("1")
+        setVisible(false);
+
+      }
+      setLoading(false);
     }
 
     const handleSelectChange = (event) => {
@@ -375,6 +427,7 @@ function Vizualizar(){
 
     const handleChangeCdoia = (event) => {
       const _cdoia = `${event.target.value}`;
+      setMensagem("");
       setInputCdoia(_cdoia);
     }
 
@@ -499,6 +552,26 @@ function Vizualizar(){
             ):(null)
             }
 
+            { name == 'excluirCdo' ? (
+                <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={<h4>Excluir analise</h4>}
+                    colorType={'#ff0000'}
+                    ConfirmaButton={true}
+                    textCloseButton={'Cancelar'}
+                    buttonConfirmar={ConfirmarExluirCdo}
+                    text={
+                          <>
+                            <p>Esta ação é irreversível</p>
+                            <p></p>
+                            <p>Tem certeza que gostaria de excluir</p>
+                          </>
+                          }   
+                 />
+            ):(null)
+            }
+
             { name == 'adicionarCdoia' ? (
                 <DialogAlert 
                     visibleDiag={visible} 
@@ -510,6 +583,22 @@ function Vizualizar(){
                     buttonConfirmar={ConfirmarAnaliseCdoia}
                     text={
                       <>
+                      { mensagem != "" ? (
+                        <div style={
+                            {
+                              width:'100%',
+                              backgroundColor:'#FDEDEC',
+                              border:'1px solid red',
+                              textAlign: 'center',
+                              color: 'red',
+                              fontSize: '0.7rem',
+                              fontWeight: '700',
+                              padding:'0.1rem',
+                              marginBottom: '0.6rem'
+                            }
+                          }>{mensagem}</div>
+                        ) : (null)
+                        }
                         <div style={
                                 {
                                   display: 'flex',
@@ -669,7 +758,7 @@ function Vizualizar(){
             ):(null)
             }
 
-            { statusAnalise.id_Analise != undefined && (name == "aprovado" || name == "reprovado") ? (
+            { Object.keys(statusAnalise).length !== 0 && (name == "aprovado" || name == "reprovado") ? (
                 <DialogAlert 
                 visibleDiag={visible} 
                 visibleHide={() => { setVisible(false)}}
@@ -734,7 +823,7 @@ function Vizualizar(){
             ) : (null)
             }
 
-            { statusAnalise.id_Analise == undefined ? (
+            { Object.keys(statusAnalise).length === 0 ? (
                 <DialogAlert 
                 visibleDiag={visible} 
                 visibleHide={() => setVisible(false)}
@@ -813,14 +902,20 @@ function Vizualizar(){
                     <tr>
                         <th colSpan={3}>-- ANALISE {uf} - {estacao} - {cdo} --</th>
                     </tr>
-                    { statusAnalise != "" ? (
+                    { statusAnalise.status == "APROVADO" ? (
                     <tr>
-                      <th style={statusAnalise.status == 'APROVADO' ? {
+                      <th style={{
                           backgroundColor: '#D4EFDF',
                           color: '#145A32',
                           borderTop: '1px solid #145A32',
                           borderBottom: '1px solid #145A32'
-                        } : {
+                        }} colSpan={3}> {statusAnalise.status} </th>
+                      </tr>
+                    ) : (null)
+                    }
+                    { statusAnalise.status == "REPROVADO" ? (
+                    <tr>
+                      <th style={{
                             backgroundColor: '#E6B0AA',
                             color: '#641E16',
                             borderTop: '1px solid #641E16',
@@ -900,7 +995,8 @@ function Vizualizar(){
                                     </td> 
                                     <td>
                                       <>
-                                        <Button name="editar" onClick={handleEdit} >Editar</Button>
+                                        <Button name="editar" style={{marginLeft:'0.5rem', marginRight: '0.5rem'}} onClick={handleEdit} >Editar</Button>
+                                        <Button name="excluirCdo" onClick={(e) => handleExcluirCdo(e, analise.id_Analise)} >Excluir</Button>
                                       </> 
                                     </td> 
                                   </tr>
