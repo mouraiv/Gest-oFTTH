@@ -1,11 +1,16 @@
 import api from '../services/api';
 
-export const createAnalise = async (analise) => {
-    const response = await api.post('/Analise/Cadastrar', analise);
+export const createAnaliseCdoia = async (cdoia) => {
+    const response = await api.post('/AnaliseCDOIA/Cadastrar', cdoia);
     return response;
   };
   
-  export const updateAnalise = async (analise) => {
-    const response = await api.put(`/Analise/Atualizar/${analise.id_Analise}`, analise);
+  export const updateAnaliseCdoia = async (cdoia) => {
+    const response = await api.put(`/AnaliseCDOIA/Atualizar/${cdoia.id_AnaliseCDOIA}`, cdoia);
+    return response;
+  };
+
+  export const deleteAnaliseCdoia = async (id) => {
+    const response = await api.delete(`/AnaliseCDOIA/Deletar/${id}`);
     return response;
   };
