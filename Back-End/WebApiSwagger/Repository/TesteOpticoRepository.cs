@@ -231,6 +231,7 @@ namespace WebApiSwagger.Repository
             {
                 var query = _context.TestesOpticos
                     .Where(p => p.Sel > 0)
+                    .Include(p => p.Analises)
                     .AsQueryable();
 
                 paginacao.Total = await query.CountAsync();

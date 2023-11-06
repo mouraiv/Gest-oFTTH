@@ -23,7 +23,7 @@ function Vizualizar(){
     const [dialogAviso, setDialogAviso] = useState();
     const [event, setEvent] = useState({});
     const [inputCdoia, setInputCdoia] = useState("1");
-    const [inputValue, setInputValue] = useState({analiseObservacao:"", status: ""});
+    const [inputValue, setInputValue] = useState({});
     const [selectedOption, setSelectedOption] = useState("OK");
 
     const navigate = useNavigate();
@@ -59,6 +59,7 @@ function Vizualizar(){
       dataAnalise, 
       status, 
       analiseCDOIAs,
+      analiseObservacao,
       id_Analise
       
     } = analises?.[0] ?? [];
@@ -247,7 +248,7 @@ function Vizualizar(){
             if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
 
-                let statuslength = detalheTesteOptico.data.analises.length;
+                /*let statuslength = detalheTesteOptico.data.analises.length;
 
                 if(statuslength > 0) {
                 setStatusAnalise(detalheTesteOptico.data.analises[0] ?? null);
@@ -261,7 +262,7 @@ function Vizualizar(){
                       status: `${obs.length > 1 ? "RE-TESTE" : "TESTADO"}`
                     }
                 );
-              }
+              }*/
             }
 
         } catch (error) {
@@ -275,7 +276,28 @@ function Vizualizar(){
     useEffect(() => {
       fecthDetalheTesteOptico();    
 
-    },[loading])
+    },[loading]);
+
+    const tipoCdoe = () => {
+      const regex = /[A-Z]+-(\d+)/;
+      
+      if(cdo !== undefined){
+      const match = cdo !== undefined ? cdo.match(regex) : '';
+
+        if (match) {
+          const extractedPart = match[0].split('-')[0];  
+          return extractedPart === 'CDOE' ? 'CDOE' : 'CDOIA'; 
+          }
+      }else{
+        return '';
+      }
+
+    }
+    
+    const analiseState = () => {
+      let obs = analiseObservacao.split(';');
+      return `${obs.length > 1 ? "RE-TESTE" : "TESTADO"}`
+    }
 
     const handleVoltar = () => {
         navigate(-1); 
@@ -902,7 +924,7 @@ function Vizualizar(){
             <TableGrid>
                 <thead>
                     <tr>
-                        <th colSpan={3}>-- ANALISE {uf} - {estacao} - {cdo} --</th>
+                        <th colSpan={3}>-- ANALISE : {uf} - {estacao} - {cdo} --</th>
                     </tr>
                     { status !== undefined && status === "APROVADO" ? (
                     <tr>
@@ -930,7 +952,7 @@ function Vizualizar(){
                 <tbody>
                         <tr>
                           { status !== undefined ? (
-                            <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>{inputValue.status}</td> 
+                            <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>{analiseState()}</td> 
                           ): ( 
                             <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>TESTE</td>
                           )
@@ -938,16 +960,16 @@ function Vizualizar(){
                             <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>ANALISTA : {user.nome.toUpperCase() ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>{uf ?? '-------'} - {enderecosTotais.estado ?? '-------'}</td>
+                            <td>{uf ?? '-------'} - {enderecosTotais?.estado ?? '-------'}</td>
                             <td>{construtora ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Estação: {estacao ?? '-------'} - {enderecosTotais.siglaEstacao ?? '-------'}</td>
+                            <td>Estação: {estacao ?? '-------'} - {enderecosTotais?.siglaEstacao ?? '-------'}</td>
                             <td>Tipo Obra: {tipoObra ?? '-------'}</td>
                         </tr>
                         <tr>
                             <td>Estado Campo: {estadoCampo ?? '-------'}</td>
-                            <td>Estado Projeto {enderecosTotais.estadoProjeto ?? '-------'}</td>
+                            <td>Estado Projeto {enderecosTotais?.estadoProjeto ?? '-------'}</td>
                         </tr>
                         <tr>
                           <td colSpan={2}>
@@ -966,7 +988,7 @@ function Vizualizar(){
                           <td colSpan={2}>{cdo ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td colSpan={2}>Codigo: {enderecosTotais.cod_Viabilidade ?? '-------'} | {enderecosTotais.tipoViabilidade ?? '-------'}</td>
+                            <td colSpan={2}>Codigo: {enderecosTotais?.cod_Viabilidade ?? '-------'} | {enderecosTotais?.tipoViabilidade ?? '-------'}</td>
                         </tr>
                         <tr>
                           <td colSpan={2} style={{padding: '0'}}>
@@ -1009,12 +1031,12 @@ function Vizualizar(){
                           </td>
                         </tr>
                         <tr>
-                            <td>Data Est. Operacional: {enderecosTotais.dataEstadoOperacional == 0 ? '-------' : enderecosTotais.dataEstadoOperacional}</td>
-                            <td>Estado Operacional: {enderecosTotais.estadoOperacional == 0 ? '-------' : enderecosTotais.estadoOperacional}</td>
+                            <td>Data Est. Operacional: {enderecosTotais?.dataEstadoOperacional === undefined ? '-------' : enderecosTotais?.dataEstadoOperacional}</td>
+                            <td>Estado Operacional: {enderecosTotais?.estadoOperacional === undefined ? '-------' : enderecosTotais?.estadoOperacional}</td>
                         </tr>
                         <tr>
-                            <td>Data Est. Controle: {enderecosTotais.dataEstadoControle == 0 ? '-------' : enderecosTotais.dataEstadoControle}</td>
-                            <td>Estado Controle: {enderecosTotais.EstadoControle ?? '-------'}</td>
+                            <td>Data Est. Controle: {enderecosTotais?.dataEstadoControle === undefined ? '-------' : enderecosTotais?.dataEstadoControle}</td>
+                            <td>Estado Controle: {enderecosTotais?.EstadoControle ?? '-------'}</td>
                         </tr>
                         <tr>
                             <td>Bobina Lançamento: {bobinaLancamento ?? '-------'}</td>
@@ -1049,7 +1071,7 @@ function Vizualizar(){
                                   <td>
                                     <>
                                     <div>
-                                    {status !== undefined ? (
+                                    {tipoCdoe() === 'CDOIA' ? (
                                       <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>
                                     ):(null)
                                     }
@@ -1057,7 +1079,7 @@ function Vizualizar(){
                                     </>
                                   </td>
                                 </tr>
-                              {status !== undefined ? (analiseCDOIAs.map((analise, index) => (
+                              {tipoCdoe() === 'CDOIA' ? (analiseCDOIAs?.map((analise, index) => (
                                   <tr key={index} style={analise.cdoiaStatus == 'OK' ?
                                   {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
                                     <td>{cdo}.{analise.cdoia ?? "--"}</td>

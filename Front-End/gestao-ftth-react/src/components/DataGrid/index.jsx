@@ -23,6 +23,10 @@ export default function DataGrid({
   
   const [visible, setVisible] = useState(false);
   const [id, setId] = useState();
+  const [analseDelete, setAnaliseDelete] = useState(0);
+
+  //console.log(rows.filter(p => p.id = 178212).map(value => value.getAnalise)[0]);
+  //console.log(rows);
 
   async function fetchDelete(){
     if(id !== undefined){
@@ -40,9 +44,10 @@ export default function DataGrid({
     navigate(`/TesteOptico/Editar/${id}`);
   }
 
-  const HandleExcluir = (id) => {
+  const HandleExcluir = (id, analise) => {
     setId(id);
     setVisible(true);
+    setAnaliseDelete(analise.length);
   }
 
   const ExcluirFecth = async () => {
@@ -57,14 +62,26 @@ export default function DataGrid({
             visibleDiag={visible} 
             visibleHide={() => setVisible(false)}
             header={<h4>Atenção</h4>}
-            colorType={'#3d1313'}
-            ConfirmaButton={true}
-            textCloseButton={'Cancelar'}
+            colorType={'#ff0000'}
+            ConfirmaButton={analseDelete > 0 ? false : true}
+            textCloseButton={analseDelete > 0 ? 'OK' : 'Cancelar'}
             text={
               <>
-              <p>Esta ação é irreversível</p>
-              <p></p>
-              <p>Tem certeza que gostaria de excluir esse registro?</p>
+              { analseDelete > 0 ? (
+                <>
+                <p>Esse teste não pode ser excluído!</p>
+                <p></p>
+                <p>O teste possuí analises associadas.</p>
+                </>
+
+              ):(
+                <>
+                <p>Esta ação é irreversível</p>
+                <p></p>
+                <p>Tem certeza que gostaria de excluir esse teste?</p>
+                </>
+              )
+              }
               </>
             }
             buttonConfirmar={() => ExcluirFecth()} 
@@ -100,7 +117,7 @@ export default function DataGrid({
                     { row.sel == 1 &&
                     <>
                       <Button onClick={() => HandleEditar(row.id)} >Editar</Button>
-                      <Button onClick={() => HandleExcluir(row.id)} >Excluir</Button>
+                      <Button onClick={() => HandleExcluir(row.id, row.getAnalise)} >Excluir</Button>
                     </>
                     }
                   </td>

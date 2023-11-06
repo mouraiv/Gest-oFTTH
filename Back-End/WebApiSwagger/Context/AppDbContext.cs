@@ -70,7 +70,8 @@ namespace WebApiSwagger.Context
             modelBuilder.Entity<Analise>()
                 .HasMany(a => a.AnaliseCDOIAs)
                 .WithOne()
-                .HasForeignKey(ac => ac.Id_Analise);
+                .HasForeignKey(ac => ac.Id_Analise)
+                .OnDelete(DeleteBehavior.Cascade);
                                   
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)
