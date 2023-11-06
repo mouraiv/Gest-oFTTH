@@ -4,7 +4,6 @@ import { Button, ButtonImagem, FooterButton, ButtonCdoia, TableGrid} from "./sty
 import { DetalheTesteOptico} from "../../api/testeOptico";
 import { updateAnalise, createAnalise, deleteAnalise } from "../../api/analise";
 import { updateAnaliseCdoia, createAnaliseCdoia, deleteAnaliseCdoia } from "../../api/cdoia";
-import { getEnderecoTotalAny } from "../../api/enterecoTotais"
 import { Content, GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../GlobalStyle";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
@@ -16,19 +15,13 @@ function Vizualizar(){
     const { id } = useParams();
     const [currentCdoia, setCurrentCdoia] = useState({});
     const [loading, setLoading] = useState(false);
-    const [uf, setUf] = useState();
     const [dataAtual] = useState(new Date());
-    const [estacao, setEstacao] = useState();
-    const [cdo, setCdo] = useState();
     const [testeOptico, setTesteOptico] = useState({});
-    const [enderecoTotal, setEnderecoTotal] = useState({});
     const [visible, setVisible] = useState(false);
     const [visualizarAnalise, setVisualizarAnalise] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [dialogAviso, setDialogAviso] = useState();
-    const [statusAnalise, setStatusAnalise] = useState("");
     const [event, setEvent] = useState({});
-    const [cdoia, setCdoia] = useState({});
     const [inputCdoia, setInputCdoia] = useState("1");
     const [inputValue, setInputValue] = useState({analiseObservacao:"", status: ""});
     const [selectedOption, setSelectedOption] = useState("OK");
@@ -40,17 +33,47 @@ function Vizualizar(){
     const{ name } = event.target ?? "";
     const removeDateObs = /\[ \d{2}\/\d{2}\/\d{4} \]/g;
 
+    const {
+      uf, 
+      estacao, 
+      cdo, 
+      construtora,
+      tipoObra,
+      cabo,
+      celula,
+      totalUMs,
+      bobinaLancamento,
+      bobinaRecepcao,
+      quantidadeTeste,
+      posicaoIcxDgo,
+      splitterCEOS,
+      estadoCampo,
+      fibraDGO, 
+      analises,
+      enderecosTotais
+
+    } = testeOptico ?? {};
+
+    const { 
+      analista, 
+      dataAnalise, 
+      status, 
+      analiseCDOIAs,
+      id_Analise
+      
+    } = analises?.[0] ?? [];
+
     async function fetchValidar() {
         try {
             const analiseData = {
-                ...testeOptico.analises[0]
+                ...analises[0]
             };
 
             const _analiseObservacao = analiseData.analiseObservacao != null ? analiseData.analiseObservacao.replace(';.','') : "";
             const observacao = _analiseObservacao.split(';');
-            const index = (observacao.length - 1); //ultima ocorrência
+            const index = (observacao.length - 1); 
             
-            if(name == 'editar') {
+            if(name === 'editar') {
               observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}`;
               const _observacao = observacao.join(';');
 
@@ -58,12 +81,10 @@ function Vizualizar(){
 
             } else {
               analiseData.analista = user.nome.toUpperCase();
-              analiseData.status = statusAnalise.status == 'APROVADO' ? 'REPROVADO' : 'APROVADO';
+              analiseData.status = status == 'APROVADO' ? 'REPROVADO' : 'APROVADO';
               analiseData.dataAnalise = _dataAtual;
 
-              console.log(statusAnalise.dataAnalise +" | "+ _dataAtual)
-
-              if(new Date(statusAnalise.dataAnalise).toLocaleDateString() == new Date(_dataAtual).toLocaleDateString()){
+              if(new Date(dataAnalise).toLocaleDateString() == new Date(_dataAtual).toLocaleDateString()){
                 if(inputValue.analiseObservacao != "") {
                 observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}`;
                 const _observacao = observacao.join(';');
@@ -125,10 +146,9 @@ function Vizualizar(){
 
     async function fetchDeleteCdo(){
       try {
-        const response = await deleteAnalise(currentCdoia.idAnalise);
+        const response = await deleteAnalise(id_Analise);
 
         if(response.status == 200) {
-          setStatusAnalise({});
           console.log("Excluido com sucesso");
         }
         
@@ -150,10 +170,8 @@ function Vizualizar(){
             analista: user.nome.toUpperCase(),
             dataAnalise: _dataAtual,
             cdoiaObservacao: inputValue.analiseObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}` : "",
-            id_Analise: statusAnalise.id_Analise
+            id_Analise: id_Analise
           }
-
-          console.log(analiseInsert);
 
           const analiseResponse = await createAnaliseCdoia(analiseInsert);
   
@@ -175,7 +193,7 @@ function Vizualizar(){
     async function fetchEditarCdoia() {
       try {
           const analiseData = {
-              ...testeOptico.analises[0].analiseCDOIAs[0]
+              ...analiseCDOIAs[0]
             };
 
             analiseData.id_AnaliseCDOIA = currentCdoia.idAnaliseCdoia,
@@ -228,14 +246,10 @@ function Vizualizar(){
 
             if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
-                setCdo(detalheTesteOptico.data.cdo);
-                setEstacao(detalheTesteOptico.data.estacao);
-                setUf(detalheTesteOptico.data.uf);
-                setCdoia(detalheTesteOptico.data.analises[0].analiseCDOIAs ?? null)
 
-                let status = detalheTesteOptico.data.analises.length;
+                let statuslength = detalheTesteOptico.data.analises.length;
 
-                if(status > 0) {
+                if(statuslength > 0) {
                 setStatusAnalise(detalheTesteOptico.data.analises[0] ?? null);
 
                 let obs = detalheTesteOptico.data.analises[0].analiseObservacao.split(';');
@@ -246,15 +260,7 @@ function Vizualizar(){
                       analiseObservacao: `${_obs}`, 
                       status: `${obs.length > 1 ? "RE-TESTE" : "TESTADO"}`
                     }
-                  );
-
-                const detalheEnderecoTotal = await getEnderecoTotalAny(
-                    detalheTesteOptico.data.id_EnderecoTotal
                 );
-
-                if(detalheEnderecoTotal.status == 200) {
-                    setEnderecoTotal(detalheEnderecoTotal.data);
-                }
               }
             }
 
@@ -267,8 +273,7 @@ function Vizualizar(){
     }
 
     useEffect(() => {
-        console.log(Object.keys(statusAnalise).length);
-        fecthDetalheTesteOptico();
+      fecthDetalheTesteOptico();    
 
     },[loading])
 
@@ -346,7 +351,7 @@ function Vizualizar(){
     }
 
     const handleExcluirCdoia = (e, id) => {
-      setCurrentCdoia({idAnalise: 0, idAnaliseCdoia: id});
+      setCurrentCdoia({idAnaliseCdoia: id});
       setEvent(e);
       setVisible(true);
 
@@ -359,8 +364,7 @@ function Vizualizar(){
 
     }
 
-    const handleExcluirCdo = (e, id) => {
-      setCurrentCdoia({idAnalise: id, idAnaliseCdoia: 0});
+    const handleExcluirCdo = (e) => {
       setEvent(e);
       setVisible(true);
 
@@ -381,8 +385,8 @@ function Vizualizar(){
     }
 
     const ConfirmarAnalise = () => {
-      if(statusAnalise == "") {
-        if(name == 'aprovado') {
+      if(status === undefined) {
+        if(name === 'aprovado') {
           fetchInsertValidar("APROVADO");
           setVisible(false);
 
@@ -402,10 +406,8 @@ function Vizualizar(){
     }
 
     const ConfirmarAnaliseCdoia = () => {
-      const _cdoiaRepeat = cdoia.filter(p => p.cdoia == inputCdoia)
+      const _cdoiaRepeat = analiseCDOIAs.filter(p => p.cdoia == inputCdoia)
       .map(value => value.cdoia);
-
-      console.log(_cdoiaRepeat)
       
       if(_cdoiaRepeat.length > 0){
         setMensagem(`${cdo}.${inputCdoia} já existe.`)
@@ -439,7 +441,7 @@ function Vizualizar(){
         <Content>
         { loading ? (
             <>
-            { name == 'observacao' ? (
+            { name === 'observacao' ? (
                 <DialogAlert 
                     visibleDiag={visualizarAnalise} 
                     visibleHide={() => setVisualizarAnalise(false)}
@@ -487,7 +489,7 @@ function Vizualizar(){
             ) : (null)
             }
 
-            { name == 'editar' ? (
+            { name === 'editar' ? (
                 <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
@@ -498,7 +500,7 @@ function Vizualizar(){
                     buttonConfirmar={ConfirmarAnalise}
                     text={
                       <>
-                      { statusAnalise.status == "APROVADO" ? (
+                      { status === "APROVADO" ? (
                           <div style={
                               {
                                 display: 'flex',
@@ -552,7 +554,7 @@ function Vizualizar(){
             ):(null)
             }
 
-            { name == 'excluirCdo' ? (
+            { name === 'excluirCdo' ? (
                 <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
@@ -572,7 +574,7 @@ function Vizualizar(){
             ):(null)
             }
 
-            { name == 'adicionarCdoia' ? (
+            { name === 'adicionarCdoia' ? (
                 <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
@@ -583,7 +585,7 @@ function Vizualizar(){
                     buttonConfirmar={ConfirmarAnaliseCdoia}
                     text={
                       <>
-                      { mensagem != "" ? (
+                      { mensagem !== "" ? (
                         <div style={
                             {
                               width:'100%',
@@ -654,7 +656,7 @@ function Vizualizar(){
             ):(null)
             }
 
-            { name == 'observacaoCdoia' ? (
+            { name === 'observacaoCdoia' ? (
                 <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
@@ -680,7 +682,7 @@ function Vizualizar(){
             ):(null)
             }
 
-            { name == 'editarCdoia' ? (
+            { name === 'editarCdoia' ? (
                 <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
@@ -738,7 +740,7 @@ function Vizualizar(){
             ):(null)
             }
 
-            { name == 'excluirCdoia' ? (
+            { name === 'excluirCdoia' ? (
                 <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
@@ -758,7 +760,7 @@ function Vizualizar(){
             ):(null)
             }
 
-            { Object.keys(statusAnalise).length !== 0 && (name == "aprovado" || name == "reprovado") ? (
+            { status !== undefined && (name == "aprovado" || name == "reprovado") ? (
                 <DialogAlert 
                 visibleDiag={visible} 
                 visibleHide={() => { setVisible(false)}}
@@ -769,7 +771,7 @@ function Vizualizar(){
                 buttonConfirmar={ConfirmarAnalise}
                 text={
                     <>
-                      { statusAnalise.status != "APROVADO" ? (
+                      { status !== "APROVADO" ? (
                           <div style={
                               {
                                 display: 'flex',
@@ -823,7 +825,7 @@ function Vizualizar(){
             ) : (null)
             }
 
-            { Object.keys(statusAnalise).length === 0 ? (
+            { status === undefined ? (
                 <DialogAlert 
                 visibleDiag={visible} 
                 visibleHide={() => setVisible(false)}
@@ -834,7 +836,7 @@ function Vizualizar(){
                 buttonConfirmar={ConfirmarAnalise}
                 text={
                     <>
-                      {  name == 'aprovado' ? (
+                      {  name === 'aprovado' ? (
                           <div style={
                               {
                                 display: 'flex',
@@ -902,32 +904,32 @@ function Vizualizar(){
                     <tr>
                         <th colSpan={3}>-- ANALISE {uf} - {estacao} - {cdo} --</th>
                     </tr>
-                    { statusAnalise.status == "APROVADO" ? (
+                    { status !== undefined && status === "APROVADO" ? (
                     <tr>
                       <th style={{
                           backgroundColor: '#D4EFDF',
                           color: '#145A32',
                           borderTop: '1px solid #145A32',
                           borderBottom: '1px solid #145A32'
-                        }} colSpan={3}> {statusAnalise.status} </th>
+                        }} colSpan={3}> {status} </th>
                       </tr>
                     ) : (null)
                     }
-                    { statusAnalise.status == "REPROVADO" ? (
+                    { status !== undefined && status === "REPROVADO" ? (
                     <tr>
                       <th style={{
                             backgroundColor: '#E6B0AA',
                             color: '#641E16',
                             borderTop: '1px solid #641E16',
                             borderBottom: '1px solid #641E16'
-                        }} colSpan={3}> {statusAnalise.status} </th>
+                        }} colSpan={3}> {status} </th>
                       </tr>
                     ) : (null)
                     }
                 </thead>
                 <tbody>
                         <tr>
-                          { statusAnalise != "" ? (
+                          { status !== undefined ? (
                             <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>{inputValue.status}</td> 
                           ): ( 
                             <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>TESTE</td>
@@ -936,35 +938,35 @@ function Vizualizar(){
                             <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>ANALISTA : {user.nome.toUpperCase() ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>{testeOptico.uf ?? '-------'} - {enderecoTotal.estado ?? '-------'}</td>
-                            <td>{testeOptico.construtora ?? '-------'}</td>
+                            <td>{uf ?? '-------'} - {enderecosTotais.estado ?? '-------'}</td>
+                            <td>{construtora ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Estação: {testeOptico.estacao ?? '-------'} - {enderecoTotal.siglaEstacao ?? '-------'}</td>
-                            <td>Tipo Obra: {testeOptico.tipoObra ?? '-------'}</td>
+                            <td>Estação: {estacao ?? '-------'} - {enderecosTotais.siglaEstacao ?? '-------'}</td>
+                            <td>Tipo Obra: {tipoObra ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Estado Campo: {testeOptico.estadoCampo ?? '-------'}</td>
-                            <td>Estado Projeto {enderecoTotal.estadoProjeto ?? '-------'}</td>
+                            <td>Estado Campo: {estadoCampo ?? '-------'}</td>
+                            <td>Estado Projeto {enderecosTotais.estadoProjeto ?? '-------'}</td>
                         </tr>
                         <tr>
                           <td colSpan={2}>
                             <table>
                               <tbody>
                               <tr>
-                                <td>Cabo: {testeOptico.cabo ?? '-------'}</td>
-                                <td>Celula: {testeOptico.celula ?? '-------'}</td>
-                                <td>Total UMs: {testeOptico.totalUMs ?? '-------'}</td>
+                                <td>Cabo: {cabo ?? '-------'}</td>
+                                <td>Celula: {celula ?? '-------'}</td>
+                                <td>Total UMs: {totalUMs ?? '-------'}</td>
                               </tr>
                               </tbody>
                             </table>
                           </td>
                         </tr>
                         <tr>
-                          <td colSpan={2}>{testeOptico.cdo ?? '-------'}</td>
+                          <td colSpan={2}>{cdo ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td colSpan={2}>Codigo: {enderecoTotal.cod_Viabilidade ?? '-------'} | {enderecoTotal.tipoViabilidade ?? '-------'}</td>
+                            <td colSpan={2}>Codigo: {enderecosTotais.cod_Viabilidade ?? '-------'} | {enderecosTotais.tipoViabilidade ?? '-------'}</td>
                         </tr>
                         <tr>
                           <td colSpan={2} style={{padding: '0'}}>
@@ -982,12 +984,12 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                              {testeOptico.analises.map((analise, index) => (
-                                  <tr key={index} style={analise.status == 'APROVADO' ?
+                              {status !== undefined ? (
+                                  <tr style={status === 'APROVADO' ?
                                   {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
-                                    <td>{analise.analista}</td>
-                                    <td>{new Date(analise.dataAnalise).toLocaleDateString()}</td>
-                                    <td>{analise.status}</td>
+                                    <td>{analista}</td>
+                                    <td>{new Date(dataAnalise).toLocaleDateString()}</td>
+                                    <td>{status}</td>
                                     <td>
                                       <>
                                         <Button name="observacao" style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={AnaliseDetalhe} >OBSERVAÇÕES</Button>
@@ -996,34 +998,35 @@ function Vizualizar(){
                                     <td>
                                       <>
                                         <Button name="editar" style={{marginLeft:'0.5rem', marginRight: '0.5rem'}} onClick={handleEdit} >Editar</Button>
-                                        <Button name="excluirCdo" onClick={(e) => handleExcluirCdo(e, analise.id_Analise)} >Excluir</Button>
+                                        <Button name="excluirCdo" onClick={handleExcluirCdo} >Excluir</Button>
                                       </> 
                                     </td> 
                                   </tr>
-                                ))}
+                              ):(null)
+                              }
                               </tbody>
                             </table>
                           </td>
                         </tr>
                         <tr>
-                            <td>Data Est. Operacional: {enderecoTotal.dataEstadoOperacional == 0 ? '-------' : enderecoTotal.dataEstadoOperacional}</td>
-                            <td>Estado Operacional: {enderecoTotal.estadoOperacional == 0 ? '-------' : enderecoTotal.estadoOperacional}</td>
+                            <td>Data Est. Operacional: {enderecosTotais.dataEstadoOperacional == 0 ? '-------' : enderecosTotais.dataEstadoOperacional}</td>
+                            <td>Estado Operacional: {enderecosTotais.estadoOperacional == 0 ? '-------' : enderecosTotais.estadoOperacional}</td>
                         </tr>
                         <tr>
-                            <td>Data Est. Controle: {enderecoTotal.dataEstadoControle == 0 ? '-------' : enderecoTotal.dataEstadoControle}</td>
-                            <td>Estado Controle: {enderecoTotal.EstadoControle ?? '-------'}</td>
+                            <td>Data Est. Controle: {enderecosTotais.dataEstadoControle == 0 ? '-------' : enderecosTotais.dataEstadoControle}</td>
+                            <td>Estado Controle: {enderecosTotais.EstadoControle ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Bobina Lançamento: {testeOptico.bobinaLancamento ?? '-------'}</td>
-                            <td>Posição ICX/DGO: {testeOptico.posicaoIcxDgo ?? '-------'}</td>
+                            <td>Bobina Lançamento: {bobinaLancamento ?? '-------'}</td>
+                            <td>Posição ICX/DGO: {posicaoIcxDgo ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Bobina de Recepção: {testeOptico.BobinadeRecepcao ?? '-------'}</td>
-                            <td>Splitter CEOS: {testeOptico.SplitterCEOS ?? '-------'}</td>
+                            <td>Bobina de Recepção: {bobinaRecepcao ?? '-------'}</td>
+                            <td>Splitter CEOS: {splitterCEOS ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Quantidade Teste: {testeOptico.quantidadeDeTeste ?? '-------'}</td>
-                            <td>Fibra DGO: {testeOptico.fibraDGO ?? '-------'}</td>
+                            <td>Quantidade Teste: {quantidadeTeste ?? '-------'}</td>
+                            <td>Fibra DGO: {fibraDGO ?? '-------'}</td>
                         </tr>
                         <tr>
                           <td colSpan={2} style={{padding: '0'}}>
@@ -1046,7 +1049,7 @@ function Vizualizar(){
                                   <td>
                                     <>
                                     <div>
-                                    {statusAnalise != "" ? (
+                                    {status !== undefined ? (
                                       <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>
                                     ):(null)
                                     }
@@ -1054,7 +1057,7 @@ function Vizualizar(){
                                     </>
                                   </td>
                                 </tr>
-                              {statusAnalise != "" ? (cdoia.map((analise, index) => (
+                              {status !== undefined ? (analiseCDOIAs.map((analise, index) => (
                                   <tr key={index} style={analise.cdoiaStatus == 'OK' ?
                                   {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
                                     <td>{cdo}.{analise.cdoia ?? "--"}</td>
@@ -1083,22 +1086,19 @@ function Vizualizar(){
             </TableGrid>
             <FooterButton>
               <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-              { statusAnalise.status == undefined ? (
-                <>
-                  <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
-                  <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
-                </>  
-              ) : (null)
-              }
-              { statusAnalise.id_Analise != undefined ? (
-                statusAnalise.status != "APROVADO" ? (
-                <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
-                ) : (
-                  <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
-                )
-              ) : (null)
-              }
-            </FooterButton>
+                  {status === undefined ? (
+                      <>
+                          <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
+                          <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
+                      </>  
+                  ) : null}
+                  {status !== undefined && status !== "APROVADO" ? (
+                      <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
+                  ) : null}
+                  {status !== undefined && status === "APROVADO" ? (
+                      <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
+                  ) : null}
+              </FooterButton>
             </>
             ):(<Spinner />)
             }
