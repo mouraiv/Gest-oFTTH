@@ -204,8 +204,6 @@ function Vizualizar(){
             analiseData.dataAnalise = _dataAtual;
             analiseData.cdoiaObservacao = currentCdoia.cdoiaObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${currentCdoia.cdoiaObservacao.replace(removeDateObs,"")}` : "";
 
-            console.log(analiseData);
-
             const analiseResponse = await updateAnaliseCdoia(analiseData);
   
             if (analiseResponse.status === 200) {
@@ -223,7 +221,7 @@ function Vizualizar(){
       }
   }
 
-    async function fetchDeleteCdoia(){
+  async function fetchDeleteCdoia(){
       try {
         const response = await deleteAnaliseCdoia(currentCdoia.idAnaliseCdoia);
 
@@ -239,7 +237,7 @@ function Vizualizar(){
       } finally {
         setLoading(true);
       }
-    }
+  }
 
     async function fecthDetalheTesteOptico(){
         try {
@@ -248,21 +246,6 @@ function Vizualizar(){
             if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
 
-                /*let statuslength = detalheTesteOptico.data.analises.length;
-
-                if(statuslength > 0) {
-                setStatusAnalise(detalheTesteOptico.data.analises[0] ?? null);
-
-                let obs = detalheTesteOptico.data.analises[0].analiseObservacao.split(';');
-                let _obs = obs[obs.length - 1];
-
-                setInputValue(
-                    {
-                      analiseObservacao: `${_obs}`, 
-                      status: `${obs.length > 1 ? "RE-TESTE" : "TESTADO"}`
-                    }
-                );
-              }*/
             }
 
         } catch (error) {
@@ -295,8 +278,8 @@ function Vizualizar(){
     }
     
     const analiseState = () => {
-      let obs = analiseObservacao.split(';');
-      return `${obs.length > 1 ? "RE-TESTE" : "TESTADO"}`
+      let obs = analiseObservacao?.split(';');
+      return `${obs?.length > 1 ? "RE-TESTE" : "TESTADO"}`
     }
 
     const handleVoltar = () => {
@@ -557,7 +540,7 @@ function Vizualizar(){
                           <div style={{display: 'flex'}}>
                             <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                               <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
-                              <textarea onChange={handleInputChange} defaultValue={`${inputValue.analiseObservacao.replace(removeDateObs,"")}`} name="testeObservacao" style={
+                              <textarea onChange={handleInputChange} defaultValue={`${inputValue.analiseObservacao?.replace(removeDateObs,"") ?? ""}`} name="testeObservacao" style={
                                 {
                                   width: '430px', 
                                   height: '100px', 
@@ -743,7 +726,7 @@ function Vizualizar(){
                           <div style={{display: 'flex'}}>
                             <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                               <label style={{fontSize: '0.7rem', fontWeight: '700'}}>OBSERVAÇÃO:</label>
-                              <textarea onChange={handleInputChangeCdoia} defaultValue={`${currentCdoia.cdoiaObservacao.replace(removeDateObs,"")}`} name="testeObservacao" style={
+                              <textarea onChange={handleInputChangeCdoia} defaultValue={`${currentCdoia.cdoiaObservacao?.replace(removeDateObs,"") ?? ""}`} name="testeObservacao" style={
                                 {
                                   width: '430px', 
                                   height: '100px', 

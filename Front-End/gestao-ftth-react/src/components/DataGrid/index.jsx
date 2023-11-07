@@ -25,9 +25,6 @@ export default function DataGrid({
   const [id, setId] = useState();
   const [analseDelete, setAnaliseDelete] = useState(0);
 
-  //console.log(rows.filter(p => p.id = 178212).map(value => value.getAnalise)[0]);
-  //console.log(rows);
-
   async function fetchDelete(){
     if(id !== undefined){
         const data = await deleteTesteOptico(id);
