@@ -69,5 +69,25 @@ namespace WebApiSwagger.Controllers
             }
              
         }
+        [HttpGet("ListarCarregarId")]
+        public async Task<IActionResult> ListarCarregarId([FromQuery] int? id)
+        {
+            try
+            {
+                var resultado = await _enderecoTotalRepository.ListarCarregarId(id);
+
+                if (resultado == null)
+                {
+                    return NotFound("Nenhum resultado."); 
+                }
+                
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
+            }
+           
+        }
     }
 }

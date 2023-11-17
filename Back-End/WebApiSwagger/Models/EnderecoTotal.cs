@@ -6,13 +6,9 @@ namespace WebApiSwagger.Models
     {
       [Key]
       public int Id_EnderecoTotal { get; set; }
-      public string? UF { get; set; }
-      public string? Estado { get; set; }
-      public string? SiglaEstacao { get; set; }
-      public string? Estacao { get; set; }
       public string? Celula { get; set; }
-      public string? CaboPrimario { get; set; }
-      public string? CaboSecundario { get; set; }
+      public string? SiglaEstacao { get; set; }
+      public string? UF { get; set; }
       public string? Municipio { get; set; }
       public string? Localidade { get; set; }
       public string? Cod_Localidade { get; set; }
@@ -43,35 +39,12 @@ namespace WebApiSwagger.Models
       public string? NumeroPiso { get; set; }
       public string? Disp_Comercial { get; set; }
       public string? Id_Celula { get; set; }
-      public string? Quantidade_HCS { get; set; }
-      public string? Projeto { get; set; }
-      public string? EstadoOperacional { get; set; }
-      public string? DataEstadoOperacional { get; set; }
       public string? EstadoControle { get; set; }
       public string? DataEstadoControle { get; set; }
-      public string? EstadoProjeto { get; set; }
-      public string? EstadoCicloVida { get; set; }
-      public string? Rede { get; set; }
-      public string? Destinacao { get; set; }
-      public string? Id_Sicom { get; set; }
-      public string? DcCre { get; set; }
-      public string? InfraEstrutura { get; set; }
-      public string? ICX { get; set; }
-      public string? NomeOlt { get; set; }
-      public string? PortaOLT { get; set; }
-      public string? DGO { get; set; }
-      public string? FibraDgo { get; set; }
-      public string? CaboDgo { get; set; }
-      public string? SplitterCeos { get; set; }
-      public string? OutSplitterCeos { get; set; }
-      public string? CaboCdo { get; set; }
-      public string? FibraCdo { get; set; }
-      public string? SplitterCdo { get; set; }
-      public string? EtiquetaPadrao { get; set; }
-      public string? ForaDePadrao { get; set; }
-      public string? EtiquetaDeCampo { get; set; }
-      public string? IndentificacaoTerceiro { get; set; }
-      public string? EtiqueTerceiro { get; set; }
+      public string? Quantidade_HCS { get; set; }
+      public string? Projeto { get; set; }
+      public int? Id_MaterialRede { get; set; }
+      public MaterialRede MaterialRede { get; set; } = null!;
        
     }
 }

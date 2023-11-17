@@ -6,7 +6,8 @@ namespace WebApiSwagger.Repository.Interface
 {
     public interface IEnderecoTotalRepository
     {
-        Task<EnderecoTotal> CarregarId(int? id_EnderecoTotal);
+        Task<EnderecoTotal> CarregarId(int? id_MaterialRede);
+        Task<IEnumerable<EnderecoTotal>> ListarCarregarId(int? id_MaterialRede);
         Task<IEnumerable<EnderecoTotal>> Listar(FiltroEnderecoTotal filtro, Paginacao paginacao);
     }
 }

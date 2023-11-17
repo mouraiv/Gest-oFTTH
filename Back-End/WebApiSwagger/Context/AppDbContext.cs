@@ -9,19 +9,21 @@ namespace WebApiSwagger.Context
         = LoggerFactory.Create(builder => { builder.AddConsole(); });
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            //Database.SetCommandTimeout(1800);
+            Database.SetCommandTimeout(1800);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-        optionsBuilder.UseLoggerFactory(MyLoggerFactory) 
-            .EnableSensitiveDataLogging(); 
+            optionsBuilder.UseLoggerFactory(MyLoggerFactory) 
+                .EnableSensitiveDataLogging();
         }
 
         public DbSet<Cargo> Cargos => Set<Cargo>();
         public DbSet<Analise> Analises => Set<Analise>();
         public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<EnderecoTotal> EnderecosTotais => Set<EnderecoTotal>();
+        public DbSet<MaterialRede> MateriaisRedes => Set<MaterialRede>();
+        public DbSet<Ligacao> Ligacoes => Set<Ligacao>();
         public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
         public DbSet<Validacao> Validacoes => Set<Validacao>();
         public DbSet<TesteOptico> TestesOpticos => Set<TesteOptico>();
@@ -53,26 +55,45 @@ namespace WebApiSwagger.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<TesteOptico>()
-                .HasOne(t => t.EnderecosTotais)
-                .WithMany()
-                .HasForeignKey(p => p.Id_EnderecoTotal);
+                .HasOne(t => t.MaterialRede)
+                .WithOne()
+                .HasForeignKey<TesteOptico>(p => p.Id_MaterialRede)
+                .IsRequired(false);
 
-            modelBuilder.Entity<TesteOptico>()
+             modelBuilder.Entity<TesteOptico>()
                 .HasMany(p => p.Validacoes) 
                 .WithOne()
                 .HasForeignKey(v => v.Id_TesteOptico);   
                 
             modelBuilder.Entity<TesteOptico>()
-                .HasMany(t => t.Analises)
+                .HasOne(t => t.Analises)
                 .WithOne()
-                .HasForeignKey(a => a.Id_TesteOptico);
+                .HasForeignKey<Analise>(a => a.Id_TesteOptico);
 
             modelBuilder.Entity<Analise>()
                 .HasMany(a => a.AnaliseCDOIAs)
                 .WithOne()
                 .HasForeignKey(ac => ac.Id_Analise)
                 .OnDelete(DeleteBehavior.Cascade);
-                                  
+
+            modelBuilder.Entity<EnderecoTotal>()
+                .HasOne(t => t.MaterialRede)
+                .WithMany(p => p.EnderecoTotal)
+                .HasForeignKey(p => p.Id_MaterialRede);
+
+            modelBuilder.Entity<EnderecoTotal>()
+                .HasIndex(p => p.Id_MaterialRede)
+                .IsUnique(false);    
+
+            modelBuilder.Entity<MaterialRede>()
+                .HasOne(t => t.Ligacao)
+                .WithOne()
+                .HasForeignKey<MaterialRede>(p => p.Id_MaterialRede);
+
+            modelBuilder.Entity<Ligacao>()
+                .HasIndex(p => p.Id_MaterialRede)
+                .IsUnique(false);                       
+                   
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)
                  .WithOne()
@@ -80,13 +101,13 @@ namespace WebApiSwagger.Context
 
             modelBuilder.Entity<Tecnico>()
                  .HasOne(p => p.GetCargo)
-                 .WithMany()
-                 .HasForeignKey(p => p.Id_Cargo);
+                 .WithOne()
+                 .HasForeignKey<Tecnico>(p => p.Id_Cargo);
 
             modelBuilder.Entity<Tecnico>()
                  .HasOne(p => p.GetEmpresa)
-                 .WithMany()
-                 .HasForeignKey(p => p.Id_Empresa); 
+                 .WithOne()
+                 .HasForeignKey<Tecnico>(p => p.Id_Empresa); 
 
            /* modelBuilder.Entity<EnderecoTotal>()
                 .Property(e => e.Latitude)

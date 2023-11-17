@@ -282,7 +282,9 @@ namespace WebApiSwagger.Controllers
                         Tecnico = optico.Tecnico,
                         Sel = optico.Sel,
                         getAnalise = optico.Analises,
-                        getValidacao = optico.Validacoes
+                        getValidacao = optico.Validacoes,
+                        Id_MaterialRede = optico.Id_MaterialRede
+                        
                     };
                     resultado.Add(modelo);
                 };
@@ -342,7 +344,8 @@ namespace WebApiSwagger.Controllers
                         TotalUMs = optico.TotalUMs,
                         Tecnico = optico.Tecnico,
                         Sel = optico.Sel,
-                        getAnalise = optico.Analises
+                        getAnalise = optico.Analises,
+                        Id_MaterialRede = optico.Id_MaterialRede
                     };
                     resultado.Add(modelo);
                 };
@@ -383,7 +386,7 @@ namespace WebApiSwagger.Controllers
             }
             catch (Exception ex)
             {
-               return BadRequest("Ocorreu um erro ao carregar: " + ex.InnerException);
+               return BadRequest("Ocorreu um erro ao carregar: " + ex.Message);
             }
 
         }

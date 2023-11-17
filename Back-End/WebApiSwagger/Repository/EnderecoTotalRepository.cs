@@ -43,7 +43,7 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.Estacao))
                 {
-                    query = query.Where(p => p.Estacao == filtro.Estacao);
+                    query = query.Where(p => p.MaterialRede.NomeAbastecedora_Mt == filtro.Estacao);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.Municipio))
@@ -63,19 +63,14 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.EstadoOperacional))
                 {
-                    query = query.Where(p => p.EstadoOperacional == filtro.EstadoOperacional);
+                    query = query.Where(p => p.MaterialRede.EstadoOperacional_Mt == filtro.EstadoOperacional);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.EstadoControle))
                 {
-                    query = query.Where(p => p.EstadoControle == filtro.EstadoControle);
+                    query = query.Where(p => p.MaterialRede.EstadoControle_Mt == filtro.EstadoControle);
                 }
 
-                if (!string.IsNullOrEmpty(filtro.EstadoProjeto))
-                {
-                    query = query.Where(p => p.EstadoProjeto == filtro.EstadoProjeto);
-                }
-   
                 paginacao.Total = await query.CountAsync();
 
                 query = query
@@ -89,6 +84,20 @@ namespace WebApiSwagger.Repository
                 throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
             }
                           
+        }
+
+        public async Task<IEnumerable<EnderecoTotal>> ListarCarregarId(int? id_MaterialRede)
+        {
+            try
+            {
+                return await _context.EnderecosTotais
+                .Where(p => p.Id_MaterialRede == id_MaterialRede)
+                .ToListAsync();             
+            }
+            catch (Exception ex)
+            {  
+                throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
+            }
         }
     }
 }

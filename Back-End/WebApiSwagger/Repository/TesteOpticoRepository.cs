@@ -81,16 +81,16 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.TestesOpticos
-                            .Include(p => p.Validacoes)
-                            .Include(p => p.EnderecosTotais)
-                            .Include(p => p.Analises)
+                        .Include(p => p.Analises)
                             .ThenInclude(p => p.AnaliseCDOIAs)
-                            .Where(p => p.Id_TesteOptico == id)
-                            .FirstOrDefaultAsync() ?? new TesteOptico();    
+                        .Where(p => p.Id_TesteOptico == id)
+                        .AsSplitQuery()
+                        .FirstOrDefaultAsync() ?? new TesteOptico();
+    
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocorreu um erro ao carregar: " + ex.InnerException);
+                throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
             }
             
         }

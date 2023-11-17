@@ -1,5 +1,29 @@
 import { styled } from "@stitches/react";
 
+export const ContentTabs = styled("div", {
+    width:'700px',
+    marginBottom: '1rem',
+    marginTop: '1rem',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+
+    '.nav-link' : {
+       color: '#13293d',
+       textDecoration: 'underline',
+       cursor: 'pointer'
+    },
+    
+    '.nav-link:hover' : {
+        textDecoration: 'none'
+     },
+
+    '.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active' : {
+        textDecoration: 'none',
+        color: '#13293d'
+     }
+
+});
+
 export const TableGrid = styled("table", {
     borderCollapse: 'collapse',
     fontSize: '0.7rem',
@@ -33,7 +57,6 @@ export const TableGrid = styled("table", {
 export const FooterButton = styled("div", {
     display:'flex',
     backgroundColor: '#d6dbdf',
-    minWidth: '720px', 
     justifyContent: 'flex-end', 
     alignItems: 'flex-end',
     marginTop: '1.5rem',

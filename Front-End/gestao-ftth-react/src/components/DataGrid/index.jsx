@@ -27,17 +27,15 @@ export default function DataGrid({
 
   async function fetchDelete(){
     if(id !== undefined){
-        const data = await deleteTesteOptico(id);
+        await deleteTesteOptico(id);
     }
   }
 
-  const handleVisualizar = (id) => {
-    setId(id);
-    navigate(`/TesteOptico/Visualizar/${id}`);
+  const handleVisualizar = (id, idNetwin) => {
+    navigate(`/TesteOptico/Visualizar/${id}/${idNetwin}`);
   }
 
   const HandleEditar = (id) => {
-    setId(id);
     navigate(`/TesteOptico/Editar/${id}`);
   }
 
@@ -110,7 +108,7 @@ export default function DataGrid({
                     <td key={column.key}>{row[column.key] || "-"}</td>
                   ))}
                   <td>
-                    <Button onClick={() => handleVisualizar(row.id)} >Visualizar</Button>
+                    <Button onClick={() => handleVisualizar(row.id, row.id_MaterialRede)} >Visualizar</Button>
                     { row.sel == 1 &&
                     <>
                       <Button onClick={() => HandleEditar(row.id)} >Editar</Button>

@@ -9,12 +9,17 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IEnderecoTotalRepository, EnderecoTotalRepository>();
 builder.Services.AddScoped<ITesteOpticoRepository, TesteOpticoRepository>();
+builder.Services.AddScoped<IMaterialRedeRepository, MaterialRedeRepository>();
+builder.Services.AddScoped<ILigacaoRepository, LigacaoRepository>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IAnaliseRepository, AnaliseRepository>();
 builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
@@ -32,7 +37,11 @@ builder.Services.AddSingleton<UploadXlsx>();
 builder.Services.AddSingleton<ConversorDwg>();
 builder.Services.AddSingleton<Paginacao>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -102,7 +111,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(options =>
 {
-    options.WithOrigins("http://localhost:5173", "http://localhost:5226")
+    options.WithOrigins("http://192.168.0.39:5173", "http://192.168.0.39:5226")
            .AllowAnyHeader()
            .AllowAnyMethod()
            .SetIsOriginAllowed(origin => true)
