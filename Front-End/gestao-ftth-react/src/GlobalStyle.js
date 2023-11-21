@@ -1,4 +1,5 @@
 import { globalCss, styled } from "@stitches/react"
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const GlobalStyle = globalCss({
 	'*': {    
@@ -10,7 +11,18 @@ export const GlobalStyle = globalCss({
         },
         'body':{
             backgroundColor: 'whitesmoke', 
-        }   
+        },
+        'p': {
+          margin: 0,
+          padding: 0  
+        },
+        'input' : {
+            fontSize: 'revert',
+        },
+        'textarea': {
+            fontSize: 'revert',
+        }
+       
 });
 
 export const Template = styled("div", {

@@ -5,15 +5,13 @@ export const FormGroup = styled("div", {
     flexDirection: 'column',
 });
 
-export const Input = styled("input", {
-    marginLeft: '1rem',
-    marginTop: '0.2rem',
-    height: '6px',
-    width: '130px',
-    padding: '0.5rem',
-    fontSize: '0.8rem',
-    fontWeight: '600',
-    textTransform: 'uppercase'
+export const Input = styled("input",{
+        marginLeft: '1rem',
+        marginTop: '0.2rem',
+        fontSize: '0.8rem',
+        fontWeight: '600',
+        textTransform: 'uppercase'
+    
 });
 
 export const Label = styled("label", {

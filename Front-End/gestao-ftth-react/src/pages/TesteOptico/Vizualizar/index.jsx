@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import { Tab, Tabs } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams, useNavigate } from "react-router-dom";
 import { ButtonValidar, ButtonImagem, FooterButton, TableGrid, ButtonReValidar, ButtonEditar, ContentTabs } from "./style";
 import { DetalheTesteOptico, updateTesteOptico } from "../../../api/testeOptico";
@@ -145,7 +144,7 @@ function Vizualizar(){
     }
 
     const handleAnalise = () => {
-        navigate(`/Analise/${id}`); 
+        navigate(`/Analise/${id}/${idNetwin}`); 
     };
 
     GlobalStyle();

@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, ButtonImagem, FooterButton, ButtonCdoia, TableGrid} from "./styles";
 import { DetalheTesteOptico} from "../../api/testeOptico";
+import { DetahleMaterialRedeAny} from "../../api/materialRede";
 import { updateAnalise, createAnalise, deleteAnalise } from "../../api/analise";
 import { updateAnaliseCdoia, createAnaliseCdoia, deleteAnaliseCdoia } from "../../api/cdoia";
 import { Content, GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../GlobalStyle";
@@ -12,11 +13,12 @@ import { useAuth } from "../../contexts/auth";
 import DialogAlert from "../../components/Dialog";
 
 function Vizualizar(){
-    const { id } = useParams();
+    const { id, idNetwin } = useParams();
     const [currentCdoia, setCurrentCdoia] = useState({});
     const [loading, setLoading] = useState(false);
     const [dataAtual] = useState(new Date());
     const [testeOptico, setTesteOptico] = useState({});
+    const [materialRede, setMaterialRede] = useState({});
     const [visible, setVisible] = useState(false);
     const [visualizarAnalise, setVisualizarAnalise] = useState(false);
     const [mensagem, setMensagem] = useState("");
@@ -50,9 +52,13 @@ function Vizualizar(){
       estadoCampo,
       fibraDGO, 
       analises,
-      enderecosTotais
 
     } = testeOptico ?? {};
+
+    const {
+      enderecoTotal
+
+    } = materialRede ?? {};
 
     const { 
       analista, 
@@ -62,12 +68,12 @@ function Vizualizar(){
       analiseObservacao,
       id_Analise
       
-    } = analises?.[0] ?? [];
+    } = analises ?? {};
 
     async function fetchValidar() {
         try {
             const analiseData = {
-                ...analises[0]
+                ...analises
             };
 
             const _analiseObservacao = analiseData.analiseObservacao != null ? analiseData.analiseObservacao.replace(';.','') : "";
@@ -242,10 +248,11 @@ function Vizualizar(){
     async function fecthDetalheTesteOptico(){
         try {
             const detalheTesteOptico = await DetalheTesteOptico(id);
+            const detalheMaterialRede = await DetahleMaterialRedeAny(idNetwin);
 
             if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
-
+                setMaterialRede(detalheMaterialRede.data);
             }
 
         } catch (error) {
@@ -291,15 +298,14 @@ function Vizualizar(){
     };
 
     const Observacao = () => {
-      if (testeOptico.analises && testeOptico.analises.length > 0) {
-        const observacoes = testeOptico.analises.map(analise => analise.analiseObservacao ?? "");
-        const _observacoes = observacoes.map(obs => obs.replace(';.','').split(';'));
-        return _observacoes;
+      if (analises != undefined) {
+          const observacoes = analiseObservacao.replace(';.','').split(';');
+          const _observacoes = observacoes.map(obs => obs);
+          return _observacoes;
       }
       return [];
     };
-    
-    
+        
     const Adicionar = (e) => {
       setInputValue({analiseObservacao:"", status: ""});
       setEvent(e);
@@ -444,7 +450,7 @@ function Vizualizar(){
         <Template>
         <Header title={"Analise"} />
         <Content>
-        { loading ? (
+        { loading || status !== undefined ? (
             <>
             { name === 'observacao' ? (
                 <DialogAlert 
@@ -461,12 +467,10 @@ function Vizualizar(){
                                   fontSize: '0.7rem'
                                 }}>
                                 <tbody>
-                                  {Observacao().map((observacaoArray, outerIndex) => (
-                                    observacaoArray.map((observacao, innerIndex) => (
-                                      <tr key={`${outerIndex}-${innerIndex}`}>
+                                  {Observacao().map((observacao, innerIndex) => (
+                                      <tr key={`${innerIndex}`}>
                                         <td style={{padding:'0.5rem'}}>{observacao}</td>
                                       </tr>
-                                    ))
                                   ))}
                                   </tbody>
                                   </TableGrid>
@@ -943,16 +947,16 @@ function Vizualizar(){
                             <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>ANALISTA : {user.nome.toUpperCase() ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>{uf ?? '-------'} - {enderecosTotais?.estado ?? '-------'}</td>
+                            <td>{uf ?? '-------'} - {materialRede?.nomeFederativa_Mt ?? '-------'}</td>
                             <td>{construtora ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Estação: {estacao ?? '-------'} - {enderecosTotais?.siglaEstacao ?? '-------'}</td>
+                            <td>Estação: {estacao ?? '-------'} - {enderecoTotal?.[0]?.siglaEstacao ?? '-------'}</td>
                             <td>Tipo Obra: {tipoObra ?? '-------'}</td>
                         </tr>
                         <tr>
                             <td>Estado Campo: {estadoCampo ?? '-------'}</td>
-                            <td>Estado Projeto {enderecosTotais?.estadoProjeto ?? '-------'}</td>
+                            <td>Estado Projeto {enderecoTotal?.[0]?.estadoProjeto ?? '-------'}</td>
                         </tr>
                         <tr>
                           <td colSpan={2}>
@@ -971,7 +975,7 @@ function Vizualizar(){
                           <td colSpan={2}>{cdo ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td colSpan={2}>Codigo: {enderecosTotais?.cod_Viabilidade ?? '-------'} | {enderecosTotais?.tipoViabilidade ?? '-------'}</td>
+                            <td colSpan={2}>Codigo: {enderecoTotal?.[0]?.cod_Viabilidade ?? '-------'} | {enderecoTotal?.[0]?.tipoViabilidade ?? '-------'}</td>
                         </tr>
                         <tr>
                           <td colSpan={2} style={{padding: '0'}}>
@@ -1014,12 +1018,12 @@ function Vizualizar(){
                           </td>
                         </tr>
                         <tr>
-                            <td>Data Est. Operacional: {enderecosTotais?.dataEstadoOperacional === undefined ? '-------' : enderecosTotais?.dataEstadoOperacional}</td>
-                            <td>Estado Operacional: {enderecosTotais?.estadoOperacional === undefined ? '-------' : enderecosTotais?.estadoOperacional}</td>
+                            <td>Data Est. Operacional: {materialRede?.dataEstadoOperacional_Mt === undefined ? '-------' : materialRede?.dataEstadoOperacional_Mt}</td>
+                            <td>Estado Operacional: {materialRede?.estadoOperacional_Mt === undefined ? '-------' : materialRede?.estadoOperacional_Mt}</td>
                         </tr>
                         <tr>
-                            <td>Data Est. Controle: {enderecosTotais?.dataEstadoControle === undefined ? '-------' : enderecosTotais?.dataEstadoControle}</td>
-                            <td>Estado Controle: {enderecosTotais?.EstadoControle ?? '-------'}</td>
+                            <td>Data Est. Controle: {materialRede?.dataEstadoControle_Mt === undefined ? '-------' : materialRede?.dataEstadoControle_Mt}</td>
+                            <td>Estado Controle: {materialRede?.estadoControle_Mt ?? '-------'}</td>
                         </tr>
                         <tr>
                             <td>Bobina Lançamento: {bobinaLancamento ?? '-------'}</td>
@@ -1035,6 +1039,7 @@ function Vizualizar(){
                         </tr>
                         <tr>
                           <td colSpan={2} style={{padding: '0'}}>
+                          {tipoCdoe() === 'CDOIA' ? (
                             <table style={{width: '100%', fontSize: '0.6rem', marginTop: '0.5rem', marginBottom: '0.8rem'}}>
                               <thead>
                                 <tr>
@@ -1052,17 +1057,10 @@ function Vizualizar(){
                               <tbody>
                                 <tr>
                                   <td>
-                                    <>
-                                    <div>
-                                    {tipoCdoe() === 'CDOIA' ? (
-                                      <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>
-                                    ):(null)
-                                    }
-                                    </div>
-                                    </>
+                                      <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>      
                                   </td>
                                 </tr>
-                              {tipoCdoe() === 'CDOIA' ? (analiseCDOIAs?.map((analise, index) => (
+                                {analiseCDOIAs?.map((analise, index) => (
                                   <tr key={index} style={analise.cdoiaStatus == 'OK' ?
                                   {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
                                     <td>{cdo}.{analise.cdoia ?? "--"}</td>
@@ -1081,10 +1079,11 @@ function Vizualizar(){
                                       </> 
                                     </td> 
                                   </tr>
-                                ))
-                              ) :  (<tr></tr>)}
+                                ))}
                               </tbody>
                             </table>
+                            ):(null)
+                            }
                           </td>
                         </tr>
                 </tbody>

@@ -17,7 +17,6 @@ export const Container = styled("div", {
     },
 
     'textarea': {
-        height: '40px',
         resize: 'none',
         border: '1px solid',
         borderColor: '#13293d',
@@ -27,10 +26,9 @@ export const Container = styled("div", {
 });
 
 export const Input = styled("input", {
-    height: '12px',
     border: '1px solid',
     borderColor: '#13293d',
-    padding: '0.3rem',
-    fontWeight: '600'
+    fontWeight: '600',
+    paddingLeft: '0.3rem'
 });
 

@@ -7,22 +7,30 @@ export default function DropBox({label, event, lista, text, valueDefaut, width, 
             <label>{label}</label>
             <Drop onChange={event} value={text} style={{width:`${width}`, height:`${height}`}}>
               {lista.length !== 0 ? (
-                <>
-                  {valueDefaut === '' ? (
+                  valueDefaut === '' ? (
+                    <>
                     <option value="">- Selecionar -</option>
+                    {lista
+                      .map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                      </>
                   ) : (
+                    <>
                     <option value={valueDefaut}>{valueDefaut}</option>
-                  )}
                   {lista
-                    .filter(item => item !== valueDefaut) // Filtra os itens que não são iguais ao valor padrão
+                    .filter(item => item !== valueDefaut && item !== '') 
                     .map((item, index) => (
                       <option key={index} value={item}>
                         {item}
                       </option>
                     ))}
-                </>
+                    </>
+                  )
               ) : (
-                <option value="">Carregando...</option>
+                  <option value="">Carregrando...</option>
               )}
             </Drop>
           </FormGroup>

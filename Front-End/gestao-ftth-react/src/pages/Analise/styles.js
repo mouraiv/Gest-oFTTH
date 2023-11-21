@@ -17,7 +17,8 @@ export const TableGrid = styled("table", {
         width: '350px',
         fontWeight: '700',
         border: '1px solid #D6DBDF',
-        wordWrap: 'break-word'
+        wordWrap: 'break-word',
+        border: 0,
     },
     "th, td": {
         height: '25px',
