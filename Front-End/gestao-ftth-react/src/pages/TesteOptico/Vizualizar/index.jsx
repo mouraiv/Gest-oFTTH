@@ -19,6 +19,7 @@ function Vizualizar(){
     const [uf, setUf] = useState();
     const [dataAtual, setDataAtual] = useState(new Date());
     const [estacao, setEstacao] = useState();
+    const [siglaEstacao, setSiglaEstacao] = useState();
     const [cdo, setCdo] = useState();
     const [testeOptico, setTesteOptico] = useState({});
     const [materialRede, setMaterialRede] = useState({});
@@ -95,6 +96,7 @@ function Vizualizar(){
 
             if(detalheMaterialRede.status == 200) {
                 setMaterialRede(detalheMaterialRede.data);
+                setSiglaEstacao(detalheMaterialRede.data.siglaAbastecedora_Mt);
             }
 
         } catch (error) {
@@ -130,7 +132,7 @@ function Vizualizar(){
     };
 
     const handleImagens = () => {
-        navigate(`/TesteOptico/Imagem/${uf}/${estacao}/${cdo}`); 
+        navigate(`/TesteOptico/Imagem/${uf}/${siglaEstacao}/${estacao}/${cdo}`); 
     };
 
     const handleValidar = async() => {
@@ -248,7 +250,11 @@ function Vizualizar(){
                         ) : (
                         <ButtonReValidar onClick={handleRevalidar}>Re-Validar</ButtonReValidar>
                     )}
-                    <ButtonImagem onClick={handleImagens}>Imagens</ButtonImagem>
+                    { loadingMaterial ?
+                    <ButtonImagem onClick={handleImagens}>Imagens</ButtonImagem> 
+                    :
+                    <ButtonImagem disabled>Carregando...</ButtonImagem>
+                    }
                     </>
                 </div>
                     <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
@@ -396,7 +402,7 @@ function Vizualizar(){
                         </tr>
                     </tbody>
             </TableGrid>
-            ):(<p>Carregando...</p>)}
+            ):(<Spinner />)}
             </Tab>
             </Tabs>
             </ContentTabs>

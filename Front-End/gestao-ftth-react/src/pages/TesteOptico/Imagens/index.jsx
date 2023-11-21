@@ -13,7 +13,7 @@ function Imagem(){
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
     const [visibleImport, setVisibleImport] = useState(false);
-    const { uf, estacao, cdo } = useParams();
+    const { uf, sigla, estacao, cdo } = useParams();
     const [cdoia, setCdoia] = useState();
     const [urlImage, setUrlImage] = useState("");
     const [arquivo, setArquivo] = useState(null);
@@ -29,7 +29,7 @@ function Imagem(){
       try{
         const filtro = {
           UF : uf,
-          Estacao : 'bot',
+          Estacao : sigla,
           CDO: cdo,
           CDOIA: cdoia,
           ImageName: arquivo.name
@@ -84,7 +84,7 @@ function Imagem(){
         try {
           const filtro = {
             UF : uf,
-            Estacao : 'bot',
+            Estacao : sigla,
             CDO: cdo,
           };
 

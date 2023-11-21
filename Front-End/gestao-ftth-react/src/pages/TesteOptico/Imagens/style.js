@@ -71,8 +71,11 @@ export const ImagemArea = styled("div", {
     textDecoration: 'none',
     fontWeight: '600',
     wordBreak: 'break-all',
-    
 
+    "ul":{
+        paddingLeft: 0
+    },
+    
     "li":{
         margin: '0.5rem',
         listStyleType:'none',
@@ -107,7 +110,6 @@ export const ImagemArea = styled("div", {
         backgroundColor:'rgb(0 ,0, 0, 0.6)',
         textDecoration: 'underline',
         color: '#ffffff',
-        height: '18px',
         left: '0',
         right: '0',
     },

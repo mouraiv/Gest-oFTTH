@@ -56,7 +56,8 @@ function Vizualizar(){
     } = testeOptico ?? {};
 
     const {
-      enderecoTotal
+      enderecoTotal,
+      siglaAbastecedora_Mt
 
     } = materialRede ?? {};
 
@@ -294,7 +295,7 @@ function Vizualizar(){
     };
 
     const handleImagens = () => {
-        navigate(`/TesteOptico/Imagem/${uf}/${estacao}/${cdo}`); 
+        navigate(`/TesteOptico/Imagem/${uf}/${siglaAbastecedora_Mt}/${estacao}/${cdo}`); 
     };
 
     const Observacao = () => {

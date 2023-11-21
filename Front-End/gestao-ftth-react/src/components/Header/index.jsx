@@ -14,8 +14,7 @@ export default function Header({title}) {
   async function handleLogout() {
     Logout();
     navigate('/');
- }
-
+  }
       return (
         <>
         { auth.token ? (

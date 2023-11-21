@@ -23,7 +23,7 @@ export default function DataGrid({
   
   const [visible, setVisible] = useState(false);
   const [id, setId] = useState();
-  const [analseDelete, setAnaliseDelete] = useState(0);
+  const [analseDelete, setAnaliseDelete] = useState();
 
   async function fetchDelete(){
     if(id !== undefined){
@@ -42,7 +42,12 @@ export default function DataGrid({
   const HandleExcluir = (id, analise) => {
     setId(id);
     setVisible(true);
-    setAnaliseDelete(analise.length);
+
+    if(analise == null) {
+      setAnaliseDelete(false);
+    }else{
+      setAnaliseDelete(true);
+    }   
   }
 
   const ExcluirFecth = async () => {
@@ -58,11 +63,11 @@ export default function DataGrid({
             visibleHide={() => setVisible(false)}
             header={<h4>Atenção</h4>}
             colorType={'#ff0000'}
-            ConfirmaButton={analseDelete > 0 ? false : true}
-            textCloseButton={analseDelete > 0 ? 'OK' : 'Cancelar'}
+            ConfirmaButton={analseDelete ? false : true}
+            textCloseButton={analseDelete ? 'OK' : 'Cancelar'}
             text={
               <>
-              { analseDelete > 0 ? (
+              { analseDelete ? (
                 <>
                 <p>Esse teste não pode ser excluído!</p>
                 <p></p>
