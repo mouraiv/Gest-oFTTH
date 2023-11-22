@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IEnderecoTotalRepository, EnderecoTotalRepository>();
+builder.Services.AddScoped<IInfoRepository, InfoRepository>();
 builder.Services.AddScoped<ITesteOpticoRepository, TesteOpticoRepository>();
 builder.Services.AddScoped<IMaterialRedeRepository, MaterialRedeRepository>();
 builder.Services.AddScoped<ILigacaoRepository, LigacaoRepository>();
