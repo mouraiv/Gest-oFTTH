@@ -37,14 +37,25 @@ export const AuthProvider = ({ children }) => {
     },[]);   
   
     async function Login(data) {
-      await VerificarUsuario(data)
-      .then(response => {
-        setUser(response);
-        api.defaults.headers.Authorization = `Bearer ${response.token}`;
-        sessionStorage.setItem('@App:user', JSON.stringify(response));
-        sessionStorage.setItem('@App:token', response.token);
-      })
-      .catch(error => console.error('Erro de conexão: ' + error));
+      try {
+        const response = await VerificarUsuario(data);
+
+        if (response.status === 200) {
+            if (response.data.login || response.data.pws) {
+            setUser(response.data);
+            api.defaults.headers.Authorization = `Bearer ${response.data.token}`;
+            sessionStorage.setItem('@App:user', JSON.stringify(response.data));
+            sessionStorage.setItem('@App:token', response.data.token);
+            
+          }
+
+        } 
+        
+        return response;
+
+      } catch (error) {
+        console.error('Erro de conexão: ' + error)
+      }
     }
   
     function Logout() {

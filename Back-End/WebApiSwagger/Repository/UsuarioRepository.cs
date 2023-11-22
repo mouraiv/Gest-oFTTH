@@ -53,6 +53,7 @@ namespace WebApiSwagger.Repository
                 db.Senha = Usuario.Senha;
                 db.Tipo = Usuario.Tipo;
                 db.Publico = Usuario.Publico;
+                db.Error = Usuario.Error;
             
                 _context.Usuarios.Update(db);
                 await _context.SaveChangesAsync();

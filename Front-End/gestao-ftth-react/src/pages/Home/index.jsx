@@ -2,8 +2,8 @@ import React from "react";
 import { Container } from "./styles";
 import { useAuth } from "../../contexts/auth";
 import { GlobalStyle, Template } from "../../GlobalStyle";
-import { useNavigate } from 'react-router-dom';
 import Header from "../../components/Header"
+import InfoDataBase from "../../components/DbInfo"
 import Footer from "../../components/Footer"
 import Spinner from "../../components/Spinner";
 
@@ -19,7 +19,7 @@ function Home() {
           <Header title={"Início"} />
             <Container>
              <div className="avisoInicial">
-               <p><h5>Bem-vindo ao Sistema Gestão FTTH (Beta)!</h5></p>
+               <h5>Bem-vindo ao Sistema Gestão FTTH (Beta)!</h5>
                 <br />
                 <p>Caro(a) <b>{user.nome}</b>,</p>
                 <br />

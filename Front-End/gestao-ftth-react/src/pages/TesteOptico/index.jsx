@@ -13,6 +13,7 @@ import { DateMask } from "../../components/TextInput/mask/index";
 import DropBox from '../../components/dropbox';
 import { Filter, ButtonImport, SubMenu } from './styles';
 import DialogAlert from "../../components/Dialog";
+import InfoDataBase from '../../components/DbInfo';
 
 function TesteOptico() {
   GlobalStyle();
@@ -206,6 +207,7 @@ function TesteOptico() {
       <Template>
         <Header title={"Teste Óptico"} />
           <Content>
+          <InfoDataBase />
           <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}

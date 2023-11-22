@@ -7,5 +7,5 @@ export const VerificarUsuario = async (data) => {
     },
   });
 
-  return response.data;
+  return response;
 };

@@ -13,7 +13,6 @@ export const Filter = styled("div", {
 export const SubMenu = styled("div", {
     display: 'flex',
     border: '0',
-    marginTop: '1rem',
     width:'100%',
     marginBottom: '0.5rem',
 });

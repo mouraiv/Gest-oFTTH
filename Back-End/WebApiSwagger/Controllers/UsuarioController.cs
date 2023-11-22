@@ -137,13 +137,13 @@ namespace WebApiSwagger.Controllers
                     cargo = usuarioExiste.GetTecnico?.GetCargo?.Nome,
                     empresa = usuarioExiste.GetTecnico?.GetEmpresa?.Nome,
                     tipo = usuarioExiste.Tipo,
+                    error = usuarioExiste.Error,
                     token = chave
                 };
                 
                 return Ok(user);
 
                 }else{
-
                     return Ok(new { pws = false });
 
                 }

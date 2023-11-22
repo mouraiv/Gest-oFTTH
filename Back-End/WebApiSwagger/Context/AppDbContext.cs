@@ -19,6 +19,7 @@ namespace WebApiSwagger.Context
         }
 
         public DbSet<Cargo> Cargos => Set<Cargo>();
+        public DbSet<Info> Infos => Set<Info>();
         public DbSet<Analise> Analises => Set<Analise>();
         public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<EnderecoTotal> EnderecosTotais => Set<EnderecoTotal>();

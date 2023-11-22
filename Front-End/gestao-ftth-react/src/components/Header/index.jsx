@@ -1,6 +1,6 @@
-import { HeaderStyleUser, HeaderStyle } from "./style";
+import { HeaderStyleUser, HeaderStyle} from "./style";
 import { useAuth } from "../../contexts/auth";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaRightToBracket } from 'react-icons/fa6';
 
 export default function Header({title}) {
@@ -10,11 +10,25 @@ export default function Header({title}) {
   let auth = { token: refreshToken};
 
   const navigate = useNavigate();
+  const location = useLocation();
   
   async function handleLogout() {
     Logout();
     navigate('/');
   }
+
+  const handleInicio = () => {
+    navigate(`/Home`); 
+  };
+  const handleTesteOptico = () => {
+    navigate(`/TesteOptico`); 
+  };
+  const handleEnderecoTotal = () => {
+    navigate(`/EnderecoTotal`); 
+  };
+  const handleBaseAcumulada = () => {
+    navigate(`/BaseAcumulada`); 
+  };
       return (
         <>
         { auth.token ? (
@@ -27,6 +41,21 @@ export default function Header({title}) {
                 <p className="title">| {title}</p>
               </div>
             </div>
+
+            <div className="navBar">
+              <ul>
+              {location.pathname !== '/Home' && (
+                <li><a onClick={handleInicio}>Início</a></li>
+              )}
+                <li><a onClick={handleTesteOptico}>TesteOptico</a></li>
+                <li><a>Netwin</a>
+                  <ul>
+                    <li><a onClick={handleEnderecoTotal}>Endereços Totais</a></li>
+                    <li><a onClick={handleBaseAcumulada}>Base Acumulada</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>  
 
             <div className="displayInfo">
               <div className="displayContent">
