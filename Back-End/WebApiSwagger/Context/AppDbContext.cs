@@ -58,8 +58,7 @@ namespace WebApiSwagger.Context
             modelBuilder.Entity<TesteOptico>()
                 .HasOne(t => t.MaterialRede)
                 .WithOne()
-                .HasForeignKey<TesteOptico>(p => p.Id_MaterialRede)
-                .IsRequired(false);
+                .HasForeignKey<TesteOptico>(p => p.Id_MaterialRede);
 
              modelBuilder.Entity<TesteOptico>()
                 .HasMany(p => p.Validacoes) 
@@ -80,20 +79,12 @@ namespace WebApiSwagger.Context
             modelBuilder.Entity<EnderecoTotal>()
                 .HasOne(t => t.MaterialRede)
                 .WithMany(p => p.EnderecoTotal)
-                .HasForeignKey(p => p.Id_MaterialRede);
-
-            modelBuilder.Entity<EnderecoTotal>()
-                .HasIndex(p => p.Id_MaterialRede)
-                .IsUnique(false);    
+                .HasForeignKey(p => p.Id_MaterialRede);  
 
             modelBuilder.Entity<MaterialRede>()
                 .HasOne(t => t.Ligacao)
                 .WithOne()
-                .HasForeignKey<MaterialRede>(p => p.Id_MaterialRede);
-
-            modelBuilder.Entity<Ligacao>()
-                .HasIndex(p => p.Id_MaterialRede)
-                .IsUnique(false);                       
+                .HasForeignKey<Ligacao>(p => p.Id_MaterialRede);
                    
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)

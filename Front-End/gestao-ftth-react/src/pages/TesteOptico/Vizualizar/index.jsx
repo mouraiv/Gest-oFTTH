@@ -24,8 +24,8 @@ function Vizualizar(){
     const [testeOptico, setTesteOptico] = useState({});
     const [materialRede, setMaterialRede] = useState({});
     const [visible, setVisible] = useState(false);
+    const [visibleTesteOptico, setVisibleTesteOptico] = useState(false);
     const [mensagem, setMensagem] = useState("");
-
 
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -120,12 +120,29 @@ function Vizualizar(){
         const statusAnalise = analises?.analiseObservacao;
 
          if (statusAnalise != null) {
-            return statusAnalise.split(';').length > 0 ? 'RE-TESTE' : 'TESTADO';
+            const count = statusAnalise.split(';').length;
+            return count > 1 ? 'RE-TESTE' : 'TESTADO';
          } else {
             return 'TESTE';
          }
 
     }
+
+    const countTeste = () => {
+        const statusAnalise = analises?.analiseObservacao;
+
+         if (statusAnalise != null) {
+            return statusAnalise.split(';').length;
+
+         } else {
+            return 0;
+         }
+
+    }
+
+    const handleTesteOpticoDetalhe = () => {
+        setVisibleTesteOptico(true);
+    };
 
     const handleVoltar = () => {
         navigate(-1); 
@@ -168,6 +185,103 @@ function Vizualizar(){
                         </>
                     }
                 />
+        <DialogAlert 
+                    visibleDiag={visibleTesteOptico} 
+                    visibleHide={() => setVisibleTesteOptico(false)}
+                    colorType={'#13293d'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Fechar'}
+                    text={
+                        <>
+                        <TableGrid style={{width: '600px', fontSize: '0.7rem', marginTop: '0.5rem', marginBottom: '0.8rem'}}>
+                              <thead>
+                                <tr>
+                                <th colSpan={6}>DETALHE ENDEREÇOS TOTAIS</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {enderecoTotal != undefined ? (
+                                    enderecoTotal.map((valueEndereco, index) => (
+                                        <>
+                                        <tr key={index}>
+                                            <td>{valueEndereco.uf ?? '-------'}</td>
+                                            <td>Município: {valueEndereco.municipio ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Localidade: {valueEndereco.localidade ?? '-------'}</td>
+                                            <td>Sigla localidade: {valueEndereco.localidadeAbrev ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cod. SURVEY: {valueEndereco.cod_Survey ?? '-------'}</td>
+                                            <td>Sigla estação: {valueEndereco.siglaEstacao ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2} style={{margin:0, padding:0}}>
+                                                <tr>
+                                                    <td>Cod. localidade: {valueEndereco.cod_Localidade ?? '-------'}</td>
+                                                    <td>Cod. logradouro: {valueEndereco.cod_Logradouro ?? '-------'}</td>
+                                                    <td>Id celula: {valueEndereco.id_Celula ?? '-------'}</td>
+                                                </tr>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipo rede: {valueEndereco.tipoRede ?? '-------'}</td>
+                                            <td>Celula: {valueEndereco.celula ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2}>Nome CDO: {valueEndereco.nomeCdo ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cod viabilidade: {valueEndereco.cod_Viabilidade ?? '-------'}</td>
+                                            <td>Tipo viabilidade: {valueEndereco.tipoViabilidade ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2}>Logradouro: {valueEndereco.logradouro ?? '-------'}, {valueEndereco.numeroFachada ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2} style={{margin:0, padding:0}}>
+                                                <tr>
+                                                    <td>Complemento: {valueEndereco.complemento ?? '-------'}</td>
+                                                    <td>Complemento II: {valueEndereco.complementoDois ?? '-------'}</td>
+                                                    <td>Complemento III: {valueEndereco.complementoTres ?? '-------'}</td>
+                                                </tr>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Id endereco: {valueEndereco.id_Endereco ?? '-------'}</td>
+                                            <td>Numero Piso: {valueEndereco.numeroPiso ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>CEP: {valueEndereco.cep ?? '-------'}</td>
+                                            <td>Bairro: {valueEndereco.bairro ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>quantidadeUMS: {valueEndereco.quantidadeUMS ?? '-------'}</td>
+                                            <td>Disponibilidade comercial: {valueEndereco.disp_Comercial ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>UCS Residenciais: {valueEndereco.ucS_Residenciais ?? '-------'}</td>
+                                            <td>UCS Comerciais: {valueEndereco.ucS_Comerciais ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>UMS Certificadas: {valueEndereco.umS_Certificadas ?? '-------'}</td>
+                                            <td>Rede Edificio Certificado: {valueEndereco.redeEdificio_Certificados ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Quantidade HCS: {valueEndereco.quantidade_HCS ?? '-------'}</td>
+                                            <td>Projeto: {valueEndereco.projeto ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Latitude: {valueEndereco.latitude ?? '-------'}</td>
+                                            <td>Longitude: {valueEndereco.longitude ?? '-------'}</td>
+                                        </tr>
+                                        </>
+                                    ))) : (null)}
+                              </tbody>
+                            </TableGrid>
+                        </>
+                    }
+                />        
         { loading ? (
             <ContentTabs>
             <Tabs
@@ -234,7 +348,7 @@ function Vizualizar(){
                             <td>Splitter CEOS: {testeOptico.SplitterCEOS ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Quantidade Teste: {testeOptico.quantidadeDeTeste ?? '-------'}</td>
+                            <td>Quantidade Teste: {countTeste()}</td>
                             <td>Fibra DGO: {testeOptico.fibraDGO ?? '-------'}</td>
                         </tr>
                         <tr>
@@ -300,7 +414,7 @@ function Vizualizar(){
                         </tr>
                         <tr>
                             <td>Infraestrutura: {materialRede.infraestruturaRede_Mt ?? '-------'}</td>
-                            <td></td>
+                            <td>Projeto: {ligacao.projeto_ls ?? '-------'}</td>
                         </tr>
                         <tr>
                             <td>Fabricante: {materialRede.fabricante_Mt ?? '-------'}</td>
@@ -336,7 +450,7 @@ function Vizualizar(){
                               <tbody style={{cursor: 'pointer'}}>
                                 {enderecoTotal != undefined ? (
                                     enderecoTotal.map((valueEndereco, index) => (
-                                    <tr key={index}>
+                                    <tr key={index} onClick={handleTesteOpticoDetalhe}>
                                     <td>{valueEndereco.celula ?? "--"}</td>
                                     <td>{valueEndereco.cod_Survey ?? "--"}</td>
                                     <td>{valueEndereco.quantidadeUMS ?? "--"}</td>

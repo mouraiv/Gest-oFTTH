@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Input, Div, Button, Title, Container } from "./styles"
+import { Input, Div, Button, Title, Container, Background } from "./styles"
 import { GlobalStyle, Template } from "../../GlobalStyle"
 import { useAuth } from "../../contexts/auth"
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import Header from "../../components/Header"
 import Footer from "../../components/Footer"
 import Spinner from "../../components/Spinner";
 import StatusInforme from "../../components/StatusInforme";
+import logo from "../../../public/imagens/logictel.png";
 
 function Login() {
     GlobalStyle();
@@ -63,19 +64,21 @@ function Login() {
 
     return (
       <>
+      <Background>
         <Template>
           <Header />
             <Container>
               { !loading ? (<Spinner />) :(
                status ? (
-                <div>
-                <div style={{backgroundColor:'#13293d', padding: '0.1rem', display: 'flex', justifyContent: 'center'}}>
-                  <img width={100} src="/public/imagens/logictel.png" />
-                </div>
+                <>
               <Div>
+                <div style={{backgroundColor:'#13293d', padding: '0.1rem', display: 'flex', justifyContent: 'center', width: '100%'}}>
+                  <img width={100} src={logo} />
+                </div>
                 <div>
                   <Title>Gestão FTTH | Acessar</Title>
                   <p style={{fontSize: '0.8rem', color: 'red', textAlign: 'center', fontWeight: '600'}}>{msg}</p>
+                 </div> 
                 <div style={{display: 'flex', flexDirection: 'column'}}>
                   <label>Login</label>
                   <Input onChange={handleInputLogin} />
@@ -85,15 +88,16 @@ function Login() {
                   <Input onChange={handleInputSenha} type='password' />
                 </div>
                   <Button onClick={handleLogin}>Entrar</Button>
-                </div>
               </Div>
-              </div>
+              </>
               ):( <StatusInforme text={"-- Servidor offline ou em manutenção --"} />)
               )
               }
+              
               </Container>
             <Footer />
           </Template>
+          </Background>
         </>
       )
   }

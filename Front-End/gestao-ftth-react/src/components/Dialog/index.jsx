@@ -27,7 +27,7 @@ export default function DialogAlert({
               closable={false}
               position={'top'}
               contentStyle={{
-                width: '450px',
+                minWidth: '450px',
                 marginTop: '1rem',
                 wordBreak: 'break-all'
               }}

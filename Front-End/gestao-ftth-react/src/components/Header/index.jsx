@@ -2,6 +2,7 @@ import { HeaderStyleUser, HeaderStyle} from "./style";
 import { useAuth } from "../../contexts/auth";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaRightToBracket } from 'react-icons/fa6';
+import logo from "../../../public/imagens/logictel.png";
 
 export default function Header({title}) {
   const { user, Logout } = useAuth();
@@ -35,7 +36,7 @@ export default function Header({title}) {
           <HeaderStyleUser>
             <div className="logoContainer">
               <div className="logo">
-                <img src="/public/imagens/logictel.png" />
+                <img src={logo} />
               </div>
               <div>
                 <p className="title">| {title}</p>

@@ -1,17 +1,29 @@
 import { styled } from "@stitches/react"
+import wp from '../../../public/imagens/wp_ftth.png'
 
 export const Container = styled("div", {
-    display: "grid",
-    justifyContent: 'center'
+    display: 'flex',
+    alignItems: 'center',
+});
+
+export const Background = styled("div", {
+    backgroundImage : `url(${wp})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'contain',
+    backgroundPosition: 'center',
+    minWidth: '1000px',
 });
 
 export const Div = styled("div", {
 	display:"flex",
+    flexDirection: 'column',
     background: '#F8F9F9',
+    alignItems: 'center',
     justifyContent: 'center',
     width: '300px',
     border: '1px solid',
     borderColor: '#000000',
+    marginLeft: '8rem',
 
     "label":{
         fontSize: '0.8rem',
