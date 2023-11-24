@@ -128,6 +128,7 @@ function TesteOptico() {
 
   const columns = [
     { key: 'id', name: 'ID' },
+    { key: 'id_MaterialRede', name: 'NETWIN' },
     { key: 'uf', name: 'UF' },
     { key: 'construtora', name: 'CONSTRUTORA' },
     { key: 'estacao', name: 'ESTACÃO' },

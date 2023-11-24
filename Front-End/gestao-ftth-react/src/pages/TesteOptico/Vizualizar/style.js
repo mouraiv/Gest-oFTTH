@@ -53,7 +53,7 @@ export const TableGrid = styled("table", {
         height: '25px',
     },
     ".mapsTd":{
-        backgroundColor:'#239B56',
+        border:'2px solid #239B56',
         margin: 0,
         padding: 0,
         cursor: 'pointer'

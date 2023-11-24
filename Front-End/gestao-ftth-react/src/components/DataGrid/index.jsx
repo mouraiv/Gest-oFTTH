@@ -106,7 +106,7 @@ export default function DataGrid({
             </tr>
           </thead>
           <tbody>
-            {_paginasCorrente == 0 ? (<tr><td colSpan={12}>Nenhum Resultado.</td></tr>) : (
+            {_paginasCorrente == 0 ? (<tr><td colSpan={13}>Nenhum Resultado.</td></tr>) : (
               rows.map((row, rowIndex) => (         
                 <tr key={rowIndex}>
                   {columns.map((column) => (

@@ -473,7 +473,7 @@ function Vizualizar(){
                                 <table>
                                     <tbody>
                                     <tr>
-                                    <td style={{width:'90%'}} >Endereço: {materialRede.endereco_Mt ?? '-------'}</td>
+                                    <td style={{width:'90%', border:0}} >Endereço: {materialRede.endereco_Mt ?? '-------'}</td>
                                     <td className="mapsTd" onClick={() => handleOpenMapDialog()}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                     </tr>
                                     </tbody>

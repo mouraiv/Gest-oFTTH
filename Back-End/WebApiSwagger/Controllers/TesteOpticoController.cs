@@ -280,10 +280,11 @@ namespace WebApiSwagger.Controllers
                         Celula = optico.Celula,
                         TotalUMs = optico.TotalUMs,
                         Tecnico = optico.Tecnico,
+                        Id_MaterialRede = optico.Id_MaterialRede,
                         Sel = optico.Sel,
                         getAnalise = optico.Analises,
                         getValidacao = optico.Validacoes,
-                        Id_MaterialRede = optico.Id_MaterialRede
+                        
                         
                     };
                     resultado.Add(modelo);
