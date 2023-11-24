@@ -1,16 +1,23 @@
-import React, {useState, useEffect} from "react";
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet/dist/images/marker-icon.png';
+import 'leaflet/dist/images/marker-shadow.png';
+import 'leaflet/dist/images/marker-icon-2x.png';
 import { Tab, Tabs } from 'react-bootstrap';
-import { useParams, useNavigate } from "react-router-dom";
-import { ButtonValidar, ButtonImagem, FooterButton, TableGrid, ButtonReValidar, ButtonEditar, ContentTabs } from "./style";
-import { DetalheTesteOptico, updateTesteOptico } from "../../../api/testeOptico";
+import { useNavigate, useParams } from "react-router-dom";
+import { ButtonCancelar, ButtonConfirma, Content, GlobalStyle, Template } from "../../../GlobalStyle";
 import { DetahleMaterialRedeAny } from "../../../api/materialRede";
-import { Content, GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../../GlobalStyle";
+import { DetalheTesteOptico, updateTesteOptico } from "../../../api/testeOptico";
 import { createValidacao } from '../../../api/validacao';
+import DialogAlert from "../../../components/Dialog";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
+import mapIcon from "../../../../public/imagens/mapIcon.png";
 import { useAuth } from "../../../contexts/auth";
-import DialogAlert from "../../../components/Dialog";
+import { FaLocationDot } from 'react-icons/fa6';
+import { ButtonImagem, ButtonReValidar, ButtonValidar, ContentTabs, FooterButton, TableGrid } from "./style";
 
 function Vizualizar(){
     const { id, idNetwin } = useParams();
@@ -26,6 +33,8 @@ function Vizualizar(){
     const [visible, setVisible] = useState(false);
     const [visibleTesteOptico, setVisibleTesteOptico] = useState(false);
     const [mensagem, setMensagem] = useState("");
+    const [mapDialogVisible, setMapDialogVisible] = useState(false);
+    const [positionMap, setPositionMap] = useState()
 
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -97,6 +106,7 @@ function Vizualizar(){
             if(detalheMaterialRede.status == 200) {
                 setMaterialRede(detalheMaterialRede.data);
                 setSiglaEstacao(detalheMaterialRede.data.siglaAbastecedora_Mt);
+                setPositionMap([parseFloat(detalheMaterialRede.data.latitude_Mt.replace(",", ".")), parseFloat(detalheMaterialRede.data.longitude_Mt.replace(",", "."))]);
             }
 
         } catch (error) {
@@ -109,6 +119,7 @@ function Vizualizar(){
 
     useEffect(() => {
         fecthDetalheMaterialRede();
+       
     }, []);
 
     useEffect(() => {
@@ -140,6 +151,10 @@ function Vizualizar(){
 
     }
 
+    const handleOpenMapDialog = () => {
+        setMapDialogVisible(true);
+    };
+    
     const handleTesteOpticoDetalhe = () => {
         setVisibleTesteOptico(true);
     };
@@ -172,6 +187,29 @@ function Vizualizar(){
         <Template>
         <Header title={"Teste Óptico - Visualizar"} />
         <Content>
+        <DialogAlert
+            visibleDiag={mapDialogVisible}
+            visibleHide={() => setMapDialogVisible(false)}
+            header={<h4>Mapa Geográfico </h4>}
+            ConfirmaButton={false}
+            textCloseButton={'Fechar'}
+            text={
+                    <MapContainer center={positionMap} zoom={17} style={{ width: '800px', height: '400px' }}>
+                        <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <Marker position={positionMap}>
+                        <Popup>
+                            <div>
+                                <div style={{textAlign: 'center'}}><b>{materialRede?.codigo_Mt}</b></div>
+                                <div><p><i>{materialRede?.endereco_Mt}</i></p></div>
+                            </div>
+                        </Popup>
+                        </Marker>
+                    </MapContainer>
+            }
+        />
         <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
@@ -199,11 +237,11 @@ function Vizualizar(){
                                 <th colSpan={6}>DETALHE ENDEREÇOS TOTAIS</th>
                                 </tr>
                               </thead>
-                              <tbody>
                               {enderecoTotal != undefined ? (
                                     enderecoTotal.map((valueEndereco, index) => (
+                                        <tbody key={index}>
                                         <>
-                                        <tr key={index}>
+                                        <tr>
                                             <td>{valueEndereco.uf ?? '-------'}</td>
                                             <td>Município: {valueEndereco.municipio ?? '-------'}</td>
                                         </tr>
@@ -217,11 +255,15 @@ function Vizualizar(){
                                         </tr>
                                         <tr>
                                             <td colSpan={2} style={{margin:0, padding:0}}>
-                                                <tr>
+                                                <table>
+                                                    <tbody>
+                                                    <tr>
                                                     <td>Cod. localidade: {valueEndereco.cod_Localidade ?? '-------'}</td>
                                                     <td>Cod. logradouro: {valueEndereco.cod_Logradouro ?? '-------'}</td>
                                                     <td>Id celula: {valueEndereco.id_Celula ?? '-------'}</td>
-                                                </tr>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
                                             </td>
                                         </tr>
                                         <tr>
@@ -240,11 +282,15 @@ function Vizualizar(){
                                         </tr>
                                         <tr>
                                             <td colSpan={2} style={{margin:0, padding:0}}>
-                                                <tr>
+                                                <table>
+                                                    <tbody>
+                                                    <tr>
                                                     <td>Complemento: {valueEndereco.complemento ?? '-------'}</td>
                                                     <td>Complemento II: {valueEndereco.complementoDois ?? '-------'}</td>
                                                     <td>Complemento III: {valueEndereco.complementoTres ?? '-------'}</td>
-                                                </tr>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
                                             </td>
                                         </tr>
                                         <tr>
@@ -276,8 +322,8 @@ function Vizualizar(){
                                             <td>Longitude: {valueEndereco.longitude ?? '-------'}</td>
                                         </tr>
                                         </>
+                                        </tbody>
                                     ))) : (null)}
-                              </tbody>
                             </TableGrid>
                         </>
                     }
@@ -389,6 +435,8 @@ function Vizualizar(){
                     </tr>
                 </thead>
                 <tbody>
+                    {materialRede.id_MaterialRede != undefined ? (
+                        <>
                         <tr>
                             <td>{materialRede.siglaFederativa_Mt ?? '-------'}</td>
                             <td>{materialRede.nomeFederativa_Mt ?? '-------'}</td>
@@ -414,14 +462,23 @@ function Vizualizar(){
                         </tr>
                         <tr>
                             <td>Infraestrutura: {materialRede.infraestruturaRede_Mt ?? '-------'}</td>
-                            <td>Projeto: {ligacao.projeto_ls ?? '-------'}</td>
+                            
                         </tr>
                         <tr>
                             <td>Fabricante: {materialRede.fabricante_Mt ?? '-------'}</td>
                             <td>Modelo: {materialRede.modelo_Mt ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td colSpan={2}>Endereço: {materialRede.endereco_Mt ?? '-------'}</td>
+                            <td colSpan={2}style={{margin:0, padding:0}}>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                    <td style={{width:'90%'}} >Endereço: {materialRede.endereco_Mt ?? '-------'}</td>
+                                    <td className="mapsTd" onClick={() => handleOpenMapDialog()}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
                         </tr>
                         <tr>
                             <td>Data Estado Operacional: {materialRede.dataEstadoOperacional_Mt ?? '-------'}</td>
@@ -431,6 +488,9 @@ function Vizualizar(){
                             <td>Data Estado Controle: {materialRede.dataEstadoControle_Mt ?? '-------'}</td>
                             <td>Estado Controle: {materialRede.estadoControle_Mt ?? '-------'}</td>
                         </tr>
+                        </>
+                        ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado</td></tr>)
+                        }
                         <tr>
                           <td colSpan={2} style={{padding: '0'}}>
                             <table style={{width: '100%', fontSize: '0.6rem', marginTop: '0.5rem', marginBottom: '0.8rem'}}>
@@ -450,7 +510,7 @@ function Vizualizar(){
                               <tbody style={{cursor: 'pointer'}}>
                                 {enderecoTotal != undefined ? (
                                     enderecoTotal.map((valueEndereco, index) => (
-                                    <tr key={index} onClick={handleTesteOpticoDetalhe}>
+                                    <tr key={index} onClick={handleTesteOpticoDetalhe} className="enderecoTr">
                                     <td>{valueEndereco.celula ?? "--"}</td>
                                     <td>{valueEndereco.cod_Survey ?? "--"}</td>
                                     <td>{valueEndereco.quantidadeUMS ?? "--"}</td>
@@ -458,7 +518,7 @@ function Vizualizar(){
                                     <td>{valueEndereco.tipoViabilidade ?? "--"}</td>
                                     <td>{valueEndereco.disp_Comercial ?? "--"}</td> 
                                   </tr>
-                                ))):(<tr><td colSpan={6}>Nenhum resultado.</td></tr>)}
+                                ))):(<tr><td colSpan={6} style={{fontSize:'0.7rem', cursor: 'default'}}>Nenhum resultado.</td></tr>)}
                               </tbody>
                             </table>
                           </td>
@@ -466,6 +526,8 @@ function Vizualizar(){
                         <tr>
                             <th style={{backgroundColor: '#13293d'}} colSpan={2}>LIGAÇÕES</th>
                         </tr>
+                        {ligacao != undefined ? (
+                            <>
                         <tr>
                             <td>Cabo Primário: {ligacao.caboPrimario_ls ?? '-------'}</td>
                             <td>Cabo Secundário: {ligacao.caboSecundario_ls ?? '-------'}</td>
@@ -499,8 +561,17 @@ function Vizualizar(){
                             <td>CDO: {ligacao.cdO_ls ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Etiqueta Padrão: {ligacao.etiquetaPadrao_ls ?? '-------'}</td>
-                            <td>Fora Do Padrão: {ligacao.foraPadrao_ls ?? '-------'}</td>
+                            <td colSpan={2} style={{margin:0, padding:0}}>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                    <td>Etiqueta Padrão: {ligacao.etiquetaPadrao_ls ?? '-------'}</td>
+                                    <td>Fora Do Padrão: {ligacao.foraPadrao_ls ?? '-------'}</td>
+                                    <td>Projeto: {ligacao.projeto_ls ?? '-------'}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
                         </tr>
                         <tr>
                             <td>Etiqueta Campo: {ligacao.etiquetaCampo_ls ?? '-------'}</td>
@@ -514,6 +585,9 @@ function Vizualizar(){
                             <td>Destinação: {ligacao.destinacao_ls ?? '-------'}</td>
                             <td>Estado Ciclo Vida: {ligacao.estadoCicloVida_ls ?? '-------'}</td>
                         </tr>
+                        </>
+                        ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
+                        }
                     </tbody>
             </TableGrid>
             ):(<Spinner />)}

@@ -28,6 +28,7 @@ export const TableGrid = styled("table", {
     borderCollapse: 'collapse',
     fontSize: '0.7rem',
     textAlign: 'center',
+    width: '700px',
 
     "thead":{
         backgroundColor: '#13293d',
@@ -51,6 +52,19 @@ export const TableGrid = styled("table", {
     "th, td": {
         height: '25px',
     },
+    ".mapsTd":{
+        backgroundColor:'#239B56',
+        margin: 0,
+        padding: 0,
+        cursor: 'pointer'
+    },
+    ".mapsTd:hover":{
+        backgroundColor:'#58D68D',
+    },
+    ".enderecoTr:hover":{
+        backgroundColor:'#F9E79F',
+    }
+
 
 });
 
