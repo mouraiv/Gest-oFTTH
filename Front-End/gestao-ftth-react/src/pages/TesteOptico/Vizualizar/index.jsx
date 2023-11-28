@@ -35,6 +35,7 @@ function Vizualizar(){
     const [mensagem, setMensagem] = useState("");
     const [mapDialogVisible, setMapDialogVisible] = useState(false);
     const [positionMap, setPositionMap] = useState()
+    const [valueEndereco, setValueEndereco] = useState()
 
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -169,10 +170,6 @@ function Vizualizar(){
         setMapDialogVisible(true);
     };
     
-    const handleTesteOpticoDetalhe = () => {
-        setVisibleTesteOptico(true);
-    };
-
     const handleVoltar = () => {
         navigate(-1); 
     };
@@ -193,6 +190,20 @@ function Vizualizar(){
 
     const handleAnalise = () => {
         navigate(`/Analise/${id}/${idNetwin}`); 
+    };
+
+    const filterEnderecoTotalObj = (survey) => {
+        const _enderecoTotal = enderecoTotal;
+        const filter = _enderecoTotal?.filter(p => p.cod_Survey === survey).map((value, index) => {
+            return value;
+        })
+        setValueEndereco(filter[0]);
+    }
+
+    const handleTesteOpticoDetalhe = (event) => {
+        const survey = event.currentTarget.id;
+        filterEnderecoTotalObj(survey);
+        setVisibleTesteOptico(true);
     };
 
     GlobalStyle();
@@ -257,9 +268,8 @@ function Vizualizar(){
                                 <th colSpan={6}>DETALHE ENDEREÇOS TOTAIS</th>
                                 </tr>
                               </thead>
-                              {enderecoTotal != undefined ? (
-                                    enderecoTotal.map((valueEndereco, index) => (
-                                        <tbody key={index}>
+                              {valueEndereco != undefined ? ( 
+                                        <tbody>
                                         <>
                                         <tr>
                                             <td>{valueEndereco.uf ?? '-------'}</td>
@@ -342,8 +352,7 @@ function Vizualizar(){
                                             <td>Longitude: {valueEndereco.longitude ?? '-------'}</td>
                                         </tr>
                                         </>
-                                        </tbody>
-                                    ))) : (null)}
+                                        </tbody>) : (null)}
                             </TableGrid>
                         </>
                     }
@@ -351,7 +360,7 @@ function Vizualizar(){
         { loading ? (
             <ContentTabs>
             <Tabs
-            defaultActiveKey="TesteOptico"
+            defaultActiveKey="MaterialRede"
             id="uncontrolled-tab-example"
             >
             <Tab eventKey="TesteOptico" title="Teste Optico">        
@@ -513,7 +522,7 @@ function Vizualizar(){
                         }
                         <tr>
                           <td colSpan={2} style={{padding: '0'}}>
-                            <table style={{width: '100%', fontSize: '0.6rem', marginTop: '0.5rem', marginBottom: '0.8rem'}}>
+                            <table className="tableEnderecoTotal">
                               <thead>
                                 <tr>
                                 <th colSpan={6}>ENDEREÇOS TOTAIS</th>
@@ -527,10 +536,10 @@ function Vizualizar(){
                                   <th style={{width: '10%'}}>DISP. COMERCIAL</th>
                                 </tr>
                               </thead>
-                              <tbody style={{cursor: 'pointer'}}>
+                              <tbody>
                                 {enderecoTotal != undefined ? (
                                     enderecoTotal.map((valueEndereco, index) => (
-                                    <tr key={index} onClick={handleTesteOpticoDetalhe} className="enderecoTr">
+                                    <tr key={index} id={valueEndereco.cod_Survey} onClick={handleTesteOpticoDetalhe} className="enderecoTr">
                                     <td>{valueEndereco.celula ?? "--"}</td>
                                     <td>{valueEndereco.cod_Survey ?? "--"}</td>
                                     <td>{valueEndereco.quantidadeUMS ?? "--"}</td>

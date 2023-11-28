@@ -63,8 +63,21 @@ export const TableGrid = styled("table", {
     },
     ".enderecoTr:hover":{
         backgroundColor:'#F9E79F',
-    }
+    },
 
+    ".tableEnderecoTotal":{
+        display: 'block',
+        fontSize: '0.6rem', 
+        marginTop: '0.5rem', 
+        marginBottom: '0.8rem', 
+    },
+
+    ".tableEnderecoTotal tbody":{
+        display: 'block',
+        maxHeight: '250px', 
+        overflowY: 'auto',
+        cursor: 'pointer'
+    }
 
 });
 
