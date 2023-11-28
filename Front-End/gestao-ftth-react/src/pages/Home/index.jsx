@@ -18,6 +18,7 @@ function Home() {
         <Template>
           <Header title={"Início"} />
             <Container>
+              <InfoDataBase />
              <div className="avisoInicial">
                <h5>Bem-vindo ao Sistema Gestão FTTH (Beta)!</h5>
                 <br />

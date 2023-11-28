@@ -39,5 +39,20 @@ namespace WebApiSwagger.Repository
             }
             
         }
+         public async Task<MaterialRede> CarregarChave(string? chave)
+        {
+            try
+            {
+                return await _context.MateriaisRedes
+                            .FirstOrDefaultAsync(p => p.CHAVE == chave) ?? new MaterialRede();
+
+
+            }
+            catch (Exception ex)
+            {  
+                throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
+            }
+            
+        }
     }
 }

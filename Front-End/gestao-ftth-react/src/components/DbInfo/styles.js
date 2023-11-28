@@ -2,14 +2,18 @@ import { styled } from "@stitches/react"
 
 export const InfoData = styled("div", {
     display: 'flex',
-    marginTop: '0.5rem',
+    fontSize: '0.6rem',
     width: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-start',
-    fontSize: '0.7rem',
+    justifyContent: 'center',
+    marginTop: '0.5rem',
+    marginBottom: '1rem',
+    backgroundColor: '#D6DBDF',
     fontWeight: '600',
     
    ".info":{
+        display: 'flex',
+        margin: '0.5rem',
+        alignItems: 'center',
         marginLeft: '0.8rem',
         backgroundColor: '#EAEDED',
         width: '180px',

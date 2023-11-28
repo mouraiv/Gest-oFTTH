@@ -9,6 +9,7 @@ import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
 import DialogAlert from "../../../components/Dialog";
+import InfoDataBase from '../../../components/DbInfo';
 
 function ImportFile(){
     const [testeOptico, setTesteOptico] = useState({});
@@ -101,6 +102,7 @@ function ImportFile(){
 
       const columns = [
         { key: 'id', name: 'ID' },
+        { key: 'id_MaterialRede', name: 'NETWIN' },
         { key: 'uf', name: 'UF' },
         { key: 'construtora', name: 'CONSTRUTORA' },
         { key: 'estacao', name: 'ESTACÃO' },
@@ -201,6 +203,7 @@ function ImportFile(){
                 )
               )
             }
+            <InfoDataBase />
             <ImportArea>
                 <InputImport onChange={handleFileChange} type="file"
                 ref={inputRef} 

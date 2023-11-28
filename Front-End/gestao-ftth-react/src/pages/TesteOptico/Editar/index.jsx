@@ -8,6 +8,7 @@ import Footer from "../../../components/Footer";
 import Spinner from "../../../components/Spinner";
 import DialogAlert from "../../../components/Dialog";
 import DropBox from '../../../components/dropbox';
+import { DateMask } from "../../../components/TextInput/mask/index";
 
 
 function Editar() {
@@ -24,6 +25,9 @@ function Editar() {
     const [estacao, setEstacao] = useState("");
     const [dropUf, setDropUf] = useState([]);
     const [uf, setUf] = useState("");
+    const [dateInputRecebimento, setDateInputRecebimento] = useState('');
+    const [dateInputTeste, setDateInputTeste] = useState('');
+    const [dateInputConstrucao, setDateInputConstrucao] = useState('');
 
     async function fetchDropFilter () {
     
@@ -47,12 +51,9 @@ function Editar() {
           }
           
         } catch (error) {
-          setLoading(true);
+          console.log("Erro ao carregar droplist" + error)
           
-        } finally {
-          setLoading(true);
-    
-        }
+        } 
       }
 
     async function fetchUpdateTesteOptico() {
@@ -63,9 +64,15 @@ function Editar() {
                 ...testeOptico
             }
 
+            testeOpticoData.CHAVE = `${uf}-${estacao.replace(/\s/g,"")}${testeOptico.cdo}`;
             testeOpticoData.uf = uf;
             testeOpticoData.construtora = construtora;
             testeOpticoData.estacao = estacao;
+            testeOpticoData.dataConstrucao = formatarDateJson(dateInputConstrucao);
+            testeOpticoData.dataRecebimento = formatarDateJson(dateInputRecebimento);
+            testeOpticoData.dataTeste = formatarDateJson(dateInputTeste);
+
+            console.log(testeOpticoData)
          
             const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
     
@@ -74,23 +81,15 @@ function Editar() {
                 setMensagem(testeOpticoResponse.data)
                 setVisible(true);
                 
-                const detalheTesteOptico = await DetalheTesteOptico(id);
-
-                if(detalheTesteOptico.status == 200) {
-                    setTesteOptico(detalheTesteOptico.data);
-
-                }
-
             }
 
         } catch (error) {
             setDialogAviso(true);
             setMensagem(`Erro ao editar.`)
             setVisible(true);
-            setLoading(true);
 
         } finally {
-            setLoading(true);
+            setLoading(false);
         }
     }
 
@@ -100,6 +99,9 @@ function Editar() {
 
             if(detalheTesteOptico.status <= 200) {
                 setTesteOptico(detalheTesteOptico.data);
+                setUf(detalheTesteOptico.data.uf);
+                setConstrutora(detalheTesteOptico.data.construtora);
+                setEstacao(detalheTesteOptico.data.estacao)
 
             }
 
@@ -116,13 +118,26 @@ function Editar() {
 
     useEffect(() => {
         fetchDropFilter();
-        fecthDetalheTesteOptico();
+        
+    },[]);
 
+    useEffect(() => {
+        fecthDetalheTesteOptico();
+        setDateInputConstrucao(testeOptico?.dataConstrucao != '' ? new Date(testeOptico?.dataConstrucao).toLocaleDateString() : '');
+        setDateInputTeste(testeOptico?.dataTeste != '' ? new Date(testeOptico?.dataTeste).toLocaleDateString(): '');
+        setDateInputRecebimento(testeOptico?.dataRecebimento != '' ? new Date(testeOptico?.dataRecebimento).toLocaleDateString() : '');
+        
     },[loading]);
 
     const handleVoltar = () => {
         navigate(-1); 
     };
+
+    const formatarDateJson = (date) => {
+        const parts = date.split('/');
+        return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+
+    }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -140,9 +155,21 @@ function Editar() {
             setVisible(true);
         } else {
             fetchUpdateTesteOptico();
-            setLoading(false);
         }
     }
+
+    const handleDataTeste = (event) => {
+        const input = DateMask(event);
+        setDateInputTeste(input);
+      }
+      const handleDataContrucao = (event) => {
+        const input = DateMask(event);
+        setDateInputConstrucao(input);
+      }
+      const handleDataRecebimento = (event) => {
+        const input = DateMask(event);
+        setDateInputRecebimento(input);
+      }
 
     const handleUf = (event) => {
         const input = event.target.value;
@@ -262,17 +289,17 @@ function Editar() {
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>DATA CONSTRUÇÃO:</label>
-                            <Input name="dataConstrucao" onChange={handleInputChange} placeholder="__/__/____" defaultValue={testeOptico.dataConstrucao} style={{width: '240px'}} />
+                            <Input name="dataConstrucao" onChange={handleDataContrucao} placeholder="__/__/____" value={dateInputConstrucao} style={{width: '240px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
                             <label>DATA TESTE:</label>
-                            <Input name="dataTeste" onChange={handleInputChange} placeholder="__/__/____" defaultValue={testeOptico.dataTeste} style={{width: '240px'}} />
+                            <Input name="dataTeste" onChange={handleDataTeste} placeholder="__/__/____" value={dateInputTeste} style={{width: '240px'}} />
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>DATA RECEBIMENTO:</label>
-                            <Input name="dataRecebimento" onChange={handleInputChange} placeholder="__/__/____" defaultValue={testeOptico.dataRecebimento} style={{width: '240px'}} />
+                            <Input name="dataRecebimento" onChange={handleDataRecebimento} placeholder="__/__/____" value={dateInputRecebimento} style={{width: '240px'}} />
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
@@ -317,7 +344,11 @@ function Editar() {
                     </div>
                     <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '0.8rem'}}>
                         <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-                        <ButtonConfirma onClick={handleEdite}>Editar</ButtonConfirma>
+                        { dropEstacao.length > 0 ?
+                        <ButtonConfirma onClick={handleEdite}>Editar</ButtonConfirma> 
+                        :
+                        <ButtonConfirma disabled>Carregando...</ButtonConfirma>
+                        }
                     </div>
                 </div>
                 ):(<Spinner />)

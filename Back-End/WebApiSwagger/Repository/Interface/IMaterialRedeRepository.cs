@@ -7,5 +7,6 @@ namespace WebApiSwagger.Repository.Interface
     public interface IMaterialRedeRepository
     {
         Task<MaterialRede> CarregarId(int? id_MaterialRede);
+        Task<MaterialRede> CarregarChave(string? chave);
     }
 }

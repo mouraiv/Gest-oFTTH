@@ -21,6 +21,7 @@ namespace WebApiSwagger.Repository
             {
                 TesteOptico db = await CarregarId(id);
 
+                db.CHAVE = testeOptico.CHAVE;
                 db.UF = testeOptico.UF;
                 db.Construtora = testeOptico.Construtora;
                 db.Estacao = testeOptico.Estacao;
@@ -48,6 +49,7 @@ namespace WebApiSwagger.Repository
                 db.SplitterCEOS = testeOptico.SplitterCEOS;
                 db.FibraDGO = testeOptico.FibraDGO;
                 db.Sel = testeOptico.Sel;
+                db.Id_MaterialRede = testeOptico.Id_MaterialRede;
 
                 _context.TestesOpticos.Update(db);
                 await _context.SaveChangesAsync();

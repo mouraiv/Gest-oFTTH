@@ -13,12 +13,14 @@ namespace WebApiSwagger.Controllers
    public class TesteOpticoController : Controller
     {
          private readonly ITesteOpticoRepository _testeOpticoRepository;
+         private readonly IMaterialRedeRepository _materialRedeRepository;
          private readonly UploadXlsx _uploadXlsx;
          private readonly Paginacao _paginacao;
 
-        public TesteOpticoController(ITesteOpticoRepository testeOpticoRepository, UploadXlsx uploadXlsx, Paginacao paginacao)
+        public TesteOpticoController(ITesteOpticoRepository testeOpticoRepository, IMaterialRedeRepository materialRedeRepository, UploadXlsx uploadXlsx, Paginacao paginacao)
         {
             _testeOpticoRepository = testeOpticoRepository;
+            _materialRedeRepository = materialRedeRepository;
             _uploadXlsx = uploadXlsx;
             _paginacao = paginacao;
         }
@@ -115,10 +117,11 @@ namespace WebApiSwagger.Controllers
                         var _uf = _uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper();
                         var _estacao = _uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper();
                         var _cdo = _uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper();
+                        var _chave = $"{_uf}-{_estacao?.Replace(" ", "") ?? ""}{_cdo}";
 
                         var modelo = new TesteOptico
                             {
-                                CHAVE = $"{_uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper()}-{_uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper()}{_uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper()}",
+                                CHAVE = _chave,
                                 UF = _uf,
                                 Construtora = _uploadXlsx.Worksheet?.Cells[row, 3].Value?.ToString()?.ToUpper(),
                                 Estacao = _estacao,
@@ -140,6 +143,7 @@ namespace WebApiSwagger.Controllers
                                 BobinaLancamento = _uploadXlsx.Worksheet?.Cells[row, 22].Value?.ToString()?.ToUpper(),
                                 BobinaRecepcao = _uploadXlsx.Worksheet?.Cells[row, 23].Value?.ToString()?.ToUpper(),
                                 QuantidadeTeste = _uploadXlsx.Worksheet?.Cells[row, 24].Value?.ToString()?.ToUpper(),
+                                Id_MaterialRede = _materialRedeRepository.CarregarChave(_chave).Result.Id_MaterialRede,
                                 Sel = 1      
                             };
 
@@ -188,8 +192,17 @@ namespace WebApiSwagger.Controllers
         {
             try
             {
-                var modelo = new TesteOptico{
+                    //Get valores DataTime String para tratamento
+                    string dataContrucao = testeOptico.DataConstrucao.ToString() ?? "";
+                    DateTime _dataContrucao = DateTime.ParseExact(dataContrucao, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    string dataTeste = testeOptico.DataTeste.ToString() ?? "";
+                    DateTime _dataTeste = DateTime.ParseExact(dataTeste, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    string dataRecebimento = testeOptico.DataRecebimento.ToString() ?? "";
+                    DateTime _dataRecebimento = DateTime.ParseExact(dataRecebimento, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
+                    var modelo = new TesteOptico{
+
+                    CHAVE = testeOptico.CHAVE,    
                     UF = testeOptico.UF,
                     Construtora = testeOptico.Construtora,
                     Estacao = testeOptico.Estacao,
@@ -207,16 +220,17 @@ namespace WebApiSwagger.Controllers
                     AceitacaoMesRef = testeOptico.AceitacaoMesRef,
                     TesteObservacao = testeOptico.TesteObservacao,
                     Meta = testeOptico.Meta,
-                    DataConstrucao = testeOptico.DataConstrucao,
+                    DataConstrucao = _dataContrucao,
                     EquipeConstrucao = testeOptico.EquipeConstrucao,
-                    DataTeste = testeOptico.DataTeste,
+                    DataTeste = _dataTeste,
                     Tecnico = testeOptico.Tecnico,
-                    DataRecebimento = testeOptico.DataRecebimento,
+                    DataRecebimento = _dataRecebimento,
                     BobinaLancamento = testeOptico.BobinaLancamento,
                     BobinaRecepcao = testeOptico.BobinaRecepcao,
                     PosicaoIcxDgo = testeOptico.PosicaoIcxDgo,
                     SplitterCEOS = testeOptico.SplitterCEOS,
                     FibraDGO = testeOptico.FibraDGO,
+                    Id_MaterialRede = _materialRedeRepository.CarregarChave(testeOptico.CHAVE).Result.Id_MaterialRede,
                     Sel = testeOptico.Sel
 
                 };

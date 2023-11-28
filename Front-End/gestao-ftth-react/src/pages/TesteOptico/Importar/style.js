@@ -6,8 +6,6 @@ export const ImportArea = styled("div", {
     width: '100%',
     fontSize: '0.8rem',
     fontWeight: '700',
-    paddingBottom: '0.7rem',
-    paddingTop: '1rem',
 
     'input[type=file]::file-selector-button':{
         backgroundColor: '#D6DBDF',

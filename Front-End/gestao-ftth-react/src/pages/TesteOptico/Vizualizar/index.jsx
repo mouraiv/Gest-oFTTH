@@ -129,25 +129,39 @@ function Vizualizar(){
 
     const statusAnalise = () => {
         const statusAnalise = analises?.analiseObservacao;
+        const count = statusAnalise != null ? statusAnalise.split(';').length : 0;
 
-         if (statusAnalise != null) {
-            const count = statusAnalise.split(';').length;
-            return count > 1 ? 'RE-TESTE' : 'TESTADO';
-         } else {
+        if(analises != undefined) {
+            if(count > 1){
+                return 'RE-TESTE';
+
+            }else{
+                return 'TESTADO';
+            }
+
+        }else{
             return 'TESTE';
-         }
+
+        }
 
     }
 
     const countTeste = () => {
         const statusAnalise = analises?.analiseObservacao;
+        const count = statusAnalise != null ? statusAnalise.split(';').length : 0;
 
-         if (statusAnalise != null) {
-            return statusAnalise.split(';').length;
+        if(analises != undefined) {
+            if(count > 1){
+                return statusAnalise.split(';').length;
 
-         } else {
+            }else{
+                return 1;
+            }
+
+        }else{
             return 0;
-         }
+
+        }
 
     }
 
@@ -190,7 +204,13 @@ function Vizualizar(){
         <DialogAlert
             visibleDiag={mapDialogVisible}
             visibleHide={() => setMapDialogVisible(false)}
-            header={<h4>Mapa Geográfico </h4>}
+            header={
+                    <>
+                        <h4>Mapa Geográfico </h4> 
+                        <br /> 
+                        <p>{materialRede?.endereco_Mt}</p>
+                    </>
+                    }
             ConfirmaButton={false}
             textCloseButton={'Fechar'}
             text={
@@ -364,7 +384,7 @@ function Vizualizar(){
                         </tr>
                         <tr>
                             <td>Estado Campo: {testeOptico.estadoCampo ?? '-------'}</td>
-                            <td>Data Teste: {testeOptico.dataTeste ?? '-------'}</td>
+                            <td>Data Teste: {testeOptico.dataTeste != null ? new Date(testeOptico.dataTeste).toLocaleDateString() : '-------'}</td>
                         </tr>
                         <tr>
                             <td colSpan={2}>{testeOptico.cdo ?? '-------'}</td>
@@ -382,8 +402,8 @@ function Vizualizar(){
                             <td>Equipe Construção: {testeOptico.equipeConstrucao ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Data Construção: {testeOptico.dataConstrucao ?? '-------'}</td>
-                            <td>Data Recebimento: {testeOptico.dataRecebimento ?? '-------'}</td>
+                            <td>Data Construção: {testeOptico.dataConstrucao != null ? new Date(testeOptico.dataConstrucao).toLocaleDateString() : '-------'}</td>
+                            <td>Data Recebimento: {testeOptico.dataRecebimento != null ? new Date(testeOptico.dataRecebimento).toLocaleDateString() : '-------'}</td>
                         </tr>
                         <tr>
                             <td>Bobina Lançamento: {testeOptico.bobinaLancamento ?? '-------'}</td>
@@ -481,11 +501,11 @@ function Vizualizar(){
                             </td>
                         </tr>
                         <tr>
-                            <td>Data Estado Operacional: {materialRede.dataEstadoOperacional_Mt ?? '-------'}</td>
+                            <td>Data Estado Operacional: {materialRede?.dataEstadoOperacional_Mt != '' ? new Date(materialRede?.dataEstadoOperacional_Mt).toLocaleDateString() : '-------'}</td>
                             <td>Estado Operacional: {materialRede.estadoOperacional_Mt ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Data Estado Controle: {materialRede.dataEstadoControle_Mt ?? '-------'}</td>
+                            <td>Data Estado Controle: {materialRede?.dataEstadoControle_Mt != '' ? new Date(materialRede?.dataEstadoControle_Mt).toLocaleDateString() : '-------'}</td>
                             <td>Estado Controle: {materialRede.estadoControle_Mt ?? '-------'}</td>
                         </tr>
                         </>

@@ -249,11 +249,16 @@ function Vizualizar(){
     async function fecthDetalheTesteOptico(){
         try {
             const detalheTesteOptico = await DetalheTesteOptico(id);
-            const detalheMaterialRede = await DetahleMaterialRedeAny(idNetwin);
-
+            
             if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
-                setMaterialRede(detalheMaterialRede.data);
+
+                const detalheMaterialRede = await DetahleMaterialRedeAny(idNetwin);
+
+                if(detalheMaterialRede.status == 200) {
+                  setMaterialRede(detalheMaterialRede.data);
+                  
+                }
             }
 
         } catch (error) {
@@ -265,8 +270,8 @@ function Vizualizar(){
     }
 
     useEffect(() => {
-      fecthDetalheTesteOptico();    
-
+      fecthDetalheTesteOptico();
+      
     },[loading]);
 
     const tipoCdoe = () => {
@@ -299,7 +304,7 @@ function Vizualizar(){
     };
 
     const Observacao = () => {
-      if (analises != undefined) {
+      if (analiseObservacao !== null) {
           const observacoes = analiseObservacao.replace(';.','').split(';');
           const _observacoes = observacoes.map(obs => obs);
           return _observacoes;

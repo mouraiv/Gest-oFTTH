@@ -1,9 +1,11 @@
 import { styled } from "@stitches/react"
 
 export const Container = styled("div", {
-    display: "grid",
-    justifyContent: 'center',
-    padding: '1rem',
+    display: "flex",
+    alignItems: 'center',
+    flexDirection: 'column',
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
 
     '.avisoInicial':{
         backgroundColor:'#FEF9E7',
