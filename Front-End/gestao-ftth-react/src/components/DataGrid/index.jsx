@@ -56,6 +56,11 @@ export default function DataGrid({
     atualizar();
   }
 
+  function getNestedValue(obj, key) {
+    const keys = key.split('.');
+    return keys.reduce((acc, currentKey) => (acc && acc[currentKey] ? acc[currentKey] : undefined), obj);
+  }
+  
   return (
     <>
     <DialogAlert 
@@ -110,7 +115,11 @@ export default function DataGrid({
               rows.map((row, rowIndex) => (         
                 <tr key={rowIndex}>
                   {columns.map((column) => (
-                    <td key={column.key}>{row[column.key] || "-"}</td>
+                    <td key={column.key}>
+                      {column.key.includes('.') 
+                      ? getNestedValue(row, column.key) || "-"
+                      : row[column.key] || "-"}
+                    </td>
                   ))}
                   <td>
                     <Button onClick={() => handleVisualizar(row.id, row.id_MaterialRede)} >Visualizar</Button>

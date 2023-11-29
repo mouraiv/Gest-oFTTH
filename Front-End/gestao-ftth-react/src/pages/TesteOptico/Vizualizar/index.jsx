@@ -360,7 +360,7 @@ function Vizualizar(){
         { loading ? (
             <ContentTabs>
             <Tabs
-            defaultActiveKey="MaterialRede"
+            defaultActiveKey="TesteOptico"
             id="uncontrolled-tab-example"
             >
             <Tab eventKey="TesteOptico" title="Teste Optico">        

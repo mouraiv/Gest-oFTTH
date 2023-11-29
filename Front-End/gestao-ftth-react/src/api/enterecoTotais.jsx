@@ -21,3 +21,14 @@ export const getCarregarEnderecoTotal = async (id) => {
 
   return response;
 };
+
+export const getEnderecoTotal = async (filtro) => {
+  const response = await api.get('/EnderecoTotal/Listar', {
+    params: filtro,
+    headers:{
+      'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
+    },
+  });
+
+  return response;
+};

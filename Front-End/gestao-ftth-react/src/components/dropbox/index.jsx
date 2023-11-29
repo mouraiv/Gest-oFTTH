@@ -1,11 +1,11 @@
 import { Drop, FormGroup } from "./style";
 
-export default function DropBox({label, event, lista, text, valueDefaut, width, height}) {
+export default function DropBox({label, event, lista, text, valueDefaut, width, height, disable}) {
       return (
         <>
           <FormGroup>
             <label>{label}</label>
-            <Drop onChange={event} value={text} style={{width:`${width}`, height:`${height}`}}>
+            <Drop onChange={event} value={text} style={{width:`${width}`, height:`${height}`}} disabled={disable}>
               {lista.length !== 0 ? (
                   valueDefaut === '' ? (
                     <>

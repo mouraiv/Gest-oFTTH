@@ -9,6 +9,8 @@ import Imagem from "../pages/TesteOptico/Imagens";
 import Editar from "../pages/TesteOptico/Editar";
 import Analise from "../pages/Analise";
 import Home from "../pages/Home";
+import EnderecoTotal from "../pages/EnderecoTotal";
+import BaseAcumulada from "../pages/BaseAcumulada";
 
 export default function AppRoutes(){
     return (
@@ -22,6 +24,8 @@ export default function AppRoutes(){
                     <Route path="/TesteOptico/Visualizar/:id/:idNetwin" element={<Vizualizar />} />
                     <Route path="/TesteOptico/Imagem/:uf/:sigla/:estacao/:cdo" element={<Imagem />} />
                     <Route path="/Analise/:id/:idNetwin" element={<Analise />} />
+                    <Route path="/EnderecoTotal" element={<EnderecoTotal />} />
+                    <Route path="/BaseAcumulada" element={<BaseAcumulada />} />
                 </Route>
                 <Route path="/" element={<Login />} />
             </Routes>

@@ -4,6 +4,7 @@ using WebApiSwagger.Filters;
 using WebApiSwagger.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using WebApiSwagger.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiSwagger.Repository
 {
@@ -34,7 +35,33 @@ namespace WebApiSwagger.Repository
               try
             {
                 var query = _context.EnderecosTotais
-                        .AsQueryable();
+                    .Select(et => new EnderecoTotal {
+                        Id_EnderecoTotal = et.Id_EnderecoTotal,
+                        Id_MaterialRede = et.Id_MaterialRede,
+                        UF = et.UF,
+                        Localidade = et.Localidade,
+                        Municipio = et.Municipio,
+                        SiglaEstacao = et.SiglaEstacao,
+                        Celula = et.Celula,
+                        NomeCdo = et.NomeCdo,
+                        Cod_Survey = et.Cod_Survey,
+                        QuantidadeUMS = et.QuantidadeUMS,
+                        Cod_Viabilidade = et.Cod_Viabilidade,
+                        TipoViabilidade = et.TipoViabilidade,
+                        TipoRede = et.TipoRede,
+                        UCS_Residenciais = et.UCS_Residenciais,
+                        UCS_Comerciais = et.UCS_Comerciais,
+                        MaterialRede = _context.MateriaisRedes
+                        .Select(mr => new MaterialRede {
+                            CHAVE = mr.CHAVE,
+                            NomeAbastecedora_Mt = mr.NomeAbastecedora_Mt,
+                            DataEstadoControle_Mt = mr.DataEstadoControle_Mt,
+                            EstadoControle_Mt = mr.EstadoControle_Mt,
+                            DataEstadoOperacional_Mt = mr.DataEstadoOperacional_Mt,
+                            EstadoOperacional_Mt = mr.EstadoOperacional_Mt
+                        }).FirstOrDefault() ?? new MaterialRede()
+                    })
+                    .AsQueryable();
 
                 if (!string.IsNullOrEmpty(filtro.UF))
                 {
@@ -46,9 +73,9 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.MaterialRede.NomeAbastecedora_Mt == filtro.Estacao);
                 }
 
-                if (!string.IsNullOrEmpty(filtro.Municipio))
+                if (!string.IsNullOrEmpty(filtro.Localidade))
                 {
-                    query = query.Where(p => p.Municipio == filtro.Municipio);
+                    query = query.Where(p => p.Localidade == filtro.Localidade);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.CodSurvey))
@@ -61,9 +88,24 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.NomeCdo == filtro.CDO);
                 }
 
+                if (!string.IsNullOrEmpty(filtro.Cod_Viabilidade))
+                {
+                    query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
+                }
+
+                if (!string.IsNullOrEmpty(filtro.DataEstadoOperacional_Mt))
+                {
+                    query = query.Where(p => p.MaterialRede.DataEstadoOperacional_Mt == filtro.DataEstadoOperacional_Mt);
+                }
+
                 if (!string.IsNullOrEmpty(filtro.EstadoOperacional))
                 {
                     query = query.Where(p => p.MaterialRede.EstadoOperacional_Mt == filtro.EstadoOperacional);
+                }
+
+                 if (!string.IsNullOrEmpty(filtro.DataEstadoControle_Mt))
+                {
+                    query = query.Where(p => p.MaterialRede.DataEstadoControle_Mt == filtro.DataEstadoControle_Mt);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.EstadoControle))
@@ -98,6 +140,40 @@ namespace WebApiSwagger.Repository
             {  
                 throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
             }
+        }
+
+        public Task<List<string?>> ListaUnica([FromQuery]string coluna)
+        {
+            try
+            {
+                var propriedade = typeof(TesteOptico).GetProperty(coluna);
+
+                if (propriedade == null)
+                {
+                    // A propriedade não existe na classe TesteOptico.
+                    return Task.FromResult(new List<string?>());
+                } 
+
+                var valores = _context.EnderecosTotais
+                    .Include(p => p.MaterialRede)
+                    .AsEnumerable()
+                    .Where(x => propriedade.GetValue(x) != null)
+                    .Select(x => propriedade.GetValue(x)!.ToString())
+                    .ToList();
+
+                var valoresUnicos = valores
+                    .GroupBy(x => x)
+                    .Select(group => group.Key)
+                    .ToList();
+
+            return Task.FromResult(valoresUnicos);
+            
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
+            }
+           
         }
     }
 }

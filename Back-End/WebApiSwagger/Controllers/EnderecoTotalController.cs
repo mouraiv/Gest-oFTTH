@@ -89,5 +89,25 @@ namespace WebApiSwagger.Controllers
             }
            
         }
+        [HttpGet("ListaUnica")]
+        public async Task<IActionResult> ListaUnica([FromQuery] string coluna)
+        {
+            try
+            {
+                var resultado = await _enderecoTotalRepository.ListaUnica(coluna);
+
+                if (resultado == null)
+                {
+                    return NotFound("Nenhum resultado."); 
+                }
+                
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
+            }
+
+        }
     }
 }
