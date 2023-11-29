@@ -209,6 +209,8 @@ function Vizualizar(){
     GlobalStyle();
     return(
         <>
+        { id !== 'undefined' ? (
+        <>
         <Template>
         <Header title={"Teste Óptico - Visualizar"} />
         <Content>
@@ -629,6 +631,321 @@ function Vizualizar(){
             <Footer />
         </Template>
         </>
+    ):(
+        <>
+        <Template>
+        <Header title={"Netwin - Visualização"} />
+        <Content>
+        <DialogAlert
+            visibleDiag={mapDialogVisible}
+            visibleHide={() => setMapDialogVisible(false)}
+            header={
+                    <>
+                        <h4>Mapa Geográfico </h4> 
+                        <br /> 
+                        <p>{materialRede?.endereco_Mt}</p>
+                    </>
+                    }
+            ConfirmaButton={false}
+            textCloseButton={'Fechar'}
+            text={
+                    <MapContainer center={positionMap} zoom={17} style={{ width: '800px', height: '400px' }}>
+                        <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <Marker position={positionMap}>
+                        <Popup>
+                            <div>
+                                <div style={{textAlign: 'center'}}><b>{materialRede?.codigo_Mt}</b></div>
+                                <div><p><i>{materialRede?.endereco_Mt}</i></p></div>
+                            </div>
+                        </Popup>
+                        </Marker>
+                    </MapContainer>
+            }
+        />
+         <DialogAlert 
+                    visibleDiag={visibleTesteOptico} 
+                    visibleHide={() => setVisibleTesteOptico(false)}
+                    colorType={'#13293d'}
+                    ConfirmaButton={false}
+                    textCloseButton={'Fechar'}
+                    text={
+                        <>
+                        <TableGrid style={{width: '600px', fontSize: '0.7rem', marginTop: '0.5rem', marginBottom: '0.8rem'}}>
+                              <thead>
+                                <tr>
+                                <th colSpan={6}>DETALHE ENDEREÇOS TOTAIS</th>
+                                </tr>
+                              </thead>
+                              {valueEndereco != undefined ? ( 
+                                        <tbody>
+                                        <>
+                                        <tr>
+                                            <td>{valueEndereco.uf ?? '-------'}</td>
+                                            <td>Município: {valueEndereco.municipio ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Localidade: {valueEndereco.localidade ?? '-------'}</td>
+                                            <td>Sigla localidade: {valueEndereco.localidadeAbrev ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cod. SURVEY: {valueEndereco.cod_Survey ?? '-------'}</td>
+                                            <td>Sigla estação: {valueEndereco.siglaEstacao ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2} style={{margin:0, padding:0}}>
+                                                <table>
+                                                    <tbody>
+                                                    <tr>
+                                                    <td>Cod. localidade: {valueEndereco.cod_Localidade ?? '-------'}</td>
+                                                    <td>Cod. logradouro: {valueEndereco.cod_Logradouro ?? '-------'}</td>
+                                                    <td>Id celula: {valueEndereco.id_Celula ?? '-------'}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipo rede: {valueEndereco.tipoRede ?? '-------'}</td>
+                                            <td>Celula: {valueEndereco.celula ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2}>Nome CDO: {valueEndereco.nomeCdo ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cod viabilidade: {valueEndereco.cod_Viabilidade ?? '-------'}</td>
+                                            <td>Tipo viabilidade: {valueEndereco.tipoViabilidade ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2}>Logradouro: {valueEndereco.logradouro ?? '-------'}, {valueEndereco.numeroFachada ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2} style={{margin:0, padding:0}}>
+                                                <table>
+                                                    <tbody>
+                                                    <tr>
+                                                    <td>Complemento: {valueEndereco.complemento ?? '-------'}</td>
+                                                    <td>Complemento II: {valueEndereco.complementoDois ?? '-------'}</td>
+                                                    <td>Complemento III: {valueEndereco.complementoTres ?? '-------'}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Id endereco: {valueEndereco.id_Endereco ?? '-------'}</td>
+                                            <td>Numero Piso: {valueEndereco.numeroPiso ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>CEP: {valueEndereco.cep ?? '-------'}</td>
+                                            <td>Bairro: {valueEndereco.bairro ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>quantidadeUMS: {valueEndereco.quantidadeUMS ?? '-------'}</td>
+                                            <td>Disponibilidade comercial: {valueEndereco.disp_Comercial ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>UCS Residenciais: {valueEndereco.ucS_Residenciais ?? '-------'}</td>
+                                            <td>UCS Comerciais: {valueEndereco.ucS_Comerciais ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>UMS Certificadas: {valueEndereco.umS_Certificadas ?? '-------'}</td>
+                                            <td>Rede Edificio Certificado: {valueEndereco.redeEdificio_Certificados ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Quantidade HCS: {valueEndereco.quantidade_HCS ?? '-------'}</td>
+                                            <td>Projeto: {valueEndereco.projeto ?? '-------'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Latitude: {valueEndereco.latitude ?? '-------'}</td>
+                                            <td>Longitude: {valueEndereco.longitude ?? '-------'}</td>
+                                        </tr>
+                                        </>
+                                        </tbody>) : (null)}
+                            </TableGrid>
+                        </>
+                    }
+                />        
+        {loadingMaterial ? (
+            <>
+            <TableGrid style={{marginTop:'1rem'}}>
+                <thead>
+                    <tr>
+                        <th colSpan={3}>-- MATERIAIS DE REDE - {materialRede.chave} --</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {materialRede.id_MaterialRede != undefined ? (
+                        <>
+                        <tr>
+                            <td>{materialRede.siglaFederativa_Mt ?? '-------'}</td>
+                            <td>{materialRede.nomeFederativa_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Sigla Localidade: {materialRede.siglaLocalidade_Mt ?? '-------'}</td>
+                            <td>Nome Localidade: {materialRede.nomeLocalidade_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Municipio: {materialRede.municipio_Mt ?? '-------'}</td>
+                            <td>Nome Abastecedora: {materialRede.nomeAbastecedora_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>          
+                            <td>Sigla Abastecedora: {materialRede.siglaAbastecedora_Mt ?? '-------'}</td>
+                            <td>Codigo SAP: {materialRede.codigoSap_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td colSpan={2}>{materialRede.codigo_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Elemento Rede: {materialRede.elementoRede_Mt ?? '-------'}</td>
+                            <td>Tipo Rede: {materialRede.tipo_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Infraestrutura: {materialRede.infraestruturaRede_Mt ?? '-------'}</td>
+                            
+                        </tr>
+                        <tr>
+                            <td>Fabricante: {materialRede.fabricante_Mt ?? '-------'}</td>
+                            <td>Modelo: {materialRede.modelo_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td colSpan={2}style={{margin:0, padding:0}}>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                    <td style={{width:'90%', border:0}} >Endereço: {materialRede.endereco_Mt ?? '-------'}</td>
+                                    <td className="mapsTd" onClick={() => handleOpenMapDialog()}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Data Estado Operacional: {materialRede?.dataEstadoOperacional_Mt != '' ? new Date(materialRede?.dataEstadoOperacional_Mt).toLocaleDateString() : '-------'}</td>
+                            <td>Estado Operacional: {materialRede.estadoOperacional_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Data Estado Controle: {materialRede?.dataEstadoControle_Mt != '' ? new Date(materialRede?.dataEstadoControle_Mt).toLocaleDateString() : '-------'}</td>
+                            <td>Estado Controle: {materialRede.estadoControle_Mt ?? '-------'}</td>
+                        </tr>
+                        </>
+                        ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado</td></tr>)
+                        }
+                        <tr>
+                          <td colSpan={2} style={{padding: '0'}}>
+                            <table className="tableEnderecoTotal">
+                              <thead>
+                                <tr>
+                                <th colSpan={6}>ENDEREÇOS TOTAIS</th>
+                                </tr>
+                                <tr style={{backgroundColor:'#34495E'}}>
+                                  <th style={{width: '15%'}}>CELULA</th>
+                                  <th style={{width: '10%'}}>SURVEY</th>
+                                  <th style={{width: '5%'}}>UMS</th>
+                                  <th style={{width: '8%'}}>COD. VIAB</th>
+                                  <th style={{width: '25%'}}>TIPO VIAB</th>
+                                  <th style={{width: '10%'}}>DISP. COMERCIAL</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {enderecoTotal != undefined ? (
+                                    <tr id={enderecoTotal[0].cod_Survey} onClick={handleTesteOpticoDetalhe} className="enderecoTr">
+                                    <td>{enderecoTotal[0].celula ?? "--"}</td>
+                                    <td>{enderecoTotal[0].cod_Survey ?? "--"}</td>
+                                    <td>{enderecoTotal[0].quantidadeUMS ?? "--"}</td>
+                                    <td>{enderecoTotal[0].cod_Viabilidade ?? "--"}</td>
+                                    <td>{enderecoTotal[0].tipoViabilidade ?? "--"}</td>
+                                    <td>{enderecoTotal[0].disp_Comercial ?? "--"}</td> 
+                                  </tr>
+                                ):(<tr><td colSpan={6} style={{fontSize:'0.7rem', cursor: 'default'}}>Nenhum resultado.</td></tr>)}
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                        <tr>
+                            <th style={{backgroundColor: '#13293d'}} colSpan={2}>LIGAÇÕES</th>
+                        </tr>
+                        {ligacao != undefined ? (
+                            <>
+                        <tr>
+                            <td>Cabo Primário: {ligacao.caboPrimario_ls ?? '-------'}</td>
+                            <td>Cabo Secundário: {ligacao.caboSecundario_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Nome OLT: {ligacao.nomeOlt_ls ?? '-------'}</td>
+                            <td>Porta OLT: {ligacao.portaOlt_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>ICX: {ligacao.icX_ls ?? '-------'}</td>
+                            <td>BSP: {ligacao.bsP_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>DGO: {ligacao.dgO_ls ?? '-------'}</td>
+                            <td>Fibra DGO: {ligacao.fibraDgo_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Cabo DGO: {ligacao.caboDgo_ls ?? '-------'}</td>
+                            <td>SplitterCEOS: {ligacao.splitterCEOS_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Out SplitterCEOS: {ligacao.outSplitterCEOS_ls ?? '-------'}</td>
+                            <td>Cabo CDO: {ligacao.caboCdo_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Fibra CDO: {ligacao.fibraCdo_ls ?? '-------'}</td>
+                            <td>Porta CDO: {ligacao.portaCdo_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Splitter CDO: {ligacao.splitteR_CDO_ls ?? '-------'}</td>
+                            <td>CDO: {ligacao.cdO_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td colSpan={2} style={{margin:0, padding:0}}>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                    <td>Etiqueta Padrão: {ligacao.etiquetaPadrao_ls ?? '-------'}</td>
+                                    <td>Fora Do Padrão: {ligacao.foraPadrao_ls ?? '-------'}</td>
+                                    <td>Projeto: {ligacao.projeto_ls ?? '-------'}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Etiqueta Campo: {ligacao.etiquetaCampo_ls ?? '-------'}</td>
+                            <td>Identificação Terceiro: {ligacao.identificacaoTerceiro_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Etiqueta Terceiros: {ligacao.etiquetaTerceiro_ls ?? '-------'}</td>
+                            <td>Rede: {ligacao.rede_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Destinação: {ligacao.destinacao_ls ?? '-------'}</td>
+                            <td>Estado Ciclo Vida: {ligacao.estadoCicloVida_ls ?? '-------'}</td>
+                        </tr>
+                        </>
+                        ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
+                        }
+                    </tbody>
+            </TableGrid>
+             <FooterButton style={{width: '700px'}}>
+             <div>
+                 <>
+                 <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
+                 </>
+             </div>
+         </FooterButton>
+         </>
+            ):(<Spinner />)}
+            </Content>
+            <Footer />
+        </Template>
+        </>
+    )}
+    </>
     );
 }
 

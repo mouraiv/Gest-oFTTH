@@ -35,6 +35,7 @@ namespace WebApiSwagger.Repository
               try
             {
                 var query = _context.EnderecosTotais
+                    .Include(p => p.MaterialRede)
                     .Select(et => new EnderecoTotal {
                         Id_EnderecoTotal = et.Id_EnderecoTotal,
                         Id_MaterialRede = et.Id_MaterialRede,
@@ -51,15 +52,7 @@ namespace WebApiSwagger.Repository
                         TipoRede = et.TipoRede,
                         UCS_Residenciais = et.UCS_Residenciais,
                         UCS_Comerciais = et.UCS_Comerciais,
-                        MaterialRede = _context.MateriaisRedes
-                        .Select(mr => new MaterialRede {
-                            CHAVE = mr.CHAVE,
-                            NomeAbastecedora_Mt = mr.NomeAbastecedora_Mt,
-                            DataEstadoControle_Mt = mr.DataEstadoControle_Mt,
-                            EstadoControle_Mt = mr.EstadoControle_Mt,
-                            DataEstadoOperacional_Mt = mr.DataEstadoOperacional_Mt,
-                            EstadoOperacional_Mt = mr.EstadoOperacional_Mt
-                        }).FirstOrDefault() ?? new MaterialRede()
+                        MaterialRede = et.MaterialRede
                     })
                     .AsQueryable();
 
@@ -93,19 +86,9 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
                 }
 
-                if (!string.IsNullOrEmpty(filtro.DataEstadoOperacional_Mt))
-                {
-                    query = query.Where(p => p.MaterialRede.DataEstadoOperacional_Mt == filtro.DataEstadoOperacional_Mt);
-                }
-
                 if (!string.IsNullOrEmpty(filtro.EstadoOperacional))
                 {
                     query = query.Where(p => p.MaterialRede.EstadoOperacional_Mt == filtro.EstadoOperacional);
-                }
-
-                 if (!string.IsNullOrEmpty(filtro.DataEstadoControle_Mt))
-                {
-                    query = query.Where(p => p.MaterialRede.DataEstadoControle_Mt == filtro.DataEstadoControle_Mt);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.EstadoControle))

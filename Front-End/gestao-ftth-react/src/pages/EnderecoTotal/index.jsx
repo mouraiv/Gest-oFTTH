@@ -58,6 +58,8 @@ function EnderecoTotal() {
         setEnderecoTotal(response.data);
       }
 
+      console.log(response);
+
     } catch (error) {
       setMensagem(`Erro ao carregar.`)
       setVisible(true);
