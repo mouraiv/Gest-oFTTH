@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { Container } from "./styles"
 import { GlobalStyle, Template } from "../../GlobalStyle"
-import { useAuth } from "../../contexts/auth"
-import { useNavigate } from 'react-router-dom';
+import EmDesenvolvimento from "../../../public/imagens/em_desenvolvimento.png"
 import Header from "../../components/Header"
 import Footer from "../../components/Footer"
 
@@ -14,7 +13,7 @@ function BaseAcumulada() {
         <Template>
           <Header title={"Base Acumulada"} />
             <Container>
-                <p>BASE ACUMULADA</p>    
+                <img src={EmDesenvolvimento} />   
             </Container>
             <Footer />
           </Template>

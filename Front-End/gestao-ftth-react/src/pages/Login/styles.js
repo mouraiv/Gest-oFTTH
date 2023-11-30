@@ -24,6 +24,7 @@ export const Div = styled("div", {
     border: '1px solid',
     borderColor: '#000000',
     marginLeft: '8rem',
+    position:'relative',
 
     "label":{
         fontSize: '0.8rem',

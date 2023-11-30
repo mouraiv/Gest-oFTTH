@@ -39,7 +39,7 @@ export default function InfoDataBase() {
                             {loading ? (
                                 <>
                                 <p>Base: {value?.base}</p>
-                                <p>Data: {new Date(value?.dataImport).toLocaleDateString()}</p>
+                                <p>Data: {value?.dataImport == '2023-02-10T00:00:00' ? '--/--/----' : new Date(value?.dataImport).toLocaleDateString()}</p>
                                 </>
                             ) : (<p>Carregando...</p>)}
                         </div>

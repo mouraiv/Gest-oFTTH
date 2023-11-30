@@ -88,6 +88,8 @@ function Login() {
                   <Input onChange={handleInputSenha} type='password' />
                 </div>
                   <Button onClick={handleLogin}>Entrar</Button>
+                  <div style={{height:'20px'}}></div>
+                      <p style={{position: 'absolute',fontSize:'0.7rem', right:0, bottom:0, marginRight:'0.5rem'}}>Version 1.0-Beta</p>
               </Div>
               </>
               ):( <StatusInforme text={"-- Servidor offline ou em manutenção --"} />)
