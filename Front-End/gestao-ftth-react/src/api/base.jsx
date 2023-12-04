@@ -41,15 +41,23 @@ export const deleteImagem = async (url) => {
 };
 
 // Função para fazer o upload de um arquivo para o backend
-export const fazerUploadDeArquivo = async (file, filtro) => {
+// Função para fazer o upload de arquivos para o backend
+export const fazerUploadDeArquivo = async (files, filtro) => {
+  try {
     const formData = new FormData();
-    formData.append("path", file);
-
+  
+    for (let i = 0; i < files.length; i++) {
+      formData.append("path", files[i]); // Use uma chave única para cada arquivo
+    }
     const response = await api.post("Base/UploadArquivo", formData, {
       params: filtro,
     });
 
     return response;
+    
+  } catch (error) {
+    console.log(error); // Lança o erro para que possa ser tratado no chamador
+  }
 };
 
 

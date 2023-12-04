@@ -32,11 +32,10 @@ function Imagem(){
           Estacao : sigla,
           CDO: cdo,
           CDOIA: cdoia,
-          ImageName: arquivo.name
         };
 
         const response = await fazerUploadDeArquivo(arquivo, filtro);
-
+       
         if (response.status == 200) {
           setMensagem({tipo: 'error', msg: ''});
           setMensagem({tipo: 'sucesso', msg: response.data});
@@ -44,9 +43,7 @@ function Imagem(){
         } 
 
       }catch(error){
-        setDialogAviso(true);
-        setMensagem({tipo: 'error', msg: "Erro ao realizar o upload."});
-        setVisible(true);
+        setMensagem({tipo: 'error', msg: "Erro ao realizar o upload." + error});
         setLoading(true);
 
       } finally {
@@ -58,7 +55,6 @@ function Imagem(){
     async function fetchDeletaArquivo(){
       try {
         const _url = urlImage.replace("https://localhost:7155/Uploads\\Anexos\\","");
-        console.log
         const response = await deleteImagem(_url);
 
         if(response.status == 200) {
@@ -155,7 +151,7 @@ function Imagem(){
       };
 
       const handleFileChange = (event) => {
-        setArquivo(event.target.files[0]); 
+        setArquivo(event.target.files); 
       };
 
       const handleChangeCdoia = (event) => {
@@ -239,7 +235,8 @@ function Imagem(){
                       <ImportArea>
                         <InputImport onChange={handleFileChange} type="file"
                         ref={inputFile} 
-                        accept=".jpg, .jpeg, .png, .jfif, .tiff, .bmp, .dwg" />
+                        accept=".jpg, .jpeg, .png, .jfif, .tiff, .bmp, .dwg" 
+                        multiple/>
                         <ButtonUpload onClick={handleUpload} >Upload</ButtonUpload>
                       </ImportArea>
                        { inputMensagem.tipo == 'error' &&
