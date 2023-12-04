@@ -7,6 +7,7 @@ namespace WebApiSwagger.Filters
 {
     public class FiltroEnderecoTotal
     {
+        public int? Pagina { get; set; }
         public string? UF { get; set; }
         public string? Estacao { get; set; }
         public string? Localidade { get; set; }

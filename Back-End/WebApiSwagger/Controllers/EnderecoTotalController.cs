@@ -26,7 +26,7 @@ namespace WebApiSwagger.Controllers
             {
                 _paginacao.Pagina = pagina ?? 1;
                 _paginacao.Tamanho = 100;
-                _paginacao.PaginasCorrentes = pagina + 100 ?? 100;
+                _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 
                 var resultado = await _enderecoTotalRepository.Listar(filtro,_paginacao);
 
