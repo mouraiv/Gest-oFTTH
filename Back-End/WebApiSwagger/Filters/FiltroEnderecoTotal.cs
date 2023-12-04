@@ -18,6 +18,7 @@ namespace WebApiSwagger.Filters
         public string? DataEstadoControle_Mt { get; set; }
         public string? EstadoControle { get; set; }
         public string? EstadoProjeto { get; set; }
+        public string? GrupoOperacional { get; set; }
         
     }
 }

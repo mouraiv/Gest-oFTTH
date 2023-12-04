@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { getEnderecoTotal } from "../../api/enterecoTotais";
-import { ufOptions, localidadeOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
+import { ufOptions, grupoOperacionalOptions,localidadeOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';
@@ -31,6 +31,7 @@ function EnderecoTotal() {
   const [mensagem, setMensagem] = useState("");
   const [viabilidade, setViabilidade] = useState("");
   const [survey, setSurvey] = useState("");
+  const [grupoOperacional, setGrupoOperacional] = useState("");
   const [estadoOperacional, setEstadoOperacional] = useState("");
   const [estadoControle, setEstadoControle] = useState("");
 
@@ -48,6 +49,7 @@ function EnderecoTotal() {
         CDO: cdoInput,
         Cod_Viabilidade : viabilidade,
         CodSurvey: survey,
+        GrupoOperacional : grupoOperacional,
         EstadoOperacional: estadoOperacional,
         EstadoControle: estadoControle,
       };
@@ -100,17 +102,17 @@ function EnderecoTotal() {
 
   const columns = [
     { key: 'id_EnderecoTotal', name: 'ID' },
-    { key: 'id_MaterialRede', name: 'NETWIN' },
     { key: 'uf', name: 'UF' },
     { key: 'localidade', name: 'LOCALIDADE' },
+    { key: 'celula', name: 'CELULA' },
     { key: 'siglaEstacao', name: 'SIGLA' },
     { key: 'materialRede.nomeAbastecedora_Mt', name: 'ESTAÇÃO' },
-    { key: 'celula', name: 'CELULA' },
     { key: 'nomeCdo', name: 'CDO' },
     { key: 'cod_Viabilidade', name: 'COD. VIAB' },
     { key: 'tipoViabilidade', name: 'TIPO VIAB' },
     { key: 'cod_Survey', name: 'SURVEY' },
     { key: 'quantidadeUMS', name: 'UMS' },
+    { key: 'materialRede.grupoOperacional_Mt', name: 'GRUPO OPERACIONAL' },
     { key: 'materialRede.estadoControle_Mt', name: 'EST. CONTROLE' },
     { key: 'materialRede.estadoOperacional_Mt', name: 'EST. OPERACIONAL' },
   ];
@@ -137,6 +139,11 @@ function EnderecoTotal() {
     setDropEstacao(subElementoEstacoes);
 
   };
+
+  const handleGrupoOperacional = (event) => {
+    const input = event.target.value;
+    setGrupoOperacional(input);
+  }
 
   const handleControle = (event) => {
     const input = event.target.value;
@@ -181,6 +188,7 @@ function EnderecoTotal() {
     setSurvey("");
     setCdoInput("");
     setViabilidade("");
+    setGrupoOperacional("");
     setEstadoControle("");
     setEstadoOperacional("");
     setCurrentPage(1);
@@ -211,42 +219,52 @@ function EnderecoTotal() {
                     }
                 />
             <Filter>
+              <div>
+              <div style={{display: 'flex'}}>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={ufOptions.sort()} text={uf} />
               </div>
               { uf !== '' ? (
                 <>
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                  <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Localidade"} event={handleConstrutora} lista={dropConstrutora.sort()} text={construtora} />
+                  <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Localidade"} event={handleConstrutora} lista={dropConstrutora.sort()} text={construtora} />
                 </div> 
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                  <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao.sort()} text={estacao} />
+                  <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao.sort()} text={estacao} />
                 </div>
                 </>
               ) : (
                 <>
                   <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                    <DropBox width={"150px"} height={"25px"} valueDefaut={"- Selecionar -"} label={"Localidade"} lista={[""]} disable={true}/>
+                    <DropBox width={"300px"} height={"25px"} valueDefaut={"- Selecionar -"} label={"Localidade"} lista={[""]} disable={true}/>
                   </div> 
                   <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                    <DropBox width={"150px"} height={"25px"} valueDefaut={"- Selecionar -"} label={"Estação"} lista={[""]} disable={true}/>
+                    <DropBox width={"300px"} height={"25px"} valueDefaut={"- Selecionar -"} label={"Estação"} lista={[""]} disable={true}/>
                   </div>
                  </>
               )}
+              </div>
+                
+              <div style={{display: 'flex'}}>
               <TextInput label={"Survey"} event={handleSurvey} text={survey} />
               <TextInput label={"Cdo"} event={handleCdo} text={cdoInput} />
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Viabilidade"} event={handleViabilidade} lista={viabilidadeOptions.sort((a, b) => parseInt(a, 10) - parseInt(b, 10))} text={viabilidade} />
-              </div>       
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Est. Controle"} event={handleControle} lista={controleOptions.sort()} text={estadoControle} />
               </div>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Est. Operacional"} event={handleOperacional} lista={operacionalOptions.sort()} text={estadoOperacional} />
+                <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Grupo Operacional"} event={handleGrupoOperacional} lista={grupoOperacionalOptions.sort()} text={grupoOperacional} />
+              </div>      
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"350px"} height={"25px"} valueDefaut={""} label={"Est. Controle"} event={handleControle} lista={controleOptions.sort()} text={estadoControle} />
               </div>
-
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Est. Operacional"} event={handleOperacional} lista={operacionalOptions.sort()} text={estadoOperacional} />
+              </div>
+              
               <ButtonSearch event={submit} />
-              <ButtonDefaut event={limparFiltro} text={"Limpar"} />          
+              <ButtonDefaut event={limparFiltro} text={"Limpar"} />
+              </div>
+              </div>           
             </Filter>
             { enderecoTotal.resultado !== undefined ? (
               loading ? (  

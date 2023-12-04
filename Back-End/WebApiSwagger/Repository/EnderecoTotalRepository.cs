@@ -86,6 +86,11 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
                 }
 
+                 if (!string.IsNullOrEmpty(filtro.GrupoOperacional))
+                {
+                    query = query.Where(p => p.MaterialRede.GrupoOperacional_Mt == filtro.GrupoOperacional);
+                }
+
                 if (!string.IsNullOrEmpty(filtro.EstadoOperacional))
                 {
                     query = query.Where(p => p.MaterialRede.EstadoOperacional_Mt == filtro.EstadoOperacional);

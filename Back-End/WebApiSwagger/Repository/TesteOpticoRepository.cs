@@ -130,9 +130,14 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.UF == filtro.UF);
                 }
 
-                if (!string.IsNullOrEmpty(filtro.Construtora))
+                if (!string.IsNullOrEmpty(filtro.Celula))
                 {
-                    query = query.Where(p => p.Construtora == filtro.Construtora);
+                    query = query.Where(p => p.Celula == filtro.Celula);
+                }
+
+                if (!string.IsNullOrEmpty(filtro.Cabo))
+                {
+                    query = query.Where(p => p.Cabo == filtro.Cabo);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.Estacao))
@@ -159,6 +164,9 @@ namespace WebApiSwagger.Repository
                 {
                     query = query.Where(p => p.DataRecebimento == DateTime.Parse(filtro.DataRecebimento));
                 }
+
+                // Aplica a ordenação
+                query = query.OrderBy(p => p.Estacao).ThenBy(p => p.Celula).ThenBy(p => p.CDO);
 
                 paginacao.Total = await query.CountAsync();
             

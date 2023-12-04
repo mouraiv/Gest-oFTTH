@@ -30,7 +30,7 @@ export default function DropBox({label, event, lista, text, valueDefaut, width, 
                     </>
                   )
               ) : (
-                  <option value="">Carregrando...</option>
+                  <option value="">Carregando...</option>
               )}
             </Drop>
           </FormGroup>

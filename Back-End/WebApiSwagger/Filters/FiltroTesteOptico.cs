@@ -4,7 +4,8 @@ namespace WebApiSwagger.Filters
     {
         public int? Pagina { get; set; }
         public string? UF { get; set; }
-        public string? Construtora { get; set; }
+        public string? Cabo { get; set; }
+        public string? Celula { get; set; }
         public string? Estacao { get; set; }
         public string? CDO { get; set; }
         public string? DataTeste { get; set; }

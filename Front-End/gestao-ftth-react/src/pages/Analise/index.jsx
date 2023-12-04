@@ -1061,11 +1061,13 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
+                              { testeOptico.sel == 1 &&
                                 <tr>
                                   <td>
                                       <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>      
                                   </td>
                                 </tr>
+                                }
                                 {analiseCDOIAs?.map((analise, index) => (
                                   <tr key={index} style={analise.cdoiaStatus == 'OK' ?
                                   {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
@@ -1096,6 +1098,8 @@ function Vizualizar(){
             </TableGrid>
             <FooterButton>
               <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
+              { testeOptico.sel == 1 &&
+                  <>
                   {status === undefined ? (
                       <>
                           <ButtonConfirma name="aprovado" style={{backgroundColor:'#00ce59'}} onClick={Adicionar} >APROVAR</ButtonConfirma>
@@ -1108,6 +1112,8 @@ function Vizualizar(){
                   {status !== undefined && status === "APROVADO" ? (
                       <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
                   ) : null}
+                  </>
+                }
               </FooterButton>
             </>
             ):(<Spinner />)

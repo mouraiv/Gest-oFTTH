@@ -14,7 +14,6 @@ import DialogAlert from "../../../components/Dialog";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
-import mapIcon from "../../../../public/imagens/mapIcon.png";
 import { useAuth } from "../../../contexts/auth";
 import { FaLocationDot } from 'react-icons/fa6';
 import { ButtonImagem, ButtonReValidar, ButtonValidar, ContentTabs, FooterButton, TableGrid } from "./style";
@@ -449,12 +448,7 @@ function Vizualizar(){
                     </>
                 </div>
                     <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-                    
-                    { testeOptico.sel == 1 &&
-                    <>
                     <ButtonConfirma onClick={handleAnalise}>Analisar</ButtonConfirma>
-                    </>
-                    }
             </FooterButton>
             </Tab>
             <Tab eventKey="MaterialRede" title="Netwin">
@@ -492,10 +486,6 @@ function Vizualizar(){
                             <td>Tipo Rede: {materialRede.tipo_Mt ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Infraestrutura: {materialRede.infraestruturaRede_Mt ?? '-------'}</td>
-                            
-                        </tr>
-                        <tr>
                             <td>Fabricante: {materialRede.fabricante_Mt ?? '-------'}</td>
                             <td>Modelo: {materialRede.modelo_Mt ?? '-------'}</td>
                         </tr>
@@ -510,6 +500,10 @@ function Vizualizar(){
                                     </tbody>
                                 </table>
                             </td>
+                        </tr>
+                        <tr>
+                            <td>Infraestrutura: {materialRede.infraestruturaRede_Mt ?? '-------'}</td>
+                            <td>Grupo Operacional: {materialRede.grupoOperacional_Mt ?? '-------'}</td>
                         </tr>
                         <tr>
                             <td>Data Estado Operacional: {materialRede?.dataEstadoOperacional_Mt != '' ? new Date(materialRede?.dataEstadoOperacional_Mt).toLocaleDateString() : '-------'}</td>
@@ -549,7 +543,7 @@ function Vizualizar(){
                                     <td>{valueEndereco.tipoViabilidade ?? "--"}</td>
                                     <td>{valueEndereco.disp_Comercial ?? "--"}</td> 
                                   </tr>
-                                ))):(<tr><td colSpan={6} style={{fontSize:'0.7rem', cursor: 'default'}}>Nenhum resultado.</td></tr>)}
+                                ))):(<tr><td colSpan={6} style={{fontSize:'0.7rem', cursor: 'default', width: '800px'}}>Nenhum resultado.</td></tr>)}
                               </tbody>
                             </table>
                           </td>
