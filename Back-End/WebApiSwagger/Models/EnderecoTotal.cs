@@ -6,6 +6,13 @@ namespace WebApiSwagger.Models
     {
       [Key]
       public int Id_EnderecoTotal { get; set; }
+      public string? StatusGanho { get; set; } = null!;
+      public int Id_StatusGanho { get; set; }
+      public string? StatusGanhoDia { get; set; } = null!;
+      public int Id_StatusGanhoDia { get; set; }
+      public string? Disponibilidade { get; set; } = null!;
+      public int Id_Disponibilidade { get; set; }
+      public string? AnoMes { get; set; }
       public string? Celula { get; set; }
       public string? SiglaEstacao { get; set; }
       public string? UF { get; set; }
@@ -22,7 +29,9 @@ namespace WebApiSwagger.Models
       public string? CEP { get; set; }
       public string? Bairro { get; set; }
       public string? Cod_Survey { get; set; }
-      public string? QuantidadeUMS { get; set; }
+      public int? QuantidadeUMS { get; set; }
+      public int? QuantidadeUMS_old { get; set; }
+      public int? QuantidadeUMS_ganhoDia { get; set; }
       public string? Cod_Viabilidade { get; set; }
       public string? TipoViabilidade { get; set; }
       public string? TipoRede { get; set; }

@@ -6,6 +6,7 @@ namespace WebApiSwagger.Models.ViewModel
         public string? UF {get; set;}
         public string? Construtora {get; set;}
         public string? Estacao {get; set;}
+        public string? SiglaEstacao {get; set;}
         public string? TipoObra {get; set;}
         public string? CDO {get; set;}
         public string? Cabo {get; set;}

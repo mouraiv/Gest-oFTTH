@@ -21,8 +21,6 @@ function Editar() {
     const [dialogAviso, setDialogAviso] = useState();
     const [dropConstrutora, setDropConstrutora] = useState([]);
     const [construtora, setConstrutora] = useState("");
-    const [dropEstacao, setDropEstacao] = useState([]);
-    const [estacao, setEstacao] = useState("");
     const [dropUf, setDropUf] = useState([]);
     const [uf, setUf] = useState("");
     const [dateInputRecebimento, setDateInputRecebimento] = useState('');
@@ -42,12 +40,7 @@ function Editar() {
             if(construtora.status == 200) {
               setDropConstrutora(construtora.data);
             }
-    
-            const estacao = await DropTesteOptico("Estacao");
-    
-            if(estacao.status == 200) {
-              setDropEstacao(estacao.data);
-            }
+
           }
           
         } catch (error) {
@@ -64,10 +57,9 @@ function Editar() {
                 ...testeOptico
             }
 
-            testeOpticoData.CHAVE = `${uf}-${estacao.replace(/\s/g,"")}${testeOptico.cdo}`;
+            testeOpticoData.CHAVE = `${uf}-${testeOptico.siglaEstacao.replace(/\s/g,"")}${testeOptico.cdo}`;
             testeOpticoData.uf = uf;
             testeOpticoData.construtora = construtora;
-            testeOpticoData.estacao = estacao;
             testeOpticoData.dataConstrucao = formatarDateJson(dateInputConstrucao);
             testeOpticoData.dataRecebimento = formatarDateJson(dateInputRecebimento);
             testeOpticoData.dataTeste = formatarDateJson(dateInputTeste);
@@ -101,7 +93,6 @@ function Editar() {
                 setTesteOptico(detalheTesteOptico.data);
                 setUf(detalheTesteOptico.data.uf);
                 setConstrutora(detalheTesteOptico.data.construtora);
-                setEstacao(detalheTesteOptico.data.estacao)
 
             }
 
@@ -149,7 +140,7 @@ function Editar() {
 
     const handleEdite = () => {
         const camposVazios = camposObrigatorios.filter(campo => !testeOptico[campo]);
-        if (camposVazios.length > 0 || uf == '' || construtora == '' || estacao == '') {
+        if (camposVazios.length > 0 || uf == '' || construtora == '') {
             setDialogAviso(true);
             setMensagem(`Preencha os campos obrigatórios: ${camposVazios.join(', ')}`);
             setVisible(true);
@@ -235,11 +226,17 @@ function Editar() {
                     </div>
                     <div style={{display: 'flex'}}>
                         <div style={{display:'flex', margin: '0.5rem' , flexDirection: 'column'}}>
-                            <DropBox width={"240px"} height={"24px"} valueDefaut={testeOptico.estacao} label={"ESTAÇÃO:"} event={handleEstacao} lista={dropEstacao} text={estacao} /> 
+                            <label>ESTAÇÃO:</label>
+                            <div>
+                            <Input name="siglaEstacao" onChange={handleInputChange} defaultValue={testeOptico.siglaEstacao} style={{width: '50px', marginRight: '0.2rem'}} /> 
+                            <Input name="estacao" onChange={handleInputChange} defaultValue={testeOptico.estacao} style={{width: '240px'}} />
+                            </div>
                         </div>
                         <div style={{display:'flex', margin: '0.5rem', flexDirection: 'column'}}>
                             <label>TIPO OBRA:</label>
-                            <Input name="tipoObra" onChange={handleInputChange} defaultValue={testeOptico.tipoObra} style={{width: '240px'}} />
+                            <div>
+                            <Input name="tipoObra" onChange={handleInputChange} defaultValue={testeOptico.tipoObra} style={{width: '187px'}} />
+                            </div>
                         </div>
                     </div>
                     <div style={{display: 'flex'}}>
@@ -344,7 +341,7 @@ function Editar() {
                     </div>
                     <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '0.8rem'}}>
                         <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-                        { dropEstacao.length > 0 ?
+                        { dropConstrutora.length > 0 ?
                         <ButtonConfirma onClick={handleEdite}>Editar</ButtonConfirma> 
                         :
                         <ButtonConfirma disabled>Carregando...</ButtonConfirma>

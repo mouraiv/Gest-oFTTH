@@ -23,6 +23,8 @@ function TesteOptico() {
   const [construtora, setConstrutora] = useState("");
   const [dropEstacao, setDropEstacao] = useState([]);
   const [estacao, setEstacao] = useState("");
+  const [dropSiglaEstacao, setDropSiglaEstacao] = useState([]);
+  const [siglaEstacao, setSiglaEstacao] = useState("");
   const [dropCabo, setDropCabo] = useState([]);
   const [cabo, setCabo] = useState("");
   const [dropUf, setDropUf] = useState([]);
@@ -47,22 +49,27 @@ function TesteOptico() {
       if(uf.status == 200) {
         setDropUf(uf.data);
 
-        const estacao = await DropTesteOptico("Estacao");
+        const siglaEstacao = await DropTesteOptico("SiglaEstacao");
 
-        if(estacao.status == 200) {
-          setDropEstacao(estacao.data);
+        if(siglaEstacao.status == 200) {
+          setDropSiglaEstacao(siglaEstacao.data);
 
-          const cabo = await DropTesteOptico("Cabo");
+          const estacao = await DropTesteOptico("Estacao");
 
-          if(cabo.status == 200) {
-            setDropCabo(cabo.data);
+          if(estacao.status == 200) {
+            setDropEstacao(estacao.data);
 
-            const celula = await DropTesteOptico("Celula");
+            const cabo = await DropTesteOptico("Cabo");
 
-            if(celula.status == 200) {
-              setDropConstrutora(celula.data);
+            if(cabo.status == 200) {
+              setDropCabo(cabo.data);
 
-            
+              const celula = await DropTesteOptico("Celula");
+
+              if(celula.status == 200) {
+                setDropConstrutora(celula.data);
+
+              }
             }   
           }
         }
@@ -89,6 +96,7 @@ function TesteOptico() {
         UF : uf,
         Celula : construtora,
         Estacao : estacao,
+        SiglaEstacao : siglaEstacao,
         CDO: cdoInput,
         Cabo: cabo,
         DataTeste : _dateInputTeste,
@@ -139,7 +147,7 @@ function TesteOptico() {
 
   const columns = [
     { key: 'id', name: 'ID' },
-    { key: 'id_MaterialRede', name: 'NETWIN' },
+    { key: 'siglaEstacao', name: 'SIGLA' },
     { key: 'uf', name: 'UF' },
     { key: 'estacao', name: 'ESTACÃO' },
     { key: 'cabo', name: 'CABO' },
@@ -166,6 +174,11 @@ function TesteOptico() {
   const handleEstacao = (event) => {
     const input = event.target.value;
     setEstacao(input);
+  };
+
+  const handleSiglaEstacao = (event) => {
+    const input = event.target.value;
+    setSiglaEstacao(input);
   };
 
   const handleCabo = (event) => {
@@ -207,6 +220,7 @@ function TesteOptico() {
     setUf("");
     setConstrutora("");
     setEstacao("");
+    setSiglaEstacao("");
     setCdoInput("");
     setDateInputRecebimento("");
     setDateInputConstrucao("");
@@ -246,6 +260,9 @@ function TesteOptico() {
               <div style={{display: 'flex'}}>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={dropUf.sort()} text={uf} />
+              </div>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao.sort()} text={siglaEstacao} />
               </div>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao.sort()} text={estacao} />

@@ -121,7 +121,7 @@ export default function DataGrid({
                       : row[column.key] || "-"}
                     </td>
                   ))}
-                  <td>
+                  <td style={{whiteSpace: 'nowrap'}}>
                     <Button onClick={() => handleVisualizar(row.id, row.id_MaterialRede)} >Visualizar</Button>
                     { row.sel == 1 &&
                     <>

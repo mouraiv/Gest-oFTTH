@@ -35,7 +35,7 @@ namespace WebApiSwagger.Controllers
                     CHAVE = testeOptico.CHAVE,
                     UF = testeOptico.UF,
                     Construtora = testeOptico.Construtora,
-                    Estacao = testeOptico.Estacao,
+                    SiglaEstacao = testeOptico.SiglaEstacao,
                     TipoObra = testeOptico.TipoObra,
                     CDO = testeOptico.CDO,
                     Cabo = testeOptico.Cabo,
@@ -115,15 +115,18 @@ namespace WebApiSwagger.Controllers
                         DateTime _dataRecebimento = DateTime.ParseExact(dataRecebimento, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
                         var _uf = _uploadXlsx.Worksheet?.Cells[row, 2].Value?.ToString()?.ToUpper();
-                        var _estacao = _uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper();
+                        var _siglaEstacao = _uploadXlsx.Worksheet?.Cells[row, 4].Value?.ToString()?.ToUpper();
                         var _cdo = _uploadXlsx.Worksheet?.Cells[row, 8].Value?.ToString()?.ToUpper();
-                        var _chave = $"{_uf}-{_estacao?.Replace(" ", "") ?? ""}{_cdo}";
+                        var _chave = $"{_uf}-{_siglaEstacao?.Replace(" ", "") ?? ""}{_cdo}";
+
+                        var _estacao = _materialRedeRepository.CarregarChave(_chave).Result.NomeAbastecedora_Mt;
 
                         var modelo = new TesteOptico
                             {
                                 CHAVE = _chave,
                                 UF = _uf,
                                 Construtora = _uploadXlsx.Worksheet?.Cells[row, 3].Value?.ToString()?.ToUpper(),
+                                SiglaEstacao = _siglaEstacao,
                                 Estacao = _estacao,
                                 TipoObra = _uploadXlsx.Worksheet?.Cells[row, 5].Value?.ToString()?.ToUpper(),
                                 Cabo = _uploadXlsx.Worksheet?.Cells[row, 6].Value?.ToString()?.ToUpper(),                           
@@ -205,7 +208,8 @@ namespace WebApiSwagger.Controllers
                     CHAVE = testeOptico.CHAVE,    
                     UF = testeOptico.UF,
                     Construtora = testeOptico.Construtora,
-                    Estacao = testeOptico.Estacao,
+                    SiglaEstacao = testeOptico.SiglaEstacao,
+                    Estacao = _materialRedeRepository.CarregarChave(testeOptico.CHAVE).Result.NomeAbastecedora_Mt,
                     TipoObra = testeOptico.TipoObra,
                     CDO = testeOptico.CDO,
                     Cabo = testeOptico.Cabo,
@@ -285,6 +289,7 @@ namespace WebApiSwagger.Controllers
                         Id = optico.Id_TesteOptico,
                         UF = optico.UF,
                         Construtora = optico.Construtora,
+                        SiglaEstacao = optico.SiglaEstacao,
                         Estacao = optico.Estacao,
                         DataRecebimento = dataRecebimentoBr,
                         DataConstrucao = dataConstrucaoBr,
@@ -349,6 +354,7 @@ namespace WebApiSwagger.Controllers
                         Id = optico.Id_TesteOptico,
                         UF = optico.UF,
                         Construtora = optico.Construtora,
+                        SiglaEstacao = optico.SiglaEstacao,
                         Estacao = optico.Estacao,
                         DataRecebimento = dataRecebimentoBr,
                         DataConstrucao = dataConstrucaoBr,

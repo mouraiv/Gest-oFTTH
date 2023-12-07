@@ -48,7 +48,7 @@ export const TableGrid = styled("table", {
     width: '100%',
     fontSize: '0.7rem',
     textAlign: 'center',
-    whiteSpace: 'nowrap',
+    //whiteSpace: 'nowrap',
     border: '1px solid #D6DBDF',
 
     "thead":{
@@ -78,6 +78,7 @@ export const Button = styled("button", {
     border: 'none',
     borderRadius: '0.2rem',
     marginLeft: '0.8rem',
+    marginRight: '0.8rem',
     fontSize: '0.8rem',
     height: '23px',
     color: '#13293d',

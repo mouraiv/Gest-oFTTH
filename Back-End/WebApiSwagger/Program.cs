@@ -37,6 +37,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<UploadXlsx>();
 builder.Services.AddSingleton<ConversorDwg>();
 builder.Services.AddSingleton<Paginacao>();
+builder.Services.AddSingleton<PainelGanho>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

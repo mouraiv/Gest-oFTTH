@@ -5,6 +5,7 @@ using WebApiSwagger.Filters;
 using Microsoft.EntityFrameworkCore;
 using WebApiSwagger.Utils;
 using Microsoft.AspNetCore.Mvc;
+using GroupDocs.Conversion.Contracts;
 
 namespace WebApiSwagger.Repository
 {
@@ -24,6 +25,7 @@ namespace WebApiSwagger.Repository
                 db.CHAVE = testeOptico.CHAVE;
                 db.UF = testeOptico.UF;
                 db.Construtora = testeOptico.Construtora;
+                db.SiglaEstacao = testeOptico.SiglaEstacao;
                 db.Estacao = testeOptico.Estacao;
                 db.TipoObra = testeOptico.TipoObra;
                 db.CDO = testeOptico.CDO;
@@ -145,6 +147,11 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.Estacao == filtro.Estacao);
                 }
 
+                if (!string.IsNullOrEmpty(filtro.SiglaEstacao))
+                {
+                    query = query.Where(p => p.SiglaEstacao == filtro.SiglaEstacao);
+                }
+
                 if (!string.IsNullOrEmpty(filtro.CDO))
                 {
                     query = query.Where(p => p.CDO == filtro.CDO);
@@ -215,17 +222,17 @@ namespace WebApiSwagger.Repository
            
         }
 
-        public async Task<TesteOptico> Unique(string uf, string estacao, string cdo)
+        public async Task<TesteOptico> Unique(string uf, string SiglaEstacao, string cdo)
         {
             try
             {
 
                 return await _context.TestesOpticos
-                .Where(p => p.UF == uf && p.Estacao == estacao && p.CDO == cdo)
+                .Where(p => p.UF == uf && p.SiglaEstacao == SiglaEstacao && p.CDO == cdo)
                 .Select(p => new TesteOptico{
                     Id_TesteOptico = p.Id_TesteOptico,
                     UF = p.UF,
-                    Estacao = p.Estacao,
+                    SiglaEstacao = p.SiglaEstacao,
                     CDO = p.CDO
                 })
                 .FirstOrDefaultAsync() ?? new TesteOptico();    

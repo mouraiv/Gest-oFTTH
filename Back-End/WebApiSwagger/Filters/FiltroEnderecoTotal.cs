@@ -8,11 +8,17 @@ namespace WebApiSwagger.Filters
     public class FiltroEnderecoTotal
     {
         public int? Pagina { get; set; }
+        public int? Id_StatusGanho { get; set; }
+        public int? Id_StatusGanhoDia { get; set; }
+        public int? Id_Disponibilidade { get; set; }
+        public string? AnoMes { get; set; }
         public string? UF { get; set; }
+        public string? SiglaEstacao { get; set; }
         public string? Estacao { get; set; }
         public string? Localidade { get; set; }
         public string? CodSurvey { get; set; }
         public string? CDO { get; set; }
+        public string? Disp_Comercial { get; set; }
         public string? Cod_Viabilidade { get; set; }
         public string? DataEstadoOperacional_Mt { get; set; }
         public string? EstadoOperacional { get; set; }

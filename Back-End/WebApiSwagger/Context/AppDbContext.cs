@@ -1,5 +1,6 @@
 ﻿using WebApiSwagger.Models;
 using Microsoft.EntityFrameworkCore;
+using WebApiSwagger.Models.ViewModel;
 
 namespace WebApiSwagger.Context
 {
@@ -34,6 +35,8 @@ namespace WebApiSwagger.Context
         public DbSet<StatusControle> StatusControles => Set<StatusControle>();
         public DbSet<StatusNetwin> StatusNetwins => Set<StatusNetwin>();
         public DbSet<StatusProjeto> StatusProjetos => Set<StatusProjeto>();
+        public DbSet<ViewStatusGanho> ViewStatusGanhos => Set<ViewStatusGanho>();
+        public DbSet<ViewStatusGanhoDia> ViewStatusGanhosDias => Set<ViewStatusGanhoDia>();
 
         public override int SaveChanges()
         {
@@ -99,7 +102,11 @@ namespace WebApiSwagger.Context
             modelBuilder.Entity<Tecnico>()
                  .HasOne(p => p.GetEmpresa)
                  .WithOne()
-                 .HasForeignKey<Tecnico>(p => p.Id_Empresa); 
+                 .HasForeignKey<Tecnico>(p => p.Id_Empresa);
+
+            modelBuilder.Entity<ViewStatusGanho>().HasNoKey();
+            
+            modelBuilder.Entity<ViewStatusGanhoDia>().HasNoKey();
 
            /* modelBuilder.Entity<EnderecoTotal>()
                 .Property(e => e.Latitude)

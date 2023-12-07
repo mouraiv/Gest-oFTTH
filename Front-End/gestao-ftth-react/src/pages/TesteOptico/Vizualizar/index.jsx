@@ -85,6 +85,7 @@ function Vizualizar(){
             if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
                 setCdo(detalheTesteOptico.data.cdo);
+                setSiglaEstacao(detalheTesteOptico.data.siglaEstacao);
                 setEstacao(detalheTesteOptico.data.estacao);
                 setUf(detalheTesteOptico.data.uf);
             }
@@ -105,7 +106,6 @@ function Vizualizar(){
 
             if(detalheMaterialRede.status == 200) {
                 setMaterialRede(detalheMaterialRede.data);
-                setSiglaEstacao(detalheMaterialRede.data.siglaAbastecedora_Mt);
                 setPositionMap([parseFloat(detalheMaterialRede.data.latitude_Mt.replace(",", ".")), parseFloat(detalheMaterialRede.data.longitude_Mt.replace(",", "."))]);
             }
 
