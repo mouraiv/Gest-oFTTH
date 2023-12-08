@@ -63,8 +63,6 @@ function BaseAcumulada() {
         setEnderecoTotal(response.data);
       }
 
-      console.log(response);
-
     } catch (error) {
       setMensagem(`Erro ao carregar.`)
       setVisible(true);
@@ -127,8 +125,6 @@ function BaseAcumulada() {
     const filteredLocalidades = localidadeOptions.filter(([ufOption]) => ufOption === input);
     const subElementoLocalidade = filteredLocalidades.map(subarray => subarray[1]);
     setDropConstrutora(subElementoLocalidade);
-    console.log(subElementoLocalidade)
-
 
     setEstacao('');
   };
@@ -138,6 +134,7 @@ function BaseAcumulada() {
     setConstrutora(input);
  
    // Filtrar estações correspondentes à localidade selecionada
+    console.log(estacaoOptions)
     const filteredEstacoes = estacaoOptions.filter(([localidade]) => localidade === input);
     const subSiglaEstacoes = filteredEstacoes.map(subarray => subarray[1]);
     setDropSiglaEstacao(subSiglaEstacoes);

@@ -18,17 +18,29 @@ import InfoDataBase from '../../components/DbInfo';
 function TesteOptico() {
   GlobalStyle();
 
+  /* estado lista teste óptico grid */
   const [testeOptico, setTesteOptico] = useState({});
-  const [dropConstrutora, setDropConstrutora] = useState([]);
-  const [construtora, setConstrutora] = useState("");
-  const [dropEstacao, setDropEstacao] = useState([]);
-  const [estacao, setEstacao] = useState("");
-  const [dropSiglaEstacao, setDropSiglaEstacao] = useState([]);
-  const [siglaEstacao, setSiglaEstacao] = useState("");
-  const [dropCabo, setDropCabo] = useState([]);
-  const [cabo, setCabo] = useState("");
+  
+  /* Estado filtro de seguimento */
   const [dropUf, setDropUf] = useState([]);
   const [uf, setUf] = useState("");
+
+  const [listSiglaEstacao, setListSiglaEstacao] = useState([]);
+  const [dropSiglaEstacao, setDropSiglaEstacao] = useState([""]);
+  const [siglaEstacao, setSiglaEstacao] = useState("");
+
+  const [listEstacao, setListEstacao] = useState([]);
+  const [dropEstacao, setDropEstacao] = useState([""]);
+  const [estacao, setEstacao] = useState("");
+  
+  const [dropCabo, setDropCabo] = useState([]);
+  const [cabo, setCabo] = useState("");
+
+  const [dropCelula, setDropCelula] = useState([]);
+  const [celula, setCelula] = useState("");
+
+  /*------------------------------------*/ 
+
   const [currentPage, setCurrentPage] = useState(1);
   const [cdoInput, setCdoInput] = useState('');
   const [loading, setLoading] = useState();
@@ -44,36 +56,50 @@ function TesteOptico() {
   async function fetchDropFilter () {
     
     try {
-      const uf = await DropTesteOptico("UF");
+      const dropList = await DropTesteOptico();
 
-      if(uf.status == 200) {
-        setDropUf(uf.data);
+      if (dropList.status == 200) {
+        const _dropListUf = dropList.data
+            .map((value) => value.uf)
+            .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+        });
+        setDropUf(_dropListUf);
 
-        const siglaEstacao = await DropTesteOptico("SiglaEstacao");
-
-        if(siglaEstacao.status == 200) {
-          setDropSiglaEstacao(siglaEstacao.data);
-
-          const estacao = await DropTesteOptico("Estacao");
-
-          if(estacao.status == 200) {
-            setDropEstacao(estacao.data);
-
-            const cabo = await DropTesteOptico("Cabo");
-
-            if(cabo.status == 200) {
-              setDropCabo(cabo.data);
-
-              const celula = await DropTesteOptico("Celula");
-
-              if(celula.status == 200) {
-                setDropConstrutora(celula.data);
-
+        const _dropListSiglaEstacao = dropList.data
+            .map((value, index) => {
+              if(value.siglaEstacao != null){ 
+                return `${value.uf},${value.siglaEstacao}`.split(',')
               }
-            }   
-          }
-        }
-      }
+            })
+            .filter((value) => value !== undefined);
+            setListSiglaEstacao(_dropListSiglaEstacao);
+
+        const _dropListEstacao = dropList.data
+            .map((value, index) => {
+              if(value.siglaEstacao != null){ 
+                return `${value.uf},${value.estacao}`.split(',')
+              }
+            })
+            .filter((value) => value !== undefined);
+            setListEstacao(_dropListEstacao);
+           
+        const _dropListCabo = dropList.data
+            .map((value) => value.cabo)
+            .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+            });
+            setDropCabo(_dropListCabo);
+        
+        const _dropListCelula = dropList.data
+            .map((value) => value.celula)
+            .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+            });
+            setDropCelula(_dropListCelula);        
+            
+  
+    }
       
     } catch (error) {
       setDropLoading(true);
@@ -94,7 +120,7 @@ function TesteOptico() {
       const filtro = {
         pagina : currentPage,
         UF : uf,
-        Celula : construtora,
+        Celula : celula,
         Estacao : estacao,
         SiglaEstacao : siglaEstacao,
         CDO: cdoInput,
@@ -164,21 +190,39 @@ function TesteOptico() {
   const handleUf = (event) => {
     const input = event.target.value;
     setUf(input);
-  };
+ 
+    const _siglaEstacaoFilter = listSiglaEstacao.filter(([uf]) => { return uf === input})
+    const _subSiglaEstacoes = _siglaEstacaoFilter
+      .map(subarray => subarray[1])
+      .filter((value, index, self) => {
+        return self.indexOf(value) === index;
+      });
+    setDropSiglaEstacao(_subSiglaEstacoes);
 
-  const handleConstrutora = (event) => {
-    const input = event.target.value;
-    setConstrutora(input);
-  };
-
-  const handleEstacao = (event) => {
-    const input = event.target.value;
-    setEstacao(input);
+    const _estacaoFilter = listEstacao.filter(([uf]) => { return uf === input})
+    const _subEstacoes = _estacaoFilter
+      .map(subarray => subarray[1])
+      .filter((value, index, self) => {
+        return self.indexOf(value) === index;
+      });
+    setDropEstacao(_subEstacoes);
+    
   };
 
   const handleSiglaEstacao = (event) => {
     const input = event.target.value;
     setSiglaEstacao(input);
+
+  };
+  
+  const handleEstacao = (event) => {
+    const input = event.target.value;
+    setEstacao(input);
+  };
+
+  const handleCelula = (event) => {
+    const input = event.target.value;
+    setCelula(input);
   };
 
   const handleCabo = (event) => {
@@ -218,7 +262,7 @@ function TesteOptico() {
   const limparFiltro = () => {
     setLoading(false);
     setUf("");
-    setConstrutora("");
+    setCelula("");
     setEstacao("");
     setSiglaEstacao("");
     setCdoInput("");
@@ -261,19 +305,44 @@ function TesteOptico() {
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={dropUf.sort()} text={uf} />
               </div>
+              { uf !== '' ? (
+              <>
+              { estacao !== '' ? (
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao.sort()} text={siglaEstacao} />
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao != '' ? dropSiglaEstacao.sort() : [""]} text={siglaEstacao} disable={true}/>
+              </div>
+              ) : (
+                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao != '' ? dropSiglaEstacao.sort() : [""]} text={siglaEstacao} />
+                </div>
+              )}
+               { siglaEstacao !== '' ? (
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao != '' ? dropEstacao.sort() : [""]} text={estacao} disable={true}/>
+              </div>
+               ):(
+                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao != '' ? dropEstacao.sort() : [""]} text={estacao}/>
+              </div>
+               )}
+              </>
+              ) : (
+              <>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao != '' ? dropSiglaEstacao.sort() : [""]} text={siglaEstacao} disable={true}/>
               </div>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao.sort()} text={estacao} />
-              </div>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao != '' ? dropEstacao.sort() : [""]} text={estacao} disable={true}/>
+               </div>
+               </> 
+              )}
               </div>
               <div style={{display: 'flex'}}>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Cabo"} event={handleCabo} lista={dropCabo.sort()} text={cabo} />
               </div>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Celula"} event={handleConstrutora} lista={dropConstrutora.sort((a, b) => parseInt(a, 10) - parseInt(b, 10))} text={construtora} />
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Celula"} event={handleCelula} lista={dropCelula.sort((a, b) => parseInt(a, 10) - parseInt(b, 10))} text={celula} />
               </div>    
               <TextInput label={"CDO"} event={handleCdo} text={cdoInput} />
               <TextInput 

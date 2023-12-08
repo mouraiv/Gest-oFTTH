@@ -11,7 +11,7 @@ namespace WebApiSwagger.Repository.Interface
         Task<TesteOptico> Unique(string uf, string estacao, string cdo);
         Task<bool> Deletar(int id);
         Task<TesteOptico> CarregarId(int id);
-        Task<List<string?>> ListaUnica(string coluna);
+        Task<IEnumerable<TesteOptico>> ListaUnica();
         Task<IEnumerable<TesteOptico>> Listar(FiltroTesteOptico filtro, Paginacao paginacao);
         Task<IEnumerable<TesteOptico>> ControlerCdo(FiltroTesteOptico filtro, Paginacao paginacao);
     }

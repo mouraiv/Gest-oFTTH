@@ -37,9 +37,8 @@ export const deleteTesteOptico = async (id) => {
   return response;
 };
 
-export const DropTesteOptico = async (coluna) => {
+export const DropTesteOptico = async () => {
   const response = await api.get("/TesteOptico/ListaUnica", {
-    params: {coluna},
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
