@@ -11,6 +11,7 @@ import Analise from "../pages/Analise";
 import Home from "../pages/Home";
 import EnderecoTotal from "../pages/EnderecoTotal";
 import BaseAcumulada from "../pages/BaseAcumulada";
+import GanhoSurvey from "../pages/GanhoSurvey";
 
 export default function AppRoutes(){
     return (
@@ -26,6 +27,7 @@ export default function AppRoutes(){
                     <Route path="/Analise/:id/:idNetwin" element={<Analise />} />
                     <Route path="/EnderecoTotal" element={<EnderecoTotal />} />
                     <Route path="/BaseAcumulada" element={<BaseAcumulada />} />
+                    <Route path="/GanhoSurvey" element={<GanhoSurvey />} />
                 </Route>
                 <Route path="/" element={<Login />} />
             </Routes>

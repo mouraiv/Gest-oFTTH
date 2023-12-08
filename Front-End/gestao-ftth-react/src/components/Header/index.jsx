@@ -30,6 +30,9 @@ export default function Header({title}) {
   const handleBaseAcumulada = () => {
     navigate(`/BaseAcumulada`); 
   };
+  const handleGanhoSurvey = () => {
+    navigate(`/GanhoSurvey`); 
+  };
       return (
         <>
         { auth.token ? (
@@ -49,6 +52,7 @@ export default function Header({title}) {
                 <li><a onClick={handleInicio}>Início</a></li>
               )}
                 <li><a onClick={handleTesteOptico}>TesteOptico</a></li>
+                <li><a onClick={handleGanhoSurvey}>Ganho Survey</a></li>
                 <li><a>Netwin</a>
                   <ul>
                     <li><a onClick={handleEnderecoTotal}>Endereços Totais</a></li>
