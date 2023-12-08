@@ -535,31 +535,22 @@ namespace WebApiSwagger.Repository
                 }
         }
 
-        public Task<List<string?>> ListaUnica([FromQuery]string coluna)
+        public async Task<IEnumerable<EnderecoTotal>> ListaUnica()
         {
             try
             {
-                var propriedade = typeof(TesteOptico).GetProperty(coluna);
+                var query = await  _context.EnderecosTotais
+                        .Select(p => new EnderecoTotal
+                        { 
+                            UF = p.UF,
+                            Localidade = p.Localidade, 
+                            SiglaEstacao = p.SiglaEstacao, 
+                            Cod_Viabilidade = p.Cod_Viabilidade
+                        })
+                        .Distinct()
+                        .ToListAsync();
 
-                if (propriedade == null)
-                {
-                    // A propriedade não existe na classe TesteOptico.
-                    return Task.FromResult(new List<string?>());
-                } 
-
-                var valores = _context.EnderecosTotais
-                    .Include(p => p.MaterialRede)
-                    .AsEnumerable()
-                    .Where(x => propriedade.GetValue(x) != null)
-                    .Select(x => propriedade.GetValue(x)!.ToString())
-                    .ToList();
-
-                var valoresUnicos = valores
-                    .GroupBy(x => x)
-                    .Select(group => group.Key)
-                    .ToList();
-
-            return Task.FromResult(valoresUnicos);
+                        return query;
             
             }
             catch (Exception ex)

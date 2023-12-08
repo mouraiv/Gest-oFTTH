@@ -13,6 +13,6 @@ namespace WebApiSwagger.Repository.Interface
         Task<IEnumerable<EnderecoTotal>> BaseAcumulada(FiltroEnderecoTotal filtro, Paginacao paginacao);
         Task<IEnumerable<EnderecoTotal>> ListarGanho(FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho);
         Task<IEnumerable<EnderecoTotal>> ListarGanhoDia(FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho);
-        Task<List<string?>> ListaUnica(string coluna);
+        Task<IEnumerable<EnderecoTotal>> ListaUnica();
     }
 }

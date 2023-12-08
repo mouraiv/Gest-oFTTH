@@ -31,8 +31,8 @@ export default function DataGrid({
     }
   }
 
-  const handleVisualizar = (id, idNetwin) => {
-    navigate(`/TesteOptico/Visualizar/${id}/${idNetwin}`);
+  const handleVisualizar = (id, idNetwin, survey) => {
+    navigate(`/TesteOptico/Visualizar/${id}/${idNetwin}/${survey}`);
   }
 
   const HandleEditar = (id) => {
@@ -122,7 +122,7 @@ export default function DataGrid({
                     </td>
                   ))}
                   <td style={{whiteSpace: 'nowrap'}}>
-                    <Button onClick={() => handleVisualizar(row.id, row.id_MaterialRede)} >Visualizar</Button>
+                    <Button onClick={() => handleVisualizar(row.id, row.id_MaterialRede, row.cod_Survey)} >Visualizar</Button>
                     { row.sel == 1 &&
                     <>
                       <Button onClick={() => HandleEditar(row.id)} >Editar</Button>

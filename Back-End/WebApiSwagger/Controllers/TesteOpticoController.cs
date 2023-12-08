@@ -195,13 +195,22 @@ namespace WebApiSwagger.Controllers
         {
             try
             {
+                    DateTime? _dataContrucao = null;
+                    DateTime? _dataTeste = null;
+                    DateTime? _dataRecebimento = null;
                     //Get valores DataTime String para tratamento
                     string dataContrucao = testeOptico.DataConstrucao.ToString() ?? "";
-                    DateTime _dataContrucao = DateTime.ParseExact(dataContrucao, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    if(!string.IsNullOrEmpty(dataContrucao)){
+                    _dataContrucao = DateTime.ParseExact(dataContrucao, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    }
                     string dataTeste = testeOptico.DataTeste.ToString() ?? "";
-                    DateTime _dataTeste = DateTime.ParseExact(dataTeste, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    if(!string.IsNullOrEmpty(dataTeste)){
+                    _dataTeste = DateTime.ParseExact(dataTeste, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    }
                     string dataRecebimento = testeOptico.DataRecebimento.ToString() ?? "";
-                    DateTime _dataRecebimento = DateTime.ParseExact(dataRecebimento, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    if(!string.IsNullOrEmpty(dataRecebimento)){
+                    _dataRecebimento = DateTime.ParseExact(dataRecebimento, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    }
 
                     var modelo = new TesteOptico{
 
@@ -234,9 +243,8 @@ namespace WebApiSwagger.Controllers
                     PosicaoIcxDgo = testeOptico.PosicaoIcxDgo,
                     SplitterCEOS = testeOptico.SplitterCEOS,
                     FibraDGO = testeOptico.FibraDGO,
-                    Id_MaterialRede = _materialRedeRepository.CarregarChave(testeOptico.CHAVE).Result.Id_MaterialRede,
-                    Sel = testeOptico.Sel
-
+                     Sel = testeOptico.Sel,
+                    Id_MaterialRede = _materialRedeRepository.CarregarChave(testeOptico.CHAVE).Result.Id_MaterialRede
                 };
 
                 var resultado = await _testeOpticoRepository.Editar(id, modelo);

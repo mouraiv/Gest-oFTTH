@@ -986,6 +986,8 @@ function Vizualizar(){
                         <tr>
                           <td colSpan={2} style={{padding: '0'}}>
                             <table style={{width: '100%', fontSize: '0.6rem', marginTop: '0.5rem', marginBottom: '0.8rem'}}>
+                            { testeOptico.sel == 1 ? (
+                              <>
                               <thead>
                                 <tr>
                                 <th colSpan={5}>HISTÓRICO ANÁLISE</th>
@@ -999,8 +1001,8 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                              {status !== undefined ? (
-                                  <tr style={status === 'APROVADO' ?
+                              {status !== undefined ? (                           
+                               <tr style={status === 'APROVADO' ?
                                   {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
                                     <td>{analista}</td>
                                     <td>{new Date(dataAnalise).toLocaleDateString()}</td>
@@ -1020,6 +1022,39 @@ function Vizualizar(){
                               ):(null)
                               }
                               </tbody>
+                              </>
+                              ):(
+                                <>
+                              <thead>
+                                <tr>
+                                <th colSpan={4}>HISTÓRICO ANÁLISE</th>
+                                </tr>
+                                <tr style={{backgroundColor:'#34495E'}}>
+                                  <th style={{width: '25%'}}>ANALISTA</th>
+                                  <th style={{width: '15%'}}>DATA ANALISE</th>
+                                  <th style={{width: '15%'}}>STATUS</th>
+                                  <th style={{width: '20%'}}>OBSERVAÇÃO</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {status !== undefined ? (                           
+                               <tr style={status === 'APROVADO' ?
+                                  {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
+                                    <td>{analista}</td>
+                                    <td>{new Date(dataAnalise).toLocaleDateString()}</td>
+                                    <td>{status}</td>
+                                    <td>
+                                      <>
+                                        <Button name="observacao" style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={AnaliseDetalhe} >OBSERVAÇÕES</Button>
+                                      </> 
+                                    </td> 
+                                  </tr>
+                              ):(null)
+                              }
+                              </tbody>
+                              </>
+                              )
+                              }
                             </table>
                           </td>
                         </tr>

@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet/dist/images/marker-icon.png';
 import 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/images/marker-icon-2x.png';
-import { Tab, Tabs } from 'react-bootstrap';
+import { Tab, Tabs, Toast } from 'react-bootstrap';
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonCancelar, ButtonConfirma, Content, GlobalStyle, Template } from "../../../GlobalStyle";
 import { DetahleMaterialRedeAny } from "../../../api/materialRede";
@@ -19,8 +19,12 @@ import { FaLocationDot } from 'react-icons/fa6';
 import { ButtonImagem, ButtonReValidar, ButtonValidar, ContentTabs, FooterButton, TableGrid } from "./style";
 
 function Vizualizar(){
-    const { id, idNetwin } = useParams();
+    const { id, idNetwin, survey } = useParams();
     const [loading, setLoading] = useState(false);
+    const [totalUms, setTotalUms] = useState({
+        totalUms: 0,
+        totalUmsGanho: 0
+    });
     const [loadingMaterial, setLoadingMaterial] = useState(false);
     const [uf, setUf] = useState();
     const [dataAtual, setDataAtual] = useState(new Date());
@@ -107,6 +111,13 @@ function Vizualizar(){
             if(detalheMaterialRede.status == 200) {
                 setMaterialRede(detalheMaterialRede.data);
                 setPositionMap([parseFloat(detalheMaterialRede.data.latitude_Mt.replace(",", ".")), parseFloat(detalheMaterialRede.data.longitude_Mt.replace(",", "."))]);
+
+                const somaUMS = detalheMaterialRede.data.enderecoTotal?.reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+                const somaUMS_gannhoDia = detalheMaterialRede.data.enderecoTotal?.reduce((acc, value) => acc + (value.quantidadeUMS_ganhoDia || 0), 0);
+                setTotalUms({
+                    totalUms: somaUMS,
+                    totalUmsGanho: somaUMS_gannhoDia
+                });
             }
 
         } catch (error) {
@@ -124,7 +135,7 @@ function Vizualizar(){
 
     useEffect(() => {
         fecthDetalheTesteOptico();
-        
+    
     },[loading])
 
     const statusAnalise = () => {
@@ -287,13 +298,13 @@ function Vizualizar(){
                                         <tr>
                                             <td colSpan={2} style={{margin:0, padding:0}}>
                                                 <table>
-                                                    <tbody>
+                                            
                                                     <tr>
                                                     <td>Cod. localidade: {valueEndereco.cod_Localidade ?? '-------'}</td>
                                                     <td>Cod. logradouro: {valueEndereco.cod_Logradouro ?? '-------'}</td>
                                                     <td>Id celula: {valueEndereco.id_Celula ?? '-------'}</td>
                                                     </tr>
-                                                    </tbody>
+                                                 
                                                 </table>
                                             </td>
                                         </tr>
@@ -380,7 +391,7 @@ function Vizualizar(){
                         backgroundColor: '#E6B0AA',
                         color: '#641E16',
                         border: '1px solid #641E16'
-                    }}> {testeOptico.sel == 0 ? "VALIDADO" : "NÃO VALIDADO"} </th>
+                    }}> {testeOptico.sel == 0 ? `VALIDADO${analises?.status != null ? ` - ${analises.status}` : ''}` : `NÃO VALIDADO${analises?.status != null ? ` - ${analises.status}` : ''}`} </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -460,8 +471,21 @@ function Vizualizar(){
                     </tr>
                 </thead>
                 <tbody>
-                    {materialRede.id_MaterialRede != undefined ? (
+                    {materialRede.id_MaterialRede !== undefined ? (
                         <>
+                        {enderecoTotal?.[0] !== undefined &&
+                        <tr>   
+                        <th colSpan={2} style={enderecoTotal?.[0]?.id_StatusGanhoDia == 1 ? {
+                            backgroundColor: '#D4EFDF',
+                            color: '#145A32',
+                            border: '1px solid #145A32'
+                        } : {
+                            backgroundColor: '#E6B0AA',
+                            color: '#641E16',
+                            border: '1px solid #641E16'
+                        }}> {enderecoTotal?.[0]?.statusGanhoDia} </th>
+                        </tr>
+                        }
                         <tr>
                             <td>{materialRede.siglaFederativa_Mt ?? '-------'}</td>
                             <td>{materialRede.nomeFederativa_Mt ?? '-------'}</td>
@@ -544,6 +568,21 @@ function Vizualizar(){
                                     <td>{valueEndereco.disp_Comercial ?? "--"}</td> 
                                   </tr>
                                 ))):(<tr><td colSpan={6} style={{fontSize:'0.7rem', cursor: 'default', width: '800px'}}>Nenhum resultado.</td></tr>)}
+                                {enderecoTotal?.[0] !== undefined &&
+                                <tr>
+                                    <th style={{backgroundColor: '#34495E',fontSize:'0.6rem', border:'1px solid #13293d', padding:0}} colSpan={6}>
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{border:0}}>Total UMS : {totalUms.totalUms} </td>
+                                                    <td style={{border:0}}> - </td>
+                                                    <td style={{border:0}}>Ganho UMS : {totalUms.totalUms == totalUms.totalUmsGanho ? 0 : totalUms.totalUmsGanho} </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th>
+                                </tr>
+                                }
                               </tbody>
                             </table>
                           </td>
@@ -773,6 +812,19 @@ function Vizualizar(){
                 <tbody>
                     {materialRede.id_MaterialRede != undefined ? (
                         <>
+                        {enderecoTotal?.[0] !== undefined &&
+                        <tr>   
+                        <th colSpan={2} style={enderecoTotal?.[0]?.id_StatusGanhoDia == 1 ? {
+                            backgroundColor: '#D4EFDF',
+                            color: '#145A32',
+                            border: '1px solid #145A32'
+                        } : {
+                            backgroundColor: '#E6B0AA',
+                            color: '#641E16',
+                            border: '1px solid #641E16'
+                        }}> {enderecoTotal?.[0]?.statusGanhoDia} </th>
+                        </tr>
+                        }
                         <tr>
                             <td>{materialRede.siglaFederativa_Mt ?? '-------'}</td>
                             <td>{materialRede.nomeFederativa_Mt ?? '-------'}</td>
@@ -797,10 +849,6 @@ function Vizualizar(){
                             <td>Tipo Rede: {materialRede.tipo_Mt ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Infraestrutura: {materialRede.infraestruturaRede_Mt ?? '-------'}</td>
-                            
-                        </tr>
-                        <tr>
                             <td>Fabricante: {materialRede.fabricante_Mt ?? '-------'}</td>
                             <td>Modelo: {materialRede.modelo_Mt ?? '-------'}</td>
                         </tr>
@@ -817,6 +865,10 @@ function Vizualizar(){
                             </td>
                         </tr>
                         <tr>
+                            <td>Infraestrutura: {materialRede.infraestruturaRede_Mt ?? '-------'}</td>
+                            <td>Grupo Operacional: {materialRede.grupoOperacional_Mt ?? '-------'}</td>
+                        </tr>
+                        <tr>
                             <td>Data Estado Operacional: {materialRede?.dataEstadoOperacional_Mt != '' ? new Date(materialRede?.dataEstadoOperacional_Mt).toLocaleDateString() : '-------'}</td>
                             <td>Estado Operacional: {materialRede.estadoOperacional_Mt ?? '-------'}</td>
                         </tr>
@@ -828,8 +880,8 @@ function Vizualizar(){
                         ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado</td></tr>)
                         }
                         <tr>
-                          <td colSpan={2} style={{padding: '0'}}>
-                            <table className="tableEnderecoTotal">
+                          <td colSpan={2} style={{paddingBottom: '0.3rem', paddingLeft:0, paddingRight:0}}>
+                          <table className="tableEnderecoTotal">
                               <thead>
                                 <tr>
                                 <th colSpan={6}>ENDEREÇOS TOTAIS</th>
@@ -845,17 +897,33 @@ function Vizualizar(){
                               </thead>
                               <tbody>
                                 {enderecoTotal != undefined ? (
-                                    <tr id={enderecoTotal[0].cod_Survey} onClick={handleTesteOpticoDetalhe} className="enderecoTr">
-                                    <td>{enderecoTotal[0].celula ?? "--"}</td>
-                                    <td>{enderecoTotal[0].cod_Survey ?? "--"}</td>
-                                    <td>{enderecoTotal[0].quantidadeUMS ?? "--"}</td>
-                                    <td>{enderecoTotal[0].cod_Viabilidade ?? "--"}</td>
-                                    <td>{enderecoTotal[0].tipoViabilidade ?? "--"}</td>
-                                    <td>{enderecoTotal[0].disp_Comercial ?? "--"}</td> 
+                                    enderecoTotal?.map((valueEndereco, index) => (
+                                    <tr style={ valueEndereco.cod_Survey === survey ? {backgroundColor:'#F9E79F', color: 'red'} : null} key={index} id={valueEndereco.cod_Survey} onClick={handleTesteOpticoDetalhe} className="enderecoTr">
+                                    <td>{valueEndereco.celula ?? "--"}</td>
+                                    <td>{valueEndereco.cod_Survey ?? "--"}</td>
+                                    <td>{valueEndereco.quantidadeUMS ?? "--"}</td>
+                                    <td>{valueEndereco.cod_Viabilidade ?? "--"}</td>
+                                    <td>{valueEndereco.tipoViabilidade ?? "--"}</td>
+                                    <td>{valueEndereco.disp_Comercial ?? "--"}</td> 
                                   </tr>
-                                ):(<tr><td colSpan={6} style={{fontSize:'0.7rem', cursor: 'default'}}>Nenhum resultado.</td></tr>)}
-                              </tbody>
+                                ))):(<tr><td colSpan={6} style={{fontSize:'0.7rem', cursor: 'default', width: '800px'}}>Nenhum resultado.</td></tr>)}
+                               </tbody>
                             </table>
+                            {enderecoTotal?.[0] !== undefined &&
+                            <tr>
+                                <th style={{backgroundColor: '#34495E',fontSize:'0.6rem', border:'1px solid #13293d', paddingBottom:0}} colSpan={6}>
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{border:0}}>Total UMS : {`${totalUms.totalUms}`} </td>
+                                                    <td style={{border:0}}> - </td>
+                                                    <td style={{border:0}}>Ganho UMS : {totalUms.totalUms == totalUms.totalUmsGanho ? 0 : totalUms.totalUmsGanho} </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th>
+                              </tr>
+                            }
                           </td>
                         </tr>
                         <tr>

@@ -186,11 +186,11 @@ namespace WebApiSwagger.Controllers
            
         }
         [HttpGet("ListaUnica")]
-        public async Task<IActionResult> ListaUnica([FromQuery] string coluna)
+        public async Task<IActionResult> ListaUnica()
         {
             try
             {
-                var resultado = await _enderecoTotalRepository.ListaUnica(coluna);
+                var resultado = await _enderecoTotalRepository.ListaUnica();
 
                 if (resultado == null)
                 {
