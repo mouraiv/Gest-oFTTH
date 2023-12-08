@@ -393,9 +393,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = _context.EnderecosTotais
-                .Where(p => p.QuantidadeUMS != null && 
-                    p.QuantidadeUMS_old != null && 
-                    p.QuantidadeUMS != p.QuantidadeUMS_old)
+                .Where(p => p.QuantidadeUMS_old != null && p.QuantidadeUMS_ganhoDia != null)
                 .Include(p => p.MaterialRede)
                     .Select(et => new EnderecoTotal {
                         Id_EnderecoTotal = et.Id_EnderecoTotal,
@@ -411,12 +409,11 @@ namespace WebApiSwagger.Repository
                         Celula = et.Celula,
                         NomeCdo = et.NomeCdo,
                         Cod_Survey = et.Cod_Survey,
+                        QuantidadeUMS = et.QuantidadeUMS,
+                        QuantidadeUMS_old = et.QuantidadeUMS_old,
                         QuantidadeUMS_ganhoDia = et.QuantidadeUMS_ganhoDia,
                         Cod_Viabilidade = et.Cod_Viabilidade,
                         TipoViabilidade = et.TipoViabilidade,
-                        TipoRede = et.TipoRede,
-                        UCS_Residenciais = et.UCS_Residenciais,
-                        UCS_Comerciais = et.UCS_Comerciais,
                         MaterialRede = et.MaterialRede
                     })
                     .AsQueryable();
@@ -454,31 +451,6 @@ namespace WebApiSwagger.Repository
                     if (!string.IsNullOrEmpty(filtro.CodSurvey))
                     {
                         query = query.Where(p => p.Cod_Survey == filtro.CodSurvey);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.CDO))
-                    {
-                        query = query.Where(p => p.NomeCdo == filtro.CDO);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.Cod_Viabilidade))
-                    {
-                        query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.GrupoOperacional))
-                    {
-                        query = query.Where(p => p.MaterialRede.GrupoOperacional_Mt == filtro.GrupoOperacional);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.EstadoOperacional))
-                    {
-                        query = query.Where(p => p.MaterialRede.EstadoOperacional_Mt == filtro.EstadoOperacional);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.EstadoControle))
-                    {
-                        query = query.Where(p => p.MaterialRede.EstadoControle_Mt == filtro.EstadoControle);
                     }
 
                     // Aplica a ordenação

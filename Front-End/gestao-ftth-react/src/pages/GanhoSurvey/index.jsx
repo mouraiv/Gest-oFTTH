@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { getBaseAcumulada } from "../../api/enterecoTotais";
-import { ufOptions, grupoOperacionalOptions,localidadeOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
+import { getGanhoSurveyDia } from "../../api/enterecoTotais";
+import { ufOptions, localidadeOptions, estacaoOptions,} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';
@@ -27,15 +27,10 @@ function GanhoSurvey() {
   const [siglaEstacao, setSiglaEstacao] = useState("");
   const [uf, setUf] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [cdoInput, setCdoInput] = useState('');
   const [loading, setLoading] = useState();
   const [visible, setVisible] = useState(false);
   const [mensagem, setMensagem] = useState("");
-  const [viabilidade, setViabilidade] = useState("");
   const [survey, setSurvey] = useState("");
-  const [grupoOperacional, setGrupoOperacional] = useState("");
-  const [estadoOperacional, setEstadoOperacional] = useState("");
-  const [estadoControle, setEstadoControle] = useState("");
 
   const navigate = useNavigate();
 
@@ -49,15 +44,10 @@ function GanhoSurvey() {
         Localidade : construtora,
         SiglaEstacao : siglaEstacao,
         Estacao : estacao,
-        CDO: cdoInput,
-        Cod_Viabilidade : viabilidade,
         CodSurvey: survey,
-        GrupoOperacional : grupoOperacional,
-        EstadoOperacional: estadoOperacional,
-        EstadoControle: estadoControle,
       };
 
-      const response = await getBaseAcumulada(filtro);
+      const response = await getGanhoSurveyDia(filtro);
 
       if(response.status == 200) {
         setEnderecoTotal(response.data);
@@ -103,19 +93,14 @@ function GanhoSurvey() {
 
   const columns = [
     { key: 'uf', name: 'UF' },
-    { key: 'anoMes', name: 'AnoMes' },
     { key: 'localidade', name: 'LOCALIDADE' },
     { key: 'celula', name: 'CELULA' },
     { key: 'siglaEstacao', name: 'SIGLA' },
-    { key: 'materialRede.nomeAbastecedora_Mt', name: 'ESTAÇÃO' },
     { key: 'nomeCdo', name: 'CDO' },
+    { key: 'cod_Survey', name: 'SURVEY' },
+    { key: 'quantidadeUMS_ganhoDia', name: 'GANHO' },
     { key: 'cod_Viabilidade', name: 'COD. VIAB' },
     { key: 'tipoViabilidade', name: 'TIPO VIAB' },
-    { key: 'cod_Survey', name: 'SURVEY' },
-    { key: 'quantidadeUMS', name: 'UMS' },
-    { key: 'materialRede.grupoOperacional_Mt', name: 'GRUPO OPERACIONAL' },
-    { key: 'materialRede.estadoControle_Mt', name: 'EST. CONTROLE' },
-    { key: 'materialRede.estadoOperacional_Mt', name: 'EST. OPERACIONAL' },
   ];
 
   const handleUf = (event) => {
@@ -148,40 +133,14 @@ function GanhoSurvey() {
     setSiglaEstacao(input);
   }
 
-
-  const handleGrupoOperacional = (event) => {
-    const input = event.target.value;
-    setGrupoOperacional(input);
-  }
-
-  const handleControle = (event) => {
-    const input = event.target.value;
-    setEstadoControle(input);
-  }
-
-  const handleOperacional = (event) => {
-    const input = event.target.value;
-    setEstadoOperacional(input);
-  }
-
   const handleEstacao = (event) => {
     const input = event.target.value;
     setEstacao(input);
   };
 
-  const handleCdo = (event) => {
-    const input = event.target.value;
-    setCdoInput(input);
-  };
-
   const handleSurvey = (event) => {
     const input = event.target.value;
     setSurvey(input);
-  };
-
-  const handleViabilidade = (event) => {
-    const input = event.target.value;
-    setViabilidade(input);
   };
 
   const submit = () => {
@@ -196,11 +155,6 @@ function GanhoSurvey() {
     setEstacao("");
     setSiglaEstacao("");
     setSurvey("");
-    setCdoInput("");
-    setViabilidade("");
-    setGrupoOperacional("");
-    setEstadoControle("");
-    setEstadoOperacional("");
     setCurrentPage(1);
 
   };
@@ -229,7 +183,6 @@ function GanhoSurvey() {
                     }
                 />
             <Filter>
-              <div>
               <div style={{display: 'flex'}}>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={ufOptions.sort()} text={uf} />
@@ -278,23 +231,10 @@ function GanhoSurvey() {
                   </div>
                  </>
               )}
-              </div>
                 
               <div style={{display: 'flex'}}>
               <TextInput label={"Survey"} event={handleSurvey} text={survey} />
-              <TextInput label={"Cdo"} event={handleCdo} text={cdoInput} />
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Viabilidade"} event={handleViabilidade} lista={viabilidadeOptions.sort((a, b) => parseInt(a, 10) - parseInt(b, 10))} text={viabilidade} />
-              </div>
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Grupo Operacional"} event={handleGrupoOperacional} lista={grupoOperacionalOptions.sort()} text={grupoOperacional} />
-              </div>      
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"350px"} height={"25px"} valueDefaut={""} label={"Est. Controle"} event={handleControle} lista={controleOptions.sort()} text={estadoControle} />
-              </div>
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Est. Operacional"} event={handleOperacional} lista={operacionalOptions.sort()} text={estadoOperacional} />
-              </div>
+              
               
               <ButtonSearch event={submit} />
               <ButtonDefaut event={limparFiltro} text={"Limpar"} />
