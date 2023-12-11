@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { getGanhoSurveyDia } from "../../api/enterecoTotais";
-import { ufOptions, localidadeOptions, estacaoOptions,} from '../../components/dropbox/options';
+import { ufOptions, localidadeOptions, estacaoOptions, statusGanhoOptions, disponibilidadeOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';
@@ -11,7 +11,7 @@ import Header from "../../components/Header";
 import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import DropBox from '../../components/dropbox';
-import { Filter } from './styles';
+import { Filter, Painel } from './styles';
 import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 
@@ -26,6 +26,10 @@ function GanhoSurvey() {
   const [dropSiglaEstacao, setDropSiglaEstacao] = useState([]);
   const [siglaEstacao, setSiglaEstacao] = useState("");
   const [uf, setUf] = useState("");
+  const [inputStatusGanho, setInputStatusGanho] = useState("");
+  const [statusGanho, setStatusGanho] = useState("");
+  const [inputStatusDisponibilidade, setInputStatusDisponibilidade] = useState("");
+  const [statusDisponibilidade, setStatusDisponibilidade] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState();
   const [visible, setVisible] = useState(false);
@@ -33,6 +37,8 @@ function GanhoSurvey() {
   const [survey, setSurvey] = useState("");
 
   const navigate = useNavigate();
+
+  const { painel } = enderecoTotal;
 
   async function fetchEnderecoTotal () {
 
@@ -45,6 +51,8 @@ function GanhoSurvey() {
         SiglaEstacao : siglaEstacao,
         Estacao : estacao,
         CodSurvey: survey,
+        id_StatusGanhoDia: statusGanho,
+        id_Disponibilidade: statusDisponibilidade
       };
 
       const response = await getGanhoSurveyDia(filtro);
@@ -93,6 +101,8 @@ function GanhoSurvey() {
 
   const columns = [
     { key: 'uf', name: 'UF' },
+    { key: 'statusGanhoDia', name: 'STATUS' },
+    { key: 'disponibilidade', name: 'DISPONIBILIDADE' },
     { key: 'localidade', name: 'LOCALIDADE' },
     { key: 'celula', name: 'CELULA' },
     { key: 'siglaEstacao', name: 'SIGLA' },
@@ -109,7 +119,7 @@ function GanhoSurvey() {
 
     const filteredLocalidades = localidadeOptions.filter(([ufOption]) => ufOption === input);
     const subElementoLocalidade = filteredLocalidades.map(subarray => subarray[1]);
-    setDropConstrutora(subElementoLocalidade);
+    setDropConstrutora(subElementoLocalidade?.length == 0 ? [""] : subElementoLocalidade);
 
     setEstacao('');
   };
@@ -119,13 +129,11 @@ function GanhoSurvey() {
     setConstrutora(input);
  
    // Filtrar estações correspondentes à localidade selecionada
-    console.log(estacaoOptions)
     const filteredEstacoes = estacaoOptions.filter(([localidade]) => localidade === input);
     const subSiglaEstacoes = filteredEstacoes.map(subarray => subarray[1]);
-    setDropSiglaEstacao(subSiglaEstacoes);
+    setDropSiglaEstacao(subSiglaEstacoes?.length == 0 ? [""] : subSiglaEstacoes);
     const subEstacoes = filteredEstacoes.map(subarray => subarray[2]);
-    setDropEstacao(subEstacoes);
-
+    setDropEstacao(subEstacoes?.length == 0 ? [""] : subEstacoes);
   };
 
   const handleSiglaEstacao = (event) => {
@@ -136,6 +144,48 @@ function GanhoSurvey() {
   const handleEstacao = (event) => {
     const input = event.target.value;
     setEstacao(input);
+  };
+
+  const handleStatusGanho = (event) => {
+    const input = event.target.value;
+    setInputStatusGanho(input);
+
+    if(input == 'COM GANHO'){
+      setStatusGanho(1);
+
+    }
+    if(input == 'SEM GANHO'){
+      setStatusGanho(2);
+
+    }
+    if(input == ''){
+      setStatusGanho(null);
+
+    }
+    
+  };
+
+  const handleStatusDisponibilidade = (event) => {
+    const input = event.target.value;
+    setInputStatusDisponibilidade(input);
+
+    if(input == 'ATIVA'){
+      setStatusDisponibilidade(1);
+
+    }
+    if(input == 'INATIVA'){
+      setStatusDisponibilidade(2);
+
+    }
+    if(input == 'F. DA CÉLULA'){
+      setStatusDisponibilidade(3);
+
+    }
+    if(input == ''){
+      setStatusDisponibilidade(null);
+
+    }
+
   };
 
   const handleSurvey = (event) => {
@@ -151,6 +201,10 @@ function GanhoSurvey() {
   const limparFiltro = () => {
     setLoading(false);
     setUf("");
+    setStatusGanho("");
+    setInputStatusGanho("");
+    setStatusDisponibilidade("");
+    setInputStatusDisponibilidade("");
     setConstrutora("");
     setEstacao("");
     setSiglaEstacao("");
@@ -183,6 +237,7 @@ function GanhoSurvey() {
                     }
                 />
             <Filter>
+              <div>
               <div style={{display: 'flex'}}>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={ufOptions.sort()} text={uf} />
@@ -231,9 +286,16 @@ function GanhoSurvey() {
                   </div>
                  </>
               )}
+              </div>
                 
               <div style={{display: 'flex'}}>
-              <TextInput label={"Survey"} event={handleSurvey} text={survey} />
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Status Ganho"} event={handleStatusGanho} lista={statusGanhoOptions.sort()} text={inputStatusGanho} />
+              </div>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Disponibilidade"} event={handleStatusDisponibilidade} lista={disponibilidadeOptions.sort()} text={inputStatusDisponibilidade} />
+              </div>
+              <TextInput label={"Survey"} height={"25px"} event={handleSurvey} text={survey} />
               
               
               <ButtonSearch event={submit} />
@@ -243,6 +305,44 @@ function GanhoSurvey() {
             </Filter>
             { enderecoTotal.resultado !== undefined ? (
               loading ? (  
+            <>
+            <Painel>
+                <div className='view'>
+                    <p className='lab'>COM GANHO</p>
+                    <p className='result'>{painel?.comGanhoTotal}</p>
+                </div>
+                <div className='view'>
+                    <p className='lab'>COM GANHO ATIVO</p>
+                    <p className='result'>{painel?.comGanhoAtivo}</p>
+                </div>
+                <div className='view'>
+                    <p className='lab'>COM GANHO INATIVO</p>
+                    <p className='result'>{painel?.comGanhoInativo}</p>
+                </div>
+                <div className='view'>
+                    <p className='lab'>COM GANHO F. CÉLULA</p>
+                    <p className='result'>{painel?.comGanhoForaCelula}</p>
+                </div >
+                <div className='view'>
+                    <p className='lab'>SEM GANHO</p>
+                    <p className='result'>{painel?.semGanhoTotal}</p>
+                </div>
+                <div className='view'>
+                    <p className='lab'>SEM GANHO ATIVO</p>
+                    <p className='result'>{painel?.semGanhoAtivo}</p>
+                </div>
+                <div className='view'>
+                    <p className='lab'>SEM GANHO INATIVO</p>
+                    <p className='result'>{painel?.semGanhoInativo}</p>
+                </div>
+                <div className='view'>
+                    <p className='lab'>SEM GANHO F. CÉLULA</p>
+                    <p className='result'>{painel?.semGanhoForaCelula}</p>
+                </div>
+
+
+
+            </Painel>
             <DataGridTable 
               columns={columns} 
               rows={enderecoTotal.resultado} 
@@ -253,6 +353,7 @@ function GanhoSurvey() {
               right={nextPage}
               atualizar={fetchLoading} 
             />
+            </>
               ):(<Spinner />)
             ) : ( <Spinner /> )
             }

@@ -393,7 +393,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = _context.EnderecosTotais
-                .Where(p => p.QuantidadeUMS_old != null && p.QuantidadeUMS_ganhoDia != null)
+                .Where(p => p.QuantidadeUMS_ganhoDia != null)
                 .Include(p => p.MaterialRede)
                     .Select(et => new EnderecoTotal {
                         Id_EnderecoTotal = et.Id_EnderecoTotal,
@@ -452,9 +452,6 @@ namespace WebApiSwagger.Repository
                     {
                         query = query.Where(p => p.Cod_Survey == filtro.CodSurvey);
                     }
-
-                    // Aplica a ordenação
-                    query = query.OrderBy(p => p.Cod_Viabilidade);
 
                     paginacao.Total = query.Count();
 

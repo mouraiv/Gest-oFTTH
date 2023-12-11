@@ -127,9 +127,7 @@ function EnderecoTotal() {
 
     const filteredLocalidades = localidadeOptions.filter(([ufOption]) => ufOption === input);
     const subElementoLocalidade = filteredLocalidades.map(subarray => subarray[1]);
-    setDropConstrutora(subElementoLocalidade);
-    console.log(subElementoLocalidade)
-
+    setDropConstrutora(subElementoLocalidade?.length == 0 ? [""] : subElementoLocalidade);
 
     setEstacao('');
   };
@@ -141,9 +139,9 @@ function EnderecoTotal() {
    // Filtrar estações correspondentes à localidade selecionada
     const filteredEstacoes = estacaoOptions.filter(([localidade]) => localidade === input);
     const subSiglaEstacoes = filteredEstacoes.map(subarray => subarray[1]);
-    setDropSiglaEstacao(subSiglaEstacoes);
+    setDropSiglaEstacao(subSiglaEstacoes?.length == 0 ? [""] : subSiglaEstacoes);
     const subEstacoes = filteredEstacoes.map(subarray => subarray[2]);
-    setDropEstacao(subEstacoes);
+    setDropEstacao(subEstacoes?.length == 0 ? [""] : subEstacoes);
 
   };
 
@@ -203,7 +201,7 @@ function EnderecoTotal() {
       setDispComercial(null);
 
     }
-    console.log(input)
+
 
   }
 

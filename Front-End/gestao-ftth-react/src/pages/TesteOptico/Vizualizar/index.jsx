@@ -576,7 +576,7 @@ function Vizualizar(){
                                                 <tr>
                                                     <td style={{border:0}}>Total UMS : {totalUms.totalUms} </td>
                                                     <td style={{border:0}}> - </td>
-                                                    <td style={{border:0}}>Ganho UMS : {totalUms.totalUms == totalUms.totalUmsGanho ? 0 : totalUms.totalUmsGanho} </td>
+                                                    <td style={{border:0}}>Ganho UMS : {totalUms.totalUmsGanho === null ? 0 : totalUms.totalUmsGanho} </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -917,7 +917,7 @@ function Vizualizar(){
                                                 <tr>
                                                     <td style={{border:0}}>Total UMS : {`${totalUms.totalUms}`} </td>
                                                     <td style={{border:0}}> - </td>
-                                                    <td style={{border:0}}>Ganho UMS : {totalUms.totalUms == totalUms.totalUmsGanho ? 0 : totalUms.totalUmsGanho} </td>
+                                                    <td style={{border:0}}>Ganho UMS : {totalUms.totalUmsGanho == null ? 0 : totalUms.totalUmsGanho} </td>
                                                 </tr>
                                             </tbody>
                                         </table>

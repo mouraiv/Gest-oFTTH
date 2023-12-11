@@ -51,6 +51,8 @@ export const TableGrid = styled("table", {
     },
     "th, td": {
         height: '25px',
+        boxSizing: 'border-box',
+        display: 'table-cell'
     },
     ".mapsTd":{
         border:'2px solid #239B56',
@@ -66,18 +68,16 @@ export const TableGrid = styled("table", {
     },
 
     ".tableEnderecoTotal":{
-        display: 'block',
+        display: 'inline-block',
         fontSize: '0.6rem', 
         marginTop: '0.5rem', 
         marginBottom: '0.8rem', 
     },
 
-    ".tableEnderecoTotal tbody":{
-        display: 'block',
-        maxHeight: '250px', 
-        overflowY: 'auto',
+    ".tableEnderecoTotal tbody":{ 
+        overflowY: 'scroll',
         cursor: 'pointer'
-    }
+    },
 
 });
 

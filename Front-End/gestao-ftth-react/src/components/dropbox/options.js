@@ -13,3 +13,7 @@ export const operacionalOptions = ["BLOQUEADO","EM SERVIÇO","EM MANUTENÇÃO","
 export const grupoOperacionalOptions =  ["As-Built: Aceito","Implantação: Sob Demanda","Desativar","Removido","As-Built: Concluída","Implantação: Concluí­da","Implantação: Em Andamento","Projeto: Paralisado","Projeto: Concluído","Desativado","","Implantação: Paralisada"]
 
 export const dispComercialOptions =  ["VIÁVEL","INVIÁVEL"]
+
+export const disponibilidadeOptions =  ["ATIVA","INATIVA", "F. DA CÉLULA"]
+
+export const statusGanhoOptions =  ["COM GANHO","SEM GANHO"]
