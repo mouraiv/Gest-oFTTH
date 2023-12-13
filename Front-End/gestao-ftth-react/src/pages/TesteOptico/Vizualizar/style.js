@@ -63,8 +63,25 @@ export const TableGrid = styled("table", {
     ".mapsTd:hover":{
         backgroundColor:'#58D68D',
     },
-    ".enderecoTr:hover":{
-        backgroundColor:'#F9E79F',
+
+    ".enderecoTr[id-statusganho='1']:hover" : {
+        backgroundColor: '#F9E79F',
+        color: '#13293d'
+    },
+
+    ".enderecoTr[id-statusganho='2']:hover" : {
+        backgroundColor: '#F9E79F',
+        color: '#13293d'
+    },
+      
+    ".enderecoTr[id-statusganho='1']" : {
+        backgroundColor: '#d4efdf',
+        color: 'green'
+    },
+      
+    ".enderecoTr[id-statusganho='2']" : {
+        backgroundColor: '#fadbd8',
+        color: 'red'
     },
 
     ".tableEnderecoTotal":{

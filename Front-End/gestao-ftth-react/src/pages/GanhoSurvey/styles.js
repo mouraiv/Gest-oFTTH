@@ -18,7 +18,14 @@ export const Painel = styled("div", {
     color: '#ffffff',
     textAlign: 'center',
 
-    '.view':{
+    '.viewComGanho':{
+        backgroundColor: '#13293d',
+        padding: '0.5rem',
+        marginRight: '0.3rem',
+        borderRadius: '0.4rem'
+    },
+
+    '.viewSemGanho':{
         backgroundColor: '#13293d',
         padding: '0.5rem',
         marginRight: '0.3rem',
@@ -30,7 +37,7 @@ export const Painel = styled("div", {
     },
 
     '.result' : {
-        fontSize: '1rem',
+        fontSize: '0.8rem',
     }
 });
 

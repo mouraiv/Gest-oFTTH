@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { getGanhoSurveyDia } from "../../api/enterecoTotais";
+import { getGanhoSurvey } from "../../api/enterecoTotais";
 import { ufOptions, localidadeOptions, estacaoOptions, statusGanhoOptions, disponibilidadeOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
@@ -51,11 +51,11 @@ function GanhoSurvey() {
         SiglaEstacao : siglaEstacao,
         Estacao : estacao,
         CodSurvey: survey,
-        id_StatusGanhoDia: statusGanho,
+        id_StatusGanho: statusGanho,
         id_Disponibilidade: statusDisponibilidade
       };
 
-      const response = await getGanhoSurveyDia(filtro);
+      const response = await getGanhoSurvey(filtro);
 
       if(response.status == 200) {
         setEnderecoTotal(response.data);
@@ -101,7 +101,7 @@ function GanhoSurvey() {
 
   const columns = [
     { key: 'uf', name: 'UF' },
-    { key: 'statusGanhoDia', name: 'STATUS' },
+    { key: 'statusGanho', name: 'STATUS' },
     { key: 'disponibilidade', name: 'DISPONIBILIDADE' },
     { key: 'localidade', name: 'LOCALIDADE' },
     { key: 'celula', name: 'CELULA' },

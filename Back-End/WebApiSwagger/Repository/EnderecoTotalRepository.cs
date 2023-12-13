@@ -269,9 +269,6 @@ namespace WebApiSwagger.Repository
                         QuantidadeUMS = et.QuantidadeUMS,
                         Cod_Viabilidade = et.Cod_Viabilidade,
                         TipoViabilidade = et.TipoViabilidade,
-                        TipoRede = et.TipoRede,
-                        UCS_Residenciais = et.UCS_Residenciais,
-                        UCS_Comerciais = et.UCS_Comerciais,
                         MaterialRede = et.MaterialRede
                     })
                     .AsQueryable();

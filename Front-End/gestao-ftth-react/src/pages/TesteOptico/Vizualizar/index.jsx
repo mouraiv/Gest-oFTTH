@@ -210,6 +210,8 @@ function Vizualizar(){
         setValueEndereco(filter[0]);
     }
 
+    console.log(enderecoTotal)
+
     const handleTesteOpticoDetalhe = (event) => {
         const survey = event.currentTarget.id;
         filterEnderecoTotalObj(survey);
@@ -282,7 +284,18 @@ function Vizualizar(){
                               </thead>
                               {valueEndereco != undefined ? ( 
                                         <tbody>
-                                        <>
+                                        <>     
+                                        <tr>   
+                                        <th colSpan={2} style={valueEndereco.id_StatusGanho == 1 ? {
+                                            backgroundColor: '#D4EFDF',
+                                            color: '#145A32',
+                                            border: '1px solid #145A32'
+                                        } : {
+                                            backgroundColor: '#E6B0AA',
+                                            color: '#641E16',
+                                            border: '1px solid #641E16'
+                                        }}> {valueEndereco.statusGanho} </th>
+                                        </tr>
                                         <tr>
                                             <td>{valueEndereco.uf ?? '-------'}</td>
                                             <td>Município: {valueEndereco.municipio ?? '-------'}</td>
@@ -475,7 +488,7 @@ function Vizualizar(){
                         <>
                         {enderecoTotal?.[0] !== undefined &&
                         <tr>   
-                        <th colSpan={2} style={enderecoTotal?.[0]?.id_StatusGanhoDia == 1 ? {
+                        <th colSpan={2} style={enderecoTotal?.[0]?.id_StatusGanho == 1 ? {
                             backgroundColor: '#D4EFDF',
                             color: '#145A32',
                             border: '1px solid #145A32'
@@ -483,7 +496,7 @@ function Vizualizar(){
                             backgroundColor: '#E6B0AA',
                             color: '#641E16',
                             border: '1px solid #641E16'
-                        }}> {enderecoTotal?.[0]?.statusGanhoDia} </th>
+                        }}> {enderecoTotal?.[0]?.statusGanho} </th>
                         </tr>
                         }
                         <tr>
@@ -574,9 +587,9 @@ function Vizualizar(){
                                         <table>
                                             <tbody>
                                                 <tr>
-                                                    <td style={{border:0}}>Total UMS : {totalUms.totalUms} </td>
-                                                    <td style={{border:0}}> - </td>
-                                                    <td style={{border:0}}>Ganho UMS : {totalUms.totalUmsGanho === null ? 0 : totalUms.totalUmsGanho} </td>
+                                                    <td style={{border:0}}></td>
+                                                    <td style={{border:0}}></td>
+                                                    <td style={{border:0}}>Total UMS : {`${totalUms.totalUms}`} </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -715,6 +728,17 @@ function Vizualizar(){
                               {valueEndereco != undefined ? ( 
                                         <tbody>
                                         <>
+                                        <tr>   
+                                        <th colSpan={2} style={valueEndereco.id_StatusGanho == 1 ? {
+                                            backgroundColor: '#D4EFDF',
+                                            color: '#145A32',
+                                            border: '1px solid #145A32'
+                                        } : {
+                                            backgroundColor: '#E6B0AA',
+                                            color: '#641E16',
+                                            border: '1px solid #641E16'
+                                        }}> {valueEndereco.statusGanho} </th>
+                                        </tr>
                                         <tr>
                                             <td>{valueEndereco.uf ?? '-------'}</td>
                                             <td>Município: {valueEndereco.municipio ?? '-------'}</td>
@@ -812,19 +836,6 @@ function Vizualizar(){
                 <tbody>
                     {materialRede.id_MaterialRede != undefined ? (
                         <>
-                        {enderecoTotal?.[0] !== undefined &&
-                        <tr>   
-                        <th colSpan={2} style={enderecoTotal?.[0]?.id_StatusGanhoDia == 1 ? {
-                            backgroundColor: '#D4EFDF',
-                            color: '#145A32',
-                            border: '1px solid #145A32'
-                        } : {
-                            backgroundColor: '#E6B0AA',
-                            color: '#641E16',
-                            border: '1px solid #641E16'
-                        }}> {enderecoTotal?.[0]?.statusGanhoDia} </th>
-                        </tr>
-                        }
                         <tr>
                             <td>{materialRede.siglaFederativa_Mt ?? '-------'}</td>
                             <td>{materialRede.nomeFederativa_Mt ?? '-------'}</td>
@@ -884,9 +895,10 @@ function Vizualizar(){
                           <table className="tableEnderecoTotal">
                               <thead>
                                 <tr>
-                                <th colSpan={6}>ENDEREÇOS TOTAIS</th>
+                                <th colSpan={7}>ENDEREÇOS TOTAIS</th>
                                 </tr>
                                 <tr style={{backgroundColor:'#34495E'}}>
+                                  <th style={{width: '10%'}}>CELULA</th>
                                   <th style={{width: '15%'}}>CELULA</th>
                                   <th style={{width: '10%'}}>SURVEY</th>
                                   <th style={{width: '5%'}}>UMS</th>
@@ -896,18 +908,59 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                                {enderecoTotal != undefined ? (
-                                    enderecoTotal?.map((valueEndereco, index) => (
-                                    <tr style={ valueEndereco.cod_Survey === survey ? {backgroundColor:'#F9E79F', color: 'red'} : null} key={index} id={valueEndereco.cod_Survey} onClick={handleTesteOpticoDetalhe} className="enderecoTr">
-                                    <td>{valueEndereco.celula ?? "--"}</td>
-                                    <td>{valueEndereco.cod_Survey ?? "--"}</td>
-                                    <td>{valueEndereco.quantidadeUMS ?? "--"}</td>
-                                    <td>{valueEndereco.cod_Viabilidade ?? "--"}</td>
-                                    <td>{valueEndereco.tipoViabilidade ?? "--"}</td>
-                                    <td>{valueEndereco.disp_Comercial ?? "--"}</td> 
-                                  </tr>
-                                ))):(<tr><td colSpan={6} style={{fontSize:'0.7rem', cursor: 'default', width: '800px'}}>Nenhum resultado.</td></tr>)}
-                               </tbody>
+                                {enderecoTotal !== undefined ? (
+                                    [
+                                    ...enderecoTotal
+                                        .filter((value) => value.cod_Survey === survey)
+                                        .map((valueEndereco, index) => (
+                                        <tr
+                                            style={
+                                            valueEndereco.cod_Survey === survey
+                                                ? { backgroundColor: '#F9E79F'}
+                                                : null
+                                            }
+                                            key={index}
+                                            id={valueEndereco.cod_Survey}
+                                            onClick={handleTesteOpticoDetalhe}
+                                            className="enderecoTr"
+                                        >
+                                            <td>{valueEndereco.statusGanho ?? '--'}</td>
+                                            <td>{valueEndereco.celula ?? '--'}</td>
+                                            <td>{valueEndereco.cod_Survey ?? '--'}</td>
+                                            <td>{valueEndereco.quantidadeUMS ?? '--'}</td>
+                                            <td>{valueEndereco.cod_Viabilidade ?? '--'}</td>
+                                            <td>{valueEndereco.tipoViabilidade ?? '--'}</td>
+                                            <td>{valueEndereco.disp_Comercial ?? '--'}</td>
+                                        </tr>
+                                        )),
+                                    ...enderecoTotal
+                                        .filter((value) => value.cod_Survey !== survey)
+                                        .map((valueEndereco, index) => (
+                                        <tr
+                                            id-statusganho={valueEndereco.id_StatusGanho}
+                                            key={index}
+                                            id={valueEndereco.cod_Survey}
+                                            onClick={handleTesteOpticoDetalhe}
+                                            className="enderecoTr"
+                                        >
+                                            <td>{valueEndereco.statusGanho ?? '--'}</td>
+                                            <td>{valueEndereco.celula ?? '--'}</td>
+                                            <td>{valueEndereco.cod_Survey ?? '--'}</td>
+                                            <td>{valueEndereco.quantidadeUMS ?? '--'}</td>
+                                            <td>{valueEndereco.cod_Viabilidade ?? '--'}</td>
+                                            <td>{valueEndereco.tipoViabilidade ?? '--'}</td>
+                                            <td>{valueEndereco.disp_Comercial ?? '--'}</td>
+                                        </tr>
+                                        )),
+                                    ]
+                                ) : (
+                                    <tr>
+                                    <td colSpan={6} style={{ fontSize: '0.7rem', cursor: 'default', width: '800px' }}>
+                                        Nenhum resultado.
+                                    </td>
+                                    </tr>
+                                )}
+                                </tbody>
                             </table>
                             {enderecoTotal?.[0] !== undefined &&
                             <tr>
@@ -915,9 +968,9 @@ function Vizualizar(){
                                         <table>
                                             <tbody>
                                                 <tr>
+                                                    <td style={{border:0}}></td>
+                                                    <td style={{border:0}}></td>
                                                     <td style={{border:0}}>Total UMS : {`${totalUms.totalUms}`} </td>
-                                                    <td style={{border:0}}> - </td>
-                                                    <td style={{border:0}}>Ganho UMS : {totalUms.totalUmsGanho == null ? 0 : totalUms.totalUmsGanho} </td>
                                                 </tr>
                                             </tbody>
                                         </table>
