@@ -217,6 +217,21 @@ function GanhoSurvey() {
     setLoading(false);
   }
 
+  function formatarNumero(numero) {
+    // Converte o número para uma string
+    const numeroString = numero.toString();
+  
+    // Divide a string em grupos de 3 caracteres
+    const grupos = [];
+    for (let i = numeroString.length; i > 0; i -= 3) {
+      grupos.unshift(numeroString.substring(Math.max(0, i - 3), i));
+    }
+  
+    // Junta os grupos usando o ponto como separador e retorna
+    return grupos.join('.');
+  }
+  
+
   return (
       <>
       <Template>
@@ -307,37 +322,37 @@ function GanhoSurvey() {
               loading ? (  
             <>
             <Painel>
-                <div className='view'>
+                <div className='viewComGanho'>
                     <p className='lab'>COM GANHO</p>
-                    <p className='result'>{painel?.comGanhoTotal}</p>
+                    <p className='result'>{formatarNumero(painel?.comGanhoTotal)}</p>
                 </div>
-                <div className='view'>
+                <div className='viewComGanho'>
                     <p className='lab'>COM GANHO ATIVO</p>
-                    <p className='result'>{painel?.comGanhoAtivo}</p>
+                    <p className='result'>{formatarNumero(painel?.comGanhoAtivo)}</p>
                 </div>
-                <div className='view'>
+                <div className='viewComGanho'>
                     <p className='lab'>COM GANHO INATIVO</p>
-                    <p className='result'>{painel?.comGanhoInativo}</p>
+                    <p className='result'>{formatarNumero(painel?.comGanhoInativo)}</p>
                 </div>
-                <div className='view'>
+                <div className='viewComGanho'>
                     <p className='lab'>COM GANHO F. CÉLULA</p>
-                    <p className='result'>{painel?.comGanhoForaCelula}</p>
+                    <p className='result'>{formatarNumero(painel?.comGanhoForaCelula)}</p>
                 </div >
-                <div className='view'>
+                <div className='viewSemGanho'>
                     <p className='lab'>SEM GANHO</p>
-                    <p className='result'>{painel?.semGanhoTotal}</p>
+                    <p className='result'>{formatarNumero(painel?.semGanhoTotal)}</p>
                 </div>
-                <div className='view'>
+                <div className='viewSemGanho'>
                     <p className='lab'>SEM GANHO ATIVO</p>
-                    <p className='result'>{painel?.semGanhoAtivo}</p>
+                    <p className='result'>{formatarNumero(painel?.semGanhoAtivo)}</p>
                 </div>
-                <div className='view'>
+                <div className='viewSemGanho'>
                     <p className='lab'>SEM GANHO INATIVO</p>
-                    <p className='result'>{painel?.semGanhoInativo}</p>
+                    <p className='result'>{formatarNumero(painel?.semGanhoInativo)}</p>
                 </div>
-                <div className='view'>
+                <div className='viewSemGanho'>
                     <p className='lab'>SEM GANHO F. CÉLULA</p>
-                    <p className='result'>{painel?.semGanhoForaCelula}</p>
+                    <p className='result'>{formatarNumero(painel?.semGanhoForaCelula)}</p>
                 </div>
 
 

@@ -61,6 +61,20 @@ export default function DataGrid({
     return keys.reduce((acc, currentKey) => (acc && acc[currentKey] ? acc[currentKey] : undefined), obj);
   }
   
+  function formatarNumero(numero) {
+    // Converte o número para uma string
+    const numeroString = numero.toString();
+  
+    // Divide a string em grupos de 3 caracteres
+    const grupos = [];
+    for (let i = numeroString.length; i > 0; i -= 3) {
+      grupos.unshift(numeroString.substring(Math.max(0, i - 3), i));
+    }
+  
+    // Junta os grupos usando o ponto como separador e retorna
+    return grupos.join('.');
+  }
+
   return (
     <>
     <DialogAlert 
@@ -92,12 +106,12 @@ export default function DataGrid({
             buttonConfirmar={() => ExcluirFecth()} 
        />
         <TableGridMenu>
-          <div className="total"><p>{paginacao.total} Registros</p></div>
-          <p>{_paginasCorrente == 0 ? 0 : _pagina}</p>
+          <div className="total"><p>{formatarNumero(paginacao.total)} Registros</p></div>
+          <p>{_paginasCorrente == 0 ? 0 : formatarNumero(_pagina)}</p>
           <p>&nbsp;-&nbsp;</p>
-          <p>{_paginasCorrente == 100 ? 100 : _paginasCorrente}</p>
+          <p>{_paginasCorrente == 100 ? 100 : formatarNumero(_paginasCorrente)}</p>
           <p>&nbsp;de&nbsp;</p>
-          <p>{_paginasTotal}</p>
+          <p>{formatarNumero(_paginasTotal)}</p>
           {_pagina > 100 ? <FaAngleLeft onClick={left} className="leftAngle" /> : <FaAngleLeft style={{color:'#AEB6BF', fill:'#AEB6BF', cursor:'default'}} className="leftAngle" />}
           {_paginasCorrente < _paginasTotal ? <FaAngleRight onClick={right} className="rightAngle" /> : <FaAngleRight style={{color:'#AEB6BF', fill:'#AEB6BF', cursor:'default'}} className="rightAngle" />}
         </TableGridMenu>

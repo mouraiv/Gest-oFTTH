@@ -318,21 +318,7 @@ namespace WebApiSwagger.Repository
                         query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
                     }
 
-                    if (!string.IsNullOrEmpty(filtro.GrupoOperacional))
-                    {
-                        query = query.Where(p => p.MaterialRede.GrupoOperacional_Mt == filtro.GrupoOperacional);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.EstadoOperacional))
-                    {
-                        query = query.Where(p => p.MaterialRede.EstadoOperacional_Mt == filtro.EstadoOperacional);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.EstadoControle))
-                    {
-                        query = query.Where(p => p.MaterialRede.EstadoControle_Mt == filtro.EstadoControle);
-                    }
-
+                   
                     // Aplica a ordenação
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
@@ -360,12 +346,12 @@ namespace WebApiSwagger.Repository
                     } else {
                         var soma = _context.ViewStatusGanhos.ToList();
 
-                        painelGanho.ComGanhoTotal = soma.FirstOrDefault(r => r.Id_StatusGanho == 1 && r.Id_Disponibilidade == 0)?.TotalPorStatus ?? 0;
+                        painelGanho.ComGanhoTotal = soma.FirstOrDefault(r => r.Id_StatusGanho == 1)?.TotalPorStatus ?? 0;
                         painelGanho.ComGanhoAtivo = soma.FirstOrDefault(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1)?.TotalPorStatus ?? 0;
                         painelGanho.ComGanhoInativo =  soma.FirstOrDefault(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2)?.TotalPorStatus ?? 0;
                         painelGanho.ComGanhoForaCelula = soma.FirstOrDefault(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3)?.TotalPorStatus ?? 0;
 
-                        painelGanho.SemGanhoTotal = soma.FirstOrDefault(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 0)?.TotalPorStatus ?? 0;
+                        painelGanho.SemGanhoTotal = soma.FirstOrDefault(p => p.Id_StatusGanho == 2)?.TotalPorStatus ?? 0;
                         painelGanho.SemGanhoAtivo = soma.FirstOrDefault(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1)?.TotalPorStatus ?? 0;
                         painelGanho.SemGanhoInativo = soma.FirstOrDefault(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2)?.TotalPorStatus ?? 0;
                         painelGanho.SemGanhoForaCelula = soma.FirstOrDefault(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3)?.TotalPorStatus ?? 0;

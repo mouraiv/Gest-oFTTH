@@ -44,7 +44,6 @@ export const TableGrid = styled("table", {
     },
     "td":{
         width: '350px',
-        paddingLeft: '0.5rem',
         fontWeight: '700',
         border: '1px solid #D6DBDF',
         wordWrap: 'break-word'
@@ -88,7 +87,7 @@ export const TableGrid = styled("table", {
         display: 'inline-block',
         fontSize: '0.6rem', 
         marginTop: '0.5rem', 
-        marginBottom: '0.8rem', 
+
     },
 
     ".tableEnderecoTotal tbody":{ 

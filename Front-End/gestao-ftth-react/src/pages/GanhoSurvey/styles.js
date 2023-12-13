@@ -19,17 +19,23 @@ export const Painel = styled("div", {
     textAlign: 'center',
 
     '.viewComGanho':{
-        backgroundColor: '#13293d',
+        backgroundColor: '#d4efdf',
+        border: '1px solid green',
+        color: 'green',
         padding: '0.5rem',
         marginRight: '0.3rem',
-        borderRadius: '0.4rem'
+        borderRadius: '0.4rem',
+        minWidth: '110px'
     },
 
     '.viewSemGanho':{
-        backgroundColor: '#13293d',
+        backgroundColor: '#FADBD8',
+        border: '1px solid red',
+        color: 'red',
         padding: '0.5rem',
         marginRight: '0.3rem',
-        borderRadius: '0.4rem'
+        borderRadius: '0.4rem',
+        minWidth: '110px'
     },
 
     '.lab' : {
