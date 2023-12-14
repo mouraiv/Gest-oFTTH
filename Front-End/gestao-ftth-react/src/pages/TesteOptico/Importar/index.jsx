@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect, useRef, useCallback} from "react";
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
 import { getControleCdo, ImportarArquivo} from "../../../api/testeOptico";
@@ -20,10 +20,15 @@ function ImportFile(){
     const [mensagem, setMensagem] = useState("");
     const [dialogAviso, setDialogAviso] = useState()
     const [event, setEvent] = useState({});
+    const [submitClicked, setSubmitClicked] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
 
     const navigate = useNavigate();
     const inputRef = useRef(null);
     const { name } = event.target ?? "";
+
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     async function fetchDownloadModelo(){
         await DownloadArquivo();
@@ -47,7 +52,7 @@ function ImportFile(){
       }
     }
 
-    async function fetchTesteOptico() {
+    const fetchTesteOptico = useCallback(async () => {
       try {
         const filtro = {
           pagina : currentPage,
@@ -61,7 +66,7 @@ function ImportFile(){
           Set : 1
         };
     
-        const response = await getControleCdo(filtro);
+        const response = await getControleCdo(filtro, {signal});
 
         if(response.status == 200) {
           setTesteOptico(response.data);
@@ -73,18 +78,19 @@ function ImportFile(){
           setMensagem(`Erro ao carregar.`)
           setVisible(true);
           setLoading(true);
+          setInitialLoad(false);
           
         } finally {
           setLoading(true);
 
         }    
         
-      }
+      }, [submitClicked]);
     
       // Função para avançar para a próxima página
       const nextPage = async () => {
         setCurrentPage(currentPage + 1);
-        setLoading(false);
+        setSubmitClicked(true)
       };
     
       // Função para retroceder para a página anterior
@@ -92,13 +98,26 @@ function ImportFile(){
         if (currentPage > 1) {
           setCurrentPage(currentPage - 1);
         }
-        setLoading(false);
+        setSubmitClicked(true)
       };
      
-      useEffect(() => {
+      useEffect(() => {    
+        if (initialLoad) {
+          // Realiza a pesquisa inicial apenas uma vez ao carregar a página
           fetchTesteOptico();
-
-      }, [loading]);
+    
+        } else if (submitClicked) {
+          // Realiza pesquisas apenas quando o botão de pesquisa é clicado
+          fetchTesteOptico();
+          setLoading(false);
+          setSubmitClicked(false);
+    
+        } else {
+    
+          return () => { controller.abort() };
+        }
+        
+      }, [fetchTesteOptico]);
 
       const columns = [
         { key: 'id', name: 'ID' },

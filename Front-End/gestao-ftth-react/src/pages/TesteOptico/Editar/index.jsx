@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Input } from "./styles";
 import { DetalheTesteOptico, updateTesteOptico, DropTesteOptico } from "../../../api/testeOptico";
@@ -19,34 +19,42 @@ function Editar() {
     const [visible, setVisible] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [dialogAviso, setDialogAviso] = useState();
-    const [dropConstrutora, setDropConstrutora] = useState([]);
+    const [dropConstrutora, setDropConstrutora] = useState([""]);
     const [construtora, setConstrutora] = useState("");
-    const [dropUf, setDropUf] = useState([]);
+    const [dropUf, setDropUf] = useState([""]);
     const [uf, setUf] = useState("");
     const [dateInputRecebimento, setDateInputRecebimento] = useState('');
     const [dateInputTeste, setDateInputTeste] = useState('');
     const [dateInputConstrucao, setDateInputConstrucao] = useState('');
+    const [submitClicked, setSubmitClicked] = useState(false);
+
 
     async function fetchDropFilter () {
     
         try {
-          const uf = await DropTesteOptico("UF");
-    
-          if(uf.status == 200) {
-            setDropUf(uf.data);
-    
-            const construtora = await DropTesteOptico("Construtora");
-    
-            if(construtora.status == 200) {
-              setDropConstrutora(construtora.data);
-            }
+          const dropList = await DropTesteOptico();
+              
+          if(dropList.status == 200) {
+            const _dropListUf = dropList.data
+            .map((value) => value.uf)
+            .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+            });
+            setDropUf(_dropListUf);
 
-          }
-          
+            const _dropListConstrutora = dropList.data
+            .map((value) => value.construtora)
+            .filter((value, index, self) => {
+                 return self.indexOf(value) === index;
+            });
+            setDropConstrutora(_dropListConstrutora);
+        }
+        
         } catch (error) {
           console.log("Erro ao carregar droplist" + error)
           
         } 
+
       }
 
     async function fetchUpdateTesteOptico() {
@@ -63,8 +71,6 @@ function Editar() {
             testeOpticoData.dataConstrucao = formatarDateJson(dateInputConstrucao);
             testeOpticoData.dataRecebimento = formatarDateJson(dateInputRecebimento);
             testeOpticoData.dataTeste = formatarDateJson(dateInputTeste);
-
-            console.log(testeOpticoData)
          
             const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
     
@@ -82,17 +88,23 @@ function Editar() {
 
         } finally {
             setLoading(false);
+            setSubmitClicked(true);
+            
         }
     }
 
-    async function fecthDetalheTesteOptico(){
+    const fecthDetalheTesteOptico = useCallback(async () => {
+
         try {
             const detalheTesteOptico = await DetalheTesteOptico(id);
 
-            if(detalheTesteOptico.status <= 200) {
+            if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
                 setUf(detalheTesteOptico.data.uf);
                 setConstrutora(detalheTesteOptico.data.construtora);
+                setDateInputConstrucao(detalheTesteOptico.data.dataConstrucao != '' ? new Date(detalheTesteOptico.data.dataConstrucao).toLocaleDateString() : '');
+                setDateInputTeste(detalheTesteOptico.data.dataTeste != '' ? new Date(detalheTesteOptico.data.dataTeste).toLocaleDateString(): '');
+                setDateInputRecebimento(detalheTesteOptico.data.dataRecebimento != '' ? new Date(detalheTesteOptico.data.dataRecebimento).toLocaleDateString() : '');
 
             }
 
@@ -105,20 +117,20 @@ function Editar() {
         } finally {
             setLoading(true);
         }
-    }
+
+    }, [submitClicked]);
 
     useEffect(() => {
         fetchDropFilter();
-        
+    
     },[]);
 
     useEffect(() => {
         fecthDetalheTesteOptico();
-        setDateInputConstrucao(testeOptico?.dataConstrucao != '' ? new Date(testeOptico?.dataConstrucao).toLocaleDateString() : '');
-        setDateInputTeste(testeOptico?.dataTeste != '' ? new Date(testeOptico?.dataTeste).toLocaleDateString(): '');
-        setDateInputRecebimento(testeOptico?.dataRecebimento != '' ? new Date(testeOptico?.dataRecebimento).toLocaleDateString() : '');
-        
-    },[loading]);
+        setLoading(false);
+        setSubmitClicked(false);
+
+    },[fecthDetalheTesteOptico]);
 
     const handleVoltar = () => {
         navigate(-1); 
@@ -135,8 +147,7 @@ function Editar() {
         setTesteOptico({ ...testeOptico, [name]: value });
     };
 
-    const camposObrigatorios = ['cdo',
-                                'cabo', 'celula', 'totalUMs', 'dataTeste', 'dataRecebimento', 'tecnico'];
+    const camposObrigatorios = ['cdo', 'cabo', 'celula', 'totalUMs', 'dataTeste', 'dataRecebimento', 'tecnico'];
 
     const handleEdite = () => {
         const camposVazios = camposObrigatorios.filter(campo => !testeOptico[campo]);
@@ -172,11 +183,6 @@ function Editar() {
         setConstrutora(input);
       };
     
-      const handleEstacao = (event) => {
-        const input = event.target.value;
-        setEstacao(input);
-      };
-
     GlobalStyle();
 
     return (

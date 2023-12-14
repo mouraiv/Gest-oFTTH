@@ -267,7 +267,7 @@ function Vizualizar(){
         } finally {
             setLoading(true);
         }
-    }
+  }
 
     useEffect(() => {
       fecthDetalheTesteOptico();

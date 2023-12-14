@@ -1,22 +1,24 @@
 import api from '../services/api';
 
-export const getTesteOptico = async (filtro) => {
+export const getTesteOptico = async (filtro, {signal}) => {
   const response = await api.get('/TesteOptico/Listar', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
+    signal: signal
   });
 
   return response;
 };
 
-export const getControleCdo = async (filtro) => {
+export const getControleCdo = async (filtro, {signal}) => {
   const response = await api.get('/TesteOptico/ControleCdo', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
+    signal: signal
   });
 
   return response;

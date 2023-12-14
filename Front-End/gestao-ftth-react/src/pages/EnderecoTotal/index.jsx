@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { getEnderecoTotal } from "../../api/enterecoTotais";
@@ -38,10 +38,15 @@ function EnderecoTotal() {
   const [estadoControle, setEstadoControle] = useState("");
   const [dispComercial, setDispComercial] = useState("");
   const [inputDispComercial, setInputDispComercial] = useState("");
+  const [submitClicked, setSubmitClicked] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const navigate = useNavigate();
 
-  async function fetchEnderecoTotal () {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  const fetchEnderecoTotal = useCallback(async () => {
 
     try {
 
@@ -60,27 +65,29 @@ function EnderecoTotal() {
         EstadoControle: estadoControle,
       };
 
-      const response = await getEnderecoTotal(filtro);
+      console.log("EXECUTANDO");
+
+      const response = await getEnderecoTotal(filtro, {signal});
 
       if(response.status == 200) {
         setEnderecoTotal(response.data);
       }
 
     } catch (error) {
-      setMensagem(`Erro ao carregar.`)
-      setVisible(true);
+      console.log(`Erro ao carregar : ${error}`)
       setLoading(true);
       
     } finally {
       setLoading(true)
+      setInitialLoad(false);
     }
 
-  }
+  }, [submitClicked]);
 
   // Função para avançar para a próxima página
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
-    setLoading(false);
+    setSubmitClicked(true);
   };
 
   // Função para retroceder para a página anterior
@@ -88,21 +95,26 @@ function EnderecoTotal() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-    setLoading(false);
+    setSubmitClicked(true);
   };
 
-  useEffect(() => {
-    if(uf === '') {
-      setDropConstrutora([]);
-      setDropEstacao([]);
+  useEffect(() => {    
+    if (initialLoad) {
+      // Realiza a pesquisa inicial apenas uma vez ao carregar a página
+      fetchEnderecoTotal();
+
+    } else if (submitClicked) {
+      // Realiza pesquisas apenas quando o botão de pesquisa é clicado
+      fetchEnderecoTotal();
+      setLoading(false);
+      setSubmitClicked(false);
+
+    } else {
+
+      return () => { controller.abort() };
     }
-
-  }, [uf]);
-
-  useEffect(() => {
-    fetchEnderecoTotal();
-   
-  }, [loading, currentPage]);
+    
+  }, [fetchEnderecoTotal]);
 
   const columns = [
     { key: 'uf', name: 'UF' },
@@ -202,16 +214,14 @@ function EnderecoTotal() {
 
     }
 
-
   }
 
   const submit = () => {
-    setLoading(false);
+    setSubmitClicked(true);
     setCurrentPage(1);
   };
 
   const limparFiltro = () => {
-    setLoading(false);
     setUf("");
     setConstrutora("");
     setEstacao("");
@@ -225,6 +235,7 @@ function EnderecoTotal() {
     setInputDispComercial("");
     setDispComercial(null);
     setCurrentPage(1);
+    setSubmitClicked(true);
 
   };
 

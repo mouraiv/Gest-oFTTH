@@ -273,6 +273,9 @@ namespace WebApiSwagger.Repository
                     })
                     .AsQueryable();
 
+                    if (filtro != null)
+                    {
+
                     if (filtro.Id_StatusGanho != null)
                     {
                         query = query.Where(p => p.Id_StatusGanho == filtro.Id_StatusGanho);
@@ -318,51 +321,29 @@ namespace WebApiSwagger.Repository
                         query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
                     }
 
-                   
-                    // Aplica a ordenação
-                    query = query.OrderBy(p => p.Cod_Viabilidade);
+                    }
 
-                    paginacao.Total = query.Count();
+                        paginacao.Total = await query.CountAsync();
 
-                    if(filtro != null && typeof(FiltroEnderecoTotal).GetProperties().Where(prop => prop.Name != "Pagina").Any(prop => prop.GetValue(filtro) != null)) {
-                        var _query = await query.ToListAsync();
+                        if(filtro?.Pagina == 1) {    
 
-                        painelGanho.ComGanhoTotal = _query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.ComGanhoAtivo = _query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.ComGanhoInativo =  _query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.ComGanhoForaCelula = _query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoInativo =  query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
 
-                        painelGanho.SemGanhoTotal = _query.Where(p => p.Id_StatusGanho == 2).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.SemGanhoAtivo = _query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.SemGanhoInativo = _query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.SemGanhoForaCelula = _query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoTotal = query.Where(p => p.Id_StatusGanho == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoAtivo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoInativo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+                        
+                        }
 
-                        _query = _query
-                        .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
-                        .Take(paginacao.Tamanho).ToList();
-
-                        return _query;   
-
-                    } else {
-                        var soma = _context.ViewStatusGanhos.ToList();
-
-                        painelGanho.ComGanhoTotal = soma.FirstOrDefault(r => r.Id_StatusGanho == 1)?.TotalPorStatus ?? 0;
-                        painelGanho.ComGanhoAtivo = soma.FirstOrDefault(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1)?.TotalPorStatus ?? 0;
-                        painelGanho.ComGanhoInativo =  soma.FirstOrDefault(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2)?.TotalPorStatus ?? 0;
-                        painelGanho.ComGanhoForaCelula = soma.FirstOrDefault(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3)?.TotalPorStatus ?? 0;
-
-                        painelGanho.SemGanhoTotal = soma.FirstOrDefault(p => p.Id_StatusGanho == 2)?.TotalPorStatus ?? 0;
-                        painelGanho.SemGanhoAtivo = soma.FirstOrDefault(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1)?.TotalPorStatus ?? 0;
-                        painelGanho.SemGanhoInativo = soma.FirstOrDefault(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2)?.TotalPorStatus ?? 0;
-                        painelGanho.SemGanhoForaCelula = soma.FirstOrDefault(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3)?.TotalPorStatus ?? 0;
-
-                        query = query
+                        query = query.OrderBy(p => p.Cod_Viabilidade)
                         .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                         .Take(paginacao.Tamanho);
 
-                        return await  query.ToListAsync(); 
-                       
-                    }
+                        return await query.ToListAsync();   
 
                 }
                 catch (Exception ex)

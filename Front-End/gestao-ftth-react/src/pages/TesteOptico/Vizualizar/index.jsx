@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet/dist/images/marker-icon.png';
@@ -41,6 +41,8 @@ function Vizualizar(){
     const [positionMap, setPositionMap] = useState()
     const [infoMap, setInfoMap] = useState({endereco:'', cdo: ''})
     const [valueEndereco, setValueEndereco] = useState()
+    const [submitClicked, setSubmitClicked] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
 
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -82,9 +84,11 @@ function Vizualizar(){
 
         } finally {
             setLoading(true);
+            setSubmitClicked(true);
+
         }
     }
-    async function fecthDetalheTesteOptico(){
+    const fecthDetalheTesteOptico = useCallback(async () => {
         try {
             const detalheTesteOptico = await DetalheTesteOptico(id);
 
@@ -104,10 +108,11 @@ function Vizualizar(){
             
         } finally {
             setLoading(true);
+            setInitialLoad(false);
         }
-    }
+    } , [submitClicked]);
 
-    async function fecthDetalheMaterialRede(){
+    const fecthDetalheMaterialRede = useCallback(async () => {
         try {
             const detalheMaterialRede = await DetahleMaterialRedeAny(idNetwin);
 
@@ -130,17 +135,19 @@ function Vizualizar(){
         } finally {
             setLoadingMaterial(true);
         }
-    }
+    }, [submitClicked]);
 
-    useEffect(() => {
-        fecthDetalheMaterialRede();
-       
-    }, []);
 
-    useEffect(() => {
-        fecthDetalheTesteOptico();
+    useEffect(() => {    
+          fecthDetalheTesteOptico();
     
-    },[loading, positionMap])
+        if (initialLoad) {
+          fecthDetalheMaterialRede();
+          setLoading(false);
+        }
+        setSubmitClicked(false); 
+
+    }, [fecthDetalheTesteOptico, fecthDetalheMaterialRede]);    
 
     const statusAnalise = () => {
         const statusAnalise = analises?.analiseObservacao;

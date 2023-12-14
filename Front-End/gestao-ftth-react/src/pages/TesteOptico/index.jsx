@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { DropTesteOptico, getTesteOptico } from "../../api/testeOptico";
@@ -12,7 +12,6 @@ import TextInput from '../../components/TextInput';
 import { DateMask } from "../../components/TextInput/mask/index";
 import DropBox from '../../components/dropbox';
 import { Filter, ButtonImport, SubMenu } from './styles';
-import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 
 function TesteOptico() {
@@ -48,10 +47,13 @@ function TesteOptico() {
   const [dateInputRecebimento, setDateInputRecebimento] = useState('');
   const [dateInputTeste, setDateInputTeste] = useState('');
   const [dateInputConstrucao, setDateInputConstrucao] = useState('');
-  const [visible, setVisible] = useState(false);
-  const [mensagem, setMensagem] = useState("");
+  const [submitClicked, setSubmitClicked] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const navigate = useNavigate();
+
+  const controller = new AbortController();
+  const signal = controller.signal;
 
   async function fetchDropFilter () {
     
@@ -102,6 +104,7 @@ function TesteOptico() {
     }
       
     } catch (error) {
+      console.log(`Houve um error : ${error}`)
       setDropLoading(true);
       
     } finally {
@@ -110,7 +113,7 @@ function TesteOptico() {
     }
   }
 
-  async function fetchTesteOptico () {
+  const fetchTesteOptico = useCallback(async () => {
 
     try {
       const _dateInputRecebimento = dateInputRecebimento.replace(/\D/g, '-');
@@ -130,27 +133,27 @@ function TesteOptico() {
         DataConstrucao : _dateInputConstrucao
       };
 
-      const response = await getTesteOptico(filtro);
+      const response = await getTesteOptico(filtro, {signal});
 
       if(response.status == 200) {
         setTesteOptico(response.data);
       }
 
     } catch (error) {
-      setMensagem(`Erro ao carregar.`)
-      setVisible(true);
+      console.log(`Houve um error : ${error}`)
       setLoading(true);
       
     } finally {
       setLoading(true)
+      setInitialLoad(false);
     }
 
-  }
+  }, [submitClicked]);
 
   // Função para avançar para a próxima página
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
-    setLoading(false);
+    setSubmitClicked(true)
   };
 
   // Função para retroceder para a página anterior
@@ -158,7 +161,7 @@ function TesteOptico() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-    setLoading(false);
+    setSubmitClicked(true)
   };
 
   useEffect(() => {
@@ -166,10 +169,23 @@ function TesteOptico() {
 
   },[dropLoading])
 
-  useEffect(() => {
-    fetchTesteOptico();
+  useEffect(() => {    
+    if (initialLoad) {
+      // Realiza a pesquisa inicial apenas uma vez ao carregar a página
+      fetchTesteOptico();
 
-  }, [loading, currentPage]);
+    } else if (submitClicked) {
+      // Realiza pesquisas apenas quando o botão de pesquisa é clicado
+      fetchTesteOptico();
+      setLoading(false);
+      setSubmitClicked(false);
+
+    } else {
+
+      return () => { controller.abort() };
+    }
+    
+  }, [fetchTesteOptico]);
 
   const columns = [
     { key: 'id', name: 'ID' },
@@ -255,12 +271,11 @@ function TesteOptico() {
   };
 
   const submit = () => {
-    setLoading(false);
+    setSubmitClicked(true);
     setCurrentPage(1);
   };
 
   const limparFiltro = () => {
-    setLoading(false);
     setUf("");
     setCelula("");
     setEstacao("");
@@ -270,6 +285,7 @@ function TesteOptico() {
     setDateInputConstrucao("");
     setDateInputTeste("");
     setCurrentPage(1);
+    setSubmitClicked(true);
 
   };
 
@@ -283,19 +299,6 @@ function TesteOptico() {
         <Header title={"Teste Óptico"} />
           <Content>
           <InfoDataBase />
-          <DialogAlert 
-                    visibleDiag={visible} 
-                    visibleHide={() => setVisible(false)}
-                    header={<h4>Atenção</h4>}
-                    colorType={'#ff0000'}
-                    ConfirmaButton={false}
-                    textCloseButton={'Ok'}
-                    text={
-                        <>
-                        <p>{mensagem}</p>
-                        </>
-                    }
-                />
             <SubMenu>
               <ButtonImport onClick={handleImportar} >Controler CDOs</ButtonImport>
              </SubMenu>

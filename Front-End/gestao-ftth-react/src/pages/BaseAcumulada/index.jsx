@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { getBaseAcumulada } from "../../api/enterecoTotais";
@@ -12,7 +12,6 @@ import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import DropBox from '../../components/dropbox';
 import { Filter } from './styles';
-import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 
 function BaseAcumulada() {
@@ -29,17 +28,20 @@ function BaseAcumulada() {
   const [currentPage, setCurrentPage] = useState(1);
   const [cdoInput, setCdoInput] = useState('');
   const [loading, setLoading] = useState();
-  const [visible, setVisible] = useState(false);
-  const [mensagem, setMensagem] = useState("");
   const [viabilidade, setViabilidade] = useState("");
   const [survey, setSurvey] = useState("");
   const [grupoOperacional, setGrupoOperacional] = useState("");
   const [estadoOperacional, setEstadoOperacional] = useState("");
   const [estadoControle, setEstadoControle] = useState("");
+  const [submitClicked, setSubmitClicked] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const navigate = useNavigate();
 
-  async function fetchEnderecoTotal () {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  const fetchEnderecoTotal = useCallback(async () => {
 
     try {
 
@@ -57,27 +59,27 @@ function BaseAcumulada() {
         EstadoControle: estadoControle,
       };
 
-      const response = await getBaseAcumulada(filtro);
+      const response = await getBaseAcumulada(filtro, {signal});
 
       if(response.status == 200) {
         setEnderecoTotal(response.data);
       }
 
     } catch (error) {
-      setMensagem(`Erro ao carregar.`)
-      setVisible(true);
+      console.log(`Erro ao carregar : ${error}`)
       setLoading(true);
       
     } finally {
       setLoading(true)
+      setInitialLoad(false);
     }
 
-  }
+  }, [submitClicked]);
 
   // Função para avançar para a próxima página
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
-    setLoading(false);
+    setSubmitClicked(true);
   };
 
   // Função para retroceder para a página anterior
@@ -85,21 +87,26 @@ function BaseAcumulada() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-    setLoading(false);
+    setSubmitClicked(true);
   };
 
-  useEffect(() => {
-    if(uf === '') {
-      setDropConstrutora([]);
-      setDropEstacao([]);
+  useEffect(() => {    
+    if (initialLoad) {
+      // Realiza a pesquisa inicial apenas uma vez ao carregar a página
+      fetchEnderecoTotal();
+
+    } else if (submitClicked) {
+      // Realiza pesquisas apenas quando o botão de pesquisa é clicado
+      fetchEnderecoTotal();
+      setLoading(false);
+      setSubmitClicked(false);
+
+    } else {
+
+      return () => { controller.abort() };
     }
-
-  }, [uf]);
-
-  useEffect(() => {
-    fetchEnderecoTotal();
-
-  }, [loading, currentPage]);
+    
+  }, [fetchEnderecoTotal]);
 
   const columns = [
     { key: 'uf', name: 'UF' },
@@ -184,12 +191,11 @@ function BaseAcumulada() {
   };
 
   const submit = () => {
-    setLoading(false);
+    setSubmitClicked(true);
     setCurrentPage(1);
   };
 
   const limparFiltro = () => {
-    setLoading(false);
     setUf("");
     setConstrutora("");
     setEstacao("");
@@ -201,6 +207,7 @@ function BaseAcumulada() {
     setEstadoControle("");
     setEstadoOperacional("");
     setCurrentPage(1);
+    setSubmitClicked(true);
 
   };
 
@@ -214,19 +221,6 @@ function BaseAcumulada() {
         <Header title={"Base Acumulada"} />
           <Content>
           <InfoDataBase />
-          <DialogAlert 
-                    visibleDiag={visible} 
-                    visibleHide={() => setVisible(false)}
-                    header={<h4>Atenção</h4>}
-                    colorType={'#ff0000'}
-                    ConfirmaButton={false}
-                    textCloseButton={'Ok'}
-                    text={
-                        <>
-                        <p>{mensagem}</p>
-                        </>
-                    }
-                />
             <Filter>
               <div>
               <div style={{display: 'flex'}}>

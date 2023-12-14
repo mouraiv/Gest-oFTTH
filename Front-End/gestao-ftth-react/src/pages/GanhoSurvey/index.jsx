@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { getGanhoSurvey } from "../../api/enterecoTotais";
@@ -12,7 +12,6 @@ import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import DropBox from '../../components/dropbox';
 import { Filter, Painel } from './styles';
-import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 
 function GanhoSurvey() {
@@ -31,51 +30,55 @@ function GanhoSurvey() {
   const [inputStatusDisponibilidade, setInputStatusDisponibilidade] = useState("");
   const [statusDisponibilidade, setStatusDisponibilidade] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState();
-  const [visible, setVisible] = useState(false);
-  const [mensagem, setMensagem] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [submitClicked, setSubmitClicked] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [survey, setSurvey] = useState("");
 
   const navigate = useNavigate();
 
   const { painel } = enderecoTotal;
 
-  async function fetchEnderecoTotal () {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  const fetchEnderecoTotal = useCallback(async () => {
 
     try {
 
-      const filtro = {
-        pagina : currentPage,
-        UF : uf,
-        Localidade : construtora,
-        SiglaEstacao : siglaEstacao,
-        Estacao : estacao,
-        CodSurvey: survey,
-        id_StatusGanho: statusGanho,
-        id_Disponibilidade: statusDisponibilidade
-      };
+        const filtro = {
+          pagina : currentPage,
+          UF : uf,
+          Localidade : construtora,
+          SiglaEstacao : siglaEstacao,
+          Estacao : estacao,
+          CodSurvey: survey,
+          id_StatusGanho: statusGanho,
+          id_Disponibilidade: statusDisponibilidade
+        };
 
-      const response = await getGanhoSurvey(filtro);
+        const response = await getGanhoSurvey(filtro, {signal});
 
-      if(response.status == 200) {
-        setEnderecoTotal(response.data);
-      }
+        if(response.status == 200) {
+          setEnderecoTotal(response.data);
+        }
 
     } catch (error) {
-      setMensagem(`Erro ao carregar.`)
-      setVisible(true);
+      console.log(`Erro ao carregar : ${error}`)
       setLoading(true);
       
     } finally {
       setLoading(true)
+      setInitialLoad(false);
     }
 
-  }
+  }, [submitClicked]);
+
 
   // Função para avançar para a próxima página
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
-    setLoading(false);
+    setSubmitClicked(true)
   };
 
   // Função para retroceder para a página anterior
@@ -83,21 +86,26 @@ function GanhoSurvey() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-    setLoading(false);
+    setSubmitClicked(true)
   };
 
-  useEffect(() => {
-    if(uf === '') {
-      setDropConstrutora([]);
-      setDropEstacao([]);
+  useEffect(() => {    
+    if (initialLoad) {
+      // Realiza a pesquisa inicial apenas uma vez ao carregar a página
+      fetchEnderecoTotal();
+
+    } else if (submitClicked) {
+      // Realiza pesquisas apenas quando o botão de pesquisa é clicado
+      fetchEnderecoTotal();
+      setLoading(false);
+      setSubmitClicked(false);
+
+    } else {
+
+      return () => { controller.abort() };
     }
-
-  }, [uf]);
-
-  useEffect(() => {
-    fetchEnderecoTotal();
-
-  }, [loading, currentPage]);
+    
+  }, [fetchEnderecoTotal]);
 
   const columns = [
     { key: 'uf', name: 'UF' },
@@ -194,12 +202,11 @@ function GanhoSurvey() {
   };
 
   const submit = () => {
-    setLoading(false);
+    setSubmitClicked(true);
     setCurrentPage(1);
   };
 
   const limparFiltro = () => {
-    setLoading(false);
     setUf("");
     setStatusGanho("");
     setInputStatusGanho("");
@@ -210,11 +217,11 @@ function GanhoSurvey() {
     setSiglaEstacao("");
     setSurvey("");
     setCurrentPage(1);
-
+    setSubmitClicked(true);
   };
 
   const fetchLoading = () => {
-    setLoading(false);
+     setLoading(false);
   }
 
   function formatarNumero(numero) {
@@ -238,19 +245,6 @@ function GanhoSurvey() {
         <Header title={"Ganho Survey"} />
           <Content>
           <InfoDataBase />
-          <DialogAlert 
-                    visibleDiag={visible} 
-                    visibleHide={() => setVisible(false)}
-                    header={<h4>Atenção</h4>}
-                    colorType={'#ff0000'}
-                    ConfirmaButton={false}
-                    textCloseButton={'Ok'}
-                    text={
-                        <>
-                        <p>{mensagem}</p>
-                        </>
-                    }
-                />
             <Filter>
               <div>
               <div style={{display: 'flex'}}>

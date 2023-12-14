@@ -22,34 +22,37 @@ export const getCarregarEnderecoTotal = async (id) => {
   return response;
 };
 
-export const getEnderecoTotal = async (filtro) => {
+export const getEnderecoTotal = async (filtro, {signal}) => {
   const response = await api.get('/EnderecoTotal/Listar', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
+    signal: signal
   });
 
   return response;
 };
 
-export const getBaseAcumulada = async (filtro) => {
+export const getBaseAcumulada = async (filtro, {signal}) => {
   const response = await api.get('/EnderecoTotal/BaseAcumulada', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
+    signal: signal
   });
 
   return response;
 };
 
-export const getGanhoSurvey = async (filtro) => {
+export const getGanhoSurvey = async (filtro, {signal}) => {
   const response = await api.get('/EnderecoTotal/GanhoSurvey', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
+    signal: signal
   });
 
   return response;

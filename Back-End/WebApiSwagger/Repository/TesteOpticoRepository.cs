@@ -200,7 +200,8 @@ namespace WebApiSwagger.Repository
                             SiglaEstacao = p.SiglaEstacao, 
                             Estacao = p.Estacao,
                             Cabo = p.Cabo,
-                            Celula = p.Celula 
+                            Celula = p.Celula,
+                            Construtora= p.Construtora 
                         })
                         .Distinct()
                         .ToListAsync();
