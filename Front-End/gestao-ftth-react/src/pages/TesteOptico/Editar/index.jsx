@@ -347,7 +347,7 @@ function Editar() {
                     </div>
                     <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '0.8rem'}}>
                         <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-                        { dropConstrutora.length > 0 ?
+                        { dropConstrutora.length > 0 && loading ?
                         <ButtonConfirma onClick={handleEdite}>Editar</ButtonConfirma> 
                         :
                         <ButtonConfirma disabled>Carregando...</ButtonConfirma>

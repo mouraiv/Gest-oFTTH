@@ -79,13 +79,14 @@ function Vizualizar(){
 
             const _analiseObservacao = analiseData.analiseObservacao != null ? analiseData.analiseObservacao.replace(';.','') : "";
             const observacao = _analiseObservacao.split(';');
-            const index = (observacao.length - 1); 
+            const index = (observacao.length - 1);
+            const inputObs = inputValue.analiseObservacao.replace(removeDateObs,"");
             
             if(name === 'editar') {
-              observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}`;
+              observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputObs}`;
               const _observacao = observacao.join(';');
 
-              analiseData.analiseObservacao = `${_observacao}`;
+              analiseData.analiseObservacao = inputObs != "" ? `${_observacao}` : `${analiseData.analiseObservacao}`;
 
             } else {
               analiseData.analista = user.nome.toUpperCase();
@@ -94,14 +95,14 @@ function Vizualizar(){
 
               if(new Date(dataAnalise).toLocaleDateString() == new Date(_dataAtual).toLocaleDateString()){
                 if(inputValue.analiseObservacao != "") {
-                observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}`;
+                observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputObs}`;
                 const _observacao = observacao.join(';');
-                analiseData.analiseObservacao = `${_observacao}`;
+                analiseData.analiseObservacao = inputObs != "" ? `${_observacao}` : `${analiseData.analiseObservacao}`;
 
                 }
 
               }else{
-                analiseData.analiseObservacao = inputValue.analiseObservacao != "" ? `${analiseData.analiseObservacao};[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}` : "";
+                analiseData.analiseObservacao = inputObs != "" ? `${analiseData.analiseObservacao};[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputObs}` : `${analiseData.analiseObservacao}`;
 
               }
             }
