@@ -205,7 +205,7 @@ function Vizualizar(){
     };
 
     const handleImagens = () => {
-        navigate(`/TesteOptico/Imagem/${uf}/${siglaEstacao}/${estacao}/${cdo}`); 
+        navigate(`/TesteOptico/Imagem/${uf}/${siglaEstacao}/${cdo}`); 
     };
 
     const handleValidar = async() => {

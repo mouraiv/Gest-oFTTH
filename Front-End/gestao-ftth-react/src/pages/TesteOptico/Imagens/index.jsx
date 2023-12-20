@@ -54,8 +54,7 @@ function Imagem(){
 
     async function fetchDeletaArquivo(){
       try {
-        const _url = urlImage.replace("https://localhost:7155/Uploads\\Anexos\\","");
-        const response = await deleteImagem(_url);
+        const response = await deleteImagem(urlImage);
 
         if(response.status == 200) {
           setMensagem({tipo: 'sucesso', msg: response.data});
@@ -88,7 +87,6 @@ function Imagem(){
          
           if(response.status == 200) {
             setTesteOptico(response.data)
-
           }
 
          }catch(error){
@@ -106,23 +104,15 @@ function Imagem(){
 
       function groupUrlsByFolders(testeOptico) {
         const groupedUrls = {};
-        let primeiroEncontrado = false;
 
         testeOptico.forEach((url) => {
-          const parts = url.split("\\");
+          const parts = url.split("/");
+          let folder = parts[parts.length - 2];
+
           let currentGroup = groupedUrls;
-
-          primeiroEncontrado = true;
-
-          // Ignoramos o primeiro e o último elemento, pois são partes da URL fixas
-          for (let i = 5; i < parts.length; i++) {
-            const folder = parts[i].split('/')[0];
-            currentGroup[folder] = currentGroup[folder] || {};
-            currentGroup = currentGroup[folder];
-          }
-
-          currentGroup.urls = currentGroup.urls || [];
-          currentGroup.urls.push(url);
+    
+          currentGroup[folder] = currentGroup[folder] || [];
+          currentGroup[folder].push(url);
         });
 
         return groupedUrls;
@@ -142,6 +132,7 @@ function Imagem(){
       }
 
       const handleButtonClick = (url) => {
+        console.log(url)
         setUrlImage(url);
       };
 
@@ -267,7 +258,7 @@ function Imagem(){
             <NavArea>
                 <ButtonImport onClick={handleImportar} >Importar</ButtonImport>
             </NavArea>
-            <RotuloTitulo><p>{uf} - {estacao}- {cdo}</p></RotuloTitulo>
+            <RotuloTitulo><p>{uf} - {sigla}- {cdo}</p></RotuloTitulo>
             <ImagemArea>
               {loading ? (
                 testeOptico[0] !== undefined ? (
@@ -286,30 +277,13 @@ function Imagem(){
                               {folderName}
                             </div>
                             <ul>
-                              {Object.keys(groupedTesteOptico[folderName]).map(
-                                (subFolderName, subFolderIndex) => (
-                                  <div key={subFolderIndex}>
-                                    <div className={ `${subpasta(subFolderName) && "folder_0"}`}
-                                      style={{
-                                        backgroundColor: '#13293d',
-                                        color: '#ffffff',
-                                        padding: '0.3rem',
-                                      }}
-                                    >
-                                      {subFolderName}
-                                    </div>
-                                    <ul>
-                                      {groupedTesteOptico[folderName][subFolderName].urls.map(
-                                        (url, urlIndex) => (
-                                          <li key={urlIndex} onClick={() => handleButtonClick(url)}>
-                                            {url.replace(/^.*[\\\/]/, '')}
-                                          </li>
-                                        )
-                                      )}
-                                    </ul>
-                                  </div>
+                              {groupedTesteOptico[folderName].map(
+                                (url, urlIndex) => (
+                                  <li key={urlIndex} onClick={() => handleButtonClick(url)}>
+                                    {url.replace(/^.*[\\\/]/, '')}
+                                  </li>
                                 )
-                              )}
+                              )}      
                             </ul>
                           </div>
                         ))}
