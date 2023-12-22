@@ -69,9 +69,9 @@ namespace WebApiSwagger.Context
                 .HasForeignKey(v => v.Id_TesteOptico);   
                 
             modelBuilder.Entity<TesteOptico>()
-                .HasOne(t => t.Analises)
+                .HasMany(p => p.Analises)
                 .WithOne()
-                .HasForeignKey<Analise>(a => a.Id_TesteOptico);
+                .HasForeignKey(a => a.Id_TesteOptico);
 
             modelBuilder.Entity<Analise>()
                 .HasMany(a => a.AnaliseCDOIAs)

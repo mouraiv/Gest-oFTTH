@@ -352,7 +352,7 @@ namespace WebApiSwagger.Repository
                 }
         }
 
-        public async Task<IEnumerable<EnderecoTotal>> ListarGanhoDia(FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho)
+        /*public async Task<IEnumerable<EnderecoTotal>> ListarGanhoDia(FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho)
         {
             try
             {
@@ -466,7 +466,7 @@ namespace WebApiSwagger.Repository
                 {  
                     throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
                 }
-        }
+        }*/
 
         public async Task<IEnumerable<EnderecoTotal>> ListaUnica()
         {

@@ -132,7 +132,6 @@ function Imagem(){
       }
 
       const handleButtonClick = (url) => {
-        console.log(url)
         setUrlImage(url);
       };
 

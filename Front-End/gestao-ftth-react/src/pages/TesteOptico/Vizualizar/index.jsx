@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet/dist/images/marker-icon.png';
-import 'leaflet/dist/images/marker-shadow.png';
-import 'leaflet/dist/images/marker-icon-2x.png';
 import { Tab, Tabs, Toast } from 'react-bootstrap';
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonCancelar, ButtonConfirma, Content, GlobalStyle, Template } from "../../../GlobalStyle";
@@ -436,7 +433,7 @@ function Vizualizar(){
                         backgroundColor: '#E6B0AA',
                         color: '#641E16',
                         border: '1px solid #641E16'
-                    }}> {testeOptico.sel == 0 ? `VALIDADO${analises?.status != null ? ` - ${analises.status}` : ''}` : `NÃO VALIDADO${analises?.status != null ? ` - ${analises.status}` : ''}`} </th>
+                    }}> {testeOptico.sel == 0 ? `VALIDADO${analises?.[0]?.status != null ? ` - ${analises?.[0]?.status}` : ''}` : `NÃO VALIDADO${analises?.[0]?.status != null ? ` - ${analises?.[0]?.status}` : ''}`} </th>
                     </tr>
                 </thead>
                 <tbody>

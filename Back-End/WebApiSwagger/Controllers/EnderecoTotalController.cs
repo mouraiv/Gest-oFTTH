@@ -113,7 +113,7 @@ namespace WebApiSwagger.Controllers
            
         }
 
-        [HttpGet("GanhoSurveyDia")]
+        /*[HttpGet("GanhoSurveyDia")]
         public async Task<IActionResult> GanhoSurveyDia([FromQuery]FiltroEnderecoTotal filtro, int? pagina)
         {
             try
@@ -143,7 +143,7 @@ namespace WebApiSwagger.Controllers
                return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
             }
            
-        }
+        }*/
 
         [HttpGet("Carregar")]
         public async Task<IActionResult> Carregar([FromQuery] int id)

@@ -16,6 +16,7 @@
           "Microsoft.EntityFrameworkCore": "7.0.10",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.10",
           "Microsoft.EntityFrameworkCore.Tools": "7.0.10",
+          "Microsoft.NET.Build.Containers": "8.0.100",
           "Swashbuckle.AspNetCore": "6.5.0",
           "System.IdentityModel.Tokens.Jwt": "7.0.0"
         },
@@ -594,6 +595,7 @@
           }
         }
       },
+      "Microsoft.NET.Build.Containers/8.0.100": {},
       "Microsoft.Net.Http.Headers/2.2.0": {
         "dependencies": {
           "Microsoft.Extensions.Primitives": "7.0.0",
@@ -1490,6 +1492,13 @@
       "sha512": "sha512-T5ahjOqWFMTSb9wFHKFNAcGXm35BxbUbwARtAPLSSPPFehcLz5mwDsKO1RR9R2aZ2Lk1BNQC7Ja63onOBE6rpA==",
       "path": "microsoft.io.recyclablememorystream/2.2.1",
       "hashPath": "microsoft.io.recyclablememorystream.2.2.1.nupkg.sha512"
+    },
+    "Microsoft.NET.Build.Containers/8.0.100": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ow9/XknHKTy9SDMfkabuWh0EBRfFYFtKW+OU2xscYUIde3Tv3eGhUKxsiA6g729yrwQ1Hf3L9uRqlXBUJrBzkw==",
+      "path": "microsoft.net.build.containers/8.0.100",
+      "hashPath": "microsoft.net.build.containers.8.0.100.nupkg.sha512"
     },
     "Microsoft.Net.Http.Headers/2.2.0": {
       "type": "package",

@@ -6,6 +6,7 @@ export const createAnalise = async (analise) => {
   };
   
   export const updateAnalise = async (analise) => {
+    console.log(analise.id_Analise)
     const response = await api.put(`/Analise/Atualizar/${analise.id_Analise}`, analise);
     return response;
   };

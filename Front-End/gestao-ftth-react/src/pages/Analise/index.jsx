@@ -14,6 +14,7 @@ import DialogAlert from "../../components/Dialog";
 
 function Vizualizar(){
     const { id, idNetwin } = useParams();
+    const [ idAnalise, setIdAnalise ] = useState();
     const [currentCdoia, setCurrentCdoia] = useState({});
     const [loading, setLoading] = useState(false);
     const [dataAtual] = useState(new Date());
@@ -69,51 +70,80 @@ function Vizualizar(){
       analiseObservacao,
       id_Analise
       
-    } = analises ?? {};
+    } = analises?.[analises.length - 1] ?? {};
 
-    async function fetchValidar() {
+
+    async function fetchValidar(hd_status) {
         try {
-            const analiseData = {
-                ...analises
-            };
 
-            const _analiseObservacao = analiseData.analiseObservacao != null ? analiseData.analiseObservacao.replace(';.','') : "";
-            const observacao = _analiseObservacao.split(';');
-            const index = (observacao.length - 1);
-            const inputObs = inputValue.analiseObservacao.replace(removeDateObs,"");
-            
-            if(name === 'editar') {
-              observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputObs}`;
-              const _observacao = observacao.join(';');
+            const _status = hd_status;
 
-              analiseData.analiseObservacao = inputObs != "" ? `${_observacao}` : `${analiseData.analiseObservacao}`;
+            if(name !== 'editar') {
 
-            } else {
-              analiseData.analista = user.nome.toUpperCase();
-              analiseData.status = status == 'APROVADO' ? 'REPROVADO' : 'APROVADO';
-              analiseData.dataAnalise = _dataAtual;
+              if(new Date(dataAnalise).toLocaleDateString() === new Date(_dataAtual).toLocaleDateString()){
+                const ultimaAnalise = {}
 
-              if(new Date(dataAnalise).toLocaleDateString() == new Date(_dataAtual).toLocaleDateString()){
-                if(inputValue.analiseObservacao != "") {
+                ultimaAnalise.id_Analise = id_Analise;
+
+                const _analiseObservacao = ultimaAnalise.analiseObservacao != null ? ultimaAnalise.analiseObservacao.replace(';.','') : "";
+                const observacao = _analiseObservacao.split(';');
+                const index = (observacao.length - 1);
+                const inputObs = inputValue.analiseObservacao.replace(removeDateObs,"");
                 observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputObs}`;
+
                 const _observacao = observacao.join(';');
-                analiseData.analiseObservacao = inputObs != "" ? `${_observacao}` : `${analiseData.analiseObservacao}`;
 
-                }
-
+                ultimaAnalise.analista = user.nome.toUpperCase();
+                ultimaAnalise.status = _status;
+                
+                ultimaAnalise.analiseObservacao = inputObs != "" ? `${_observacao}` : `${ultimaAnalise.analiseObservacao}`;
+                
+                const analiseResponse = await updateAnalise(ultimaAnalise);
+      
+                  if (analiseResponse.status === 200) {
+                      console.log("Validado com sucesso")
+                  };  
+              
               }else{
-                analiseData.analiseObservacao = inputObs != "" ? `${analiseData.analiseObservacao};[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputObs}` : `${analiseData.analiseObservacao}`;
+                fetchInsertValidar(_status);
+    
+              }
+            }
+
+            if(name === 'editar') {
+              const analiseEditId = analises?.filter((f) => f.id_Analise === idAnalise).map((value) => {return value});
+              const editObs = {...analiseEditId?.[0]};
+
+              const _analiseObservacao = editObs.analiseObservacao != null ? editObs.analiseObservacao.replace(';.','') : "";
+              const observacao = _analiseObservacao.split(';');
+              const index = (observacao.length - 1);
+              const inputObs = inputValue.analiseObservacao.replace(removeDateObs,"");
+              observacao[index] = `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputObs}`;
+
+              const _observacao = observacao.join(';');
+              
+              if(new Date(dataAnalise).toLocaleDateString() === new Date(_dataAtual).toLocaleDateString()){
+                editObs.analiseObservacao = inputObs != "" ? `${_observacao}` : `${editObs.analiseObservacao}`;
+                console.log(editObs)
+                
+                const analiseResponse = await updateAnalise(editObs);
+    
+                if (analiseResponse.status === 200) {
+                    console.log("Validado com sucesso")
+                }
+                
+              }else{
+                editObs.analiseObservacao = inputObs != "" ? `${editObs.analiseObservacao};[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputObs}` : `${editObs.analiseObservacao}`;
+
+                const analiseResponse = await updateAnalise(editObs);
+    
+                if (analiseResponse.status === 200) {
+                    console.log("Validado com sucesso")
+                }
 
               }
             }
-            
-            const analiseResponse = await updateAnalise(analiseData);
-    
-            if (analiseResponse.status === 200) {
-                console.log("Validado com sucesso")
-            };
-                        
-            
+ 
         } catch (error) {
             setDialogAviso(true);
             setMensagem(`Erro ao analisar`);
@@ -125,11 +155,12 @@ function Vizualizar(){
         }
     }
 
-    async function fetchInsertValidar(status) {
+    async function fetchInsertValidar(hd_status) {
+      
       try {
           const analiseInsert = {
-            CHAVE: '',
-            status: status,
+            CHAVE: `${testeOptico?.uf}-${testeOptico?.siglaEstacao}${testeOptico?.cdo}`,
+            status: hd_status,
             analista: user.nome.toUpperCase(),
             dataAnalise: _dataAtual,
             analiseObservacao: inputValue.analiseObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao}` : "",
@@ -155,7 +186,7 @@ function Vizualizar(){
 
     async function fetchDeleteCdo(){
       try {
-        const response = await deleteAnalise(id_Analise);
+        const response = await deleteAnalise(idAnalise);
 
         if(response.status == 200) {
           console.log("Excluido com sucesso");
@@ -292,7 +323,7 @@ function Vizualizar(){
     }
     
     const analiseState = () => {
-      let obs = analiseObservacao?.split(';');
+      let obs = analiseObservacao?.[0]?.split(';');
       return `${obs?.length > 1 ? "RE-TESTE" : "TESTADO"}`
     }
 
@@ -306,8 +337,7 @@ function Vizualizar(){
 
     const Observacao = () => {
       if (analiseObservacao !== null) {
-          const observacoes = analiseObservacao.replace(';.','').split(';');
-          const _observacoes = observacoes.map(obs => obs);
+          const _observacoes = analises?.filter((f) => f.id_Analise == idAnalise).map((value, index) => (value.analiseObservacao.replace(';.','').split(';')));
           return _observacoes;
       }
       return [];
@@ -320,7 +350,8 @@ function Vizualizar(){
       setVisible(true);
     };
 
-    const AnaliseDetalhe = (e) => {
+    const AnaliseDetalhe = (e, id) => {
+      setIdAnalise(id)
       setEvent(e);
       setVisualizarAnalise(true);
     };
@@ -335,9 +366,11 @@ function Vizualizar(){
       currentCdoia.cdoiaObservacao = value;
     };
 
-    const handleEdit = (e) => {
+    const handleEdit = (e, id) => {
+      setIdAnalise(id);
       setEvent(e);
       setVisible(true);
+      setLoading(false);
     };
     
     const handleAdicionarCdoia = (e) => {
@@ -382,7 +415,8 @@ function Vizualizar(){
 
     }
 
-    const handleExcluirCdo = (e) => {
+    const handleExcluirCdo = (e, id) => {
+      setIdAnalise(id)
       setEvent(e);
       setVisible(true);
 
@@ -415,12 +449,18 @@ function Vizualizar(){
         }
 
       }else{
-        fetchValidar();
-        setVisible(false);
+        if(name === 'aprovado') {
+          fetchValidar("APROVADO");
+          setVisible(false);
+
+        }else{
+          fetchValidar("REPROVADO");
+          setVisible(false);
+
+        }
+
       }
-
       setLoading(false);
-
     }
 
     const ConfirmarAnaliseCdoia = () => {
@@ -1002,27 +1042,29 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                              {status !== undefined ? (                           
-                               <tr style={status === 'APROVADO' ?
-                                  {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
-                                    <td>{analista}</td>
-                                    <td>{new Date(dataAnalise).toLocaleDateString()}</td>
-                                    <td>{status}</td>
-                                    <td>
-                                      <>
-                                        <Button name="observacao" style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={AnaliseDetalhe} >OBSERVAÇÕES</Button>
-                                      </> 
-                                    </td> 
-                                    <td>
-                                      <>
-                                        <Button name="editar" style={{marginLeft:'0.5rem', marginRight: '0.5rem'}} onClick={handleEdit} >Editar</Button>
-                                        <Button name="excluirCdo" onClick={handleExcluirCdo} >Excluir</Button>
-                                      </> 
-                                    </td> 
-                                  </tr>
-                              ):(null)
-                              }
-                              </tbody>
+                              {status !== undefined && analises?.map((value, index) => (
+                                <tr key={index} style={value.status === 'APROVADO' ? { backgroundColor: '#D5F5E3' } : { backgroundColor: '#F5B7B1' }}>
+                                  <td>{value.analista}</td>
+                                  <td>{new Date(value.dataAnalise).toLocaleDateString()}</td>
+                                  <td>{value.status}</td>
+                                  <td>
+                                    <Button name="observacao" style={{ fontSize: '0.6rem', fontWeight: '700' }} onClick={(e) => AnaliseDetalhe(e, value.id_Analise)}>
+                                      OBSERVAÇÕES
+                                    </Button>
+                                  </td>
+                                  <td>
+                                    <>
+                                      <Button name="editar" style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }} onClick={(e) => handleEdit(e, value.id_Analise)}>
+                                        Editar
+                                      </Button>
+                                      <Button name="excluirCdo" onClick={(e) => handleExcluirCdo(e ,value.id_Analise)}>
+                                        Excluir
+                                      </Button>
+                                    </>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
                               </>
                               ):(
                                 <>

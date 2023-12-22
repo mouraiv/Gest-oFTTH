@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Ri8EHFWplaDEkU9CTN86CbAX+jRjSHIrY0MBbaS+bASYDycHrbcNQR0ds2/2m7FxgP85L25yjA6+liNNrUxj1g==",
+  "dgSpecHash": "olHcNtpo/srt0wttSfz4ZcFsIR1kAb5mf8uW73QeAV6qLaqJeZmdXhVz9IDrKOjQQfm2MNGIXZ4/JUGSr+xanQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
   "expectedPackageFiles": [
@@ -66,6 +66,7 @@
     "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.21.0\\microsoft.identitymodel.protocols.openidconnect.6.21.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.identitymodel.tokens\\7.0.0\\microsoft.identitymodel.tokens.7.0.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.io.recyclablememorystream\\2.2.1\\microsoft.io.recyclablememorystream.2.2.1.nupkg.sha512",
+    "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.net.build.containers\\8.0.100\\microsoft.net.build.containers.8.0.100.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.net.http.headers\\2.2.0\\microsoft.net.http.headers.2.2.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.1\\microsoft.netcore.platforms.1.1.1.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.netcore.targets\\1.1.3\\microsoft.netcore.targets.1.1.3.nupkg.sha512",

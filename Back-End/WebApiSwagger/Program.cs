@@ -120,19 +120,6 @@ app.UseCors(options =>
            .AllowCredentials();
 });
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, @"Uploads")),
-    RequestPath = "/Uploads"
-});
-
-app.UseDirectoryBrowser(new DirectoryBrowserOptions()
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
-        RequestPath = new PathString("/Uploads")
-});
-
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
