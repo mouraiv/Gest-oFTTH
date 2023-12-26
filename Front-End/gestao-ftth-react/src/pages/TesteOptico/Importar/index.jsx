@@ -18,7 +18,7 @@ function ImportFile(){
     const [file, setFile] = useState(null);
     const [visible, setVisible] = useState(false);
     const [mensagem, setMensagem] = useState("");
-    const [dialogAviso, setDialogAviso] = useState()
+    const [dialogAviso, setDialogAviso] = useState();
     const [event, setEvent] = useState({});
     const [submitClicked, setSubmitClicked] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
@@ -105,7 +105,7 @@ function ImportFile(){
         if (initialLoad) {
           // Realiza a pesquisa inicial apenas uma vez ao carregar a página
           fetchTesteOptico();
-    
+
         } else if (submitClicked) {
           // Realiza pesquisas apenas quando o botão de pesquisa é clicado
           fetchTesteOptico();
@@ -114,7 +114,9 @@ function ImportFile(){
     
         } else {
     
-          return () => { controller.abort() };
+          return () => { 
+            controller.abort(); 
+          };
         }
         
       }, [fetchTesteOptico]);
@@ -145,7 +147,7 @@ function ImportFile(){
         if(file){
           await fetchUpaloadArquivo(file)
           setDialogAviso(false);
-          setVisible(true);
+          fetchLoading();
           setLoading(false);
         }else{
           setDialogAviso(true);
@@ -158,8 +160,9 @@ function ImportFile(){
         await fetchDownloadModelo();
       }
 
-      const fetchLoading = () => {
-        setLoading(false);
+      const fetchLoading = (value) => {
+        fetchTesteOptico();
+        setLoading(value);
       }
 
       const ExcluirFecth = () => {

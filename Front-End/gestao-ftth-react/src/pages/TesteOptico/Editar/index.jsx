@@ -65,7 +65,7 @@ function Editar() {
                 ...testeOptico
             }
 
-            testeOpticoData.CHAVE = `${uf}-${testeOptico.siglaEstacao.replace(/\s/g,"")}${testeOptico.cdo}`;
+            testeOpticoData.CHAVE = testeOpticoData.CHAVE == null ? null : `${uf}-${testeOptico.siglaEstacao.replace(/\s/g,"")}${testeOptico.cdo}`;
             testeOpticoData.uf = uf;
             testeOpticoData.construtora = construtora;
             testeOpticoData.dataConstrucao = formatarDateJson(dateInputConstrucao);

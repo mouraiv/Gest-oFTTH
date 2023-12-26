@@ -12,7 +12,6 @@ export default function DataGrid({
   pagina, 
   left, 
   right,
-  sel,
   atualizar
 }) {
   const _paginasCorrente = paginacao.total < paginacao.paginasCorrentes ? paginacao.total : paginacao.paginasCorrentes; 
@@ -26,9 +25,18 @@ export default function DataGrid({
   const [analseDelete, setAnaliseDelete] = useState();
 
   async function fetchDelete(){
-    if(id !== undefined){
+    try {
+      atualizar(false)
+      if(id !== undefined){
         await deleteTesteOptico(id);
+      }
+    } catch (error) {
+      atualizar(true);
+      
+    }finally{
+      atualizar(true);
     }
+    
   }
 
   const handleVisualizar = (id, idNetwin, survey) => {
@@ -43,17 +51,16 @@ export default function DataGrid({
     setId(id);
     setVisible(true);
 
-    if(analise == null) {
+    if(analise.length == 0) {
       setAnaliseDelete(false);
     }else{
       setAnaliseDelete(true);
-    }   
+    }  
   }
 
   const ExcluirFecth = async () => {
     await fetchDelete();
     setVisible(false);
-    atualizar();
   }
 
   function getNestedValue(obj, key) {
