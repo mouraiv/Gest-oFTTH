@@ -63,7 +63,6 @@ function Imagem(){
         }
 
       } catch (error) {
-        setDialogAviso(true);
         setMensagem({tipo: 'error', msg: "Erro ao deletar."});
         setVisible(true);
         setLoading(true);

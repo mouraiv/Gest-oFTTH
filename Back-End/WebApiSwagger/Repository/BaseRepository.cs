@@ -20,7 +20,7 @@ namespace WebApiSwagger.Repository
         public BaseRepository(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            pastaDoProjeto = $"/GestaoFTTH/TesteOptico/Uploads/Anexos/";
+            pastaDoProjeto = $"/Front-End/dataftpd/GestaoFTTH/TesteOptico/Uploads/Anexos/";
             ftpServer = "ftp://192.168.4.10/";
             ftpUsername = "mouraiv";
             ftpPassword = "Wes2485";
@@ -49,8 +49,7 @@ namespace WebApiSwagger.Repository
                 // Envia o arquivo para o servidor FTP
                 using (WebClient client = new WebClient())
                 {    
-                    client.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
-
+                    
                     foreach (var file in path)
                     {
                         if (file != null && file.Length > 0)
@@ -60,14 +59,17 @@ namespace WebApiSwagger.Repository
                             var fileExtension = Path.GetExtension(file.FileName);
 
                             //Renomear aquivos para uptload
-                            string name = filter.CDOIA != null ? $"{filter.CDOIA?.ToUpper()}_{DateTime.Now.Ticks}{fileExtension}" :
-                            $"{filter.CDO?.ToUpper()}_{DateTime.Now.Ticks}{fileExtension}";
+                            string name = filter.CDOIA != null ? $"{filter.CDOIA?.ToUpper().Replace("-","_")}_{DateTime.Now.Ticks}{fileExtension}" :
+                            $"{filter.CDO?.ToUpper().Replace("-","_")}_{DateTime.Now.Ticks}{fileExtension}";
 
                             // Salva o arquivo no diretório criado
                             var filePath = $"{caminho}{name}";
 
                             using (var stream = file.OpenReadStream())
                             {
+                                //Autenticar FTP server
+                                client.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
+
                                 // Faz upload diretamente para o FTP
                                 client.UploadData($"{filePath}", "STOR", LerBytesDoStream(stream));
                             }
@@ -143,7 +145,7 @@ namespace WebApiSwagger.Repository
         }
         public List<string> ListarArquivo(FiltroImagem filter)
         {
-            string caminhoRelativo = $"/GestaoFTTH/TesteOptico/Uploads/Anexos/{filter.UF?.ToUpper()}/{filter.Estacao?.ToUpper()}/TESTE_OPTICO/{filter.CDO?.ToUpper()}/";
+            string caminhoRelativo = $"/Front-End/dataftpd/GestaoFTTH/TesteOptico/Uploads/Anexos/{filter.UF?.ToUpper()}/{filter.Estacao?.ToUpper()}/TESTE_OPTICO/{filter.CDO?.ToUpper()}/";
 
             var request = (FtpWebRequest)WebRequest.Create(new Uri(new Uri($"{ftpServer}"), caminhoRelativo));
             request.Method = WebRequestMethods.Ftp.ListDirectory;
@@ -257,16 +259,16 @@ namespace WebApiSwagger.Repository
         private static string ConstruirUrlImagem(string nomeArquivo)
         {
             var scheme = "http";
-            var host = "192.168.4.10/dataftpd";
+            var host = "192.168.4.10/dataftpd/";
 
-            return $"{scheme}://{host}{nomeArquivo}";
+            return $"{scheme}://{host}{nomeArquivo.Replace("/Front-End/dataftpd","")}";
         }
 
         public bool DeletaArquivo(string url){
 
             try
             {
-                string _url = url.Replace("http://192.168.4.10/dataftpd/","ftp://192.168.4.10//");
+                string _url = url.Replace("http://192.168.4.10/dataftpd/","ftp://192.168.4.10//Front-End/dataftpd");
                 WebRequest request = WebRequest.Create(_url);
                 request.Method = WebRequestMethods.Ftp.DeleteFile;
                 request.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
