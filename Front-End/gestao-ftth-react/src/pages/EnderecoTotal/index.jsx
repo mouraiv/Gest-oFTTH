@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { getEnderecoTotal } from "../../api/enterecoTotais";
 import { ufOptions, dispComercialOptions, grupoOperacionalOptions,localidadeOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
@@ -41,8 +40,6 @@ function EnderecoTotal() {
   const [submitClicked, setSubmitClicked] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
 
-  const navigate = useNavigate();
-
   const controller = new AbortController();
   const signal = controller.signal;
 
@@ -65,8 +62,6 @@ function EnderecoTotal() {
         EstadoControle: estadoControle,
       };
 
-      console.log("EXECUTANDO");
-
       const response = await getEnderecoTotal(filtro, {signal});
 
       if(response.status == 200) {
@@ -74,7 +69,7 @@ function EnderecoTotal() {
       }
 
     } catch (error) {
-      console.log(`Erro ao carregar : ${error}`)
+      setMensagem(`Erro ao carregar : ${error}`)
       setLoading(true);
       
     } finally {

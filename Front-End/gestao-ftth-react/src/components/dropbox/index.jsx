@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Drop, FormGroup } from "./style";
 
 export default function DropBox({label, event, lista, text, valueDefaut, width, height, disable}) {
