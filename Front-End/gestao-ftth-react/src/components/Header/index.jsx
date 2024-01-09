@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FaRightToBracket } from 'react-icons/fa6';
 import logo from "../../../public/imagens/logictel.png";
 
+// eslint-disable-next-line react/prop-types
 export default function Header({title}) {
   const { user, Logout } = useAuth();
 

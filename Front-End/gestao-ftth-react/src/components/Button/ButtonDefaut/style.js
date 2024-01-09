@@ -1,9 +1,9 @@
 import { styled } from "@stitches/react"
 
 export const Container = styled("div", {
-    marginTop: '1.7rem',
+    marginTop: '1.8rem',
     marginLeft: '1rem',
-    marginRight: '1rem',
+
 
     "button":{
         backgroundColor: '#13293d',

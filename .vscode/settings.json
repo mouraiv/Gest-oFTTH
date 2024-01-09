@@ -2,7 +2,6 @@
     "dotnet.defaultSolution": "Back-End/WebApiSwagger.sln",
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit",
-        "source.fixAll.eslint": "explicit"
     },
     "editor.bracketPairColorization.independentColorPoolPerBracketType": false,
     "editor.formatOnSave": true,

@@ -10,7 +10,7 @@ namespace WebApiSwagger.Context
         = LoggerFactory.Create(builder => { builder.AddConsole(); });
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            Database.SetCommandTimeout(1800);
+            Database.SetCommandTimeout(10800); 
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -7,10 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -113,14 +109,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(options =>
 {
-    options.WithOrigins("http://192.168.0.39:5173", "http://192.168.0.39:5226")
+    options.WithOrigins("http://192.168.0.39:5173", 
+                        "http://192.168.0.39:5226",
+                        "http://localhost:5173",
+                        "http://localhost:5226"
+                        )
            .AllowAnyHeader()
-           .AllowAnyMethod()
-           .SetIsOriginAllowed(origin => true)
-           .AllowCredentials();
+           .AllowAnyMethod();
 });
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

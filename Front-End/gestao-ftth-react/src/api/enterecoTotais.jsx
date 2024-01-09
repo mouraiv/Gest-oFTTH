@@ -23,8 +23,7 @@ export const getCarregarEnderecoTotal = async (id) => {
 };
 
 export const getEnderecoTotal = async (filtro, {signal}) => {
-  const response = await api.get('/EnderecoTotal/Listar', {
-    params: filtro,
+  const response = await api.post('/EnderecoTotal/Listar', filtro, {
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },

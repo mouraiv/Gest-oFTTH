@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApiSwagger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSwagger.Models.ViewModel;
+using System.Linq;
 
 namespace WebApiSwagger.Repository
 {
@@ -70,9 +71,9 @@ namespace WebApiSwagger.Repository
                         query = query.Where(p => p.Localidade == filtro.Localidade);
                     }
 
-                    if (!string.IsNullOrEmpty(filtro.CodSurvey))
+                    if (filtro.Cod_Survey != null && filtro.Cod_Survey.Any())
                     {
-                        query = query.Where(p => p.Cod_Survey == filtro.CodSurvey);
+                        query = query.Where(p => filtro.Cod_Survey.Contains(p.Cod_Survey));
                     }
 
                     if (!string.IsNullOrEmpty(filtro.CDO))
@@ -135,6 +136,8 @@ namespace WebApiSwagger.Repository
         {
               try
             {
+                var _cod_Survey = filtro.Cod_Survey?.Split(',');
+
                 var query = _context.EnderecosTotais
                     .Include(p => p.MaterialRede)
                     .Select(et => new EnderecoTotal {
@@ -184,11 +187,6 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.Localidade == filtro.Localidade);
                 }
 
-                if (!string.IsNullOrEmpty(filtro.CodSurvey))
-                {
-                    query = query.Where(p => p.Cod_Survey == filtro.CodSurvey);
-                }
-
                 if (!string.IsNullOrEmpty(filtro.CDO))
                 {
                     query = query.Where(p => p.NomeCdo == filtro.CDO);
@@ -214,16 +212,29 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.MaterialRede.EstadoControle_Mt == filtro.EstadoControle);
                 }
 
-                 // Aplica a ordenação
-                query = query.OrderBy(p => p.Cod_Viabilidade);
+                if (!string.IsNullOrEmpty(filtro.Cod_Survey) && _cod_Survey.Any())
+                {
+                    query = query.Where(p => _cod_Survey.Contains(p.Cod_Survey));
 
-                paginacao.Total = await query.CountAsync();
+                    query = query.OrderBy(p => p.Cod_Viabilidade);
+                    
+                    return await query.ToListAsync();     
+                }
+                else
+                {
+                    // Aplica a ordenação
+                    query = query.OrderBy(p => p.Cod_Viabilidade);
 
-                query = query
-                    .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
-                    .Take(paginacao.Tamanho);
+                    paginacao.Total = await query.CountAsync();
 
-                return await query.ToListAsync();             
+                    query = query
+                        .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
+                        .Take(paginacao.Tamanho);
+
+                    return await query.ToListAsync();             
+
+                }
+
             }
             catch (Exception ex)
             {  
@@ -306,9 +317,9 @@ namespace WebApiSwagger.Repository
                         query = query.Where(p => p.Localidade == filtro.Localidade);
                     }
 
-                    if (!string.IsNullOrEmpty(filtro.CodSurvey))
+                    if (filtro.Cod_Survey != null && filtro.Cod_Survey.Any())
                     {
-                        query = query.Where(p => p.Cod_Survey == filtro.CodSurvey);
+                        query = query.Where(p => filtro.Cod_Survey.Contains(p.Cod_Survey));
                     }
 
                     if (!string.IsNullOrEmpty(filtro.CDO))

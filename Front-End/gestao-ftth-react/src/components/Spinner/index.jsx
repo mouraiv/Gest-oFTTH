@@ -5,7 +5,7 @@ import { Container } from "./style";
 export default function Spinner() {
       return (
         <>
-        <Container>
+        <Container>    
             <LineWave height={200} width={200} color="#13293d" />
         </Container>
         </>
