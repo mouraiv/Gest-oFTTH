@@ -214,10 +214,13 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.Cod_Survey) && _cod_Survey.Any())
                 {
+                    
                     query = query.Where(p => _cod_Survey.Contains(p.Cod_Survey));
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
-                    
+
+                    paginacao.Total = filtro.TotalSurveyList;
+                
                     return await query.ToListAsync();     
                 }
                 else
@@ -226,7 +229,7 @@ namespace WebApiSwagger.Repository
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
                     paginacao.Total = await query.CountAsync();
-
+                    
                     query = query
                         .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                         .Take(paginacao.Tamanho);

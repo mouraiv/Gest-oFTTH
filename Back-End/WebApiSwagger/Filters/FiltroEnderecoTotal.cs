@@ -8,6 +8,7 @@ namespace WebApiSwagger.Filters
     public class FiltroEnderecoTotal
     {
         public int? Pagina { get; set; }
+        public int TotalSurveyList {get; set;} 
         public int? Id_StatusGanho { get; set; }
         public int? Id_StatusGanhoDia { get; set; }
         public int? Id_Disponibilidade { get; set; }

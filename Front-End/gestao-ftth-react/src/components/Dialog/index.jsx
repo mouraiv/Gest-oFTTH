@@ -9,7 +9,8 @@ export default function DialogAlert({
   buttonConfirmar,
   colorType,
   ConfirmaButton,
-  textCloseButton
+  textCloseButton,
+  CancelaButton
 }) 
     {
       return (
@@ -43,8 +44,10 @@ export default function DialogAlert({
                 marginTop: '1.5rem',
                 paddingTop: '1rem'
                 }}>
-                  
+                  { !CancelaButton ? (
                     <ButtonCancelar onClick={visibleHide}>{textCloseButton}</ButtonCancelar>
+                    ) : (null)
+                  }
                   { ConfirmaButton ? (
                     <ButtonConfirma onClick={buttonConfirmar}>Confirmar</ButtonConfirma>
                     ) : (null)

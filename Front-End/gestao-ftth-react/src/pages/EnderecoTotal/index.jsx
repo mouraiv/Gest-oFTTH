@@ -9,7 +9,7 @@ import Header from "../../components/Header";
 import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import DropBox from '../../components/dropbox';
-import { Filter, ButtonUpload } from './styles';
+import { Filter, ButtonUpload, ProgressBar } from './styles';
 import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 
@@ -44,12 +44,12 @@ function EnderecoTotal() {
   const [surveyList, setSurveyList] = useState([]);
   const [viewListSurvey, setViewListSurvey] = useState("");
   const [listLocalSurvey, setListLocalSurvey] = useState(false);
+  const [progresso, setProgresso] = useState(0);
+  const [tempoEstimadoEmMilissegundos, setTempoEstimadoEmMilissegundos] = useState(0);
 
   const controller = new AbortController();
   const signal = controller.signal;
   const tempoMedioPorSurvey = 1; // tempo médio em segundos para buscar 1 Cod_Survey
-
-  console.log(construtora);
 
   const aplicarFiltros = (dados) => {
     return dados.filter(
@@ -73,6 +73,7 @@ function EnderecoTotal() {
 
       const filtro = {
         pagina : currentPage,
+        totalSurveyList: countListSurvey,
         UF : uf,
         Localidade : construtora,
         SiglaEstacao : siglaEstacao,
@@ -112,11 +113,6 @@ function EnderecoTotal() {
     }
 
   }, [submitClicked]);
-
-  const filterLocalSurvey = (filtro) => {
-    const surveyFiltro = enderecoTotal.filter(value => value.uf === filtro)
-    console.log(surveyFiltro)
-  }
 
   // Função para avançar para a próxima página
   const nextPage = () => {
@@ -252,7 +248,7 @@ function EnderecoTotal() {
 
   const handleColarSurvey = (e) => {
     setViewListSurvey(e.target.value);
-    const lines = e.target.value.split(/\r?\n/); // Divide por novas linhas
+    const lines = e.target.value.split(/\r?\n|,/); // Divide por novas linhas
     const surveys = lines.filter(line => line.trim() !== ''); // Remove linhas vazias
 
     setCountListSurvey(surveys.length);
@@ -301,27 +297,56 @@ function EnderecoTotal() {
     setLoading(false);
   }
 
-  const calcularTempoEstimado = () => {
+  /*const calcularTempoEstimado = () => {
     const tempoEstimadoTotal = countListSurvey * tempoMedioPorSurvey;
-
-    // Obtendo a hora atual em milissegundos
-    const agora = new Date().getTime();
 
     // Convertendo o tempo estimado total de segundos para milissegundos
     const tempoEstimadoEmMilissegundos = tempoEstimadoTotal * 1000;
+    setProgressoTotal(tempoEstimadoEmMilissegundos);
 
-    // Somando o tempo estimado com a hora atual
-    const horarioTerminoEstimado = new Date(agora + tempoEstimadoEmMilissegundos);
+    let tempoDecorrido = 0;
+    const intervalo = 1000; // Atualizar a cada 1 segundo
 
-    // Formatando o horário de término estimado em hh:mm:ss
-    const hh = String(horarioTerminoEstimado.getHours()).padStart(2, '0');
-    const mm = String(horarioTerminoEstimado.getMinutes()).padStart(2, '0');
-    const ss = String(horarioTerminoEstimado.getSeconds()).padStart(2, '0');
+    const intervalId = setInterval(() => {
+        tempoDecorrido += intervalo;
+        setProgresso(tempoDecorrido);
 
-    return `${hh}:${mm}:${ss}`;
-  };
+        if (tempoDecorrido >= tempoEstimadoEmMilissegundos) {
+            clearInterval(intervalId);
+        }
+      }, intervalo);
+  };*/
 
-  return (
+  useEffect(() => {
+    const calcularTempoEstimado = () => {
+        // Supondo que countListSurvey e tempoMedioPorSurvey sejam props ou estados
+        const tempoEstimadoTotal = countListSurvey * tempoMedioPorSurvey;
+
+        // Convertendo o tempo estimado total de segundos para milissegundos
+        const tempoEst = tempoEstimadoTotal * 1000;
+        setTempoEstimadoEmMilissegundos(tempoEst);
+    };
+
+    calcularTempoEstimado();
+}, [countListSurvey, tempoMedioPorSurvey]); // Dependências do efeito
+
+useEffect(() => {
+    let tempoDecorrido = 0;
+    const intervalo = 1000; // Atualizar a cada 1 segundo
+
+    const intervalId = setInterval(() => {
+        tempoDecorrido += intervalo;
+        setProgresso(tempoDecorrido / tempoEstimadoEmMilissegundos * 100);
+
+        if (tempoDecorrido >= tempoEstimadoEmMilissegundos) {
+            clearInterval(intervalId);
+        }
+    }, intervalo);
+
+    return () => clearInterval(intervalId); // Limpeza no desmonte
+}, [tempoEstimadoEmMilissegundos]); 
+
+return (
       <>
       <Template>
         <Header title={"EnderecoTotal"} />
@@ -332,12 +357,15 @@ function EnderecoTotal() {
                     visibleHide={() => setVisibleSurvey(false)}
                     header={<h4>Lista Survey</h4>}
                     colorType={'#13293d'}
-                    ConfirmaButton={true}
+                    ConfirmaButton={countListSurvey < 59999 ? true : false}
+                    CancelaButton={countListSurvey < 59999 ? false : true}
                     buttonConfirmar={handleConfirm}
                     textCloseButton={'Cancelar'}
                     text={
                         <>
-                        <p style={{fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic'}}>{ countListSurvey ?? 0 } Surveys</p>
+                        <p style={countListSurvey < 59999 ? 
+                        {fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic'} :
+                        {fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic', color:'red'}}>{ countListSurvey ?? 0 } Surveys</p>
                         <textarea style={{
                           width: '450px',
                           height: '300px',
@@ -350,6 +378,16 @@ function EnderecoTotal() {
                           onChange={(e) => handleColarSurvey(e)}
                           placeholder="Cole os surveys aqui"
                         />
+                        {countListSurvey > 59999 ? (
+                        <p style={{
+                          border:'1px solid red',
+                          textAlign: 'center',
+                          color:'red',
+                          fontSize:'0.8rem',
+                          padding:'0.3rem'
+                        }}>Quantidade máxima de 60.000 surveys excedida.</p>
+                        ):(null)
+                        }
                         </>
                     }
                 />
@@ -443,7 +481,7 @@ function EnderecoTotal() {
                   width: '150px',
                   height: '24px',
                   textTransform: 'uppercase'
-                }} label={"Survey"} />
+                }} label={"Survey"} maxLength="30"/>
               )
               }
               <ButtonUpload name="upload" onClick={handleImportSurvey} >Lista</ButtonUpload>
@@ -490,17 +528,18 @@ function EnderecoTotal() {
             />
               ):(
               <>
-              { countListSurvey > 10 ? (
+              { countListSurvey > 5 ? (
                 <>
                   <div>
-                    <Spinner />
-                      <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem'}}>
+                      <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem', marginTop:'10rem'}}>
                         <div style={{padding: '0.5rem'}}>
                           <p>Buscando {<b>{countListSurvey}</b>} Surveys no banco de dados.</p>
                           <p>Esse processo pode ser demorado de acordo com da quantidade de surveys.</p>
                       </div>
-                      <div style={{padding: '0.2rem',display:'flex', alignItems: 'center', justifyContent:'center', backgroundColor:'#d6dbdf', borderEndEndRadius:'0.3rem', borderEndStartRadius:'0.3rem',fontWeight:'600'}}><p>{`Tempo estimado -- ${calcularTempoEstimado()} --`}</p></div>
-                    </div>
+                        <div style={{position: 'relative'}}><ProgressBar value={progresso} max={100} />
+                          <div style={{position: 'absolute', marginLeft: 'auto', marginRight:'auto', marginTop: '0.4rem',textAlign: 'center', left:'0', right:'0', top: '0', width:'500px', fontWeight:'600'}}><p>{progresso == 100 ? 'Baixando...' : 'Carregando Surveys:  -- '+progresso.toFixed(2)+'% --'}</p></div>
+                        </div>
+                      </div>
                   </div>
                 </>
                 ):(
