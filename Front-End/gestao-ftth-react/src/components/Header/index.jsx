@@ -1,12 +1,12 @@
 import { HeaderStyleUser, HeaderStyle} from "./style";
-import { useAuth } from "../../contexts/auth";
+import { UseAuth } from "../../contexts/auth";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaRightToBracket } from 'react-icons/fa6';
 import logo from "../../../public/imagens/logictel.png";
 
 // eslint-disable-next-line react/prop-types
 export default function Header({title}) {
-  const { user, Logout } = useAuth();
+  const { user, Logout } = UseAuth();
 
   const refreshToken = sessionStorage.getItem("@App:token");
   let auth = { token: refreshToken};

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TableGrid, TableGridMenu, Button } from "./style";
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import DialogAlert from "../../components/Dialog";
-import { deleteTesteOptico } from "../../api/testeOptico";
+import { DeleteTesteOptico } from "../../api/testeOptico";
 
 export default function DataGrid({ 
   columns, 
@@ -28,7 +28,7 @@ export default function DataGrid({
     try {
       atualizar(false)
       if(id !== undefined){
-        await deleteTesteOptico(id);
+        await DeleteTesteOptico(id);
       }
     } catch (error) {
       atualizar(true);
@@ -132,7 +132,7 @@ export default function DataGrid({
             </tr>
           </thead>
           <tbody>
-            {_paginasCorrente == 0 ? (<tr><td colSpan={13}>Nenhum Resultado.</td></tr>) : (
+            {rows.length === 0 ? (<tr><td colSpan={13}>Nenhum Resultado.</td></tr>) : (
               rows.map((row, rowIndex) => (         
                 <tr key={rowIndex}>
                   {columns.map((column) => (

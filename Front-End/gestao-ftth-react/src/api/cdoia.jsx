@@ -1,16 +1,22 @@
-import api from '../services/api';
+import Api from '../services/api';
 
-export const createAnaliseCdoia = async (cdoia) => {
-    const response = await api.post('/AnaliseCDOIA/Cadastrar', cdoia);
+  const CreateAnaliseCdoia = async (cdoia) => {
+    const response = await Api.post('/AnaliseCDOIA/Cadastrar', cdoia);
     return response;
   };
   
-  export const updateAnaliseCdoia = async (cdoia) => {
-    const response = await api.put(`/AnaliseCDOIA/Atualizar/${cdoia.id_AnaliseCDOIA}`, cdoia);
+  const UpdateAnaliseCdoia = async (cdoia) => {
+    const response = await Api.put(`/AnaliseCDOIA/Atualizar/${cdoia.id_AnaliseCDOIA}`, cdoia);
     return response;
   };
 
-  export const deleteAnaliseCdoia = async (id) => {
-    const response = await api.delete(`/AnaliseCDOIA/Deletar/${id}`);
+  const DeleteAnaliseCdoia = async (id) => {
+    const response = await Api.delete(`/AnaliseCDOIA/Deletar/${id}`);
     return response;
   };
+
+  export {
+    CreateAnaliseCdoia,
+    UpdateAnaliseCdoia,
+    DeleteAnaliseCdoia
+  }

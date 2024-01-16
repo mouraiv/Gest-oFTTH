@@ -1,7 +1,7 @@
-import api from '../services/api';
+import Api from '../services/api';
 
-export const DetahleMaterialRedeAny = async (id) => {
-  const response = await api.get('/MaterialRede/Carregar', {
+export const DetalheMaterialRedeAny = async (id) => {
+  const response = await Api.get('/MaterialRede/Carregar', {
     params: {id},
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'

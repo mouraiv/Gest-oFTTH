@@ -1,7 +1,7 @@
-import api from '../services/api';
+import Api from '../services/api';
 
-export const getTesteOptico = async (filtro, {signal}) => {
-  const response = await api.get('/TesteOptico/Listar', {
+const GetTesteOptico = async (filtro, {signal}) => {
+  const response = await Api.get('/TesteOptico/Listar', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -12,8 +12,8 @@ export const getTesteOptico = async (filtro, {signal}) => {
   return response;
 };
 
-export const getControleCdo = async (filtro, {signal}) => {
-  const response = await api.get('/TesteOptico/ControleCdo', {
+const GetControleCdo = async (filtro, {signal}) => {
+  const response = await Api.get('/TesteOptico/ControleCdo', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -24,23 +24,23 @@ export const getControleCdo = async (filtro, {signal}) => {
   return response;
 };
 
-export const createTesteOptico = async (testeOptico) => {
-  const response = await api.post('/TesteOptico/Cadastrar', testeOptico);
+const CreateTesteOptico = async (testeOptico) => {
+  const response = await Api.post('/TesteOptico/Cadastrar', testeOptico);
   return response;
 };
 
-export const updateTesteOptico = async (testeOptico) => {
-  const response = await api.put(`/TesteOptico/Atualizar/${testeOptico.id_TesteOptico}`, testeOptico);
+const UpdateTesteOptico = async (testeOptico) => {
+  const response = await Api.put(`/TesteOptico/Atualizar/${testeOptico.id_TesteOptico}`, testeOptico);
   return response;
 };
 
-export const deleteTesteOptico = async (id) => {
-  const response = await api.delete(`/TesteOptico/Deletar/${id}`);
+const DeleteTesteOptico = async (id) => {
+  const response = await Api.delete(`/TesteOptico/Deletar/${id}`);
   return response;
 };
 
-export const DropTesteOptico = async () => {
-  const response = await api.get("/TesteOptico/ListaUnica", {
+const DropTesteOptico = async () => {
+  const response = await Api.get("/TesteOptico/ListaUnica", {
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
@@ -48,8 +48,8 @@ export const DropTesteOptico = async () => {
   return response;
 };
 
-export const DetalheTesteOptico = async (id) => {
-  const response = await api.get("/TesteOptico/Detalhe", {
+const DetalheTesteOptico = async (id) => {
+  const response = await Api.get("/TesteOptico/Detalhe", {
     params: {id},
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -58,11 +58,22 @@ export const DetalheTesteOptico = async (id) => {
   return response;
 };
 
-export const ImportarArquivo = async (arquivo) => {
+const ImportarArquivo = async (arquivo) => {
   
   const formData = new FormData();
   formData.append('arquivo', arquivo);
 
-  const response = await api.post('/TesteOptico/UploadModelo', formData);
+  const response = await Api.post('/TesteOptico/UploadModelo', formData);
   return response;
-}; 
+};
+
+export {
+  GetControleCdo,
+  GetTesteOptico,
+  ImportarArquivo,
+  DeleteTesteOptico,
+  DetalheTesteOptico,
+  DropTesteOptico,
+  UpdateTesteOptico,
+  CreateTesteOptico
+}

@@ -1,17 +1,23 @@
-import api from '../services/api';
+import Api from '../services/api';
 
-export const createAnalise = async (analise) => {
-    const response = await api.post('/Analise/Cadastrar', analise);
+  const CreateAnalise = async (analise) => {
+    const response = await Api.post('/Analise/Cadastrar', analise);
     return response;
   };
   
-  export const updateAnalise = async (analise) => {
+  const UpdateAnalise = async (analise) => {
     console.log(analise.id_Analise)
-    const response = await api.put(`/Analise/Atualizar/${analise.id_Analise}`, analise);
+    const response = await Api.put(`/Analise/Atualizar/${analise.id_Analise}`, analise);
     return response;
   };
 
-  export const deleteAnalise = async (id) => {
-    const response = await api.delete(`/Analise/Deletar/${id}`);
+  const DeleteAnalise = async (id) => {
+    const response = await Api.delete(`/Analise/Deletar/${id}`);
     return response;
   };
+
+  export {
+    CreateAnalise,
+    UpdateAnalise,
+    DeleteAnalise
+  }

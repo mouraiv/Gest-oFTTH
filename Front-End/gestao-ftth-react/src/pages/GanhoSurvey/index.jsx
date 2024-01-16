@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { getGanhoSurvey } from "../../api/enterecoTotais";
+import { GetGanhoSurvey } from "../../api/enterecoTotais";
 import { ufOptions, localidadeOptions, estacaoOptions, statusGanhoOptions, disponibilidadeOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
@@ -35,8 +34,6 @@ function GanhoSurvey() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [survey, setSurvey] = useState("");
 
-  const navigate = useNavigate();
-
   const { painel } = enderecoTotal;
 
   const controller = new AbortController();
@@ -57,7 +54,7 @@ function GanhoSurvey() {
           id_Disponibilidade: statusDisponibilidade
         };
 
-        const response = await getGanhoSurvey(filtro, {signal});
+        const response = await GetGanhoSurvey(filtro, {signal});
 
         if(response.status == 200) {
           setEnderecoTotal(response.data);
@@ -72,6 +69,7 @@ function GanhoSurvey() {
       setInitialLoad(false);
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitClicked]);
 
 
@@ -105,6 +103,7 @@ function GanhoSurvey() {
       return () => { controller.abort() };
     }
     
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEnderecoTotal]);
 
   const columns = [

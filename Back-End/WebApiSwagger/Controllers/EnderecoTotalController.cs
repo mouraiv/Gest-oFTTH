@@ -22,11 +22,11 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpPost("Listar")]
-        public async Task<IActionResult> Listar(FiltroEnderecoTotal filtro, int? pagina)
+        public async Task<IActionResult> Listar(FiltroEnderecoTotal filtro)
         {
             try
             {
-                _paginacao.Pagina = pagina ?? 1;
+                _paginacao.Pagina = filtro.Pagina ?? 1;
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 

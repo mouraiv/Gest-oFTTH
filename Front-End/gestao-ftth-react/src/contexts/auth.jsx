@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect} from "react";
-import api from "../services/api";
-import { VerificarUsuario } from "../api/usuario";
+import Api from "../services/api";
+import { VerificarUsuario } from "../Api/usuario";
 
 const AuthContext = createContext({
     user: {},
@@ -8,7 +8,7 @@ const AuthContext = createContext({
     Logout: () => {},
     status: true,
     loading: false,
-    isTokenExpired: () => false, // Função para verificar se o token está expirado
+    IsTokenExpired: () => false, // Função para verificar se o token está expirado
   });
 
 export const AuthProvider = ({ children }) => {
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       ServerStatus();
       const storagedUser = JSON.parse(sessionStorage.getItem('@App:user'));
       const storagedToken = sessionStorage.getItem('@App:token');
-      api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
+      Api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
       setUser(storagedUser);
     },[]);   
   
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
         if (response.status === 200) {
             if (response.data.login || response.data.pws) {
             setUser(response.data);
-            api.defaults.headers.Authorization = `Bearer ${response.data.token}`;
+            Api.defaults.headers.Authorization = `Bearer ${response.data.token}`;
             sessionStorage.setItem('@App:user', JSON.stringify(response.data));
             sessionStorage.setItem('@App:token', response.data.token);
             
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
     }
   
     // Função para verificar se o token está expirado
-    function isTokenExpired() {
+    function IsTokenExpired() {
       if (!token) return true; // Token não existe, considerar expirado
       const decodedToken = decode(token); // Decodifique o token (use uma biblioteca JWT para isso)
       if (!decodedToken.exp) return false; // Sem tempo de expiração definido
@@ -73,13 +73,13 @@ export const AuthProvider = ({ children }) => {
     }
   
     return (
-      <AuthContext.Provider value={{ user, Login, Logout, status, loading, isTokenExpired }}>
+      <AuthContext.Provider value={{ user, Login, Logout, status, loading, IsTokenExpired }}>
         {children}
       </AuthContext.Provider>
     );
 };
   
-export function useAuth() {
+export function UseAuth() {
     const context = useContext(AuthContext);
   
     return context;

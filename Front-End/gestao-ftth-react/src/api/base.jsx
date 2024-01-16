@@ -1,8 +1,8 @@
-import api from '../services/api';
+import Api from '../services/api';
 
-export const DownloadArquivo = async () => {
+const DownloadArquivo = async () => {
 try {
-  const response = await api.get('Base/DownloadArquivo', {
+  const response = await Api.get('Base/DownloadArquivo', {
     responseType: 'arraybuffer', 
     });
 
@@ -25,16 +25,16 @@ try {
   }
 };
 
-export const getVisualizarArquivo = async (filtro) => {
-  const response = await api.get('/Base/VisualizarImagem', {
+const GetVisualizarArquivo = async (filtro) => {
+  const response = await Api.get('/Base/VisualizarImagem', {
     params: filtro,
   });
 
   return response;
 };
 
-export const deleteImagem = async (url) => {
-  const response = await api.delete("Base/DeletarArquivo", {
+const DeleteImagem = async (url) => {
+  const response = await Api.delete("Base/DeletarArquivo", {
     params:{url}
   });
   return response;
@@ -42,14 +42,14 @@ export const deleteImagem = async (url) => {
 
 // Função para fazer o upload de um arquivo para o backend
 // Função para fazer o upload de arquivos para o backend
-export const fazerUploadDeArquivo = async (files, filtro) => {
+const FazerUploadDeArquivo = async (files, filtro) => {
   try {
     const formData = new FormData();
   
     for (let i = 0; i < files.length; i++) {
       formData.append("path", files[i]); // Use uma chave única para cada arquivo
     }
-    const response = await api.post("Base/UploadArquivo", formData, {
+    const response = await Api.post("Base/UploadArquivo", formData, {
       params: filtro,
     });
 
@@ -59,5 +59,12 @@ export const fazerUploadDeArquivo = async (files, filtro) => {
     console.log(error); // Lança o erro para que possa ser tratado no chamador
   }
 };
+
+export {
+  DownloadArquivo,
+  GetVisualizarArquivo,
+  DeleteImagem,
+  FazerUploadDeArquivo
+}
 
 

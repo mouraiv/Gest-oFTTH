@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { DropTesteOptico, getTesteOptico } from "../../api/testeOptico";
+import { DropTesteOptico, GetTesteOptico } from "../../api/testeOptico";
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';
@@ -55,7 +55,7 @@ function TesteOptico() {
   const controller = new AbortController();
   const signal = controller.signal;
 
-  async function fetchDropFilter () {
+  async function FetchDropFilter () {
     
     try {
       const dropList = await DropTesteOptico();
@@ -133,7 +133,7 @@ function TesteOptico() {
         DataConstrucao : _dateInputConstrucao
       };
 
-      const response = await getTesteOptico(filtro, {signal});
+      const response = await GetTesteOptico(filtro, {signal});
 
       if(response.status == 200) {
         setTesteOptico(response.data);
@@ -148,6 +148,7 @@ function TesteOptico() {
       setInitialLoad(false);
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitClicked]);
 
   // Função para avançar para a próxima página
@@ -165,7 +166,7 @@ function TesteOptico() {
   };
 
   useEffect(() => {
-    fetchDropFilter()
+    FetchDropFilter()
 
   },[dropLoading])
 
@@ -185,6 +186,7 @@ function TesteOptico() {
       return () => { controller.abort() };
     }
     
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchTesteOptico]);
 
   const columns = [

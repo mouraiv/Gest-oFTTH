@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Input } from "./styles";
-import { DetalheTesteOptico, updateTesteOptico, DropTesteOptico } from "../../../api/testeOptico";
+import { DetalheTesteOptico, UpdateTesteOptico, DropTesteOptico } from "../../../api/testeOptico";
 import { GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../../GlobalStyle";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
@@ -29,7 +29,7 @@ function Editar() {
     const [submitClicked, setSubmitClicked] = useState(false);
 
 
-    async function fetchDropFilter () {
+    async function FetchDropFilter () {
     
         try {
           const dropList = await DropTesteOptico();
@@ -57,7 +57,7 @@ function Editar() {
 
       }
 
-    async function fetchUpdateTesteOptico() {
+    async function FetchUpdateTesteOptico() {
         try {
 
             const testeOpticoData = {
@@ -72,7 +72,7 @@ function Editar() {
             testeOpticoData.dataRecebimento = formatarDateJson(dateInputRecebimento);
             testeOpticoData.dataTeste = formatarDateJson(dateInputTeste);
          
-            const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
+            const testeOpticoResponse = await UpdateTesteOptico(testeOpticoData);
     
             if (testeOpticoResponse.status == 200) {
                 setDialogAviso(false);
@@ -118,10 +118,11 @@ function Editar() {
             setLoading(true);
         }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [submitClicked]);
 
     useEffect(() => {
-        fetchDropFilter();
+        FetchDropFilter();
     
     },[]);
 
@@ -156,7 +157,7 @@ function Editar() {
             setMensagem(`Preencha os campos obrigatórios: ${camposVazios.join(', ')}`);
             setVisible(true);
         } else {
-            fetchUpdateTesteOptico();
+            FetchUpdateTesteOptico();
         }
     }
 

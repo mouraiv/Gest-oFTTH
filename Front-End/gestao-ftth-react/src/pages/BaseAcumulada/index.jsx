@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { getBaseAcumulada } from "../../api/enterecoTotais";
+import { GetBaseAcumulada } from "../../api/enterecoTotais";
 import { ufOptions, grupoOperacionalOptions,localidadeOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
@@ -36,8 +35,6 @@ function BaseAcumulada() {
   const [submitClicked, setSubmitClicked] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
 
-  const navigate = useNavigate();
-
   const controller = new AbortController();
   const signal = controller.signal;
 
@@ -59,7 +56,7 @@ function BaseAcumulada() {
         EstadoControle: estadoControle,
       };
 
-      const response = await getBaseAcumulada(filtro, {signal});
+      const response = await GetBaseAcumulada(filtro, {signal});
 
       if(response.status == 200) {
         setEnderecoTotal(response.data);
@@ -74,6 +71,7 @@ function BaseAcumulada() {
       setInitialLoad(false);
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitClicked]);
 
   // Função para avançar para a próxima página
@@ -106,6 +104,7 @@ function BaseAcumulada() {
       return () => { controller.abort() };
     }
     
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEnderecoTotal]);
 
   const columns = [

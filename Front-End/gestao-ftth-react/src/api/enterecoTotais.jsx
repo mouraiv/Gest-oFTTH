@@ -1,7 +1,7 @@
-import api from '../services/api';
+import Api from '../services/api';
 
-export const getEnderecoTotalAny = async (id) => {
-  const response = await api.get('/EnderecoTotal/Carregar', {
+const GetEnderecoTotalAny = async (id) => {
+  const response = await Api.get('/EnderecoTotal/Carregar', {
     params: {id},
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -11,8 +11,8 @@ export const getEnderecoTotalAny = async (id) => {
   return response;
 };
 
-export const getCarregarEnderecoTotal = async (id) => {
-  const response = await api.get('/EnderecoTotal/ListarCarregarId', {
+const GetCarregarEnderecoTotal = async (id) => {
+  const response = await Api.get('/EnderecoTotal/ListarCarregarId', {
     params: {id},
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -22,8 +22,8 @@ export const getCarregarEnderecoTotal = async (id) => {
   return response;
 };
 
-export const getEnderecoTotal = async (filtro, {signal}) => {
-  const response = await api.post('/EnderecoTotal/Listar', filtro, {
+const GetEnderecoTotal = async (filtro, {signal}) => {
+  const response = await Api.post('/EnderecoTotal/Listar', filtro, {
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },
@@ -33,8 +33,8 @@ export const getEnderecoTotal = async (filtro, {signal}) => {
   return response;
 };
 
-export const getBaseAcumulada = async (filtro, {signal}) => {
-  const response = await api.get('/EnderecoTotal/BaseAcumulada', {
+const GetBaseAcumulada = async (filtro, {signal}) => {
+  const response = await Api.get('/EnderecoTotal/BaseAcumulada', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -45,8 +45,8 @@ export const getBaseAcumulada = async (filtro, {signal}) => {
   return response;
 };
 
-export const getGanhoSurvey = async (filtro, {signal}) => {
-  const response = await api.get('/EnderecoTotal/GanhoSurvey', {
+const GetGanhoSurvey = async (filtro, {signal}) => {
+  const response = await Api.get('/EnderecoTotal/GanhoSurvey', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -57,8 +57,8 @@ export const getGanhoSurvey = async (filtro, {signal}) => {
   return response;
 };
 
-export const getGanhoSurveyDia = async (filtro) => {
-  const response = await api.get('/EnderecoTotal/GanhoSurveyDia', {
+const GetGanhoSurveyDia = async (filtro) => {
+  const response = await Api.get('/EnderecoTotal/GanhoSurveyDia', {
     params: filtro,
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -67,3 +67,12 @@ export const getGanhoSurveyDia = async (filtro) => {
 
   return response;
 };
+
+export {
+  GetBaseAcumulada,
+  GetEnderecoTotal,
+  GetCarregarEnderecoTotal,
+  GetGanhoSurveyDia,
+  GetGanhoSurvey,
+  GetEnderecoTotalAny
+}

@@ -2,14 +2,14 @@ import {useState, useEffect, useRef} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, ButtonImagem, FooterButton, ButtonCdoia, TableGrid} from "./styles";
 import { DetalheTesteOptico} from "../../api/testeOptico";
-import { DetahleMaterialRedeAny} from "../../api/materialRede";
-import { updateAnalise, createAnalise, deleteAnalise } from "../../api/analise";
-import { updateAnaliseCdoia, createAnaliseCdoia, deleteAnaliseCdoia } from "../../api/cdoia";
+import { DetalheMaterialRedeAny} from "../../api/materialRede";
+import { UpdateAnalise, CreateAnalise, DeleteAnalise } from "../../api/analise";
+import { UpdateAnaliseCdoia, CreateAnaliseCdoia, DeleteAnaliseCdoia } from "../../api/cdoia";
 import { Content, GlobalStyle, Template, ButtonCancelar, ButtonConfirma } from "../../GlobalStyle";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import Spinner from '../../components/Spinner';
-import { useAuth } from "../../contexts/auth";
+import { UseAuth } from "../../contexts/auth";
 import DialogAlert from "../../components/Dialog";
 
 function Vizualizar(){
@@ -31,7 +31,7 @@ function Vizualizar(){
 
     const navigate = useNavigate();
     const inputRef = useRef();
-    const { user } = useAuth();
+    const { user } = UseAuth();
     const _dataAtual = dataAtual.toISOString();
     const{ name } = event.target ?? "";
     const removeDateObs = /\[ \d{2}\/\d{2}\/\d{4} \]/g;
@@ -73,7 +73,7 @@ function Vizualizar(){
     } = analises?.[analises.length - 1] ?? {};
 
 
-    async function fetchValidar(hd_status) {
+    async function FetchValidar(hd_status) {
         try {
 
             const _status = hd_status;
@@ -98,14 +98,14 @@ function Vizualizar(){
                 
                 ultimaAnalise.analiseObservacao = inputObs != "" ? `${_observacao}` : `${ultimaAnalise.analiseObservacao}`;
                 
-                const analiseResponse = await updateAnalise(ultimaAnalise);
+                const analiseResponse = await UpdateAnalise(ultimaAnalise);
       
                   if (analiseResponse.status === 200) {
                       console.log("Validado com sucesso")
                   };  
               
               }else{
-                fetchInsertValidar(_status);
+                FetchInsertValidar(_status);
     
               }
             }
@@ -155,7 +155,7 @@ function Vizualizar(){
         }
     }
 
-    async function fetchInsertValidar(hd_status) {
+    async function FetchInsertValidar(hd_status) {
       
       try {
           const analiseInsert = {
@@ -167,7 +167,7 @@ function Vizualizar(){
             id_TesteOptico: id,
           }
 
-          const analiseResponse = await createAnalise(analiseInsert);
+          const analiseResponse = await CreateAnalise(analiseInsert);
   
           if (analiseResponse.status === 200) {
             console.log("Analisado com sucesso")
@@ -184,9 +184,9 @@ function Vizualizar(){
       }
     }
 
-    async function fetchDeleteCdo(){
+    async function FetchDeleteCdo(){
       try {
-        const response = await deleteAnalise(idAnalise);
+        const response = await DeleteAnalise(idAnalise);
 
         if(response.status == 200) {
           console.log("Excluido com sucesso");
@@ -202,7 +202,7 @@ function Vizualizar(){
       }
     }
 
-    async function fetchInsertValidarCdoia() {
+    async function FetchInsertValidarCdoia() {
       try {
           const analiseInsert = {
             cdoia: inputCdoia ?? "1",
@@ -213,7 +213,7 @@ function Vizualizar(){
             id_Analise: id_Analise
           }
 
-          const analiseResponse = await createAnaliseCdoia(analiseInsert);
+          const analiseResponse = await CreateAnaliseCdoia(analiseInsert);
   
           if (analiseResponse.status === 200) {
             console.log("Analisado com sucesso")
@@ -230,7 +230,7 @@ function Vizualizar(){
       }
     }
 
-    async function fetchEditarCdoia() {
+    async function FetchEditarCdoia() {
       try {
           const analiseData = {
               ...analiseCDOIAs[0]
@@ -243,7 +243,7 @@ function Vizualizar(){
             analiseData.dataAnalise = _dataAtual;
             analiseData.cdoiaObservacao = currentCdoia.cdoiaObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${currentCdoia.cdoiaObservacao.replace(removeDateObs,"")}` : "";
 
-            const analiseResponse = await updateAnaliseCdoia(analiseData);
+            const analiseResponse = await UpdateAnaliseCdoia(analiseData);
   
             if (analiseResponse.status === 200) {
                 console.log("Analisado com sucesso");
@@ -258,11 +258,11 @@ function Vizualizar(){
       } finally {
           setLoading(true);
       }
-  }
+    }
 
-  async function fetchDeleteCdoia(){
+    async function FetchDeleteCdoia(){
       try {
-        const response = await deleteAnaliseCdoia(currentCdoia.idAnaliseCdoia);
+        const response = await DeleteAnaliseCdoia(currentCdoia.idAnaliseCdoia);
 
         if(response.status == 200) {
           console.log("Excluido com sucesso");
@@ -276,16 +276,16 @@ function Vizualizar(){
       } finally {
         setLoading(true);
       }
-  }
+    }
 
-    async function fecthDetalheTesteOptico(){
+    async function FecthDetalheTesteOptico(){
         try {
             const detalheTesteOptico = await DetalheTesteOptico(id);
             
             if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
 
-                const detalheMaterialRede = await DetahleMaterialRedeAny(idNetwin);
+                const detalheMaterialRede = await DetalheMaterialRedeAny(idNetwin);
 
                 if(detalheMaterialRede.status == 200) {
                   setMaterialRede(detalheMaterialRede.data);
@@ -302,8 +302,9 @@ function Vizualizar(){
   }
 
     useEffect(() => {
-      fecthDetalheTesteOptico();
+      FecthDetalheTesteOptico();
       
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[loading]);
 
     const tipoCdoe = () => {
@@ -396,7 +397,7 @@ function Vizualizar(){
 
     const confirmarEditCdoia = () => {
       currentCdoia.cdoiaStatus = selectedOption;
-      fetchEditarCdoia();
+      FetchEditarCdoia();
       setVisible(false);
       setLoading(false);
     }
@@ -409,7 +410,7 @@ function Vizualizar(){
     }
 
     const ConfirmarExluirCdoia = () => {
-      fetchDeleteCdoia();
+      FetchDeleteCdoia();
       setVisible(false);
       setLoading(false);
 
@@ -423,7 +424,7 @@ function Vizualizar(){
     }
 
     const ConfirmarExluirCdo = () => {
-      fetchDeleteCdo();
+      FetchDeleteCdo();
       setVisible(false);
       setLoading(false);
 
@@ -450,11 +451,11 @@ function Vizualizar(){
 
       }else{
         if(name === 'aprovado') {
-          fetchValidar("APROVADO");
+          FetchValidar("APROVADO");
           setVisible(false);
 
         }else{
-          fetchValidar("REPROVADO");
+          FetchValidar("REPROVADO");
           setVisible(false);
 
         }
@@ -473,7 +474,7 @@ function Vizualizar(){
 
       }else{
         setMensagem("");
-        fetchInsertValidarCdoia();
+        FetchInsertValidarCdoia();
         setInputCdoia("1")
         setVisible(false);
 

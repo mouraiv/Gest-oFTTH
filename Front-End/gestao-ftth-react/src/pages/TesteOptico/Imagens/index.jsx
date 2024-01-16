@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Content, GlobalStyle, RotuloTitulo, Template, ImputError, MsgError, MsgSucess } from '../../../GlobalStyle';
-import { getVisualizarArquivo, deleteImagem, fazerUploadDeArquivo } from "../../../api/base";
+import { GetVisualizarArquivo, DeleteImagem, FazerUploadDeArquivo } from "../../../api/base";
 import { ImportArea, NavArea, ButtonImport, InputImport, ButtonUpload, ImagemArea, ButtonDWG} from "./style";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
@@ -22,9 +22,8 @@ function Imagem(){
 
     const inputFile= useRef();
     const inputRef = useRef();
-    const navigate = useNavigate();
-
-    async function fetchUploadImage(){
+ 
+    async function FetchUploadImage(){
 
       try{
         const filtro = {
@@ -34,7 +33,7 @@ function Imagem(){
           CDOIA: cdoia,
         };
 
-        const response = await fazerUploadDeArquivo(arquivo, filtro);
+        const response = await FazerUploadDeArquivo(arquivo, filtro);
        
         if (response.status == 200) {
           setMensagem({tipo: 'error', msg: ''});
@@ -52,9 +51,9 @@ function Imagem(){
       }
     }
 
-    async function fetchDeletaArquivo(){
+    async function FetchDeletaArquivo(){
       try {
-        const response = await deleteImagem(urlImage);
+        const response = await DeleteImagem(urlImage);
 
         if(response.status == 200) {
           setMensagem({tipo: 'sucesso', msg: response.data});
@@ -73,7 +72,7 @@ function Imagem(){
       }
     }
 
-    async function fetchVizualizarArquivo() {
+    async function FetchVizualizarArquivo() {
       
         try {
           const filtro = {
@@ -82,7 +81,7 @@ function Imagem(){
             CDO: cdo,
           };
 
-          const response = await getVisualizarArquivo(filtro);
+          const response = await GetVisualizarArquivo(filtro);
          
           if(response.status == 200) {
             setTesteOptico(response.data)
@@ -97,8 +96,9 @@ function Imagem(){
       }
     
       useEffect(() => {
-          fetchVizualizarArquivo();
+          FetchVizualizarArquivo();
           
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [loading]);
 
       function groupUrlsByFolders(testeOptico) {
@@ -124,7 +124,7 @@ function Imagem(){
       }
     
       const ExcluirFecth = async () => {
-        await fetchDeletaArquivo();
+        await FetchDeletaArquivo();
         setUrlImage("");
         setVisible(false);
         setLoading(false);
@@ -151,7 +151,7 @@ function Imagem(){
       const handleUpload = async () => {
         
         if (arquivo) {
-          await fetchUploadImage();
+          await FetchUploadImage();
           
           if (inputFile.current) {
             inputFile.current.value = null;

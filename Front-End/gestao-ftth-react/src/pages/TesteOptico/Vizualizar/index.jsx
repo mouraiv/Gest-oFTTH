@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Tab, Tabs, Toast } from 'react-bootstrap';
+import { Tab, Tabs } from 'react-bootstrap';
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonCancelar, ButtonConfirma, Content, GlobalStyle, Template } from "../../../GlobalStyle";
-import { DetahleMaterialRedeAny } from "../../../api/materialRede";
-import { DetalheTesteOptico, updateTesteOptico } from "../../../api/testeOptico";
-import { createValidacao } from '../../../api/validacao';
+import { DetalheMaterialRedeAny } from "../../../api/materialRede";
+import { DetalheTesteOptico, UpdateTesteOptico } from "../../../api/testeOptico";
+import { CreateValidacao } from '../../../api/validacao';
 import DialogAlert from "../../../components/Dialog";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
-import { useAuth } from "../../../contexts/auth";
+import { UseAuth } from "../../../contexts/auth";
 import { FaLocationDot } from 'react-icons/fa6';
 import { ButtonImagem, ButtonReValidar, ButtonValidar, ContentTabs, FooterButton, TableGrid } from "./style";
 
@@ -42,7 +42,7 @@ function Vizualizar(){
     const [initialLoad, setInitialLoad] = useState(true);
 
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user } = UseAuth();
 
     const { analises } = testeOptico;
     const { ligacao, enderecoTotal } = materialRede ?? {};
@@ -68,10 +68,10 @@ function Vizualizar(){
             }
 
     
-            const testeOpticoResponse = await updateTesteOptico(testeOpticoData);
+            const testeOpticoResponse = await UpdateTesteOptico(testeOpticoData);
     
             if (testeOpticoResponse.status === 200) {
-                await createValidacao(validacao);
+                await CreateValidacao(validacao);
             }
 
         } catch (error) {
@@ -107,11 +107,12 @@ function Vizualizar(){
             setLoading(true);
             setInitialLoad(false);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     } , [submitClicked]);
 
     const fecthDetalheMaterialRede = useCallback(async () => {
         try {
-            const detalheMaterialRede = await DetahleMaterialRedeAny(idNetwin);
+            const detalheMaterialRede = await DetalheMaterialRedeAny(idNetwin);
 
             if(detalheMaterialRede.status == 200) {
                 setMaterialRede(detalheMaterialRede.data);
@@ -132,6 +133,7 @@ function Vizualizar(){
         } finally {
             setLoadingMaterial(true);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [submitClicked]);
 
 
@@ -144,6 +146,7 @@ function Vizualizar(){
         }
         setSubmitClicked(false); 
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fecthDetalheTesteOptico, fecthDetalheMaterialRede]);    
 
     const statusAnalise = () => {
@@ -687,7 +690,10 @@ function Vizualizar(){
                                         .filter((value) => value.cod_Survey !== survey)
                                         .map((valueEndereco, index) => (
                                         <tr
-                                            id-statusganho={valueEndereco.id_StatusGanho}
+                                        style={valueEndereco.id_StatusGanho === 1 ?
+                                            { backgroundColor: '#D5F5E3'} : 
+                                            { backgroundColor: '#FADBD8'}}
+                                            
                                             key={index + 1}
                                             id={valueEndereco.cod_Survey}
                                             onClick={handleTesteOpticoDetalhe}
@@ -1077,7 +1083,9 @@ function Vizualizar(){
                                         .filter((value) => value.cod_Survey !== survey)
                                         .map((valueEndereco, index) => (
                                         <tr
-                                            id-statusganho={valueEndereco.id_StatusGanho}
+                                            style={valueEndereco.id_StatusGanho === 1 ?
+                                                { backgroundColor: '#D5F5E3'} : 
+                                                { backgroundColor: '#FADBD8'}}
                                             key={index + 1}
                                             id={valueEndereco.cod_Survey}
                                             onClick={handleTesteOpticoDetalhe}

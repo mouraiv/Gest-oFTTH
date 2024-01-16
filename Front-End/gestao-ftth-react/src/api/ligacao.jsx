@@ -1,7 +1,7 @@
-import api from '../services/api';
+import Api from '../services/api';
 
-export const getCarregarLigacao = async (id) => {
-    const response = await api.get('/Ligacao/ListarCarregarId', {
+const GetCarregarLigacao = async (id) => {
+    const response = await Api.get('/Ligacao/ListarCarregarId', {
       params: {id},
       headers:{
         'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -11,8 +11,8 @@ export const getCarregarLigacao = async (id) => {
     return response;
   };
 
-  export const getLigacaoAny = async (id) => {
-    const response = await api.get('/Ligacao/Carregar', {
+const GetLigacaoAny = async (id) => {
+    const response = await Api.get('/Ligacao/Carregar', {
       params: {id},
       headers:{
         'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
@@ -21,3 +21,8 @@ export const getCarregarLigacao = async (id) => {
   
     return response;
   };
+
+  export {
+    GetCarregarLigacao,
+    GetLigacaoAny
+  }

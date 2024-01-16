@@ -1,15 +1,13 @@
 import React from "react";
 import { Container } from "./styles";
-import { useAuth } from "../../contexts/auth";
+import { UseAuth } from "../../contexts/auth";
 import { GlobalStyle, Template } from "../../GlobalStyle";
 import Header from "../../components/Header"
 import InfoDataBase from "../../components/DbInfo"
 import Footer from "../../components/Footer"
-import Spinner from "../../components/Spinner";
-
 
 function Home() {
-    const { user } = useAuth();
+    const { user } = UseAuth();
 
     GlobalStyle();
 

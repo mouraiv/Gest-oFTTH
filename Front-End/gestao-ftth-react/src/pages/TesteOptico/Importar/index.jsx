@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef, useCallback} from "react";
-import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
-import { getControleCdo, ImportarArquivo} from "../../../api/testeOptico";
+import { GetControleCdo, ImportarArquivo} from "../../../api/testeOptico";
 import { DownloadArquivo } from "../../../api/base";
 import DataGridTable from '../../../components/DataGrid';
 import { ImportArea, InputImport, ButtonUpload, ButtonDownload, LinhaVertical } from "./style";
@@ -23,18 +22,17 @@ function ImportFile(){
     const [submitClicked, setSubmitClicked] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
 
-    const navigate = useNavigate();
     const inputRef = useRef(null);
     const { name } = event.target ?? "";
 
     const controller = new AbortController();
     const signal = controller.signal;
 
-    async function fetchDownloadModelo(){
+    async function FetchDownloadModelo(){
         await DownloadArquivo();
     }
 
-    async function fetchUpaloadArquivo(arquivo){
+    async function FetchUpaloadArquivo(arquivo){
       try {
         const importar = await ImportarArquivo(arquivo);
 
@@ -66,7 +64,7 @@ function ImportFile(){
           Set : 1
         };
     
-        const response = await getControleCdo(filtro, {signal});
+        const response = await GetControleCdo(filtro, {signal});
 
         if(response.status == 200) {
           setTesteOptico(response.data);
@@ -85,6 +83,7 @@ function ImportFile(){
 
         }    
         
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [submitClicked]);
     
       // Função para avançar para a próxima página
@@ -119,6 +118,7 @@ function ImportFile(){
           };
         }
         
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [fetchTesteOptico]);
 
       const columns = [
@@ -145,7 +145,7 @@ function ImportFile(){
         setEvent(e);
 
         if(file){
-          await fetchUpaloadArquivo(file)
+          await FetchUpaloadArquivo(file)
           setDialogAviso(false);
           fetchLoading();
           setLoading(false);
@@ -157,7 +157,7 @@ function ImportFile(){
       };
     
       const downloadModelo = async ()=> {
-        await fetchDownloadModelo();
+        await FetchDownloadModelo();
       }
 
       const fetchLoading = (value) => {

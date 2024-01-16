@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { InfoData } from "./styles";
-import { getInfo } from "../../api/info";
+import { GetInfo } from "../../api/info";
 import { FaDatabase } from 'react-icons/fa6';
 
 export default function InfoDataBase() {
@@ -9,7 +9,7 @@ export default function InfoDataBase() {
 
     async function fecthInfo(){
         try {
-            const detalheInfo = await getInfo();
+            const detalheInfo = await GetInfo();
 
             if(detalheInfo.status == 200) {
                 setInfo(detalheInfo.data);
