@@ -90,7 +90,7 @@ const ExportExcel = async (filtro) => {
       window.URL.revokeObjectURL(url);
   
   } catch (error) {
-      return 'Erro ao baixar o arquivo:', error;
+        return 'Erro ao baixar o arquivo:', error;
   }
   };
 

@@ -109,15 +109,18 @@ function EnderecoTotal() {
 
   async function FetchExportExcel(){
     try {
-      await ExportExcel(filtro);
+      const excel = await ExportExcel(filtro);
+
+      if(excel.response.request.status == 400){
+        setCarregarExport(false)
+        setMensagem('O filtro não pode exceder 1.000.000 de registros para exportação.');
+
+      }
 
     } catch (error) {
-      setMensagem(`Erro ao carregar : ${error}`)
+      setMensagem(`Erro ao carregar : ${error}`);
       setVisible(true);
       
-    }finally{
-      setVisible(false)
-      setCarregarExport(false)
     }
     
   }
