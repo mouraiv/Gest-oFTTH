@@ -7,6 +7,7 @@ export const Filter = styled("div", {
     fontSize: '0.8rem',
     fontWeight: '700',
     paddingBottom: '0.7rem',
+    position:'relative'
 });
 
 export const ButtonUpload = styled("button", {
@@ -26,6 +27,20 @@ export const ButtonUpload = styled("button", {
 
     '&:active' : {
         backgroundColor: '#5D6D7E',   
+    }
+});
+
+export const ButtonExportarExcel = styled("button", {
+    backgroundColor: '#229954',
+    padding: '0.2rem',
+    border: '1px solid #005A05',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    width: '100px',
+    color: '#ffffff',
+
+    '&:active':{
+    backgroundColor: '#196F3D',
     }
 });
 

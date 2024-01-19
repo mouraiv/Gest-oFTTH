@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { GetEnderecoTotal } from "../../api/enterecoTotais";
+import { GetEnderecoTotal, ExportExcel } from "../../api/enterecoTotais";
 import { ufOptions, dispComercialOptions, grupoOperacionalOptions,localidadeOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import DataGridTable from '../../components/DataGrid';
@@ -9,7 +9,7 @@ import Header from "../../components/Header";
 import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import DropBox from '../../components/dropbox';
-import { Filter, ButtonUpload, ProgressBar } from './styles';
+import { Filter, ButtonUpload, ProgressBar, ButtonExportarExcel } from './styles';
 import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 
@@ -46,6 +46,7 @@ function EnderecoTotal() {
   const [viewListSurvey, setViewListSurvey] = useState("");
   const [listLocalSurvey, setListLocalSurvey] = useState(false);
   const [carregarListsurvey, setCarregarListSurvey] = useState(false);
+  const [carregarExport, setCarregarExport] = useState(false);
   const [progresso, setProgresso] = useState(0);
 
   const controller = new AbortController();
@@ -90,24 +91,40 @@ function EnderecoTotal() {
     );
   },[cdoInput, construtora, dispComercial, estacao, estadoControle, estadoOperacional, grupoOperacional, siglaEstacao, uf, viabilidade])
 
+  const filtro = {
+    pagina : currentPage,
+    totalSurveyList: countListSurvey,
+    UF : uf,
+    Localidade : construtora,
+    SiglaEstacao : siglaEstacao,
+    Estacao : estacao,
+    CDO: cdoInput,
+    Cod_Viabilidade : viabilidade,
+    Cod_Survey: survey !== "" ? survey : surveyInput,
+    Id_Disponibilidade: dispComercial,
+    GrupoOperacional : grupoOperacional,
+    EstadoOperacional: estadoOperacional,
+    EstadoControle: estadoControle,
+  };
+
+  async function FetchExportExcel(){
+    try {
+      await ExportExcel(filtro);
+
+    } catch (error) {
+      setMensagem(`Erro ao carregar : ${error}`)
+      setVisible(true);
+      
+    }finally{
+      setVisible(false)
+      setCarregarExport(false)
+    }
+    
+  }
+
   const fetchEnderecoTotal = useCallback(async () => {    
     try {
-      const filtro = {
-        pagina : currentPage,
-        totalSurveyList: countListSurvey,
-        UF : uf,
-        Localidade : construtora,
-        SiglaEstacao : siglaEstacao,
-        Estacao : estacao,
-        CDO: cdoInput,
-        Cod_Viabilidade : viabilidade,
-        Cod_Survey: survey !== "" ? survey : surveyInput,
-        Id_Disponibilidade: dispComercial,
-        GrupoOperacional : grupoOperacional,
-        EstadoOperacional: estadoOperacional,
-        EstadoControle: estadoControle,
-      };
-      
+    
       if(listLocalSurvey) {
         const surveyFiltro = await aplicarFiltros(enderecoTotal.resultado);
         let _survey = {
@@ -298,6 +315,12 @@ function EnderecoTotal() {
     setVisibleSurvey(true);
   }
 
+  const handleExportExcel = () => {
+    setVisible(true)
+    setCarregarExport(true)
+    FetchExportExcel();
+  }
+
   const submit = () => {
     setSubmitClicked(true);
     setCurrentPage(1);
@@ -412,13 +435,17 @@ return (
           <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
-                    header={<h4>Atenção</h4>}
-                    colorType={'#ff0000'}
+                    header={carregarExport ?? <h4>Atenção</h4>}
+                    colorType={carregarExport ?? '#ff0000'}
                     ConfirmaButton={false}
                     textCloseButton={'Ok'}
                     text={
                         <>
+                        { carregarExport ? (
+                          <p>Carregando...</p>
+                        ):(
                         <p>{mensagem}</p>
+                        )}
                         </>
                     }
                 />
@@ -508,7 +535,10 @@ return (
 
               </div>
 
-                
+              <div style={{position:'absolute', right:0, top:0, marginTop:'0.3rem', marginRight:'0.4rem'}}>
+                <ButtonExportarExcel onClick={handleExportExcel}>Exportar Excel</ButtonExportarExcel>
+              </div>
+                              
               <div style={{display: 'flex'}}>
               
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
@@ -527,8 +557,12 @@ return (
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Est. Operacional"} event={handleOperacional} lista={operacionalOptions.sort()} text={estadoOperacional} />
               </div>
-              <ButtonDefaut event={submit} text={"Filtrar"} />
-              <ButtonDefaut event={limparFiltro} text={"Limpar"} />
+
+              <div style={{display: 'flex', marginRight:'1rem'}}>
+                <ButtonDefaut event={submit} text={"Filtrar"} />
+                <ButtonDefaut event={limparFiltro} text={"Limpar"} />
+              </div>
+
               </div>
               </div>           
             </Filter>
