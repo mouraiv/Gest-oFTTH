@@ -90,7 +90,7 @@ function EnderecoTotal() {
     );
   },[cdoInput, construtora, dispComercial, estacao, estadoControle, estadoOperacional, grupoOperacional, siglaEstacao, uf, viabilidade])
 
-  const fetchEnderecoTotal = useCallback(async () => {
+  const fetchEnderecoTotal = useCallback(async () => {    
     try {
       const filtro = {
         pagina : currentPage,
@@ -109,8 +109,18 @@ function EnderecoTotal() {
       };
       
       if(listLocalSurvey) {
-        const surveyFiltro = await aplicarFiltros(enderecoTotal?.resultado);
-        setEnderecoTotalLocal(surveyFiltro);
+        const surveyFiltro = await aplicarFiltros(enderecoTotal.resultado);
+        let _survey = {
+          paginacao:{
+            pagina: 1,
+            paginasCorrentes: surveyFiltro.length,
+            tamanho: surveyFiltro.length,
+            total: surveyFiltro.length,
+            totalPaginas:1
+          },
+          resultado: surveyFiltro
+        }
+        setEnderecoTotalLocal(_survey);
           
       } else {
         const response = await GetEnderecoTotal(filtro, {signal});
@@ -128,7 +138,7 @@ function EnderecoTotal() {
       setLoading(true)
       setInitialLoad(false);
       setCarregarListSurvey(false);
-      survey !== "" ? setListLocalSurvey(true) : setListLocalSurvey(false);
+      countListSurvey > 4 ? setListLocalSurvey(true) : setListLocalSurvey(false);
             
     }
 
@@ -292,10 +302,16 @@ function EnderecoTotal() {
     setSubmitClicked(true);
     setCurrentPage(1);
     segundos();
-    if(countListSurvey === 0){
-      setEnderecoTotalLocal({});
-     }else{
+    if(countListSurvey > 4){
+      if(enderecoTotalLocal.resultado === undefined){
+        startProgressSurvey();
+      }
       setCarregarListSurvey(true);
+      
+     }else{
+      setEnderecoTotalLocal({});
+      setListLocalSurvey(false);
+      
     }
     
   };
@@ -329,7 +345,7 @@ function EnderecoTotal() {
     setLoading(false);
   }
 
-  useEffect(() => {
+  const startProgressSurvey = () => {
       let tempoDecorrido = 0;
 
       // Calcula o incremento de tempo para cada intervalo com base no tempo máximo
@@ -346,7 +362,7 @@ function EnderecoTotal() {
 
       return () => clearInterval(intervalId); // Limpeza no desmonte
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [carregarListsurvey]);
+  };
 
 return (
       <>
@@ -483,7 +499,7 @@ return (
                   width: '150px',
                   height: '24px',
                   textTransform: 'uppercase'
-                }} label={"Survey"} maxLength="30" onChange={handleSurvey} />
+                }} label={"Survey"} maxLength="30" onChange={handleSurvey} value={surveyInput} />
               )
               }
               <ButtonUpload name="upload" onClick={handleImportSurvey} >Lista</ButtonUpload>
@@ -524,7 +540,7 @@ return (
                   <>
                   <DataGridTable 
                     columns={columns} 
-                    rows={enderecoTotalLocal.length > 0 ? enderecoTotalLocal : enderecoTotal.resultado} 
+                    rows={enderecoTotal.resultado} 
                     paginacao={enderecoTotal.paginacao}
                     pagina={currentPage}
                     sel={enderecoTotal.sel}
@@ -556,8 +572,8 @@ return (
                   <>
                   <DataGridTable 
                     columns={columns} 
-                    rows={enderecoTotal.resultado} 
-                    paginacao={enderecoTotal.paginacao}
+                    rows={enderecoTotalLocal?.resultado !== undefined ? enderecoTotalLocal.resultado : enderecoTotal.resultado} 
+                    paginacao={enderecoTotalLocal?.resultado !== undefined ? enderecoTotalLocal.paginacao : enderecoTotal.paginacao}
                     pagina={currentPage}
                     sel={enderecoTotal.sel}
                     left={prevPage}

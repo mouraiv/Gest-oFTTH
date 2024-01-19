@@ -132,7 +132,7 @@ namespace WebApiSwagger.Repository
             }
             
         }
-        public async Task<IEnumerable<EnderecoTotal>> Listar(FiltroEnderecoTotal filtro, Paginacao paginacao)
+        public async Task<IEnumerable<EnderecoTotal>> Listar(FiltroEnderecoTotal filtro, Paginacao paginacao, int pageOff)
         {
               try
             {
@@ -230,9 +230,11 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Total = await query.CountAsync();
                     
-                    query = query
-                        .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
-                        .Take(paginacao.Tamanho);
+                    if(pageOff == 1){
+                        query = query
+                            .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
+                            .Take(paginacao.Tamanho);
+                    }
 
                     return await query.ToListAsync();             
 
