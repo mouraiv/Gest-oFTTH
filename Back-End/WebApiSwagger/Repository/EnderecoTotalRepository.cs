@@ -228,15 +228,26 @@ namespace WebApiSwagger.Repository
                     // Aplica a ordenação
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
-                    paginacao.Total = await query.CountAsync();
+                    var _registros = await query.CountAsync();
+
+                    paginacao.Total = _registros;
                     
-                    if(pageOff == 1){
+                    if(pageOff == 1){   
                         query = query
                             .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                             .Take(paginacao.Tamanho);
-                    }
 
-                    return await query.ToListAsync();             
+                        return await query.ToListAsync(); 
+
+                    }else{
+                        if(_registros <= 1000000){
+                            return await query.ToListAsync();
+
+                        }else{
+                            throw new Exception("O filtro não pode exceder 1.000.000 de registros para exportação.");
+                            
+                        }  
+                    }
 
                 }
 

@@ -12,6 +12,7 @@ import DropBox from '../../components/dropbox';
 import { Filter, ButtonUpload, ProgressBar, ButtonExportarExcel } from './styles';
 import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
+import { formatarNumero } from "../../util/formatarNumeros";
 
 function EnderecoTotal() {
   GlobalStyle();
@@ -52,6 +53,7 @@ function EnderecoTotal() {
   const controller = new AbortController();
   const signal = controller.signal;
   const intervalo = 100;
+  const totalRegistros = enderecoTotal?.paginacao?.total;
 
   const segundos = () => {
     let milissegundos;
@@ -107,22 +109,25 @@ function EnderecoTotal() {
     EstadoControle: estadoControle,
   };
 
-  async function FetchExportExcel(){
+  function FetchExportExcel(){
     try {
-      const excel = await ExportExcel(filtro);
-
-      if(excel.response.request.status == 400){
+      if(totalRegistros <= 1000000){
+        ExportExcel(filtro).finally(() => {
+          setVisible(false);
+          setCarregarExport(false);
+        });
+          
+      }else{
         setCarregarExport(false)
         setMensagem('O filtro não pode exceder 1.000.000 de registros para exportação.');
-
       }
 
     } catch (error) {
       setMensagem(`Erro ao carregar : ${error}`);
       setVisible(true);
       
-    }
-    
+    } 
+
   }
 
   const fetchEnderecoTotal = useCallback(async () => {    
@@ -319,8 +324,9 @@ function EnderecoTotal() {
   }
 
   const handleExportExcel = () => {
-    setVisible(true)
-    setCarregarExport(true)
+    setVisible(true);
+    startProgressSurvey(5000);
+    setCarregarExport(true);
     FetchExportExcel();
   }
 
@@ -330,7 +336,7 @@ function EnderecoTotal() {
     segundos();
     if(countListSurvey > 4){
       if(enderecoTotalLocal.resultado === undefined){
-        startProgressSurvey();
+        startProgressSurvey(segundos());
       }
       setCarregarListSurvey(true);
       
@@ -371,19 +377,21 @@ function EnderecoTotal() {
     setLoading(false);
   }
 
-  const startProgressSurvey = () => {
+  const startProgressSurvey = (segundos, clear) => {
       let tempoDecorrido = 0;
-
+      
       // Calcula o incremento de tempo para cada intervalo com base no tempo máximo
-      const incremento = (segundos() / (segundos() / intervalo));
+      const incremento = (segundos / (segundos / intervalo));
 
       const intervalId = setInterval(() => {
           tempoDecorrido += incremento;
-          setProgresso(tempoDecorrido / segundos() * 100);
+          
+          setProgresso(tempoDecorrido / segundos * 100);
 
-          if (tempoDecorrido >= segundos()) {
+          if (tempoDecorrido >= segundos) {
               clearInterval(intervalId);
           }
+        
       }, intervalo);
 
       return () => clearInterval(intervalId); // Limpeza no desmonte
@@ -409,7 +417,7 @@ return (
                         <>
                         <p style={countListSurvey < 59999 ? 
                         {fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic'} :
-                        {fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic', color:'red'}}>{ countListSurvey > 0 ? ((countListSurvey + 1) - 1) : 0 } / 60.000 Surveys</p>
+                        {fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic', color:'red'}}>{ countListSurvey > 0 ? (formatarNumero((countListSurvey + 1) - 1)) : 0 } / 60.000 Surveys</p>
                         <textarea style={{
                           width: '450px',
                           height: '300px',
@@ -438,14 +446,27 @@ return (
           <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => setVisible(false)}
-                    header={carregarExport ?? <h4>Atenção</h4>}
-                    colorType={carregarExport ?? '#ff0000'}
+                    header={carregarExport ? null : <h4>Atenção</h4>}
+                    colorType={carregarExport ? null : '#ff0000'}
                     ConfirmaButton={false}
+                    CancelaButton={carregarExport ?? false}
                     textCloseButton={'Ok'}
                     text={
                         <>
                         { carregarExport ? (
-                          <p>Carregando...</p>
+                          <>
+                          <div>
+                            <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem'}}>
+                              <div style={{padding: '0.5rem'}}>
+                                <p>Exportando {<b>{formatarNumero(totalRegistros ?? 0)}</b>} registros.</p>
+                                <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
+                            </div>
+                              <div style={{position: 'relative'}}><ProgressBar value={progresso} max={100} />
+                                <div style={{position: 'absolute', marginLeft: 'auto', marginRight:'auto', marginTop: '0.4rem',textAlign: 'center', left:'0', right:'0', top: '0', width:'500px', fontWeight:'600'}}><p>{progresso.toFixed(2) >= 100.00 ? 'Baixando...' : 'Exportando registros:  -- '+progresso.toFixed(2)+'% --'}</p></div>
+                              </div>
+                            </div>
+                        </div>
+                          </>
                         ):(
                         <p>{mensagem}</p>
                         )}
@@ -591,8 +612,8 @@ return (
                       <div>
                           <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem', marginTop:'10rem'}}>
                             <div style={{padding: '0.5rem'}}>
-                              <p>Buscando {<b>{countListSurvey}</b>} Surveys no banco de dados.</p>
-                              <p>Esse processo pode ser demorado de acordo com da quantidade de surveys.</p>
+                              <p>Buscando {<b>{formatarNumero(countListSurvey)}</b>} Surveys no banco de dados.</p>
+                              <p>Esse processo pode demora de acordo com da quantidade de surveys.</p>
                           </div>
                             <div style={{position: 'relative'}}><ProgressBar value={progresso} max={100} />
                               <div style={{position: 'absolute', marginLeft: 'auto', marginRight:'auto', marginTop: '0.4rem',textAlign: 'center', left:'0', right:'0', top: '0', width:'500px', fontWeight:'600'}}><p>{progresso.toFixed(2) >= 100.00 ? 'Baixando...' : 'Carregando Surveys:  -- '+progresso.toFixed(2)+'% --'}</p></div>

@@ -4,6 +4,7 @@ import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import DialogAlert from "../../components/Dialog";
 import { DeleteTesteOptico } from "../../api/testeOptico";
+import { formatarNumero } from "../../util/formatarNumeros";
 
 export default function DataGrid({ 
   columns, 
@@ -68,20 +69,6 @@ export default function DataGrid({
     return keys.reduce((acc, currentKey) => (acc && acc[currentKey] ? acc[currentKey] : undefined), obj);
   }
   
-  function formatarNumero(numero) {
-    // Converte o número para uma string
-    const numeroString = numero.toString();
-  
-    // Divide a string em grupos de 3 caracteres
-    const grupos = [];
-    for (let i = numeroString.length; i > 0; i -= 3) {
-      grupos.unshift(numeroString.substring(Math.max(0, i - 3), i));
-    }
-  
-    // Junta os grupos usando o ponto como separador e retorna
-    return grupos.join('.');
-  }
-
   return (
     <>
     <DialogAlert 
