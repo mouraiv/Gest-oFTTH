@@ -50,7 +50,7 @@ function BaseAcumulada() {
         Estacao : estacao,
         CDO: cdoInput,
         Cod_Viabilidade : viabilidade,
-        CodSurvey: survey,
+        Cod_Survey: survey,
         GrupoOperacional : grupoOperacional,
         EstadoOperacional: estadoOperacional,
         EstadoControle: estadoControle,

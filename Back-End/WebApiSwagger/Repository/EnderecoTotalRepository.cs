@@ -137,6 +137,7 @@ namespace WebApiSwagger.Repository
               try
             {
                 var _cod_Survey = filtro.Cod_Survey?.Split(',');
+                var _chave = filtro.CHAVE?.Split(',');
 
                 var query = _context.EnderecosTotais
                     .Include(p => p.MaterialRede)
@@ -221,7 +222,18 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Total = filtro.TotalSurveyList;
                 
-                    return await query.ToListAsync();     
+                    return await query.ToListAsync();    
+
+                } 
+                else if(!string.IsNullOrEmpty(filtro.CHAVE) && _chave.Any())
+                {
+                    query = query.Where(p => _chave.Contains(p.MaterialRede.CHAVE));
+
+                    query = query.OrderBy(p => p.Cod_Viabilidade);
+
+                    paginacao.Total = filtro.TotalSurveyList;
+                
+                    return await query.ToListAsync();    
                 }
                 else
                 {
@@ -333,9 +345,9 @@ namespace WebApiSwagger.Repository
                         query = query.Where(p => p.Localidade == filtro.Localidade);
                     }
 
-                    if (filtro.Cod_Survey != null && filtro.Cod_Survey.Any())
+                    if (!string.IsNullOrEmpty(filtro.Cod_Survey))
                     {
-                        query = query.Where(p => filtro.Cod_Survey.Contains(p.Cod_Survey));
+                        query = query.Where(p => p.Cod_Survey == filtro.Cod_Survey);
                     }
 
                     if (!string.IsNullOrEmpty(filtro.CDO))

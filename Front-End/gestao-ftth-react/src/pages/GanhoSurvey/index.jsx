@@ -49,7 +49,7 @@ function GanhoSurvey() {
           Localidade : construtora,
           SiglaEstacao : siglaEstacao,
           Estacao : estacao,
-          CodSurvey: survey,
+          Cod_Survey: survey,
           id_StatusGanho: statusGanho,
           id_Disponibilidade: statusDisponibilidade
         };
@@ -362,8 +362,17 @@ function GanhoSurvey() {
               atualizar={fetchLoading} 
             />
             </>
-              ):(<Spinner />)
-            ) : ( <Spinner /> )
+              ):(
+                <>
+                  <Spinner />
+                  <p style={{border:'1px solid #000000', padding:'0.3rem', fontSize:'0.8rem', fontWeight:'600'}}>Calculando ganho survey. Esse processo levará alguns minutos.</p>
+                </>
+              )
+            ) : ( 
+            <>
+              <Spinner /> 
+              <p style={{border:'1px solid #000000', padding:'0.3rem', fontSize:'0.8rem', fontWeight:'600'}}>Calculando ganho survey. Esse processo levará alguns minutos.</p>
+            </> )
             }
           </Content>
         <Footer />

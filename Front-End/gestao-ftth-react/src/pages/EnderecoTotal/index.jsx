@@ -35,6 +35,7 @@ function EnderecoTotal() {
   const [mensagem, setMensagem] = useState("");
   const [viabilidade, setViabilidade] = useState("");
   const [survey, setSurvey] = useState("");
+  const [chave, setChave] = useState("");
   const [grupoOperacional, setGrupoOperacional] = useState("");
   const [estadoOperacional, setEstadoOperacional] = useState("");
   const [estadoControle, setEstadoControle] = useState("");
@@ -54,6 +55,7 @@ function EnderecoTotal() {
   const signal = controller.signal;
   const intervalo = 100;
   const totalRegistros = enderecoTotal?.paginacao?.total;
+  const pattern = /-/;
 
   const segundos = () => {
     let milissegundos;
@@ -96,6 +98,7 @@ function EnderecoTotal() {
   const filtro = {
     pagina : currentPage,
     totalSurveyList: countListSurvey,
+    CHAVE: chave !== "" ? chave : surveyInput,
     UF : uf,
     Localidade : construtora,
     SiglaEstacao : siglaEstacao,
@@ -314,12 +317,22 @@ function EnderecoTotal() {
   };
 
   const handleConfirm = () => {
-    setSurvey(surveyList);
+    if (pattern.test(surveyList)) {
+      // A string não segue o padrão, faça algo aqui
+      setChave(surveyList)
+    } else {
+      // A string segue o padrão
+      setSurvey(surveyList);
+    }
     setVisibleSurvey(false);
   };
 
+  console.log(chave);
+  console.log(survey);
+
   const handleImportSurvey = () => {
     setSurvey("")
+    setChave("")
     setVisibleSurvey(true);
   }
 
@@ -355,6 +368,7 @@ function EnderecoTotal() {
     setSiglaEstacao("");
     setSurveyList([]);
     setSurvey("");
+    setChave("");
     setViewListSurvey("")
     setCountListSurvey(0);
     setCdoInput("");
@@ -526,7 +540,7 @@ return (
               )}
               <div style={{display:'flex', flexDirection: 'column'}}>
                 <div style={{marginTop: '0.6rem', marginLeft:'1rem'}}>
-                  <label>Survey</label>
+                  <label>Chave | Survey</label>
                 </div>
                <div style={{display: 'flex'}}> 
               { countListSurvey > 0 ? (
@@ -540,7 +554,7 @@ return (
                   height: '24px',
                   backgroundColor: 'white',
                   border: '1px solid',
-                }} label={"Survey"} value={''} placeholder={countListSurvey > 0 ? `${countListSurvey} Surveys` : null} disabled/>
+                }} label={"CHAVE"} value={''} placeholder={countListSurvey > 0 ? `${countListSurvey} Registros` : null} disabled/>
               ) : (
               <input style={{
                   marginLeft: '1rem',
@@ -556,7 +570,7 @@ return (
               <ButtonUpload name="upload" onClick={handleImportSurvey} >Lista</ButtonUpload>
               </div> 
               </div>
-
+              
               </div>
 
               <div style={{position:'absolute', right:0, top:0, marginTop:'0.3rem', marginRight:'0.4rem'}}>
