@@ -508,6 +508,8 @@ function Vizualizar(){
             </FooterButton>
             </Tab>
             <Tab eventKey="MaterialRede" title="Netwin">
+            { materialRede !== undefined && enderecoTotal !== undefined && enderecoTotal?.length !== 0 && ligacao !== undefined ? (
+            <>
             {loadingMaterial ? (
             <TableGrid>
                 <thead>
@@ -743,6 +745,9 @@ function Vizualizar(){
                     </tbody>
             </TableGrid>
             ):(<Spinner />)}
+             </>
+             ):(<p style={{textAlign: 'center', marginTop: '1rem'}}>Nenhum resultado.</p>)
+             }
             </Tab>
             </Tabs>
             </ContentTabs>
@@ -899,7 +904,9 @@ function Vizualizar(){
                             </TableGrid>
                         </>
                     }
-                />        
+                />
+        { materialRede !== undefined && enderecoTotal !== undefined && enderecoTotal?.length !== 0 && ligacao !== undefined ? (
+        <>        
         {loadingMaterial ? (
             <>
             <TableGrid style={{marginTop:'1rem'}}>
@@ -1143,6 +1150,9 @@ function Vizualizar(){
          </FooterButton>
          </>
             ):(<Spinner />)}
+            </>
+             ):(<p style={{textAlign: 'center', marginTop: '1rem'}}>Nenhum resultado.</p>)
+             }
             </Content>
             <Footer />
         </Template>

@@ -102,7 +102,6 @@ export const FooterButton = styled("div", {
     backgroundColor: '#d6dbdf',
     justifyContent: 'flex-end', 
     alignItems: 'flex-end',
-    marginTop: '1.5rem',
     paddingTop: '1rem'
 
 });
