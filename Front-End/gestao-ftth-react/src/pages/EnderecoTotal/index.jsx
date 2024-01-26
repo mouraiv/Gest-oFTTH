@@ -29,6 +29,7 @@ function EnderecoTotal() {
   const [currentPage, setCurrentPage] = useState(1);
   const [cdoInput, setCdoInput] = useState('');
   const [surveyInput, setSurveyInput] = useState('');
+  const [chaveInput, setChaveInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [visibleSurvey, setVisibleSurvey] = useState(false);
@@ -98,7 +99,7 @@ function EnderecoTotal() {
   const filtro = {
     pagina : currentPage,
     totalSurveyList: countListSurvey,
-    CHAVE: chave !== "" ? chave : surveyInput,
+    CHAVE: chave !== "" ? chave : chaveInput,
     UF : uf,
     Localidade : construtora,
     SiglaEstacao : siglaEstacao,
@@ -280,7 +281,18 @@ function EnderecoTotal() {
   const handleSurvey = (event) => {
     const lines = event.target.value.toUpperCase().split(','); // Divide por novas linhas
     const surveys = lines.filter(line => line.trim() !== '');
-    setSurveyInput(surveys.join(','));
+    const _survey = surveys.join(',');
+
+    if (pattern.test(_survey)) {
+      // A string não segue o padrão, faça algo aqui
+      setSurveyInput("");
+      setChaveInput(_survey);
+    } else {
+      // A string segue o padrão
+      setChaveInput("");
+      setSurveyInput(_survey);
+    }
+
   };
 
   const handleViabilidade = (event) => {
@@ -326,9 +338,6 @@ function EnderecoTotal() {
     }
     setVisibleSurvey(false);
   };
-
-  console.log(chave);
-  console.log(survey);
 
   const handleImportSurvey = () => {
     setSurvey("")
@@ -378,6 +387,7 @@ function EnderecoTotal() {
     setEstadoOperacional("");
     setInputDispComercial("");
     setSurveyInput("");
+    setChaveInput("");
     setDispComercial(null);
     setCurrentPage(1);
     setSubmitClicked(true);
@@ -421,7 +431,7 @@ return (
           <DialogAlert 
                     visibleDiag={visibleSurvey} 
                     visibleHide={() => setVisibleSurvey(false)}
-                    header={<h4>Lista Survey</h4>}
+                    header={<h4>Inserir Lista</h4>}
                     colorType={'#13293d'}
                     ConfirmaButton={countListSurvey < 59999 ? true : false}
                     CancelaButton={countListSurvey < 59999 ? false : true}
@@ -431,7 +441,7 @@ return (
                         <>
                         <p style={countListSurvey < 59999 ? 
                         {fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic'} :
-                        {fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic', color:'red'}}>{ countListSurvey > 0 ? (formatarNumero((countListSurvey + 1) - 1)) : 0 } / 60.000 Surveys</p>
+                        {fontSize: '0.9rem', marginBottom: '0.2rem', fontStyle: 'italic', color:'red'}}>{ countListSurvey > 0 ? (formatarNumero((countListSurvey + 1) - 1)) : 0 } / 60.000 Registros</p>
                         <textarea style={{
                           width: '450px',
                           height: '300px',
@@ -442,7 +452,7 @@ return (
                         }}
                           value={viewListSurvey}
                           onChange={(e) => handleColarSurvey(e)}
-                          placeholder="Cole os surveys aqui"
+                          placeholder="Cole os registros aqui"
                         />
                         {countListSurvey > 59999 ? (
                         <p style={{
@@ -564,7 +574,7 @@ return (
                   width: '150px',
                   height: '24px',
                   textTransform: 'uppercase'
-                }} label={"Survey"} maxLength="30" onChange={handleSurvey} value={surveyInput} />
+                }} label={"Survey"} maxLength="30" onChange={handleSurvey} value={surveyInput === "" ? chaveInput : surveyInput} />
               )
               }
               <ButtonUpload name="upload" onClick={handleImportSurvey} >Lista</ButtonUpload>
@@ -626,11 +636,11 @@ return (
                       <div>
                           <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem', marginTop:'10rem'}}>
                             <div style={{padding: '0.5rem'}}>
-                              <p>Buscando {<b>{formatarNumero(countListSurvey)}</b>} Surveys no banco de dados.</p>
-                              <p>Esse processo pode demora de acordo com da quantidade de surveys.</p>
+                              <p>Buscando {<b>{formatarNumero(countListSurvey)}</b>} Registros no banco de dados.</p>
+                              <p>Esse processo pode demora de acordo com da quantidade de Registros.</p>
                           </div>
                             <div style={{position: 'relative'}}><ProgressBar value={progresso} max={100} />
-                              <div style={{position: 'absolute', marginLeft: 'auto', marginRight:'auto', marginTop: '0.4rem',textAlign: 'center', left:'0', right:'0', top: '0', width:'500px', fontWeight:'600'}}><p>{progresso.toFixed(2) >= 100.00 ? 'Baixando...' : 'Carregando Surveys:  -- '+progresso.toFixed(2)+'% --'}</p></div>
+                              <div style={{position: 'absolute', marginLeft: 'auto', marginRight:'auto', marginTop: '0.4rem',textAlign: 'center', left:'0', right:'0', top: '0', width:'500px', fontWeight:'600'}}><p>{progresso.toFixed(2) >= 100.00 ? 'Baixando...' : 'Carregando Registros:  -- '+progresso.toFixed(2)+'% --'}</p></div>
                             </div>
                           </div>
                       </div>
