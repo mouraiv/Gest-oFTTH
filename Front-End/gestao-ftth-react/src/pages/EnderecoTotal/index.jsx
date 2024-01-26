@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { GetEnderecoTotal, ExportExcel } from "../../api/enterecoTotais";
-import { ufOptions, dispComercialOptions, grupoOperacionalOptions,localidadeOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
+import { ufOptions, dispComercialOptions, grupoOperacionalOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import DataGridTable from '../../components/DataGrid';
 import Footer from "../../components/Footer";
@@ -19,8 +19,6 @@ function EnderecoTotal() {
 
   const [enderecoTotal, setEnderecoTotal] = useState({});
   const [enderecoTotalLocal, setEnderecoTotalLocal] = useState({});
-  const [dropConstrutora, setDropConstrutora] = useState([]);
-  const [construtora, setConstrutora] = useState("");
   const [dropSiglaEstacao, setDropSiglaEstacao] = useState([]);
   const [siglaEstacao, setSiglaEstacao] = useState("");
   const [dropEstacao, setDropEstacao] = useState([]);
@@ -83,7 +81,6 @@ function EnderecoTotal() {
     return dados.filter(
       value =>
       (uf !== "" ? value.uf === uf : true) &&
-      (construtora !== "" ? value.localidade === construtora : true)  && 
       (siglaEstacao !== "" ? value.siglaEstacao === siglaEstacao : true) &&
       (estacao !== "" ? value?.materialRede?.nomeAbastecedora_Mt === estacao : true) &&
       (cdoInput !== "" ? value.nomeCdo === cdoInput : true) &&
@@ -94,14 +91,13 @@ function EnderecoTotal() {
       (estadoOperacional !=="" ? value?.materialRede?.estadoOperacional_Mt === estadoOperacional : true) &&
       (estadoControle !=="" ? value?.materialRede?.estadoControle_Mt === estadoControle : true)
     );
-  },[cdoInput, construtora, dispComercial, estacao, estadoControle, estadoOperacional, grupoOperacional, siglaEstacao, uf, viabilidade])
+  },[cdoInput, dispComercial, estacao, estadoControle, estadoOperacional, grupoOperacional, siglaEstacao, uf, viabilidade])
 
   const filtro = {
     pagina : currentPage,
     totalSurveyList: countListSurvey,
     CHAVE: chave !== "" ? chave : chaveInput,
     UF : uf,
-    Localidade : construtora,
     SiglaEstacao : siglaEstacao,
     Estacao : estacao,
     CDO: cdoInput,
@@ -228,19 +224,7 @@ function EnderecoTotal() {
     const input = event.target.value;
     setUf(input);
 
-    const filteredLocalidades = localidadeOptions.filter(([ufOption]) => ufOption === input);
-    const subElementoLocalidade = filteredLocalidades.map(subarray => subarray[1]);
-    setDropConstrutora(subElementoLocalidade?.length == 0 ? [""] : subElementoLocalidade);
-
-    setEstacao('');
-  };
-
-  const handleConstrutora = (event) => {
-    const input = event.target.value;
-    setConstrutora(input);
- 
-   // Filtrar estações correspondentes à localidade selecionada
-    const filteredEstacoes = estacaoOptions.filter(([localidade]) => localidade === input);
+    const filteredEstacoes = estacaoOptions.filter(([ufOption]) => ufOption === input);
     const subSiglaEstacoes = filteredEstacoes.map(subarray => subarray[1]);
     setDropSiglaEstacao(subSiglaEstacoes?.length == 0 ? [""] : subSiglaEstacoes);
     const subEstacoes = filteredEstacoes.map(subarray => subarray[2]);
@@ -372,7 +356,6 @@ function EnderecoTotal() {
 
   const limparFiltro = () => {
     setUf("");
-    setConstrutora("");
     setEstacao("");
     setSiglaEstacao("");
     setSurveyList([]);
@@ -504,20 +487,6 @@ return (
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={ufOptions.sort()} text={uf} />
               </div>
               { uf !== '' ? (
-                <>
-                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                  <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Localidade"} event={handleConstrutora} lista={dropConstrutora.sort()} text={construtora} />
-                </div>   
-                </>
-              ) : (
-                <>
-                  <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                    <DropBox width={"300px"} height={"25px"} valueDefaut={"- Selecionar -"} label={"Localidade"} lista={[""]} disable={true}/>
-                  </div> 
-                 </>
-              )}
-
-              { construtora !== '' ? (
                 <> 
                 { estacao !== '' ? (
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>

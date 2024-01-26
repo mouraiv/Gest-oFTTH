@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { GetBaseAcumulada } from "../../api/enterecoTotais";
-import { ufOptions, grupoOperacionalOptions,localidadeOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
+import { ufOptions, grupoOperacionalOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';
@@ -17,8 +17,6 @@ function BaseAcumulada() {
   GlobalStyle();
 
   const [enderecoTotal, setEnderecoTotal] = useState({});
-  const [dropConstrutora, setDropConstrutora] = useState([]);
-  const [construtora, setConstrutora] = useState("");
   const [dropEstacao, setDropEstacao] = useState([]);
   const [estacao, setEstacao] = useState("");
   const [dropSiglaEstacao, setDropSiglaEstacao] = useState([]);
@@ -45,7 +43,6 @@ function BaseAcumulada() {
       const filtro = {
         pagina : currentPage,
         UF : uf,
-        Localidade : construtora,
         SiglaEstacao : siglaEstacao,
         Estacao : estacao,
         CDO: cdoInput,
@@ -128,19 +125,7 @@ function BaseAcumulada() {
     const input = event.target.value;
     setUf(input);
 
-    const filteredLocalidades = localidadeOptions.filter(([ufOption]) => ufOption === input);
-    const subElementoLocalidade = filteredLocalidades.map(subarray => subarray[1]);
-    setDropConstrutora(subElementoLocalidade?.length == 0 ? [""] : subElementoLocalidade);
-
-    setEstacao('');
-  };
-
-  const handleConstrutora = (event) => {
-    const input = event.target.value;
-    setConstrutora(input);
- 
-   // Filtrar estações correspondentes à localidade selecionada
-    const filteredEstacoes = estacaoOptions.filter(([localidade]) => localidade === input);
+    const filteredEstacoes = estacaoOptions.filter(([ufOption]) => ufOption === input);
     const subSiglaEstacoes = filteredEstacoes.map(subarray => subarray[1]);
     setDropSiglaEstacao(subSiglaEstacoes?.length == 0 ? [""] : subSiglaEstacoes);
     const subEstacoes = filteredEstacoes.map(subarray => subarray[2]);
@@ -196,7 +181,6 @@ function BaseAcumulada() {
 
   const limparFiltro = () => {
     setUf("");
-    setConstrutora("");
     setEstacao("");
     setSiglaEstacao("");
     setSurvey("");
@@ -228,19 +212,6 @@ function BaseAcumulada() {
               </div>
               { uf !== '' ? (
                 <>
-                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                  <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Localidade"} event={handleConstrutora} lista={dropConstrutora.sort()} text={construtora} />
-                </div> 
-                </>
-              ) : (
-                <>
-                  <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                    <DropBox width={"300px"} height={"25px"} valueDefaut={"- Selecionar -"} label={"Localidade"} lista={[""]} disable={true}/>
-                  </div> 
-                 </>
-              )}
-              { construtora !== '' ? (
-                <> 
                 { estacao !== '' ? (
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                   <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao.sort()} text={siglaEstacao} disable={true}/>
