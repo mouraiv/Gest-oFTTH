@@ -6,13 +6,13 @@ import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import DataGridTable from '../../components/DataGrid';
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import DropBox from '../../components/dropbox';
-import { Filter, ButtonUpload, ProgressBar, ButtonExportarExcel } from './styles';
+import { Filter, ButtonUpload, ButtonExportarExcel } from './styles';
 import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 import { formatarNumero } from "../../util/formatarNumeros";
+import ProgressComponent from '../../components/progress/ProgressComponent';
 
 function EnderecoTotal() {
   GlobalStyle();
@@ -48,34 +48,11 @@ function EnderecoTotal() {
   const [listLocalSurvey, setListLocalSurvey] = useState(false);
   const [carregarListsurvey, setCarregarListSurvey] = useState(false);
   const [carregarExport, setCarregarExport] = useState(false);
-  const [progresso, setProgresso] = useState(0);
 
   const controller = new AbortController();
   const signal = controller.signal;
-  const intervalo = 100;
   const totalRegistros = enderecoTotal?.paginacao?.total;
   const pattern = /-/;
-
-  const segundos = () => {
-    let milissegundos;
-    const base = 450; // Valor base para o multiplicador
-    const decrementoPorIntervalo = 30; // Decremento do multiplicador a cada intervalo
-    const tamanhoDoIntervalo = 500; // Tamanho de cada intervalo
-
-    // Calcular o número de intervalos que countListSurvey ultrapassa
-    let intervalosUltrapassados = Math.floor((countListSurvey - 50) / tamanhoDoIntervalo);
-
-    // Calcular o multiplicador
-    let multiplicador = base - (intervalosUltrapassados * decrementoPorIntervalo);
-
-    // Assegurar que o multiplicador não seja negativo
-    multiplicador = Math.max(multiplicador, 0);
-
-    // Calcular milissegundos
-    milissegundos = countListSurvey * multiplicador;
-
-    return milissegundos;
-  }
 
   const aplicarFiltros = useCallback((dados) => {
     return dados.filter(
@@ -85,7 +62,6 @@ function EnderecoTotal() {
       (estacao !== "" ? value?.materialRede?.nomeAbastecedora_Mt === estacao : true) &&
       (cdoInput !== "" ? value.nomeCdo === cdoInput : true) &&
       (viabilidade !== "" ? value.cod_Viabilidade === viabilidade : true) &&
-      //(survey !== "" ? value.cod_Survey === survey : true) &&
       (dispComercial !== null ? value.id_Disponibilidade === dispComercial :  true) &&
       (grupoOperacional !=="" ? value?.materialRede?.grupoOperacional_Mt === grupoOperacional : true) &&
       (estadoOperacional !=="" ? value?.materialRede?.estadoOperacional_Mt === estadoOperacional : true) &&
@@ -331,7 +307,6 @@ function EnderecoTotal() {
 
   const handleExportExcel = () => {
     setVisible(true);
-    startProgressSurvey(5000);
     setCarregarExport(true);
     FetchExportExcel();
   }
@@ -339,11 +314,7 @@ function EnderecoTotal() {
   const submit = () => {
     setSubmitClicked(true);
     setCurrentPage(1);
-    segundos();
     if(countListSurvey > 4){
-      if(enderecoTotalLocal.resultado === undefined){
-        startProgressSurvey(segundos());
-      }
       setCarregarListSurvey(true);
       
      }else{
@@ -383,27 +354,6 @@ function EnderecoTotal() {
   const fetchLoading = () => {
     setLoading(false);
   }
-
-  const startProgressSurvey = (segundos, clear) => {
-      let tempoDecorrido = 0;
-      
-      // Calcula o incremento de tempo para cada intervalo com base no tempo máximo
-      const incremento = (segundos / (segundos / intervalo));
-
-      const intervalId = setInterval(() => {
-          tempoDecorrido += incremento;
-          
-          setProgresso(tempoDecorrido / segundos * 100);
-
-          if (tempoDecorrido >= segundos) {
-              clearInterval(intervalId);
-          }
-        
-      }, intervalo);
-
-      return () => clearInterval(intervalId); // Limpeza no desmonte
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  };
 
 return (
       <>
@@ -468,9 +418,7 @@ return (
                                 <p>Exportando {<b>{formatarNumero(totalRegistros ?? 0)}</b>} registros.</p>
                                 <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
                             </div>
-                              <div style={{position: 'relative'}}><ProgressBar value={progresso} max={100} />
-                                <div style={{position: 'absolute', marginLeft: 'auto', marginRight:'auto', marginTop: '0.4rem',textAlign: 'center', left:'0', right:'0', top: '0', width:'500px', fontWeight:'600'}}><p>{progresso.toFixed(2) >= 100.00 ? 'Baixando...' : 'Exportando registros:  -- '+progresso.toFixed(2)+'% --'}</p></div>
-                              </div>
+                                <ProgressComponent />
                             </div>
                         </div>
                           </>
@@ -587,7 +535,7 @@ return (
               <>
               {carregarListsurvey ? (
                 <>  
-                { loading && progresso.toFixed(2) >= 100.00 ? (
+                { loading ? (
                   <>
                   <DataGridTable 
                     columns={columns} 
@@ -608,9 +556,7 @@ return (
                               <p>Buscando {<b>{formatarNumero(countListSurvey)}</b>} Registros no banco de dados.</p>
                               <p>Esse processo pode demora de acordo com da quantidade de Registros.</p>
                           </div>
-                            <div style={{position: 'relative'}}><ProgressBar value={progresso} max={100} />
-                              <div style={{position: 'absolute', marginLeft: 'auto', marginRight:'auto', marginTop: '0.4rem',textAlign: 'center', left:'0', right:'0', top: '0', width:'500px', fontWeight:'600'}}><p>{progresso.toFixed(2) >= 100.00 ? 'Baixando...' : 'Carregando Registros:  -- '+progresso.toFixed(2)+'% --'}</p></div>
-                            </div>
+                              <ProgressComponent />
                           </div>
                       </div>
                     </>
@@ -633,13 +579,19 @@ return (
                     />
                     </>
                     ):(
-                    <Spinner />
+                      <>
+                      <ProgressComponent />
+                    </>
                     )
                 }
                 </>
                 )}
                 </> 
-            ):( <Spinner /> )
+            ):( 
+            <>
+              <ProgressComponent />
+            </> 
+            )
             }
           </Content>
         <Footer />

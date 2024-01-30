@@ -116,16 +116,22 @@ namespace WebApiSwagger.Repository
             }
         }
        
-        public async Task<IEnumerable<TesteOptico>> Listar(FiltroTesteOptico filtro, Paginacao paginacao)
+        public async Task<IEnumerable<TesteOptico>> Listar(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao)
         {
             try
             {
+                progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
+                await Task.Delay(500);
+
                 var query = _context.TestesOpticos
                     .Where(p => p.Sel == 0)
                     .Include(p => p.Validacoes)
                     .Include(p => p.Analises)
                     .ThenInclude(p => p.AnaliseCDOIAs)
                     .AsQueryable();
+
+                progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
+                await Task.Delay(500);    
 
                 if (!string.IsNullOrEmpty(filtro.UF))
                 {
@@ -157,6 +163,9 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.CDO == filtro.CDO);
                 }
 
+                progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
+                await Task.Delay(500);
+
                 if (!string.IsNullOrEmpty(filtro.DataTeste) && filtro.DataTeste.Length == 10)
                 {
                     query = query.Where(p => p.DataTeste == DateTime.Parse(filtro.DataTeste));
@@ -181,11 +190,18 @@ namespace WebApiSwagger.Repository
                     .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                     .Take(paginacao.Tamanho);
 
+                progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);    
+
                 return await query.ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro ao Listar: " + ex.Message);
+            }
+            finally
+            {
+                progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
+                await Task.Delay(1000);
             }
             
         }
@@ -238,14 +254,20 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public async Task<IEnumerable<TesteOptico>> ControlerCdo(FiltroTesteOptico filtro, Paginacao paginacao)
+        public async Task<IEnumerable<TesteOptico>> ControlerCdo(IProgressoRepository progressoRepository, FiltroTesteOptico filtro, Paginacao paginacao)
         {
              try
             {
+                progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
+                await Task.Delay(500);
+
                 var query = _context.TestesOpticos
                     .Where(p => p.Sel > 0)
                     .Include(p => p.Analises)
                     .AsQueryable();
+
+                progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
+                await Task.Delay(500);    
 
                 paginacao.Total = await query.CountAsync();
             
@@ -253,11 +275,18 @@ namespace WebApiSwagger.Repository
                     .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                     .Take(paginacao.Tamanho);
 
+                progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);    
+
                 return await query.ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro ao Listar: " + ex.Message);
+            }
+            finally
+            {
+                progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
+                await Task.Delay(1000);
             }
         }
     }

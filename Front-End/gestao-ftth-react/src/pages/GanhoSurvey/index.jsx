@@ -7,11 +7,11 @@ import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import DropBox from '../../components/dropbox';
 import { Filter, Painel } from './styles';
 import InfoDataBase from '../../components/DbInfo';
+import ProgressComponent from '../../components/progress/ProgressComponent';
 
 function GanhoSurvey() {
   GlobalStyle();
@@ -336,14 +336,12 @@ function GanhoSurvey() {
             </>
               ):(
                 <>
-                  <Spinner />
-                  <p style={{border:'1px solid #000000', padding:'0.3rem', fontSize:'0.8rem', fontWeight:'600'}}>Calculando ganho survey. Esse processo levará alguns minutos.</p>
+                  <ProgressComponent />
                 </>
               )
             ) : ( 
             <>
-              <Spinner /> 
-              <p style={{border:'1px solid #000000', padding:'0.3rem', fontSize:'0.8rem', fontWeight:'600'}}>Calculando ganho survey. Esse processo levará alguns minutos.</p>
+              <ProgressComponent />
             </> )
             }
           </Content>

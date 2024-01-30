@@ -13,6 +13,7 @@ import { DateMask } from "../../components/TextInput/mask/index";
 import DropBox from '../../components/dropbox';
 import { Filter, ButtonImport, SubMenu } from './styles';
 import InfoDataBase from '../../components/DbInfo';
+import ProgressComponent from '../../components/progress/ProgressComponent';
 
 function TesteOptico() {
   GlobalStyle();
@@ -385,8 +386,8 @@ function TesteOptico() {
               right={nextPage}
               atualizar={fetchLoading} 
             />
-              ):(<Spinner />)
-            ) : ( <Spinner /> )
+              ):( <ProgressComponent />)
+            ) : (  <ProgressComponent /> )
             }
           </Content>
         <Footer />

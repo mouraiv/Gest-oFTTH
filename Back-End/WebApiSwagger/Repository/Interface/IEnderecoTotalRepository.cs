@@ -9,10 +9,9 @@ namespace WebApiSwagger.Repository.Interface
     {
         Task<EnderecoTotal> CarregarId(int? id_MaterialRede);
         Task<IEnumerable<EnderecoTotal>> ListarCarregarId(int? id_MaterialRede);
-        Task<IEnumerable<EnderecoTotal>> Listar(FiltroEnderecoTotal filtro, Paginacao paginacao, int pageOff);
-        Task<IEnumerable<EnderecoTotal>> BaseAcumulada(FiltroEnderecoTotal filtro, Paginacao paginacao);
-        Task<IEnumerable<EnderecoTotal>> ListarGanho(FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho);
-        //Task<IEnumerable<EnderecoTotal>> ListarGanhoDia(FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho);
+        Task<IEnumerable<EnderecoTotal>> Listar(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao, int pageOff);
+        Task<IEnumerable<EnderecoTotal>> BaseAcumulada(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao);
+        Task<IEnumerable<EnderecoTotal>> ListarGanho(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho);
         Task<IEnumerable<EnderecoTotal>> ListaUnica();
     }
 }

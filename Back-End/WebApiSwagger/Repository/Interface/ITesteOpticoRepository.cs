@@ -12,7 +12,7 @@ namespace WebApiSwagger.Repository.Interface
         Task<bool> Deletar(int id);
         Task<TesteOptico> CarregarId(int id);
         Task<IEnumerable<TesteOptico>> ListaUnica();
-        Task<IEnumerable<TesteOptico>> Listar(FiltroTesteOptico filtro, Paginacao paginacao);
-        Task<IEnumerable<TesteOptico>> ControlerCdo(FiltroTesteOptico filtro, Paginacao paginacao);
+        Task<IEnumerable<TesteOptico>> Listar(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao);
+        Task<IEnumerable<TesteOptico>> ControlerCdo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao);
     }
 }

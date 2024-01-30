@@ -18,10 +18,13 @@ namespace WebApiSwagger.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<EnderecoTotal>> BaseAcumulada(FiltroEnderecoTotal filtro, Paginacao paginacao)
+        public async Task<IEnumerable<EnderecoTotal>> BaseAcumulada(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao)
         {
             try
             {
+                progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
+                await Task.Delay(500);
+
                 var query = _context.EnderecosTotais
                     .Include(p => p.MaterialRede)
                     .Where(p => p.Id_StatusGanho == 1)
@@ -45,6 +48,9 @@ namespace WebApiSwagger.Repository
                         MaterialRede = et.MaterialRede
                     })
                     .AsQueryable();
+
+                    progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
+                    await Task.Delay(500);
 
                     if (!string.IsNullOrEmpty(filtro.AnoMes))
                     {
@@ -70,6 +76,9 @@ namespace WebApiSwagger.Repository
                     {
                         query = query.Where(p => p.Localidade == filtro.Localidade);
                     }
+
+                    progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
+                    await Task.Delay(500);
 
                     if (filtro.Cod_Survey != null && filtro.Cod_Survey.Any())
                     {
@@ -110,11 +119,19 @@ namespace WebApiSwagger.Repository
                         .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                         .Take(paginacao.Tamanho);
 
+                    progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);
+                    await Task.Delay(500);    
+
                     return await query.ToListAsync();             
                 }
                 catch (Exception ex)
                 {  
                     throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
+                }
+                finally 
+                {
+                    progressoRepository.UpdateProgress(true, 100, "Finalizando...", 100);
+                    await Task.Delay(1000);
                 }
         }
 
@@ -132,12 +149,16 @@ namespace WebApiSwagger.Repository
             }
             
         }
-        public async Task<IEnumerable<EnderecoTotal>> Listar(FiltroEnderecoTotal filtro, Paginacao paginacao, int pageOff)
+        public async Task<IEnumerable<EnderecoTotal>> Listar(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao, int pageOff)
         {
               try
             {
+                
                 var _cod_Survey = filtro.Cod_Survey?.Split(',');
                 var _chave = filtro.CHAVE?.Split(',');
+
+                progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
+                await Task.Delay(500);
 
                 var query = _context.EnderecosTotais
                     .Include(p => p.MaterialRede)
@@ -162,6 +183,9 @@ namespace WebApiSwagger.Repository
                         MaterialRede = et.MaterialRede
                     })
                     .AsQueryable();
+
+                progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
+                await Task.Delay(500);
 
                 if (!string.IsNullOrEmpty(filtro.UF))
                 {
@@ -193,6 +217,9 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.NomeCdo == filtro.CDO);
                 }
 
+                progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
+                await Task.Delay(500);
+
                 if (!string.IsNullOrEmpty(filtro.Cod_Viabilidade))
                 {
                     query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
@@ -215,29 +242,39 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.Cod_Survey) && _cod_Survey.Any())
                 {
+
+                    progressoRepository.UpdateProgress(true, 75, "Carregando surveys...", 100);
+                    await Task.Delay(500);
                     
                     query = query.Where(p => _cod_Survey.Contains(p.Cod_Survey));
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
                     paginacao.Total = filtro.TotalSurveyList;
-                
+
+                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista...", 100);
+
                     return await query.ToListAsync();    
 
                 } 
                 else if(!string.IsNullOrEmpty(filtro.CHAVE) && _chave.Any())
                 {
+                    progressoRepository.UpdateProgress(true, 75, "Carregando chaves CDOEs...", 100);
+                    await Task.Delay(500);
+
                     query = query.Where(p => _chave.Contains(p.MaterialRede.CHAVE));
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
                     paginacao.Total = filtro.TotalSurveyList;
-                
-                    return await query.ToListAsync();    
+
+                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista...", 100); 
+
+                    return await query.ToListAsync();
+        
                 }
                 else
                 {
-                    // Aplica a ordenação
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
                     var _registros = await query.CountAsync();
@@ -249,10 +286,15 @@ namespace WebApiSwagger.Repository
                             .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                             .Take(paginacao.Tamanho);
 
-                        return await query.ToListAsync(); 
+                    progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);        
+
+                    return await query.ToListAsync(); 
 
                     }else{
                         if(_registros <= 1000000){
+                            progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);
+                            await Task.Delay(500);
+
                             return await query.ToListAsync();
 
                         }else{
@@ -262,11 +304,17 @@ namespace WebApiSwagger.Repository
                     }
 
                 }
+                
 
             }
             catch (Exception ex)
             {  
                 throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
+            }
+            finally
+            {
+                progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
+                await Task.Delay(1000);
             }
                           
         }
@@ -285,10 +333,13 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public async Task<IEnumerable<EnderecoTotal>> ListarGanho(FiltroEnderecoTotal filtro, Paginacao paginacao,PainelGanho painelGanho)
+        public async Task<IEnumerable<EnderecoTotal>> ListarGanho(IProgressoRepository progressoRepository,FiltroEnderecoTotal filtro, Paginacao paginacao,PainelGanho painelGanho)
         {
             try
             {
+                progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
+                await Task.Delay(500);
+
                 var query = _context.EnderecosTotais
                 .Include(p => p.MaterialRede)
                     .Select(et => new EnderecoTotal {
@@ -311,6 +362,9 @@ namespace WebApiSwagger.Repository
                         MaterialRede = et.MaterialRede
                     })
                     .AsQueryable();
+
+                    progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
+                    await Task.Delay(500);
 
                     if (filtro != null)
                     {
@@ -340,6 +394,9 @@ namespace WebApiSwagger.Repository
                         query = query.Where(p => p.MaterialRede.NomeAbastecedora_Mt == filtro.Estacao);
                     }
 
+                    progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
+                     await Task.Delay(500);
+
                     if (!string.IsNullOrEmpty(filtro.Localidade))
                     {
                         query = query.Where(p => p.Localidade == filtro.Localidade);
@@ -362,6 +419,8 @@ namespace WebApiSwagger.Repository
 
                     }
 
+                    progressoRepository.UpdateProgress(true, 75, "Calculando Ganho...", 100);
+
                         paginacao.Total = await query.CountAsync();
 
                         if(filtro?.Pagina == 1) {    
@@ -382,12 +441,19 @@ namespace WebApiSwagger.Repository
                         .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                         .Take(paginacao.Tamanho);
 
+                        progressoRepository.UpdateProgress(true, 85, "Prrenchendo lista...", 100);
+
                         return await query.ToListAsync();   
 
                 }
                 catch (Exception ex)
                 {  
                     throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
+                }
+                finally
+                {
+                    progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
+                    await Task.Delay(1000);
                 }
         }
 

@@ -16,13 +16,15 @@ namespace WebApiSwagger.Controllers
          private readonly IMaterialRedeRepository _materialRedeRepository;
          private readonly UploadXlsx _uploadXlsx;
          private readonly Paginacao _paginacao;
+         private readonly IProgressoRepository _progressoRepository;
 
-        public TesteOpticoController(ITesteOpticoRepository testeOpticoRepository, IMaterialRedeRepository materialRedeRepository, UploadXlsx uploadXlsx, Paginacao paginacao)
+        public TesteOpticoController(ITesteOpticoRepository testeOpticoRepository, IProgressoRepository progressoRepository,IMaterialRedeRepository materialRedeRepository, UploadXlsx uploadXlsx, Paginacao paginacao)
         {
             _testeOpticoRepository = testeOpticoRepository;
             _materialRedeRepository = materialRedeRepository;
             _uploadXlsx = uploadXlsx;
             _paginacao = paginacao;
+            _progressoRepository = progressoRepository;
         }
 
         [HttpPost("Cadastrar")]
@@ -281,7 +283,7 @@ namespace WebApiSwagger.Controllers
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 
-                var lista = await _testeOpticoRepository.Listar(filtro, _paginacao);
+                var lista = await _testeOpticoRepository.Listar(_progressoRepository,filtro, _paginacao);
                 var resultado = new List<object>();
 
                 foreach(var optico in lista){
@@ -346,7 +348,7 @@ namespace WebApiSwagger.Controllers
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 
-                var lista = await _testeOpticoRepository.ControlerCdo(filtro, _paginacao);
+                var lista = await _testeOpticoRepository.ControlerCdo(_progressoRepository,filtro, _paginacao);
                 var resultado = new List<object>();
 
                 foreach(var optico in lista){

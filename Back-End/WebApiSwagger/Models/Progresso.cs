@@ -3,11 +3,10 @@ namespace WebApiSwagger.Models
 {
     public class Progresso
     {
-        public bool inicio {get; set;}
-        public int? contador {get; set;}
-        public string? descrição {get; set;}
-        public int? total {get; set;}
-        public bool fim {get; set;}
+        public bool Start {get; set;}
+        public int Contador {get; set;}
+        public string Descricao {get; set;} = null!;
+        public int Total {get; set;}
 
     }
 }

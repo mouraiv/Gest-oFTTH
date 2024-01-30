@@ -1,0 +1,29 @@
+/* ProgressBar.css */
+
+/* Estilizando a barra de progresso */
+.progress-container progress {
+    /* Cor da borda */
+    border: 1px solid #13293d;
+  
+    /* Cor do fundo da barra de progresso não preenchida */
+    background-color: #f1f1f1;
+  
+    /* Cor do fundo da barra de progresso preenchida */
+    color: #4caf50; /* Essa cor pode ser alterada conforme necessário */
+    
+    width: 500px;
+    
+    height: 21px;
+  
+  }
+  
+  /* Estilizando o valor (porcentagem) exibido dentro da barra de progresso */
+  .progress-container progress::-webkit-progress-value {
+    background-color: #4caf50; /* Cor do fundo da barra de progresso preenchida */
+  }
+  
+  /* Estilizando o texto da porcentagem (opcional) */
+  .progress-container .percentage-label {
+    margin-left: 10px;
+  }
+  

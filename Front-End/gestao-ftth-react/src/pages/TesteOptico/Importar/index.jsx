@@ -9,6 +9,7 @@ import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
 import DialogAlert from "../../../components/Dialog";
 import InfoDataBase from '../../../components/DbInfo';
+import ProgressComponent from '../../../components/progress/ProgressComponent';
 
 function ImportFile(){
     const [testeOptico, setTesteOptico] = useState({});
@@ -246,8 +247,8 @@ function ImportFile(){
               right={nextPage}
               atualizar={fetchLoading}
             />
-              ):(<Spinner />)
-            ) : ( <Spinner /> )
+              ):(<ProgressComponent />)
+            ) : ( <ProgressComponent /> )
             }
         </Content>
         <Footer />

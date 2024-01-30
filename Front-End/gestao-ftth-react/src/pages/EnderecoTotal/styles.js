@@ -44,13 +44,6 @@ export const ButtonExportarExcel = styled("button", {
     }
 });
 
-export const ProgressBar = styled("progress", {
-    height: '19px',
-    width: '500px',
-    margin: '0.5rem',
-    borderRadius:0,
-});
-
 export const ButtonFilter = styled("button", {
     backgroundColor: '#13293d',
     border: '1px solid #5D6D7E',

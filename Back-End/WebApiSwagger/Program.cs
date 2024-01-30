@@ -34,6 +34,7 @@ builder.Services.AddSingleton<UploadXlsx>();
 builder.Services.AddSingleton<ConversorDwg>();
 builder.Services.AddSingleton<Paginacao>();
 builder.Services.AddSingleton<PainelGanho>();
+builder.Services.AddSingleton<IProgressoRepository, ProgressoRepository>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -89,6 +90,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -115,10 +118,13 @@ app.UseCors(options =>
                         "http://localhost:5226"
                         )
            .AllowAnyHeader()
-           .AllowAnyMethod();
+           .AllowAnyMethod()
+           .AllowCredentials();
 });
 
 app.UseAuthorization();
+
+app.MapHub<ProgressoHub>("/progressoHub");
 
 app.MapControllers();
 

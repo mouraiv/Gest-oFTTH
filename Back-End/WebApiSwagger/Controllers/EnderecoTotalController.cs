@@ -13,10 +13,12 @@ namespace WebApiSwagger.Controllers
         private readonly IEnderecoTotalRepository _enderecoTotalRepository;
         private readonly Paginacao _paginacao;
         private readonly PainelGanho _painelGanho;
+        private readonly IProgressoRepository _progressoRepository;
 
-        public EnderecoTotalController(IEnderecoTotalRepository enderecoTotalRepository, Paginacao paginacao,  PainelGanho painelGanho)
+        public EnderecoTotalController(IEnderecoTotalRepository enderecoTotalRepository, IProgressoRepository progressoRepository, Paginacao paginacao,  PainelGanho painelGanho)
         {
             _enderecoTotalRepository = enderecoTotalRepository;
+            _progressoRepository = progressoRepository;
             _paginacao = paginacao;
             _painelGanho = painelGanho;
 
@@ -31,7 +33,7 @@ namespace WebApiSwagger.Controllers
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 
-                var resultado = await _enderecoTotalRepository.Listar(filtro,_paginacao, 1);
+                var resultado = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro,_paginacao, 1);
 
                 _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
 
@@ -61,7 +63,7 @@ namespace WebApiSwagger.Controllers
                 string pastaDoProjeto = Directory.GetCurrentDirectory();
                 string _templatePath = Path.Combine(pastaDoProjeto,"Downloads","TB_EnderecoTotais.xlsx");
                 
-                var dados = await _enderecoTotalRepository.Listar(filtro, paginacao, 0);
+                var dados = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro, paginacao, 0);
 
                 if (dados.Count() > 1000000)
                 {
@@ -122,7 +124,7 @@ namespace WebApiSwagger.Controllers
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 
-                var resultado = await _enderecoTotalRepository.BaseAcumulada(filtro,_paginacao);
+                var resultado = await _enderecoTotalRepository.BaseAcumulada(_progressoRepository ,filtro,_paginacao);
 
                 _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
 
@@ -152,7 +154,7 @@ namespace WebApiSwagger.Controllers
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 
-                var resultado = await _enderecoTotalRepository.ListarGanho(filtro,_paginacao, _painelGanho);
+                var resultado = await _enderecoTotalRepository.ListarGanho(_progressoRepository ,filtro,_paginacao, _painelGanho);
 
                 _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
 
