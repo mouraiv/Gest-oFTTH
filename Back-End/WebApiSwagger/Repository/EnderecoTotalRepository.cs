@@ -250,9 +250,13 @@ namespace WebApiSwagger.Repository
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
-                    paginacao.Total = filtro.TotalSurveyList;
+                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100);
 
-                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista...", 100);
+                    paginacao.PaginasCorrentes = filtro.TotalSurveyList;
+
+                    paginacao.Tamanho = filtro.TotalSurveyList; 
+
+                    paginacao.Total = filtro.TotalSurveyList;
 
                     return await query.ToListAsync();    
 
@@ -266,9 +270,15 @@ namespace WebApiSwagger.Repository
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
-                    paginacao.Total = filtro.TotalSurveyList;
+                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100); 
 
-                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista...", 100); 
+                    var _registros = await query.CountAsync();
+
+                    paginacao.PaginasCorrentes = _registros;
+
+                    paginacao.Tamanho = _registros;
+
+                    paginacao.Total = _registros;
 
                     return await query.ToListAsync();
         
@@ -276,6 +286,8 @@ namespace WebApiSwagger.Repository
                 else
                 {
                     query = query.OrderBy(p => p.Cod_Viabilidade);
+
+                    progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);        
 
                     var _registros = await query.CountAsync();
 
@@ -286,13 +298,11 @@ namespace WebApiSwagger.Repository
                             .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                             .Take(paginacao.Tamanho);
 
-                    progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);        
-
                     return await query.ToListAsync(); 
 
                     }else{
                         if(_registros <= 1000000){
-                            progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);
+                            progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista... ", 100);
                             await Task.Delay(500);
 
                             return await query.ToListAsync();

@@ -415,7 +415,7 @@ return (
                           <div>
                             <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem'}}>
                               <div style={{padding: '0.5rem'}}>
-                                <p>Exportando {<b>{formatarNumero(totalRegistros ?? 0)}</b>} registros.</p>
+                                <p>Exportando registros.</p>
                                 <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
                             </div>
                                 <ProgressComponent />
@@ -553,7 +553,7 @@ return (
                       <div>
                           <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem', marginTop:'10rem'}}>
                             <div style={{padding: '0.5rem'}}>
-                              <p>Buscando {<b>{formatarNumero(countListSurvey)}</b>} Registros no banco de dados.</p>
+                              <p>Buscando registros no banco de dados.</p>
                               <p>Esse processo pode demora de acordo com da quantidade de Registros.</p>
                           </div>
                               <ProgressComponent />

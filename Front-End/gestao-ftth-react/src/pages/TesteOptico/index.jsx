@@ -14,6 +14,7 @@ import DropBox from '../../components/dropbox';
 import { Filter, ButtonImport, SubMenu } from './styles';
 import InfoDataBase from '../../components/DbInfo';
 import ProgressComponent from '../../components/progress/ProgressComponent';
+import ProgressComponentSleep from '../../components/progress/progressSleep/ProgressComponentSleep';
 
 function TesteOptico() {
   GlobalStyle();
