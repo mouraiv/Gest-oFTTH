@@ -9,6 +9,7 @@ namespace WebApiSwagger.Filters
     {
         public int? Pagina { get; set; }
         public string? CHAVE {get; set;}
+        public string? ChaveCelula { get; set; }
         public int TotalSurveyList {get; set;} 
         public int? Id_StatusGanho { get; set; }
         public int? Id_StatusGanhoDia { get; set; }

@@ -54,8 +54,8 @@ namespace WebApiSwagger.Controllers
             }
            
         }
-        [HttpGet("DownloadExcel")]
-        public async Task<IActionResult> DownloadExcel([FromQuery] FiltroEnderecoTotal filtro, [FromQuery] Paginacao paginacao)
+        [HttpPost("DownloadExcel")]
+        public async Task<IActionResult> DownloadExcel(FiltroEnderecoTotal filtro, Paginacao paginacao)
         {
             try
             {
@@ -65,10 +65,18 @@ namespace WebApiSwagger.Controllers
                 
                 var dados = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro, paginacao, 0);
 
-                if (dados.Count() > 1000000)
+                var stream = new MemoryStream();
+
+                if (dados == null || dados.Count() == 0)
                 {
-                    throw new Exception("A consulta excede o limite máximo de 1.000.000 de linhas para exportação.");
+                    return BadRequest(new { message = "Nenhum Registro para exportação." });
                 }
+                else if (dados.Count() > 1000000)
+                {
+                    return BadRequest(new { message = "A consulta excede o limite máximo de 1.000.000 de linhas para exportação."});
+                }
+                else
+                {
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -102,9 +110,9 @@ namespace WebApiSwagger.Controllers
                         row++;
                     }
 
-                    var stream = new MemoryStream();
                     package.SaveAs(stream);
                     stream.Position = 0;
+                }
 
                     string excelName = $"EnderecosTotais-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
                     return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
@@ -112,7 +120,7 @@ namespace WebApiSwagger.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Ocorreu um erro ao gerar o arquivo Excel: " + ex.Message);
+                return BadRequest(new { message ="Ocorreu um erro ao exportar o arquivo Excel: " + ex.Message });
             }
         }
         [HttpGet("BaseAcumulada")]

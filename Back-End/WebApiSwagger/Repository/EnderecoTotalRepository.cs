@@ -156,6 +156,7 @@ namespace WebApiSwagger.Repository
                 
                 var _cod_Survey = filtro.Cod_Survey?.Split(',');
                 var _chave = filtro.CHAVE?.Split(',');
+                var _chaveCelula = filtro.ChaveCelula?.Split(',');
 
                 progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
                 await Task.Delay(500);
@@ -173,6 +174,7 @@ namespace WebApiSwagger.Repository
                         Celula = et.Celula,
                         NomeCdo = et.NomeCdo,
                         Cod_Survey = et.Cod_Survey,
+                        ChaveCelula = et.ChaveCelula,
                         QuantidadeUMS = et.QuantidadeUMS,
                         Cod_Viabilidade = et.Cod_Viabilidade,
                         TipoViabilidade = et.TipoViabilidade,
@@ -250,27 +252,30 @@ namespace WebApiSwagger.Repository
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
-                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100);
-
                     paginacao.PaginasCorrentes = filtro.TotalSurveyList;
 
                     paginacao.Tamanho = filtro.TotalSurveyList; 
 
                     paginacao.Total = filtro.TotalSurveyList;
 
+                    progressoRepository.UpdateProgress(true, 70, "Calculando soma de Ums...", 100);
+                    await Task.Delay(500);
+
+                    paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
+
+                     progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100);
+
                     return await query.ToListAsync();    
 
                 } 
                 else if(!string.IsNullOrEmpty(filtro.CHAVE) && _chave.Any())
                 {
-                    progressoRepository.UpdateProgress(true, 75, "Carregando chaves CDOEs...", 100);
+                    progressoRepository.UpdateProgress(true, 75, "Carregando chave CDOEs...", 100);
                     await Task.Delay(500);
 
                     query = query.Where(p => _chave.Contains(p.MaterialRede.CHAVE));
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
-
-                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100); 
 
                     var _registros = await query.CountAsync();
 
@@ -279,6 +284,39 @@ namespace WebApiSwagger.Repository
                     paginacao.Tamanho = _registros;
 
                     paginacao.Total = _registros;
+
+                    progressoRepository.UpdateProgress(true, 70, "Calculando soma de Ums...", 100);
+                    await Task.Delay(500);
+
+                    paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
+
+                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100); 
+
+                    return await query.ToListAsync();
+        
+                } else if(!string.IsNullOrEmpty(filtro.ChaveCelula) && _chaveCelula.Any())
+                {
+                    progressoRepository.UpdateProgress(true, 75, "Carregando chave celulas...", 100);
+                    await Task.Delay(500);
+
+                    query = query.Where(p => _chaveCelula.Contains(p.ChaveCelula));
+
+                    query = query.OrderBy(p => p.Cod_Viabilidade);
+
+                    var _registros = await query.CountAsync();
+
+                    paginacao.PaginasCorrentes = _registros;
+
+                    paginacao.Tamanho = _registros;
+
+                   paginacao.Total = _registros;
+
+                    progressoRepository.UpdateProgress(true, 70, "Calculando soma de Ums...", 100);
+                    await Task.Delay(500);
+
+                    paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
+
+                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100); 
 
                     return await query.ToListAsync();
         
@@ -292,6 +330,8 @@ namespace WebApiSwagger.Repository
                     var _registros = await query.CountAsync();
 
                     paginacao.Total = _registros;
+
+                    paginacao.TotalUms = 0;
                     
                     if(pageOff == 1){   
                         query = query
@@ -302,8 +342,12 @@ namespace WebApiSwagger.Repository
 
                     }else{
                         if(_registros <= 1000000){
-                            progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista... ", 100);
+                            progressoRepository.UpdateProgress(true, 70, "Calculando soma de Ums...", 100);
                             await Task.Delay(500);
+
+                            paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
+
+                            progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista... ", 100);
 
                             return await query.ToListAsync();
 
@@ -319,7 +363,7 @@ namespace WebApiSwagger.Repository
             }
             catch (Exception ex)
             {  
-                throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
+                throw;
             }
             finally
             {

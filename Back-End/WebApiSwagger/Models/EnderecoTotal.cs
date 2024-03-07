@@ -8,8 +8,7 @@ namespace WebApiSwagger.Models
       public int Id_EnderecoTotal { get; set; }
       public string? StatusGanho { get; set; } = null!;
       public int Id_StatusGanho { get; set; }
-      //public string? StatusGanhoDia { get; set; } = null!;
-      //public int Id_StatusGanhoDia { get; set; }
+      public string? ChaveCelula { get; set; }
       public string? Disponibilidade { get; set; } = null!;
       public int Id_Disponibilidade { get; set; }
       public string? AnoMes { get; set; }

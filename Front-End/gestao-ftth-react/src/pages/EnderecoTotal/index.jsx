@@ -26,15 +26,25 @@ function EnderecoTotal() {
   const [uf, setUf] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [cdoInput, setCdoInput] = useState('');
+
+  /* --------------- ESTADO PESQUISA LOTE --------------------- */
+  const [checkedCheckbox, setCheckedCheckbox] = useState('');
+
   const [surveyInput, setSurveyInput] = useState('');
   const [chaveInput, setChaveInput] = useState('');
+  const [chaveCelulaInput, setChaveCelulaInput] = useState('');
+
+  const [survey, setSurvey] = useState("");
+  const [chave, setChave] = useState("");
+  const [chaveCelula, setChaveCelula] = useState("");
+
+  /* ----------------------------------------------------------- */
+
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [visibleSurvey, setVisibleSurvey] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [viabilidade, setViabilidade] = useState("");
-  const [survey, setSurvey] = useState("");
-  const [chave, setChave] = useState("");
   const [grupoOperacional, setGrupoOperacional] = useState("");
   const [estadoOperacional, setEstadoOperacional] = useState("");
   const [estadoControle, setEstadoControle] = useState("");
@@ -52,7 +62,6 @@ function EnderecoTotal() {
   const controller = new AbortController();
   const signal = controller.signal;
   const totalRegistros = enderecoTotal?.paginacao?.total;
-  const pattern = /-/;
 
   const aplicarFiltros = useCallback((dados) => {
     return dados.filter(
@@ -73,6 +82,7 @@ function EnderecoTotal() {
     pagina : currentPage,
     totalSurveyList: countListSurvey,
     CHAVE: chave !== "" ? chave : chaveInput,
+    ChaveCelula: chaveCelula !== "" ? chaveCelula : chaveCelulaInput,
     UF : uf,
     SiglaEstacao : siglaEstacao,
     Estacao : estacao,
@@ -85,17 +95,22 @@ function EnderecoTotal() {
     EstadoControle: estadoControle,
   };
 
-  function FetchExportExcel(){
+  async function FetchExportExcel(){
     try {
-      if(totalRegistros <= 1000000){
-        ExportExcel(filtro).finally(() => {
-          setVisible(false);
-          setCarregarExport(false);
-        });
-          
-      }else{
+      if(totalRegistros === null || totalRegistros === 0){
+        setCarregarExport(false)
+        setMensagem('Nenhum registro para exportação.');
+        
+      }else if(totalRegistros >= 1000000){
         setCarregarExport(false)
         setMensagem('O filtro não pode exceder 1.000.000 de registros para exportação.');
+       
+      }else{
+        await ExportExcel(filtro).finally(() => {
+          setVisible(false);
+          setCarregarExport(false);
+
+        });
       }
 
     } catch (error) {
@@ -195,6 +210,10 @@ function EnderecoTotal() {
     { key: 'materialRede.estadoControle_Mt', name: 'EST. CONTROLE' },
     { key: 'materialRede.estadoOperacional_Mt', name: 'EST. OPERACIONAL' },
   ];
+  
+  const handleCheckboxChange = (checkboxName) => {
+    setCheckedCheckbox(checkboxName === checkedCheckbox ? '' : checkboxName);
+  };
 
   const handleUf = (event) => {
     const input = event.target.value;
@@ -243,14 +262,24 @@ function EnderecoTotal() {
     const surveys = lines.filter(line => line.trim() !== '');
     const _survey = surveys.join(',');
 
-    if (pattern.test(_survey)) {
-      // A string não segue o padrão, faça algo aqui
+    if (checkedCheckbox === 'chave_cdoe') {
       setSurveyInput("");
+      setChaveCelulaInput("");
+      console.log("CDOE");
       setChaveInput(_survey);
-    } else {
-      // A string segue o padrão
+
+    } else if(checkedCheckbox === 'chave_celula') {
+      setSurveyInput("");
       setChaveInput("");
+      console.log("CELULA");
+      setChaveCelulaInput(_survey);
+
+    } else if(checkedCheckbox === 'survey'){
+      setChaveInput("");
+      setChaveCelulaInput("");
+      console.log("SURVEY");
       setSurveyInput(_survey);
+
     }
 
   };
@@ -289,19 +318,25 @@ function EnderecoTotal() {
   };
 
   const handleConfirm = () => {
-    if (pattern.test(surveyList)) {
-      // A string não segue o padrão, faça algo aqui
+    if (checkedCheckbox === 'chave_cdoe') {
+      //console.log("CDOE");
       setChave(surveyList)
-    } else {
-      // A string segue o padrão
+
+    }else if(checkedCheckbox === 'chave_celula') {
+      //console.log("CELULA");
+      setChaveCelula(surveyList)
+      
+    }else if(checkedCheckbox === 'survey'){
+      //console.log("SURVEY");
       setSurvey(surveyList);
     }
     setVisibleSurvey(false);
   };
 
   const handleImportSurvey = () => {
-    setSurvey("")
-    setChave("")
+    setSurvey("");
+    setChave("");
+    setChaveCelula("");
     setVisibleSurvey(true);
   }
 
@@ -332,6 +367,7 @@ function EnderecoTotal() {
     setSurveyList([]);
     setSurvey("");
     setChave("");
+    setChaveCelula("");
     setViewListSurvey("")
     setCountListSurvey(0);
     setCdoInput("");
@@ -342,18 +378,21 @@ function EnderecoTotal() {
     setInputDispComercial("");
     setSurveyInput("");
     setChaveInput("");
+    setChaveCelulaInput("");
     setDispComercial(null);
     setCurrentPage(1);
     setSubmitClicked(true);
     setListLocalSurvey(false);
     setEnderecoTotalLocal({})
     setCarregarListSurvey(false);
+    setCheckedCheckbox('');
 
   };
 
   const fetchLoading = () => {
     setLoading(false);
   }
+  console.log(checkedCheckbox);
 
 return (
       <>
@@ -467,7 +506,32 @@ return (
               )}
               <div style={{display:'flex', flexDirection: 'column'}}>
                 <div style={{marginTop: '0.6rem', marginLeft:'1rem'}}>
-                  <label>Chave | Survey</label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={checkedCheckbox === 'survey'}
+                      onChange={() => handleCheckboxChange('survey')}
+                    />
+                    Survey
+                  </label>
+                  <br />
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={checkedCheckbox === 'chave_cdoe'}
+                      onChange={() => handleCheckboxChange('chave_cdoe')}
+                    />
+                    Chave-CDOE
+                  </label>
+                  <br />
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={checkedCheckbox === 'chave_celula'}
+                      onChange={() => handleCheckboxChange('chave_celula')}
+                    />
+                    Chave-Celula
+                  </label>
                 </div>
                <div style={{display: 'flex'}}> 
               { countListSurvey > 0 ? (

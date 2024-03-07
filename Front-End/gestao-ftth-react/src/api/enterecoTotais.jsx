@@ -69,9 +69,8 @@ const GetGanhoSurveyDia = async (filtro) => {
 };
 
 const ExportExcel = async (filtro) => {
-  try {
-    const response = await Api.get('/EnderecoTotal/DownloadExcel', {
-      params: filtro,
+
+    const response = await Api.post('/EnderecoTotal/DownloadExcel', filtro, {
       responseType: 'arraybuffer', 
       });
   
@@ -88,10 +87,9 @@ const ExportExcel = async (filtro) => {
   
       // Limpar o URL temporário após o download
       window.URL.revokeObjectURL(url);
+
+      return response;
   
-  } catch (error) {
-        return 'Erro ao baixar o arquivo:', error;
-  }
   };
 
 export {

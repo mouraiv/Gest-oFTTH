@@ -114,6 +114,8 @@ app.UseCors(options =>
 {
     options.WithOrigins("http://192.168.0.39:5173", 
                         "http://192.168.0.39:5226",
+                        "http://192.168.4.10:8000",
+                        "http://192.168.4.10",
                         "http://localhost:5173",
                         "http://localhost:5226"
                         )

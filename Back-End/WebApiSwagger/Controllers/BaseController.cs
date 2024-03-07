@@ -25,7 +25,7 @@ namespace WebApiSwagger.Controllers
             {
                 // Caminho completo para o arquivo XLSX na pasta "Downloads"
                 string pastaDoProjeto = Directory.GetCurrentDirectory();
-                string filePath = Path.Combine($"{pastaDoProjeto}\\Downloads\\", "TESTES_RECEBIDOS.xlsx");
+                string filePath = Path.Combine(pastaDoProjeto,"Downloads","TESTES_RECEBIDOS.xlsx");
 
                 // Verifique se o arquivo existe
                 if (System.IO.File.Exists(filePath))

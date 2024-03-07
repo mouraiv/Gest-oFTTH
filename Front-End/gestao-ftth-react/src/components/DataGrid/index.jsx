@@ -100,7 +100,9 @@ export default function DataGrid({
             buttonConfirmar={() => ExcluirFecth()} 
        />
         <TableGridMenu>
-          <div className="total"><p>{formatarNumero(paginacao.total)} Registros</p></div>
+          <div className="total">
+            <p>{formatarNumero(paginacao.total)} Registros {paginacao.totalUms > 0 ? `[Total Ums: ${formatarNumero(paginacao.totalUms)}]` : ""}</p>
+          </div>
           <p>{_paginasCorrente == 0 ? 0 : formatarNumero(_pagina)}</p>
           <p>&nbsp;-&nbsp;</p>
           <p>{_paginasCorrente == 100 ? 100 : formatarNumero(_paginasCorrente)}</p>
