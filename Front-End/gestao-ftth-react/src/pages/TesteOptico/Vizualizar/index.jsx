@@ -906,7 +906,7 @@ function Vizualizar(){
                     }
                 />
         { materialRede !== undefined && enderecoTotal !== undefined && enderecoTotal?.length !== 0 && ligacao !== undefined ? (
-        <>        
+        <>       
         {loadingMaterial ? (
             <>
             <TableGrid style={{marginTop:'1rem'}}>
@@ -970,7 +970,7 @@ function Vizualizar(){
                             <td>Estado Controle: {materialRede.estadoControle_Mt ?? '-------'}</td>
                         </tr>
                         </>
-                        ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado</td></tr>)
+                        ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
                         }
                         <tr>
                             <th style={{backgroundColor: '#13293d'}} colSpan={2}>LIGAÇÕES</th>
@@ -1151,7 +1151,7 @@ function Vizualizar(){
          </>
             ):(<Spinner />)}
             </>
-             ):(<p style={{textAlign: 'center', marginTop: '1rem'}}>Nenhum resultado.</p>)
+             ):(<p style={{textAlign: 'center', marginTop: '1rem'}}>{enderecoTotal?.length === 0 ? "Nenhum Resultado." : <><Spinner/></>}</p>)
              }
             </Content>
             <Footer />

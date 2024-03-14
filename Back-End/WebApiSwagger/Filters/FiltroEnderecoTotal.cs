@@ -18,7 +18,11 @@ namespace WebApiSwagger.Filters
         public string? UF { get; set; }
         public string? SiglaEstacao { get; set; }
         public string? Estacao { get; set; }
-        public string? Localidade { get; set; }
+        public string? Logradouro { get; set; }
+        public string? NumeroFachada { get; set; }
+        public string? CEP { get; set; }
+        public string? Bairro { get; set; }
+        public string? Municipio { get; set; }
         public string? Cod_Survey { get; set; }
         public string? CDO { get; set; }
         public string? Disp_Comercial { get; set; }

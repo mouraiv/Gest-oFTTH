@@ -1,6 +1,7 @@
 using WebApiSwagger.Models;
 using WebApiSwagger.Filters;
 using WebApiSwagger.Utils;
+using WebApiSwagger.Models.ViewModel;
 
 namespace WebApiSwagger.Repository.Interface
 {
@@ -8,5 +9,6 @@ namespace WebApiSwagger.Repository.Interface
     {
         Task<MaterialRede> CarregarId(int? id_MaterialRede);
         Task<MaterialRede> CarregarChave(string? chave);
+        Task<IEnumerable<MaterialRedeDropFilter>> ListaUnica(string uf, string cdo);
     }
 }

@@ -43,7 +43,7 @@ const ProgressComponent = () => {
           <div style={{ position: 'absolute', fontSize:'0.9rem', marginLeft: 'auto', marginRight: 'auto', textAlign: 'center', left: '0', right: '0', top: '0', width: '500px', fontWeight: '600' }}>
             <p>{`${progress.contador}% -- ${progress.descricao} --`}</p>
           </div>
-          { progress.descricao === "Calculando Ganho..." || progress.descricao === "Preenchendo Lista... " || progress.descricao === "Calculando soma de Ums..." || progress.descricao === "Carregando surveys..." || progress.descricao === "Carregando chave CDOEs..." || progress.descricao === "Carregando chave celulas..." ?
+          { progress.descricao === "Calculando Ganho..." || progress.descricao === "Preenchendo Lista..." || progress.descricao === "Calculando soma de Ums..." || progress.descricao === "Carregando surveys..." || progress.descricao === "Carregando chave CDOEs..." || progress.descricao === "Carregando chave celulas..." ?
             <ProgressComponentSleep status={true} />
             : null
           }

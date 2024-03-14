@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Drop, FormGroup } from "./style";
 
-export default function DropBox({label, event, lista, text, valueDefaut, width, height, disable}) {
+export default function DropBox({label, event, lista, text, valueDefaut, dropLoading, width, height, disable}) {
       return (
         <>
           <FormGroup>
@@ -33,6 +33,7 @@ export default function DropBox({label, event, lista, text, valueDefaut, width, 
               ) : (
                   <option value="">Carregando...</option>
               )}
+              
             </Drop>
           </FormGroup>
         </>

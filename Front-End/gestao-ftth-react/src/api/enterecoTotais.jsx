@@ -33,6 +33,25 @@ const GetEnderecoTotal = async (filtro, {signal}) => {
   return response;
 };
 
+const DropEnderecoTotal = async () => {
+  const response = await Api.get(`/EnderecoTotal/ListaUnica`, {
+    headers:{
+      'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
+    },
+  });
+  return response;
+};
+
+const DropLocalidade = async (filtro) => {
+  const response = await Api.get(`/EnderecoTotal/ListaUnicaLocalidade`, {
+    params: filtro,
+    headers:{
+      'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
+    },
+  });
+  return response;
+};
+
 const GetBaseAcumulada = async (filtro, {signal}) => {
   const response = await Api.get('/EnderecoTotal/BaseAcumulada', {
     params: filtro,
@@ -93,6 +112,8 @@ const ExportExcel = async (filtro) => {
   };
 
 export {
+  DropEnderecoTotal,
+  DropLocalidade,
   GetBaseAcumulada,
   GetEnderecoTotal,
   GetCarregarEnderecoTotal,

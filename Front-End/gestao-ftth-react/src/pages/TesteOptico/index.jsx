@@ -7,14 +7,13 @@ import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-import Spinner from '../../components/Spinner';
 import TextInput from '../../components/TextInput';
 import { DateMask } from "../../components/TextInput/mask/index";
 import DropBox from '../../components/dropbox';
 import { Filter, ButtonImport, SubMenu } from './styles';
 import InfoDataBase from '../../components/DbInfo';
 import ProgressComponent from '../../components/progress/ProgressComponent';
-import ProgressComponentSleep from '../../components/progress/progressSleep/ProgressComponentSleep';
+
 
 function TesteOptico() {
   GlobalStyle();

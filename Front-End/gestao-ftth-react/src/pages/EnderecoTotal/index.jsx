@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { GetEnderecoTotal, ExportExcel } from "../../api/enterecoTotais";
-import { ufOptions, dispComercialOptions, grupoOperacionalOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
+import { GetEnderecoTotal, ExportExcel} from "../../api/enterecoTotais";
+import { DropMaterialRede } from "../../api/materialRede";
+import {dispComercialOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import DataGridTable from '../../components/DataGrid';
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-import TextInput from '../../components/TextInput';
 import DropBox from '../../components/dropbox';
-import { Filter, ButtonUpload, ButtonExportarExcel } from './styles';
+import { Filter, Painel,ButtonUpload, ButtonExportarExcel, InputText } from './styles';
 import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 import { formatarNumero } from "../../util/formatarNumeros";
@@ -19,13 +19,44 @@ function EnderecoTotal() {
 
   const [enderecoTotal, setEnderecoTotal] = useState({});
   const [enderecoTotalLocal, setEnderecoTotalLocal] = useState({});
-  const [dropSiglaEstacao, setDropSiglaEstacao] = useState([]);
-  const [siglaEstacao, setSiglaEstacao] = useState("");
-  const [dropEstacao, setDropEstacao] = useState([]);
-  const [estacao, setEstacao] = useState("");
-  const [uf, setUf] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [cdoInput, setCdoInput] = useState('');
+
+  /* --------------- DROP FILTER --------------------- */
+  const [dropUf, setDropUf] = useState([]);
+  const [uf, setUf] = useState("");
+
+  const [dropSiglaEstacao, setDropSiglaEstacao] = useState([]);
+  const [siglaEstacao, setSiglaEstacao] = useState("");
+
+  const [dropEstacao, setDropEstacao] = useState([]);
+  const [estacao, setEstacao] = useState("");
+
+  const [dropBairro, setDropBairro] = useState([]);
+  const [bairro, setBairro] = useState("");
+
+  const [dropMunicipio, setDropMunicipio] = useState([]);
+  const [municipio, setMunicipio] = useState("");
+
+  const [dropViabilidade, setDropViabilidade] = useState([]);
+  const [viabilidade, setViabilidade] = useState("");
+
+  const [dropGrupoOperacional, setDropGrupoOperacional] = useState([]);
+  const [grupoOperacional, setGrupoOperacional] = useState("");
+
+  const [dropEstadoOperacional, setDropEstadoOperacional] = useState([]);
+  const [estadoOperacional, setEstadoOperacional] = useState("");
+
+  const [dropEstadoControle, setDropEstadoControle] = useState([]);
+  const [estadoControle, setEstadoControle] = useState("");
+
+  const [dispComercial, setDispComercial] = useState(null);
+
+  const [logradouro, setLogradouro] = useState("");
+  const [cep, setCep] = useState("");
+  const [numeroFaichada, setNumeroFaichada] = useState("");
+
+  /* -----------------------------------------------------------*/
 
   /* --------------- ESTADO PESQUISA LOTE --------------------- */
   const [checkedCheckbox, setCheckedCheckbox] = useState('');
@@ -41,14 +72,10 @@ function EnderecoTotal() {
   /* ----------------------------------------------------------- */
 
   const [loading, setLoading] = useState(false);
+  const [loadingDrop, setLoadingDrop] = useState(false);
   const [visible, setVisible] = useState(false);
   const [visibleSurvey, setVisibleSurvey] = useState(false);
   const [mensagem, setMensagem] = useState("");
-  const [viabilidade, setViabilidade] = useState("");
-  const [grupoOperacional, setGrupoOperacional] = useState("");
-  const [estadoOperacional, setEstadoOperacional] = useState("");
-  const [estadoControle, setEstadoControle] = useState("");
-  const [dispComercial, setDispComercial] = useState(null);
   const [inputDispComercial, setInputDispComercial] = useState("");
   const [submitClicked, setSubmitClicked] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
@@ -86,6 +113,11 @@ function EnderecoTotal() {
     UF : uf,
     SiglaEstacao : siglaEstacao,
     Estacao : estacao,
+    Logradouro : logradouro,
+    numeroFaichada : numeroFaichada,
+    CEP : cep,
+    Bairro : bairro,
+    Municipio : municipio,
     CDO: cdoInput,
     Cod_Viabilidade : viabilidade,
     Cod_Survey: survey !== "" ? survey : surveyInput,
@@ -121,6 +153,139 @@ function EnderecoTotal() {
 
   }
 
+  const FetchDropFilter  = async () => {
+    
+    try {
+      const dropList = await DropMaterialRede();
+
+      if (dropList.status == 200) {
+        const _dropListUf = dropList.data
+            .map((value) => value.uf)
+            .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+        });
+        setDropUf(_dropListUf);
+
+        const _dropListGrupoOperacional = dropList.data
+            .map((value) => value.grupoOperacional)
+            .filter((value, index, self) => {
+                  return self.indexOf(value) === index;
+          });
+          setDropGrupoOperacional(_dropListGrupoOperacional);
+
+          const _dropListEstadoOperacional = dropList.data
+          .map((value) => value.estadoOperacional)
+          .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+          });
+          setDropEstadoOperacional(_dropListEstadoOperacional);
+          
+          const _dropListEstadoControle = dropList.data
+          .map((value) => value.estadoControle)
+          .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+          });
+          setDropEstadoControle(_dropListEstadoControle);
+          
+          const _dropListViab = [... new Set(dropList.data
+            .map((value, index) => {
+                return value.cod_Viabilidade
+          }))]
+          .filter((value) => value !== undefined);
+          setDropViabilidade(_dropListViab);
+  
+    }
+
+      
+    } catch (error) {
+      console.log(`Houve um error : ${error}`)
+      setLoadingDrop(true);
+
+    } finally{
+      setLoadingDrop(true);
+    }
+
+  }
+
+  const FetchDropFilterMaterialExec  = async (uf, cdo) => {
+    
+    try {
+
+      const dropList = await DropMaterialRede(uf, cdo);
+
+      if (dropList.status == 200) {
+       
+          const _dropListSiglaEstacao = [... new Set(dropList.data
+          .map((value, index) => {
+              if(value.siglaEstacao != null){ 
+                return value.siglaEstacao
+              }
+          }))]
+          .filter((value) => value !== undefined);
+          setDropSiglaEstacao(_dropListSiglaEstacao);
+
+          const _dropListEstacao = [... new Set(dropList.data
+          .map((value, index) => {
+              if(value.siglaEstacao != null){ 
+                return value.nomeAbastecedora
+              }
+          }))]
+          .filter((value) => value !== undefined);
+          setDropEstacao(_dropListEstacao);
+
+          const _dropListBairro = [... new Set(dropList.data
+          .map((value) => value.bairro)
+          .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+          }))];
+          setDropBairro(_dropListBairro);
+
+          const _dropListMunicipio = [... new Set(dropList.data
+          .map((value) => value.municipio)
+          .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+          }))];
+          setDropMunicipio(_dropListMunicipio);
+
+          const _dropListGrupoOperacional = [... new Set(dropList.data
+          .map((value) => value.grupoOperacional)
+          .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+          }))];
+          setDropGrupoOperacional(_dropListGrupoOperacional);
+
+          const _dropListEstadoOperacional = [... new Set(dropList.data
+          .map((value) => value.estadoOperacional)
+          .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+          }))];
+          setDropEstadoOperacional(_dropListEstadoOperacional);
+          
+          const _dropListEstadoControle = [... new Set(dropList.data
+          .map((value) => value.estadoControle)
+          .filter((value, index, self) => {
+                return self.indexOf(value) === index;
+          }))];
+          setDropEstadoControle(_dropListEstadoControle);
+          
+          const _dropListViab = [... new Set(dropList.data
+            .map((value, index) => {
+                return value.cod_Viabilidade
+          }))]
+          .filter((value) => value !== undefined);
+          setDropViabilidade(_dropListViab);
+  
+    }
+      
+    } catch (error) {
+      console.log(`Houve um error : ${error}`)
+      setLoadingDrop(true);
+
+    } finally{
+      setLoadingDrop(true);
+    }
+  }
+
   const fetchEnderecoTotal = useCallback(async () => {    
     try {
     
@@ -154,7 +319,7 @@ function EnderecoTotal() {
       setLoading(true)
       setInitialLoad(false);
       setCarregarListSurvey(false);
-      countListSurvey > 4 ? setListLocalSurvey(true) : setListLocalSurvey(false);
+      countListSurvey > 0 ? setListLocalSurvey(true) : setListLocalSurvey(false);
             
     }
 
@@ -178,6 +343,7 @@ function EnderecoTotal() {
   useEffect(() => {    
     if (initialLoad) {
       // Realiza a pesquisa inicial apenas uma vez ao carregar a página
+      FetchDropFilter();
       fetchEnderecoTotal();
 
     } else if (submitClicked) {
@@ -196,6 +362,7 @@ function EnderecoTotal() {
 
   const columns = [
     { key: 'uf', name: 'UF' },
+    { key: 'anoMes', name: 'BASE ACUM.' },
     { key: 'localidade', name: 'LOCALIDADE' },
     { key: 'celula', name: 'CELULA' },
     { key: 'siglaEstacao', name: 'SIGLA' },
@@ -217,14 +384,10 @@ function EnderecoTotal() {
 
   const handleUf = (event) => {
     const input = event.target.value;
+    FetchDropFilterMaterialExec(input, cdoInput);
+    setLoadingDrop(false);
     setUf(input);
-
-    const filteredEstacoes = estacaoOptions.filter(([ufOption]) => ufOption === input);
-    const subSiglaEstacoes = filteredEstacoes.map(subarray => subarray[1]);
-    setDropSiglaEstacao(subSiglaEstacoes?.length == 0 ? [""] : subSiglaEstacoes);
-    const subEstacoes = filteredEstacoes.map(subarray => subarray[2]);
-    setDropEstacao(subEstacoes?.length == 0 ? [""] : subEstacoes);
-
+    
   };
 
   const handleSiglaEstacao = (event) => {
@@ -247,6 +410,31 @@ function EnderecoTotal() {
     setEstadoOperacional(input);
   }
 
+  const handleLogradouro = (event) => {
+    const input = event.target.value;
+    setLogradouro(input);
+  };
+
+  const handleNumeroFaichada = (event) => {
+    const input = event.target.value;
+    setNumeroFaichada(input);
+  };
+
+  const handleCep = (event) => {
+    const input = event.target.value;
+    setCep(input);
+  };
+
+  const handleBairro = (event) => {
+    const input = event.target.value;
+    setBairro(input);
+  };
+
+  const handleMunicipio = (event) => {
+    const input = event.target.value;
+    setMunicipio(input);
+  };
+
   const handleEstacao = (event) => {
     const input = event.target.value;
     setEstacao(input);
@@ -255,6 +443,7 @@ function EnderecoTotal() {
   const handleCdo = (event) => {
     const input = event.target.value;
     setCdoInput(input);
+    FetchDropFilterMaterialExec(uf, input);
   };
 
   const handleSurvey = (event) => {
@@ -286,6 +475,12 @@ function EnderecoTotal() {
 
   const handleViabilidade = (event) => {
     const input = event.target.value;
+
+    if (input === 'Ver mais...') {
+      console.log('Você selecionou o item 3!');
+      FetchDropFilter(paginaAtual);
+      // Execute qualquer outra ação desejada aqui
+    }
     setViabilidade(input);
   };
 
@@ -349,15 +544,21 @@ function EnderecoTotal() {
   const submit = () => {
     setSubmitClicked(true);
     setCurrentPage(1);
-    if(countListSurvey > 4){
+    if(countListSurvey > 0){
       setCarregarListSurvey(true);
       
      }else{
       setEnderecoTotalLocal({});
       setListLocalSurvey(false);
+      setCarregarListSurvey(false);
       
     }
     
+  };
+
+  const handleCarregarMais = () => {
+    setPaginaAtual(paginaAtual + 1);
+    console.log("ok")
   };
 
   const limparFiltro = () => {
@@ -371,6 +572,11 @@ function EnderecoTotal() {
     setViewListSurvey("")
     setCountListSurvey(0);
     setCdoInput("");
+    setLogradouro("");
+    setNumeroFaichada("");
+    setCep("");
+    setBairro("")
+    setMunicipio("");
     setViabilidade("");
     setGrupoOperacional("");
     setEstadoControle("");
@@ -392,7 +598,6 @@ function EnderecoTotal() {
   const fetchLoading = () => {
     setLoading(false);
   }
-  console.log(checkedCheckbox);
 
 return (
       <>
@@ -471,88 +676,88 @@ return (
               <div>
               <div style={{display: 'flex'}}>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={ufOptions.sort()} text={uf} />
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={dropUf.sort()} text={uf} />
               </div>
               { uf !== '' ? (
-                <> 
-                { estacao !== '' ? (
-                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                  <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao.sort()} text={siglaEstacao} disable={true}/>
-                </div>
-                ):(
-                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                  <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao.sort()} text={siglaEstacao} />
-                </div>
-                )}
-                {siglaEstacao !== '' ? (
-                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                  <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao.sort()} text={estacao} disable={true}/>
-                </div>
-                ):(
-                  <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                  <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao.sort()} text={estacao} />
-                 </div>
-                )}
-                </>
+              <>
+              { estacao !== '' ? (
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={[""]} text={siglaEstacao} disable={true}/>
+              </div>
               ) : (
-                <>
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                    <DropBox width={"150px"} height={"25px"} valueDefaut={"- Selecionar -"} label={"Sigla Estação"} lista={[""]} disable={true}/>
-                  </div>
-                  <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                    <DropBox width={"300px"} height={"25px"} valueDefaut={"- Selecionar -"} label={"Estação"} lista={[""]} disable={true}/>
-                  </div>
-                 </>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={loadingDrop ? dropSiglaEstacao.sort() ?? "" : []} text={siglaEstacao} />
+                </div>
               )}
-              <div style={{display:'flex', flexDirection: 'column'}}>
-                <div style={{marginTop: '0.6rem', marginLeft:'1rem'}}>
+               { siglaEstacao !== '' ? (
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={[""]} text={estacao} disable={true}/>
+              </div>
+               ):(
+                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={loadingDrop ? dropEstacao.sort() : []} text={estacao}/>
+              </div>
+               )}
+
+              </>
+              ) : (
+              <>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={[""]} text={siglaEstacao} disable={true}/>
+              </div>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={[""]} text={estacao} disable={true}/>
+               </div>
+               </> 
+              )}
+              
+               <div style={{display:'flex', flexDirection: 'column', marginLeft:'22rem'}}>
+                <div style={{marginTop: '0.6rem', marginLeft:'1rem', border:"1px solid #aaaaaa", backgroundColor:"#e7e7e7", padding: '0.8rem'}}>
                   <label>
                     <input
                       type="checkbox"
                       checked={checkedCheckbox === 'survey'}
                       onChange={() => handleCheckboxChange('survey')}
                     />
-                    Survey
+                    {" Survey"}
                   </label>
-                  <br />
-                  <label>
+
+                  <label style={{marginLeft: "0.5rem"}}>
                     <input
                       type="checkbox"
                       checked={checkedCheckbox === 'chave_cdoe'}
                       onChange={() => handleCheckboxChange('chave_cdoe')}
                     />
-                    Chave-CDOE
+                    {" Chave-CDOE"}
                   </label>
-                  <br />
-                  <label>
+
+                  <label style={{marginLeft: "0.5rem"}}>
                     <input
                       type="checkbox"
                       checked={checkedCheckbox === 'chave_celula'}
                       onChange={() => handleCheckboxChange('chave_celula')}
                     />
-                    Chave-Celula
+                    {" Chave-Celula"}
                   </label>
-                </div>
+                
                <div style={{display: 'flex'}}> 
               { countListSurvey > 0 ? (
                 <input style={{
-                  marginLeft: '1rem',
                   paddingLeft: '0.2rem',
-                  marginTop: '0.1rem',
+                  marginTop: '0.3rem',
                   fontSize: '0.7rem',
                   fontWeight: '600',
-                  width: '150px',
+                  width: '200px',
                   height: '24px',
                   backgroundColor: 'white',
                   border: '1px solid',
                 }} label={"CHAVE"} value={''} placeholder={countListSurvey > 0 ? `${countListSurvey} Registros` : null} disabled/>
               ) : (
               <input style={{
-                  marginLeft: '1rem',
-                  marginTop: '0.1rem',
+                  marginTop: '0.3rem',
                   fontSize: '0.7rem',
                   fontWeight: '600',
-                  width: '150px',
+                  width: '200px',
                   height: '24px',
                   textTransform: 'uppercase'
                 }} label={"Survey"} maxLength="30" onChange={handleSurvey} value={surveyInput === "" ? chaveInput : surveyInput} />
@@ -563,33 +768,92 @@ return (
               </div>
               
               </div>
+             
+              </div>
 
               <div style={{position:'absolute', right:0, top:0, marginTop:'0.3rem', marginRight:'0.4rem'}}>
+              { loading && loadingDrop ? (
+                <>
                 <ButtonExportarExcel onClick={handleExportExcel}>Exportar Excel</ButtonExportarExcel>
+                </>
+              ):(null)}
               </div>
-                              
+
+              <div style={{display: 'flex'}}>
+             
+              { uf !== '' && loadingDrop ? (
+              <>
+               <div style={{display: 'flex', flexDirection: 'column', marginLeft: '1rem', marginTop: '0.7rem'}}>
+              <label>Logradouro</label> 
+              <InputText onChange={handleLogradouro} value={logradouro} style={{width: "500px"}}/>
+              </div>
+              <div style={{display: 'flex', flexDirection: 'column', marginLeft: '1rem', marginTop: '0.7rem'}}>
+              <label>N°</label>  
+              <InputText onChange={handleNumeroFaichada} value={numeroFaichada} style={{width: "80px"}} />
+              </div>
+              <div style={{display: 'flex', flexDirection: 'column', marginLeft: '1rem', marginTop: '0.7rem'}}>
+              <label>CEP</label>  
+              <InputText onChange={handleCep} value={cep} style={{width: "150px"}} />
+              </div>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Bairro"} event={handleBairro} lista={loadingDrop ? dropBairro.sort() : []} text={bairro}/>
+               </div>
+                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Município"} event={handleMunicipio} lista={loadingDrop ? dropMunicipio.sort() : []} text={municipio}/>
+               </div>
+              </>
+              ):(
+              <>
+               <div style={{display: 'flex', flexDirection: 'column', marginLeft: '1rem', marginTop: '0.7rem'}}>
+              <label>Logradouro</label> 
+              <InputText style={{width: "500px"}} value={logradouro} disabled/>
+              </div>
+              <div style={{display: 'flex', flexDirection: 'column', marginLeft: '1rem', marginTop: '0.7rem'}}>
+              <label>N°</label>  
+              <InputText style={{width: "80px"}} value={numeroFaichada} disabled/>
+              </div>
+              <div style={{display: 'flex', flexDirection: 'column', marginLeft: '1rem', marginTop: '0.7rem'}}>
+              <label>CEP</label>  
+              <InputText style={{width: "150px"}} value={cep} disabled/>
+              </div>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"194px"} height={"25px"} valueDefaut={""} label={"Bairro"} event={null} lista={[""]} text={bairro} disable={true}/>
+              </div>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Município"} event={null} lista={[""]} text={municipio} disable={true}/>
+              </div>
+              </>
+              
+              )}
+              </div>
+
               <div style={{display: 'flex'}}>
               
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                    <DropBox width={"150px"} height={"25px"} valueDefaut={""} event={handleDispComercial} label={"Disponibilidade"} lista={dispComercialOptions} text={inputDispComercial} />
+              <DropBox width={"150px"} height={"25px"} valueDefaut={""} event={handleDispComercial} label={"Disponibilidade"} lista={loadingDrop ? dispComercialOptions : []} text={inputDispComercial} />
               </div>
-              <TextInput label={"Cdo"} event={handleCdo} text={cdoInput} /> 
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Viabilidade"} event={handleViabilidade} lista={viabilidadeOptions.sort((a, b) => parseInt(a, 10) - parseInt(b, 10))} text={viabilidade} />
+              <div style={{display: 'flex', flexDirection: 'column', marginLeft: '1rem', marginTop: '0.7rem'}}>
+              <label>CDO</label>  
+              <InputText style={{width: "150px"}} onChange={handleCdo} value={cdoInput} /> 
+              </div>
+              <div style={{ marginLeft: '1rem', marginTop: '0.7rem' }}>
+              <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Viabilidade"} event={handleViabilidade} lista={loadingDrop ? dropViabilidade.sort((a, b) => parseInt(a, 10) - parseInt(b, 10)) : []} text={viabilidade} >
+              <button key="carregarMaisButton" onClick={handleCarregarMais}>Carregar mais</button>
+              </DropBox>
               </div>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Grupo Operacional"} event={handleGrupoOperacional} lista={grupoOperacionalOptions.sort()} text={grupoOperacional} />
+                <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Grupo Operacional"} event={handleGrupoOperacional} lista={loadingDrop ? dropGrupoOperacional.sort() : []} text={grupoOperacional} />
               </div>      
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"350px"} height={"25px"} valueDefaut={""} label={"Est. Controle"} event={handleControle} lista={controleOptions.sort()} text={estadoControle} />
+                <DropBox width={"350px"} height={"25px"} valueDefaut={""} label={"Est. Controle"} event={handleControle} lista={loadingDrop ? dropEstadoControle.sort() : []} text={estadoControle} />
               </div>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Est. Operacional"} event={handleOperacional} lista={operacionalOptions.sort()} text={estadoOperacional} />
+                <DropBox width={"208px"} height={"25px"} valueDefaut={""} label={"Est. Operacional"} event={handleOperacional} lista={loadingDrop ? dropEstadoOperacional.sort() : []} text={estadoOperacional} />
               </div>
 
               <div style={{display: 'flex', marginRight:'1rem'}}>
-                <ButtonDefaut event={submit} text={"Filtrar"} />
-                <ButtonDefaut event={limparFiltro} text={"Limpar"} />
+                  <ButtonDefaut event={loading && loadingDrop ? submit : null} text={"Filtrar"} />
+                  <ButtonDefaut event={loading && loadingDrop ? limparFiltro : null} text={"Limpar"} />
               </div>
 
               </div>
@@ -601,6 +865,40 @@ return (
                 <>  
                 { loading ? (
                   <>
+                   <Painel>
+                <div className='viewComGanho'>
+                    <p className='lab'>COM GANHO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.comGanhoTotal)}</p>
+                </div>
+                <div className='viewComGanho'>
+                    <p className='lab'>COM GANHO ATIVO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.comGanhoAtivo)}</p>
+                </div>
+                <div className='viewComGanho'>
+                    <p className='lab'>COM GANHO INATIVO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.comGanhoInativo)}</p>
+                </div>
+                <div className='viewComGanho'>
+                    <p className='lab'>COM GANHO F. CÉLULA</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.comGanhoForaCelula)}</p>
+                </div >
+                <div className='viewSemGanho'>
+                    <p className='lab'>SEM GANHO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.semGanhoTotal)}</p>
+                </div>
+                <div className='viewSemGanho'>
+                    <p className='lab'>SEM GANHO ATIVO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.semGanhoAtivo)}</p>
+                </div>
+                <div className='viewSemGanho'>
+                    <p className='lab'>SEM GANHO INATIVO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.semGanhoInativo)}</p>
+                </div>
+                <div className='viewSemGanho'>
+                    <p className='lab'>SEM GANHO F. CÉLULA</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.semGanhoForaCelula)}</p>
+                </div>
+               </Painel>
                   <DataGridTable 
                     columns={columns} 
                     rows={enderecoTotal.resultado} 
@@ -631,6 +929,40 @@ return (
                 <>
                 {loading ? (  
                   <>
+                  <Painel>
+                <div className='viewComGanho'>
+                    <p className='lab'>COM GANHO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.comGanhoTotal)}</p>
+                </div>
+                <div className='viewComGanho'>
+                    <p className='lab'>COM GANHO ATIVO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.comGanhoAtivo)}</p>
+                </div>
+                <div className='viewComGanho'>
+                    <p className='lab'>COM GANHO INATIVO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.comGanhoInativo)}</p>
+                </div>
+                <div className='viewComGanho'>
+                    <p className='lab'>COM GANHO F. CÉLULA</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.comGanhoForaCelula)}</p>
+                </div >
+                <div className='viewSemGanho'>
+                    <p className='lab'>SEM GANHO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.semGanhoTotal)}</p>
+                </div>
+                <div className='viewSemGanho'>
+                    <p className='lab'>SEM GANHO ATIVO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.semGanhoAtivo)}</p>
+                </div>
+                <div className='viewSemGanho'>
+                    <p className='lab'>SEM GANHO INATIVO</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.semGanhoInativo)}</p>
+                </div>
+                <div className='viewSemGanho'>
+                    <p className='lab'>SEM GANHO F. CÉLULA</p>
+                    <p className='result'>{formatarNumero(enderecoTotal.painel?.semGanhoForaCelula)}</p>
+                </div>
+               </Painel>
                   <DataGridTable 
                     columns={columns} 
                     rows={enderecoTotalLocal?.resultado !== undefined ? enderecoTotalLocal.resultado : enderecoTotal.resultado} 

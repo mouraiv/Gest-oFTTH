@@ -33,7 +33,7 @@ namespace WebApiSwagger.Controllers
                 _paginacao.Tamanho = 100;
                 _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
 
-                var resultado = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro,_paginacao, 1);
+                var resultado = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro,_painelGanho,_paginacao, 1);
 
                 _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
 
@@ -45,6 +45,7 @@ namespace WebApiSwagger.Controllers
                 return Ok(
                     new {
                             Paginacao = _paginacao,
+                            Painel = _painelGanho,
                             Resultado = resultado
                         });
             }
@@ -63,7 +64,7 @@ namespace WebApiSwagger.Controllers
                 string pastaDoProjeto = Directory.GetCurrentDirectory();
                 string _templatePath = Path.Combine(pastaDoProjeto,"Downloads","TB_EnderecoTotais.xlsx");
                 
-                var dados = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro, paginacao, 0);
+                var dados = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro, _painelGanho, paginacao, 0);
 
                 var stream = new MemoryStream();
 
@@ -276,6 +277,27 @@ namespace WebApiSwagger.Controllers
                return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
             }
 
+        }
+        [HttpGet("ListarUnicaLocalidade")]
+        public async Task<IActionResult> ListarUnicaLocalidade([FromQuery]FiltroEnderecoTotal filtro)
+        {
+            try
+            {
+
+                var resultado = await _enderecoTotalRepository.ListaUnicaLocalidade(filtro);
+
+                if (resultado == null)
+                {
+                    return NotFound("Nenhum resultado."); 
+                }
+                
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
+            }
+           
         }
 
     }

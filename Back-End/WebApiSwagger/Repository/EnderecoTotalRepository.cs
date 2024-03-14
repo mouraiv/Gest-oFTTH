@@ -45,7 +45,14 @@ namespace WebApiSwagger.Repository
                         TipoRede = et.TipoRede,
                         UCS_Residenciais = et.UCS_Residenciais,
                         UCS_Comerciais = et.UCS_Comerciais,
-                        MaterialRede = et.MaterialRede
+                        MaterialRede = new MaterialRede
+                            {
+                                NomeAbastecedora_Mt = et.MaterialRede.NomeAbastecedora_Mt,
+                                GrupoOperacional_Mt = et.MaterialRede.GrupoOperacional_Mt,
+                                EstadoControle_Mt = et.MaterialRede.EstadoControle_Mt,
+                                EstadoOperacional_Mt = et.MaterialRede.EstadoOperacional_Mt
+                            }
+
                     })
                     .AsQueryable();
 
@@ -70,11 +77,6 @@ namespace WebApiSwagger.Repository
                     if (!string.IsNullOrEmpty(filtro.Estacao))
                     {
                         query = query.Where(p => p.MaterialRede.NomeAbastecedora_Mt == filtro.Estacao);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.Localidade))
-                    {
-                        query = query.Where(p => p.Localidade == filtro.Localidade);
                     }
 
                     progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
@@ -149,7 +151,7 @@ namespace WebApiSwagger.Repository
             }
             
         }
-        public async Task<IEnumerable<EnderecoTotal>> Listar(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao, int pageOff)
+        public async Task<IEnumerable<EnderecoTotal>> Listar(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, PainelGanho painelGanho,Paginacao paginacao, int pageOff)
         {
               try
             {
@@ -164,11 +166,17 @@ namespace WebApiSwagger.Repository
                 var query = _context.EnderecosTotais
                     .Include(p => p.MaterialRede)
                     .Select(et => new EnderecoTotal {
+                        Id_StatusGanho = et.Id_StatusGanho,
                         Id_EnderecoTotal = et.Id_EnderecoTotal,
                         Id_MaterialRede = et.Id_MaterialRede,
                         Id_Disponibilidade = et.Id_Disponibilidade,
+                        AnoMes = et.AnoMes,
                         UF = et.UF,
                         Localidade = et.Localidade,
+                        Logradouro = et.Logradouro,
+                        NumeroFachada = et.NumeroFachada,
+                        Bairro = et.Bairro,
+                        CEP = et.CEP,
                         Municipio = et.Municipio,
                         SiglaEstacao = et.SiglaEstacao,
                         Celula = et.Celula,
@@ -182,7 +190,14 @@ namespace WebApiSwagger.Repository
                         Disp_Comercial = et.Disp_Comercial,
                         UCS_Residenciais = et.UCS_Residenciais,
                         UCS_Comerciais = et.UCS_Comerciais,
-                        MaterialRede = et.MaterialRede
+                        MaterialRede = new MaterialRede
+                            {
+                                NomeAbastecedora_Mt = et.MaterialRede.NomeAbastecedora_Mt,
+                                GrupoOperacional_Mt = et.MaterialRede.GrupoOperacional_Mt,
+                                EstadoControle_Mt = et.MaterialRede.EstadoControle_Mt,
+                                EstadoOperacional_Mt = et.MaterialRede.EstadoOperacional_Mt
+                            }
+
                     })
                     .AsQueryable();
 
@@ -209,9 +224,25 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.MaterialRede.NomeAbastecedora_Mt == filtro.Estacao);
                 }
 
-                if (!string.IsNullOrEmpty(filtro.Localidade))
+                if (!string.IsNullOrEmpty(filtro.Logradouro))
                 {
-                    query = query.Where(p => p.Localidade == filtro.Localidade);
+                    query = query.Where(p => p.Logradouro == filtro.Logradouro);
+                }
+                if (!string.IsNullOrEmpty(filtro.NumeroFachada))
+                {
+                    query = query.Where(p => p.NumeroFachada == filtro.NumeroFachada);
+                }
+                if (!string.IsNullOrEmpty(filtro.CEP))
+                {
+                    query = query.Where(p => p.CEP == filtro.CEP);
+                }
+                if (!string.IsNullOrEmpty(filtro.Bairro))
+                {
+                    query = query.Where(p => p.Bairro == filtro.Bairro);
+                }
+                if (!string.IsNullOrEmpty(filtro.Municipio))
+                {
+                    query = query.Where(p => p.Municipio == filtro.Municipio);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.CDO))
@@ -258,12 +289,31 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Total = filtro.TotalSurveyList;
 
-                    progressoRepository.UpdateProgress(true, 70, "Calculando soma de Ums...", 100);
+                     progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
+
+                        paginacao.Total = await query.CountAsync();
+
+                        if(filtro?.Pagina == 1) {    
+
+                        painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoInativo =  query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+
+                        painelGanho.SemGanhoTotal = query.Where(p => p.Id_StatusGanho == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoAtivo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoInativo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+                        
+                        }
+
+
+                    progressoRepository.UpdateProgress(true, 85, "Calculando soma de Ums...", 100);
                     await Task.Delay(500);
 
                     paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
 
-                     progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100);
+                     progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
 
                     return await query.ToListAsync();    
 
@@ -285,12 +335,30 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Total = _registros;
 
-                    progressoRepository.UpdateProgress(true, 70, "Calculando soma de Ums...", 100);
+                    progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
+
+                    paginacao.Total = await query.CountAsync();
+
+                        if(filtro?.Pagina == 1) {    
+
+                        painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoInativo =  query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+
+                        painelGanho.SemGanhoTotal = query.Where(p => p.Id_StatusGanho == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoAtivo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoInativo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+                        
+                        }
+
+                    progressoRepository.UpdateProgress(true, 85, "Calculando soma de Ums...", 100);
                     await Task.Delay(500);
 
                     paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
 
-                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100); 
+                    progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100); 
 
                     return await query.ToListAsync();
         
@@ -309,34 +377,70 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Tamanho = _registros;
 
-                   paginacao.Total = _registros;
+                    paginacao.Total = _registros;
 
-                    progressoRepository.UpdateProgress(true, 70, "Calculando soma de Ums...", 100);
+                     progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
+
+                        paginacao.Total = await query.CountAsync();
+
+                        if(filtro?.Pagina == 1) {    
+
+                        painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoInativo =  query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+
+                        painelGanho.SemGanhoTotal = query.Where(p => p.Id_StatusGanho == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoAtivo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoInativo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+                        
+                        }
+
+                    progressoRepository.UpdateProgress(true, 85, "Calculando soma de Ums...", 100);
                     await Task.Delay(500);
 
                     paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
 
-                    progressoRepository.UpdateProgress(true, 90, "Preenchendo Lista... ", 100); 
+                    progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100); 
 
                     return await query.ToListAsync();
         
                 }
                 else
                 {
-                    query = query.OrderBy(p => p.Cod_Viabilidade);
-
-                    progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);        
+                    query = query.OrderBy(p => p.Cod_Viabilidade);    
 
                     var _registros = await query.CountAsync();
 
                     paginacao.Total = _registros;
 
                     paginacao.TotalUms = 0;
+
+                     progressoRepository.UpdateProgress(true, 85, "Calculando Ganho...", 100);
+
+                        paginacao.Total = await query.CountAsync();
+
+                        if(filtro?.Pagina == 1) {    
+
+                        painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoInativo =  query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.ComGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+
+                        painelGanho.SemGanhoTotal = query.Where(p => p.Id_StatusGanho == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoAtivo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoInativo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
+                        painelGanho.SemGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
+                        
+                        }
                     
                     if(pageOff == 1){   
                         query = query
                             .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
                             .Take(paginacao.Tamanho);
+
+                    progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);    
 
                     return await query.ToListAsync(); 
 
@@ -347,7 +451,7 @@ namespace WebApiSwagger.Repository
 
                             paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
 
-                            progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista... ", 100);
+                            progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);
 
                             return await query.ToListAsync();
 
@@ -413,7 +517,14 @@ namespace WebApiSwagger.Repository
                         QuantidadeUMS = et.QuantidadeUMS,
                         Cod_Viabilidade = et.Cod_Viabilidade,
                         TipoViabilidade = et.TipoViabilidade,
-                        MaterialRede = et.MaterialRede
+                        MaterialRede = new MaterialRede
+                            {
+                                NomeAbastecedora_Mt = et.MaterialRede.NomeAbastecedora_Mt,
+                                GrupoOperacional_Mt = et.MaterialRede.GrupoOperacional_Mt,
+                                EstadoControle_Mt = et.MaterialRede.EstadoControle_Mt,
+                                EstadoOperacional_Mt = et.MaterialRede.EstadoOperacional_Mt
+                            }
+
                     })
                     .AsQueryable();
 
@@ -450,11 +561,6 @@ namespace WebApiSwagger.Repository
 
                     progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
                      await Task.Delay(500);
-
-                    if (!string.IsNullOrEmpty(filtro.Localidade))
-                    {
-                        query = query.Where(p => p.Localidade == filtro.Localidade);
-                    }
 
                     if (!string.IsNullOrEmpty(filtro.Cod_Survey))
                     {
@@ -627,29 +733,81 @@ namespace WebApiSwagger.Repository
                 }
         }*/
 
-        public async Task<IEnumerable<EnderecoTotal>> ListaUnica()
+        public async Task<IEnumerable<EnderecoTotalDropFilter>> ListaUnica()
         {
             try
             {
-                var query = await  _context.EnderecosTotais
-                        .Select(p => new EnderecoTotal
-                        { 
-                            UF = p.UF,
-                            Localidade = p.Localidade, 
-                            SiglaEstacao = p.SiglaEstacao, 
-                            Cod_Viabilidade = p.Cod_Viabilidade
-                        })
-                        .Distinct()
-                        .ToListAsync();
+                var query = await (from endt in _context.EnderecosTotais
+                            group endt by new
+                            {
+                                endt.UF,
+                                endt.SiglaEstacao,
+                                endt.Cod_Viabilidade,
+                            } into g
+                            select new EnderecoTotalDropFilter
+                            {
+                                UF = g.Key.UF,
+                                SiglaEstacao = g.Key.SiglaEstacao,
+                                Cod_Viabilidade = g.Key.Cod_Viabilidade,
 
-                        return query;
-            
+                            }).ToListAsync();
+
+                return query;
             }
             catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
             }
-           
+        }
+        public async Task<IEnumerable<LocalidadeDropFilter>> ListaUnicaLocalidade(FiltroEnderecoTotal filtro)
+        {
+            try
+            {
+                var query = (from endt in _context.EnderecosTotais
+                            group endt by new
+                            {
+                                endt.UF,
+                                endt.SiglaEstacao,
+                                endt.NomeCdo,
+                                endt.Bairro,
+                                endt.Municipio,
+                            } into g
+                            select new LocalidadeDropFilter
+                            {
+                                UF = g.Key.UF,
+                                SiglaEstacao = g.Key.SiglaEstacao,
+                                CDO = g.Key.NomeCdo,
+                                Bairro = g.Key.Bairro,
+                                Municipio = g.Key.Municipio,
+
+                            }).AsQueryable();
+
+                if (filtro != null)
+                {
+
+                    if (!string.IsNullOrEmpty(filtro.UF))
+                    {
+                        query = query.Where(p => p.UF == filtro.UF);
+                    }
+
+                    if (!string.IsNullOrEmpty(filtro.SiglaEstacao))
+                    {
+                        query = query.Where(p => p.SiglaEstacao == filtro.SiglaEstacao);
+                    }
+
+                    if (!string.IsNullOrEmpty(filtro.CDO))
+                    {
+                        query = query.Where(p => p.CDO == filtro.CDO);
+                    }
+
+                }            
+
+                return await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
+            }
         }
     }
 }
