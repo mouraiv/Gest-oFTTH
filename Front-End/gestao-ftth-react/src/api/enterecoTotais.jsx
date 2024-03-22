@@ -1,8 +1,8 @@
 import Api from '../services/api';
 
-const GetEnderecoTotalAny = async (id) => {
+const GetEnderecoTotalAny = async (id, survey, filterSurvey) => {
   const response = await Api.get('/EnderecoTotal/Carregar', {
-    params: {id},
+    params: {id: id, survey: survey, filterSurvey: filterSurvey},
     headers:{
       'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
     },

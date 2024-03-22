@@ -37,12 +37,24 @@ namespace WebApiSwagger.Controllers
              
         }
         [HttpGet("ListaUnica")]
-        public async Task<IActionResult> ListaUnica([FromQuery] string? uf, string? cdo)
+        public async Task<IActionResult> ListaUnica([FromQuery] 
+            string? uf, 
+            string? cdo, 
+            string? sigla,
+            string? estacao,
+            bool semCdo,
+            bool anoMesBool)
         {
             try
             {
 
-                var resultado = await _materialRedeRepository.ListaUnica(uf ?? "",cdo ?? "");
+                var resultado = await _materialRedeRepository.ListaUnica(
+                    uf ?? "", 
+                    cdo ?? "", 
+                    sigla ?? "",
+                    estacao ?? "",
+                    semCdo,
+                    anoMesBool);
 
                 if (resultado == null)
                 {

@@ -5,6 +5,7 @@ import { Tab, Tabs } from 'react-bootstrap';
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonCancelar, ButtonConfirma, Content, GlobalStyle, Template } from "../../../GlobalStyle";
 import { DetalheMaterialRedeAny } from "../../../api/materialRede";
+import { GetEnderecoTotalAny } from "../../../api/enterecoTotais";
 import { DetalheTesteOptico, UpdateTesteOptico } from "../../../api/testeOptico";
 import { CreateValidacao } from '../../../api/validacao';
 import DialogAlert from "../../../components/Dialog";
@@ -13,7 +14,7 @@ import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
 import { UseAuth } from "../../../contexts/auth";
 import { FaLocationDot } from 'react-icons/fa6';
-import { ButtonImagem, ButtonReValidar, ButtonValidar, ContentTabs, FooterButton, TableGrid } from "./style";
+import { ButtonAnalise, ButtonEditar, ButtonImagem, ButtonReValidar, ButtonValidar, ContentTabs, FooterButton, TableGrid } from "./style";
 
 function Vizualizar(){
     const { id, idNetwin, survey } = useParams();
@@ -30,8 +31,10 @@ function Vizualizar(){
     const [siglaEstacao, setSiglaEstacao] = useState();
     const [cdo, setCdo] = useState();
     const [testeOptico, setTesteOptico] = useState({});
-    const [materialRede, setMaterialRede] = useState({});
+    const [materialRede, setMaterialRede] = useState(null);
+    const [enderecoTotalAny, setEnderecoTotalAny] = useState({});
     const [visible, setVisible] = useState(false);
+    const [visibleExcluir, setVisibleExcluir] = useState(false);
     const [visibleTesteOptico, setVisibleTesteOptico] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [mapDialogVisible, setMapDialogVisible] = useState(false);
@@ -40,12 +43,28 @@ function Vizualizar(){
     const [valueEndereco, setValueEndereco] = useState()
     const [submitClicked, setSubmitClicked] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
+    const [analseDelete, setAnaliseDelete] = useState();
 
     const navigate = useNavigate();
     const { user } = UseAuth();
 
     const { analises } = testeOptico;
-    const { ligacao, enderecoTotal } = materialRede ?? {};
+    const { ligacao, enderecoTotal = enderecoTotalAny } = materialRede ?? {};
+
+    async function fetchDelete(){
+        try {
+          atualizar(false)
+          if(id !== undefined){
+            await DeleteTesteOptico(id);
+          }
+        } catch (error) {
+          atualizar(true);
+          
+        }finally{
+          atualizar(true);
+        }
+        
+      }
 
     async function fetchValidar(sel) {
         try {
@@ -112,20 +131,47 @@ function Vizualizar(){
 
     const fecthDetalheMaterialRede = useCallback(async () => {
         try {
-            const detalheMaterialRede = await DetalheMaterialRedeAny(idNetwin);
+                const detalheEnderecoTotal = await GetEnderecoTotalAny(null, survey, true);
 
-            if(detalheMaterialRede.status == 200) {
-                setMaterialRede(detalheMaterialRede.data);
+                if(detalheEnderecoTotal.status == 200) {
+
+                    if (idNetwin == 'null') {
+                        const _detalheEnderecoTotal = [detalheEnderecoTotal.data];
+                        setEnderecoTotalAny(_detalheEnderecoTotal);
+                        console.log(_detalheEnderecoTotal);
+
+                        const somaUMS = _detalheEnderecoTotal.reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+                        const somaUMSComGanho = _detalheEnderecoTotal.filter(value => value.id_StatusGanho === 1).reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+                        const somaUMSSemGanho = _detalheEnderecoTotal.filter(value => value.id_StatusGanho === 2).reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+
+                        setTotalUms({
+                            totalUms: somaUMS,
+                            totalUmsComGanho: somaUMSComGanho,
+                            totalUmsSemGanho: somaUMSSemGanho
+                        })
+                        
+                    }
+                    
+                }
                 
-                const somaUMS = detalheMaterialRede.data.enderecoTotal?.reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
-                const somaUMSComGanho = detalheMaterialRede.data.enderecoTotal?.filter(value => value.id_StatusGanho === 1).reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
-                const somaUMSSemGanho = detalheMaterialRede.data.enderecoTotal?.filter(value => value.id_StatusGanho === 2).reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
-                setTotalUms({
-                    totalUms: somaUMS,
-                    totalUmsComGanho: somaUMSComGanho,
-                    totalUmsSemGanho: somaUMSSemGanho
-                });
-            }
+                const detalheMaterialRede = await DetalheMaterialRedeAny(idNetwin);
+
+                if(detalheMaterialRede.status == 200) {
+
+                    if (idNetwin !== 'null') {
+                        setMaterialRede(detalheMaterialRede.data);
+                        
+                        const somaUMS = detalheMaterialRede.data.enderecoTotal?.reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+                        const somaUMSComGanho = detalheMaterialRede.data.enderecoTotal?.filter(value => value.id_StatusGanho === 1).reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+                        const somaUMSSemGanho = detalheMaterialRede.data.enderecoTotal?.filter(value => value.id_StatusGanho === 2).reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+                        setTotalUms({
+                            totalUms: somaUMS,
+                            totalUmsComGanho: somaUMSComGanho,
+                            totalUmsSemGanho: somaUMSSemGanho
+                        });
+                    }
+ 
+                }
 
         } catch (error) {
             setLoadingMaterial(true);
@@ -136,35 +182,35 @@ function Vizualizar(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [submitClicked]);
 
-
     useEffect(() => {    
           fecthDetalheTesteOptico();
-    
+          
         if (initialLoad) {
           fecthDetalheMaterialRede();
           setLoading(false);
+
         }
         setSubmitClicked(false); 
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fecthDetalheTesteOptico, fecthDetalheMaterialRede]);    
+    }, [fecthDetalheTesteOptico, fecthDetalheMaterialRede, enderecoTotalAny]);    
 
     const statusAnalise = () => {
-        const statusAnalise = analises?.analiseObservacao;
-        const count = statusAnalise != null ? statusAnalise.split(';').length : 0;
+        let reteste = analises?.map(value => value.dataAnalise)
+                     .filter((date, index, self) => self.indexOf(date) === index);
 
         if(analises != undefined) {
-            if(count > 1){
+            if(reteste.length > 1){
                 return 'RE-TESTE';
 
             }else{
                 return 'TESTADO';
             }
 
-        }else{
-            return 'TESTE';
+            }else{
+                return '--';
 
-        }
+            }
 
     }
 
@@ -221,6 +267,7 @@ function Vizualizar(){
     const handleAnalise = () => {
         navigate(`/Analise/${id}/${idNetwin}`); 
     };
+    
 
     const filterEnderecoTotalObj = (survey) => {
         const _enderecoTotal = enderecoTotal;
@@ -250,14 +297,61 @@ function Vizualizar(){
         setVisibleTesteOptico(true);
     };
 
+    const HandleEditar = () => {
+        navigate(`/TesteOptico/Editar/${id ?? null}`);
+      }
+    
+      const HandleExcluir = () => {
+        setVisibleExcluir(true);
+    
+        if(analises.length == 0) {
+          setAnaliseDelete(false);
+        }else{
+          setAnaliseDelete(true);
+        }  
+      }
+    
+      const ExcluirFecth = async () => {
+        await fetchDelete();
+        setVisibleExcluir(false);
+      }
+
     GlobalStyle();
     return(
         <>
-        { id !== 'undefined' ? (
+        { id !== "null" ? (
         <>
         <Template>
-        <Header title={"Teste Óptico - Visualizar"} />
+        <Header navbar={false} title={"Teste Óptico - Visualizar"}  />
         <Content>
+        <DialogAlert 
+            visibleDiag={visibleExcluir} 
+            visibleHide={() => setVisibleExcluir(false)}
+            header={<h4>Atenção</h4>}
+            colorType={'#ff0000'}
+            ConfirmaButton={analseDelete ? false : true}
+            textCloseButton={analseDelete ? 'OK' : 'Cancelar'}
+            text={
+              <>
+              { analseDelete ? (
+                <>
+                <p>Esse teste não pode ser excluído!</p>
+                <p></p>
+                <p>O teste possuí analises associadas.</p>
+                </>
+
+              ):(
+                <>
+                <p>Esta ação é irreversível</p>
+                <p></p>
+                <p>Tem certeza que gostaria de excluir esse teste?</p>
+                </>
+              )
+              }
+              </>
+            }
+            buttonConfirmar={() => ExcluirFecth()} 
+         />    
         <DialogAlert
             visibleDiag={mapDialogVisible}
             visibleHide={() => setMapDialogVisible(false)}
@@ -299,7 +393,7 @@ function Vizualizar(){
                         <p>{mensagem}</p>
                         </>
                     }
-                />
+                />        
         <DialogAlert 
                     visibleDiag={visibleTesteOptico} 
                     visibleHide={() => setVisibleTesteOptico(false)}
@@ -486,6 +580,9 @@ function Vizualizar(){
                         <tr>
                             <td colSpan={2}>Observação: {testeOptico.testeObservacao ?? '-------'}</td>
                         </tr>
+                        <tr>
+                            <td colSpan={2}></td>
+                        </tr>
                 </tbody>
             </TableGrid>
             <FooterButton>
@@ -503,18 +600,19 @@ function Vizualizar(){
                     }
                     </>
                 </div>
-                    <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
+                    <ButtonEditar onClick={() => HandleEditar()} >Editar</ButtonEditar>
+                    <ButtonEditar onClick={() => HandleExcluir()} >Excluir</ButtonEditar>
                     <ButtonConfirma onClick={handleAnalise}>Analisar</ButtonConfirma>
             </FooterButton>
             </Tab>
             <Tab eventKey="MaterialRede" title="Netwin">
-            { materialRede !== undefined && enderecoTotal !== undefined && enderecoTotal?.length !== 0 && ligacao !== undefined ? (
+            { materialRede !== undefined && enderecoTotal !== undefined && enderecoTotalAny?.length !== 0 && ligacao !== undefined ? (
             <>
             {loadingMaterial ? (
             <TableGrid>
                 <thead>
                     <tr>
-                        <th colSpan={3}>-- MATERIAIS DE REDE -- {materialRede.chave} --</th>
+                        <th colSpan={3}>MATERIAIS DE REDE</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -718,7 +816,7 @@ function Vizualizar(){
                                     ]
                                 ) : (
                                     <tr>
-                                    <td colSpan={7} style={{ fontSize: '0.7rem', cursor: 'default', minWidth: '700px' }}>
+                                     <td colSpan={8} style={{ fontSize: '0.7rem', cursor: 'default', minWidth: '700px', backgroundColor: '#ffffff' }}>
                                         Nenhum resultado.
                                     </td>
                                     </tr>
@@ -760,7 +858,7 @@ function Vizualizar(){
     ):(
         <>
         <Template>
-        <Header title={"Netwin - Visualização"} />
+        <Header navbar={false} title={`NetWin = ${materialRede !== null ? `${materialRede.siglaFederativa_Mt} - ${materialRede.siglaAbastecedora_Mt} - ${materialRede.codigo_Mt}` : ""}`} />
         <Content>
         <DialogAlert
             visibleDiag={mapDialogVisible}
@@ -904,19 +1002,17 @@ function Vizualizar(){
                             </TableGrid>
                         </>
                     }
-                />
-        { materialRede !== undefined && enderecoTotal !== undefined && enderecoTotal?.length !== 0 && ligacao !== undefined ? (
-        <>       
+                />    
         {loadingMaterial ? (
             <>
             <TableGrid style={{marginTop:'1rem'}}>
                 <thead>
                     <tr>
-                        <th colSpan={3}>-- MATERIAIS DE REDE - {materialRede.chave} --</th>
+                        <th colSpan={3}>MATERIAIS DE REDE</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {materialRede.id_MaterialRede != undefined ? (
+                    {materialRede !== null ? (
                         <>
                         <tr>
                             <td>{materialRede.siglaFederativa_Mt ?? '-------'}</td>
@@ -1115,7 +1211,7 @@ function Vizualizar(){
                                     ]
                                 ) : (
                                     <tr>
-                                    <td colSpan={6} style={{ fontSize: '0.7rem', cursor: 'default', minWidth: '700px' }}>
+                                    <td colSpan={8} style={{ fontSize: '0.7rem', cursor: 'default', minWidth: '700px', backgroundColor: '#ffffff' }}>
                                         Nenhum resultado.
                                     </td>
                                     </tr>
@@ -1143,16 +1239,10 @@ function Vizualizar(){
             </TableGrid>
              <FooterButton style={{width: '700px'}}>
              <div>
-                 <>
-                 <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-                 </>
              </div>
          </FooterButton>
          </>
             ):(<Spinner />)}
-            </>
-             ):(<p style={{textAlign: 'center', marginTop: '1rem'}}>{enderecoTotal?.length === 0 ? "Nenhum Resultado." : <><Spinner/></>}</p>)
-             }
             </Content>
             <Footer />
         </Template>

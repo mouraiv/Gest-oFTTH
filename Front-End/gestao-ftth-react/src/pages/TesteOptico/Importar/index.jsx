@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef, useCallback} from "react";
 import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalStyle';
 import { GetControleCdo, ImportarArquivo} from "../../../api/testeOptico";
 import { DownloadArquivo } from "../../../api/base";
-import DataGridTable from '../../../components/DataGrid';
+import DataGridTable from '../../../components/DataGrid/DataGridTesteOptico';
 import { ImportArea, InputImport, ButtonUpload, ButtonDownload, LinhaVertical } from "./style";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";

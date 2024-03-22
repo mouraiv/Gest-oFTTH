@@ -106,8 +106,26 @@ export const FooterButton = styled("div", {
 
 });
 
+export const ButtonAnalise = styled("button", {
+    backgroundColor: 'transparent',
+    padding: '0rem',
+    border: 'none',
+    borderRadius: '0.2rem',
+    marginLeft: '0.8rem',
+    marginRight: '0.8rem',
+    fontSize: '0.8rem',
+    height: '23px',
+    color: '#13293d',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    
+    "&:active":{
+        color: '#FFFFF',
+        textDecoration: 'none'
+    }
+});
+
 export const ButtonEditar = styled("button", {
-    backgroundColor: '#AEB6BF',
     border: '1px solid #17202A',
     borderRadius: '0.3rem',
     marginRight:'0.5rem',
@@ -133,7 +151,7 @@ export const ButtonImagem = styled("button", {
     marginBottom: '0.7rem',
     width: '100px',
     height: '30px',
-    color: '#13293d',
+    color: '#17202A',
     cursor: 'pointer',
 
     '&:active' : {

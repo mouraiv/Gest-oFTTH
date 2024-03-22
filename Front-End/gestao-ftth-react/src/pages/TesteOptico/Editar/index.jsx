@@ -189,7 +189,7 @@ function Editar() {
     return (
       <>
         <Template>
-          <Header title={"Teste Óptico - Editar"} />
+          <Header navbar={false} title={"Teste Óptico - Editar"} />
             <Container>
                 { dialogAviso ? (
                 <DialogAlert 

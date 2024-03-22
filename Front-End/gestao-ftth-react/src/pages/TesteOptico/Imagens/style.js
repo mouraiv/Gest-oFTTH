@@ -31,7 +31,6 @@ export const NavArea = styled("div", {
 export const ButtonImport = styled("button", {
     backgroundColor: '#13293d',
     border: '1px solid #5D6D7E',
-    marginLeft: '0.5rem',
     borderRadius: '0.3rem',
     fontSize: '0.8rem',
     fontWeight: '500',

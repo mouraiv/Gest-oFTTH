@@ -10,9 +10,23 @@ const DetalheMaterialRedeAny = async (id) => {
   return response;
 };
 
-  const DropMaterialRede = async (uf, cdo) => {
+  const DropMaterialRede = async (
+    uf, 
+    cdo, 
+    sigla,
+    estacao,
+    semCdo,
+    anoMesBool
+    ) => {
     const response = await Api.get('/MaterialRede/ListaUnica', {
-      params: { uf: uf, cdo: cdo },
+      params: { 
+        uf: uf, 
+        cdo: cdo,
+        sigla : sigla,
+        estacao : estacao,
+        semCdo : semCdo,
+        anoMesBool: anoMesBool 
+      },
       headers:{
         'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
       },

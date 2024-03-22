@@ -324,8 +324,21 @@ function Vizualizar(){
     }
     
     const analiseState = () => {
-      let obs = analiseObservacao?.[0]?.split(';');
-      return `${obs?.length > 1 ? "RE-TESTE" : "TESTADO"}`
+      let reteste = analises?.map(value => value.dataAnalise)
+                     .filter((date, index, self) => self.indexOf(date) === index);
+
+        if(analises != undefined) {
+          if(reteste.length > 1){
+            return 'RE-TESTE';
+          
+            }else{
+            return 'TESTADO';
+          }
+          
+        }else{
+          return '--';
+          
+        }
     }
 
     const handleVoltar = () => {
@@ -333,7 +346,7 @@ function Vizualizar(){
     };
 
     const handleImagens = () => {
-        navigate(`/TesteOptico/Imagem/${uf}/${siglaAbastecedora_Mt}/${estacao}/${cdo}`); 
+        navigate(`/TesteOptico/Imagem/${uf}/${estacao}/${cdo}`); 
     };
 
     const Observacao = () => {
@@ -496,7 +509,7 @@ function Vizualizar(){
     return(
         <>
         <Template>
-        <Header title={"Analise"} />
+        <Header navbar={false} title={"Analise"} />
         <Content>
         { loading || status !== undefined ? (
             <>
@@ -975,8 +988,8 @@ function Vizualizar(){
                     { status !== undefined && status === "REPROVADO" ? (
                     <tr>
                       <th style={{
-                            backgroundColor: '#E6B0AA',
-                            color: '#641E16',
+                            backgroundColor: '#F2D7D5',
+                            color: '#7B241C',
                             borderTop: '1px solid #641E16',
                             borderBottom: '1px solid #641E16'
                         }} colSpan={3}> {status} </th>

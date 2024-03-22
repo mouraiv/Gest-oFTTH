@@ -184,7 +184,7 @@ function Imagem(){
     return(
         <>
         <Template>
-        <Header title={"Teste Óptico - Imagem"} />
+        <Header navbar={false} title={"Teste Óptico - Imagem"} />
         <Content>
                 <DialogAlert 
                   visibleDiag={visibleImport} 
@@ -256,7 +256,7 @@ function Imagem(){
             <NavArea>
                 <ButtonImport onClick={handleImportar} >Importar</ButtonImport>
             </NavArea>
-            <RotuloTitulo><p>{uf} - {sigla}- {cdo}</p></RotuloTitulo>
+            <RotuloTitulo><p>{`${uf ?? ""} - ${sigla ?? ""} - ${cdo ?? ""}`}</p></RotuloTitulo>
             <ImagemArea>
               {loading ? (
                 testeOptico[0] !== undefined ? (

@@ -26,8 +26,6 @@ export default function AppRoutes(){
                     <Route path="/TesteOptico/Imagem/:uf/:sigla/:cdo" element={<Imagem />} />
                     <Route path="/Analise/:id/:idNetwin" element={<Analise />} />
                     <Route path="/EnderecoTotal" element={<EnderecoTotal />} />
-                    <Route path="/BaseAcumulada" element={<BaseAcumulada />} />
-                    <Route path="/GanhoSurvey" element={<GanhoSurvey />} />
                 </Route>
                 <Route path="/" element={<Login />} />
             </Routes>

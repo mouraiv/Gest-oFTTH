@@ -5,7 +5,7 @@ import { FaRightToBracket } from 'react-icons/fa6';
 import logo from "../../../public/imagens/logictel.png";
 
 // eslint-disable-next-line react/prop-types
-export default function Header({title}) {
+export default function Header({title, navbar = true}) {
   const { user, Logout } = UseAuth();
 
   const refreshToken = sessionStorage.getItem("@App:token");
@@ -28,12 +28,6 @@ export default function Header({title}) {
   const handleEnderecoTotal = () => {
     navigate(`/EnderecoTotal`); 
   };
-  const handleBaseAcumulada = () => {
-    navigate(`/BaseAcumulada`); 
-  };
-  const handleGanhoSurvey = () => {
-    navigate(`/GanhoSurvey`); 
-  };
       return (
         <>
         { auth.token ? (
@@ -46,18 +40,17 @@ export default function Header({title}) {
                 <p className="title">| {title}</p>
               </div>
             </div>
-
+            {navbar && (
+            <>
             <div className="navBar">
               <ul>
               {location.pathname !== '/Home' && (
                 <li><a onClick={handleInicio}>Início</a></li>
               )}
                 <li><a onClick={handleTesteOptico}>TesteOptico</a></li>
-                <li><a onClick={handleGanhoSurvey}>Ganho Survey</a></li>
                 <li><a>Netwin</a>
                   <ul>
                     <li><a onClick={handleEnderecoTotal}>Endereços Totais</a></li>
-                    <li><a onClick={handleBaseAcumulada}>Base Acumulada</a></li>
                   </ul>
                 </li>
               </ul>
@@ -74,6 +67,8 @@ export default function Header({title}) {
                 </div>
               </div>
             </div>
+            </>
+            )}
           </HeaderStyleUser>
           ) : (
           <HeaderStyle>

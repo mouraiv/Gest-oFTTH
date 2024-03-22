@@ -1,5 +1,52 @@
 import { styled } from "@stitches/react";
 
+export const Container = styled("div", {
+    backgroundColor: 'WhiteSmoke',
+    width: '100%',
+
+    "#tableInfo" : {
+        borderCollapse: 'collapse',
+        width: '100%',
+        fontSize: '0.7rem',
+        textAlign: 'center',
+    },
+    
+    "#tableInfo tr td":{
+        backgroundColor: '#ffffff'
+    },
+
+    "#tableInfo td ":{
+        fontWeight: '700',
+        cursor: 'pointer',
+    },
+
+    "#tableInfo th, td": {
+        height: '25px',
+    },
+
+    "#tableInfo .th_column" : {
+        backgroundColor: '#D6DBDF',
+        fontSize: '0.6rem',
+        height: '18px'
+    },
+
+    "#tableContainer" :{
+        width: '100%',
+    },
+
+    "#tableContainer tbody" : {
+        borderLeft: '6px solid',
+        borderTop: '1px solid ',
+        borderBottom: '1px solid',
+        borderRight: '1px solid ',
+    },
+
+    "#tableContainer tbody:hover" : {
+        borderLeft: '1px solid',
+    }
+
+});
+
 export const TableGridMenu = styled("div", {
     display: "flex",
     backgroundColor: '#D6DBDF',
@@ -41,35 +88,6 @@ export const TableGridMenu = styled("div", {
        left: 0,
     }
        
-});
-
-export const TableGrid = styled("table", {
-    borderCollapse: 'collapse',
-    width: '100%',
-    fontSize: '0.7rem',
-    textAlign: 'center',
-    //whiteSpace: 'nowrap',
-    border: '1px solid #D6DBDF',
-
-    "thead":{
-        backgroundColor: '#13293d',
-        border: '1px solid #13293d',
-    },
-    "tbody tr:nth-child(even)":{
-        backgroundColor: '#D6DBDF'
-    },
-    "th":{
-        color: 'White',
-        paddingLeft: '0.5rem',
-        paddingRight: '0.5rem',
-    },
-    "td":{
-        paddingLeft: '0.5rem',
-        fontWeight: '700',
-    },
-    "th, td": {
-        height: '25px',
-    }
 });
 
 export const Button = styled("button", {

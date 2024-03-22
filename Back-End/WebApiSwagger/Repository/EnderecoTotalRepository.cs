@@ -137,13 +137,21 @@ namespace WebApiSwagger.Repository
                 }
         }
 
-        public async Task<EnderecoTotal> CarregarId(int? id_EnderecoTotal)
+        public async Task<EnderecoTotal> CarregarId(int? id_EnderecoTotal, string? survey, bool filterSurvey)
         {
             try
             {
+                if(!filterSurvey){
+
                 return await _context.EnderecosTotais
                            .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
+                }else{
+                
+                return await _context.EnderecosTotais
+                           .Where(p => p.Cod_Survey == survey)
+                           .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
+                }
             }
             catch (Exception ex)
             {  
@@ -165,12 +173,12 @@ namespace WebApiSwagger.Repository
 
                 var query = _context.EnderecosTotais
                     .Include(p => p.MaterialRede)
+                    .Where(p =>  p.Id_StatusGanho == filtro.Id_StatusGanho || p.Id_Disponibilidade == filtro.Id_Disponibilidade || 
+                                 (filtro.AnoMesBool ? !string.IsNullOrEmpty(p.AnoMes) : true) && (filtro.SemCdo ? p.NomeCdo == "" : true))
                     .Select(et => new EnderecoTotal {
-                        Id_StatusGanho = et.Id_StatusGanho,
-                        Id_EnderecoTotal = et.Id_EnderecoTotal,
-                        Id_MaterialRede = et.Id_MaterialRede,
-                        Id_Disponibilidade = et.Id_Disponibilidade,
                         AnoMes = et.AnoMes,
+                        Id_StatusGanho = et.Id_StatusGanho,
+                        Id_Disponibilidade = et.Id_Disponibilidade,
                         UF = et.UF,
                         Localidade = et.Localidade,
                         Logradouro = et.Logradouro,
@@ -190,8 +198,11 @@ namespace WebApiSwagger.Repository
                         Disp_Comercial = et.Disp_Comercial,
                         UCS_Residenciais = et.UCS_Residenciais,
                         UCS_Comerciais = et.UCS_Comerciais,
+                        Id_MaterialRede = et.Id_MaterialRede,
                         MaterialRede = new MaterialRede
                             {
+                                CHAVE = et.MaterialRede.CHAVE,
+                                NomeFederativa_Mt = et.MaterialRede.NomeFederativa_Mt,
                                 NomeAbastecedora_Mt = et.MaterialRede.NomeAbastecedora_Mt,
                                 GrupoOperacional_Mt = et.MaterialRede.GrupoOperacional_Mt,
                                 EstadoControle_Mt = et.MaterialRede.EstadoControle_Mt,
@@ -209,9 +220,9 @@ namespace WebApiSwagger.Repository
                     query = query.Where(p => p.UF == filtro.UF);
                 }
 
-                if (filtro.Id_Disponibilidade != null)
+                if (!string.IsNullOrEmpty(filtro.AnoMes))
                 {
-                    query = query.Where(p => p.Id_Disponibilidade == filtro.Id_Disponibilidade);
+                    query = query.Where(p => p.AnoMes == filtro.AnoMes);
                 }
 
                 if (!string.IsNullOrEmpty(filtro.SiglaEstacao))
@@ -226,7 +237,7 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.Logradouro))
                 {
-                    query = query.Where(p => p.Logradouro == filtro.Logradouro);
+                    query = query.Where(p => p.Logradouro.Contains(filtro.Logradouro));
                 }
                 if (!string.IsNullOrEmpty(filtro.NumeroFachada))
                 {

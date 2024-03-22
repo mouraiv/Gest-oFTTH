@@ -60,6 +60,8 @@ function EnderecoTotal() {
 
   /* --------------- ESTADO PESQUISA LOTE --------------------- */
   const [checkedCheckbox, setCheckedCheckbox] = useState('');
+  const [baseAcumulada, setBaseAcumulada] = useState();
+  const [semCdo, setSemCdo] = useState();
 
   const [surveyInput, setSurveyInput] = useState('');
   const [chaveInput, setChaveInput] = useState('');
@@ -96,6 +98,11 @@ function EnderecoTotal() {
       (uf !== "" ? value.uf === uf : true) &&
       (siglaEstacao !== "" ? value.siglaEstacao === siglaEstacao : true) &&
       (estacao !== "" ? value?.materialRede?.nomeAbastecedora_Mt === estacao : true) &&
+      (logradouro !== "" ? value?.logradouro === logradouro : true) &&
+      (numeroFaichada !== "" ? value?.numeroFaichada === numeroFaichada : true) &&
+      (cep !== "" ? value?.CEP === cep : true) &&
+      (bairro !== "" ? value?.bairro === bairro : true) &&
+      (municipio !== "" ? value?.municipio === municipio : true) &&
       (cdoInput !== "" ? value.nomeCdo === cdoInput : true) &&
       (viabilidade !== "" ? value.cod_Viabilidade === viabilidade : true) &&
       (dispComercial !== null ? value.id_Disponibilidade === dispComercial :  true) &&
@@ -103,7 +110,7 @@ function EnderecoTotal() {
       (estadoOperacional !=="" ? value?.materialRede?.estadoOperacional_Mt === estadoOperacional : true) &&
       (estadoControle !=="" ? value?.materialRede?.estadoControle_Mt === estadoControle : true)
     );
-  },[cdoInput, dispComercial, estacao, estadoControle, estadoOperacional, grupoOperacional, siglaEstacao, uf, viabilidade])
+  },[cdoInput, dispComercial, estacao, logradouro, numeroFaichada, cep, bairro, municipio, estadoControle, estadoOperacional, grupoOperacional, siglaEstacao, uf, viabilidade])
 
   const filtro = {
     pagina : currentPage,
@@ -114,7 +121,7 @@ function EnderecoTotal() {
     SiglaEstacao : siglaEstacao,
     Estacao : estacao,
     Logradouro : logradouro,
-    numeroFaichada : numeroFaichada,
+    numeroFachada : numeroFaichada,
     CEP : cep,
     Bairro : bairro,
     Municipio : municipio,
@@ -122,6 +129,9 @@ function EnderecoTotal() {
     Cod_Viabilidade : viabilidade,
     Cod_Survey: survey !== "" ? survey : surveyInput,
     Id_Disponibilidade: dispComercial,
+    Id_StatusGanho: null,
+    AnoMesBool : baseAcumulada,
+    SemCdo : semCdo,
     GrupoOperacional : grupoOperacional,
     EstadoOperacional: estadoOperacional,
     EstadoControle: estadoControle,
@@ -207,11 +217,23 @@ function EnderecoTotal() {
 
   }
 
-  const FetchDropFilterMaterialExec  = async (uf, cdo) => {
+  const FetchDropFilterMaterialExec  = async (
+    uf, 
+    cdo, 
+    sigla,
+    estacao,
+    semCdo,
+    anoMesBool) => {
     
     try {
 
-      const dropList = await DropMaterialRede(uf, cdo);
+      const dropList = await DropMaterialRede(
+        uf, 
+        cdo, 
+        sigla,
+        estacao,
+        semCdo,
+        anoMesBool);
 
       if (dropList.status == 200) {
        
@@ -361,38 +383,56 @@ function EnderecoTotal() {
   }, [fetchEnderecoTotal]);
 
   const columns = [
-    { key: 'uf', name: 'UF' },
-    { key: 'anoMes', name: 'BASE ACUM.' },
-    { key: 'localidade', name: 'LOCALIDADE' },
-    { key: 'celula', name: 'CELULA' },
-    { key: 'siglaEstacao', name: 'SIGLA' },
-    { key: 'materialRede.nomeAbastecedora_Mt', name: 'ESTAÇÃO' },
-    { key: 'nomeCdo', name: 'CDO' },
-    { key: 'cod_Viabilidade', name: 'COD. VIAB' },
-    { key: 'tipoViabilidade', name: 'TIPO VIAB' },
-    { key: 'cod_Survey', name: 'SURVEY' },
-    { key: 'quantidadeUMS', name: 'UMS' },
-    { key: 'disp_Comercial', name: 'Disp. Comercial' },
-    { key: 'materialRede.grupoOperacional_Mt', name: 'GRUPO OPERACIONAL' },
-    { key: 'materialRede.estadoControle_Mt', name: 'EST. CONTROLE' },
-    { key: 'materialRede.estadoOperacional_Mt', name: 'EST. OPERACIONAL' },
+    { key: 'uf', name: 'UF', width: '2%' },
+    { key: 'anoMes', name: 'BASE ACUM.', width: '7%' },
+    { key: 'localidade', name: 'LOCALIDADE', width: '8%' },
+    { key: 'celula', name: 'CELULA', width: '8%' },
+    { key: 'siglaEstacao', name: 'SIGLA', width: '6%' },
+    { key: 'materialRede.nomeAbastecedora_Mt', name: 'ESTAÇÃO', width: '8%' },
+    { key: 'nomeCdo', name: 'CDO', width: '5%' },
+    { key: 'cod_Viabilidade', name: 'COD. VIAB', width: '3%' },
+    { key: 'tipoViabilidade', name: 'TIPO VIAB', width: '8%' },
+    { key: 'cod_Survey', name: 'SURVEY', width: '8%' },
+    { key: 'quantidadeUMS', name: 'UMS', width: '3%' },
+    { key: 'disp_Comercial', name: 'DISP. COMERCIAL', width: '5%' },
+    { key: 'materialRede.grupoOperacional_Mt', name: 'GRUPO OPERACIONAL', width: '8%' },
+    { key: 'materialRede.estadoControle_Mt', name: 'EST. CONTROLE', width: '8%' },
+    { key: 'materialRede.estadoOperacional_Mt', name: 'EST. OPERACIONAL', width: '8%' },
   ];
   
   const handleCheckboxChange = (checkboxName) => {
     setCheckedCheckbox(checkboxName === checkedCheckbox ? '' : checkboxName);
+    setChaveInput("");
+    setChaveCelulaInput("");
+    setSurveyInput("");
   };
 
   const handleUf = (event) => {
     const input = event.target.value;
-    FetchDropFilterMaterialExec(input, cdoInput);
     setLoadingDrop(false);
     setUf(input);
+    FetchDropFilterMaterialExec(
+      input, 
+      cdoInput,
+      siglaEstacao, 
+      estacao,
+      semCdo,
+      baseAcumulada
+    );
     
   };
 
   const handleSiglaEstacao = (event) => {
     const input = event.target.value;
     setSiglaEstacao(input);
+    FetchDropFilterMaterialExec(
+      uf, 
+      cdoInput,
+      input, 
+      estacao,
+      semCdo,
+      baseAcumulada
+    );
   }
 
   const handleGrupoOperacional = (event) => {
@@ -438,12 +478,19 @@ function EnderecoTotal() {
   const handleEstacao = (event) => {
     const input = event.target.value;
     setEstacao(input);
+    FetchDropFilterMaterialExec(
+      uf, 
+      cdoInput,
+      siglaEstacao, 
+      input,
+      semCdo,
+      baseAcumulada
+    );
   };
 
   const handleCdo = (event) => {
     const input = event.target.value;
     setCdoInput(input);
-    FetchDropFilterMaterialExec(uf, input);
   };
 
   const handleSurvey = (event) => {
@@ -454,19 +501,16 @@ function EnderecoTotal() {
     if (checkedCheckbox === 'chave_cdoe') {
       setSurveyInput("");
       setChaveCelulaInput("");
-      console.log("CDOE");
       setChaveInput(_survey);
 
     } else if(checkedCheckbox === 'chave_celula') {
       setSurveyInput("");
       setChaveInput("");
-      console.log("CELULA");
       setChaveCelulaInput(_survey);
 
     } else if(checkedCheckbox === 'survey'){
       setChaveInput("");
       setChaveCelulaInput("");
-      console.log("SURVEY");
       setSurveyInput(_survey);
 
     }
@@ -475,12 +519,6 @@ function EnderecoTotal() {
 
   const handleViabilidade = (event) => {
     const input = event.target.value;
-
-    if (input === 'Ver mais...') {
-      console.log('Você selecionou o item 3!');
-      FetchDropFilter(paginaAtual);
-      // Execute qualquer outra ação desejada aqui
-    }
     setViabilidade(input);
   };
 
@@ -524,9 +562,23 @@ function EnderecoTotal() {
     }else if(checkedCheckbox === 'survey'){
       //console.log("SURVEY");
       setSurvey(surveyList);
+
     }
     setVisibleSurvey(false);
+
   };
+
+  const handleBaseAcumulada = (checkboxName) => {
+    setBaseAcumulada(checkboxName === baseAcumulada ? false : checkboxName);
+    FetchDropFilterMaterialExec(uf, cdoInput, siglaEstacao, estacao, semCdo, checkboxName);
+    setLoadingDrop(false);
+  }
+
+  const handleSemCdo = (checkboxName) => {
+    setSemCdo(checkboxName === semCdo ? false : checkboxName);
+    FetchDropFilterMaterialExec(uf, cdoInput, siglaEstacao, estacao, checkboxName,  baseAcumulada,);
+    setLoadingDrop(false);
+  }
 
   const handleImportSurvey = () => {
     setSurvey("");
@@ -553,12 +605,15 @@ function EnderecoTotal() {
       setCarregarListSurvey(false);
       
     }
+    FetchDropFilterMaterialExec(
+      uf, 
+      cdoInput,
+      siglaEstacao, 
+      estacao,
+      semCdo,
+      baseAcumulada
+    );
     
-  };
-
-  const handleCarregarMais = () => {
-    setPaginaAtual(paginaAtual + 1);
-    console.log("ok")
   };
 
   const limparFiltro = () => {
@@ -592,6 +647,9 @@ function EnderecoTotal() {
     setEnderecoTotalLocal({})
     setCarregarListSurvey(false);
     setCheckedCheckbox('');
+    setBaseAcumulada(false);
+    setSemCdo(false);
+    FetchDropFilter();
 
   };
 
@@ -675,9 +733,15 @@ return (
             <Filter>
               <div>
               <div style={{display: 'flex'}}>
+              {loadingDrop ? (
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={handleUf} lista={dropUf.sort()} text={uf} />
               </div>
+              ):(
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"UF"} event={null} lista={dropUf.sort()} text={uf} disable={true}/>
+              </div>
+              )}
               { uf !== '' ? (
               <>
               { estacao !== '' ? (
@@ -710,8 +774,31 @@ return (
                </div>
                </> 
               )}
-              
-               <div style={{display:'flex', flexDirection: 'column', marginLeft:'22rem'}}>
+
+              <div>
+              <div style={{marginLeft:'1rem', height: '35px', width: '', marginTop: '0.6rem', border:"1px solid #aaaaaa", backgroundColor:"#e7e7e7", paddingLeft: '0.6rem', paddingTop: '0.4rem'}}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={baseAcumulada === true}
+                      onChange={() => handleBaseAcumulada(true)}
+                    />
+                    {" Base Acumulada"}
+                  </label>
+              </div>
+              <div style={{marginLeft:'1rem', height: '35px',  width: '160px', marginTop: '0.3rem', border:"1px solid #aaaaaa", backgroundColor:"#e7e7e7", paddingLeft: '0.6rem', paddingTop: '0.4rem'}}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={semCdo === true}
+                      onChange={() => handleSemCdo(true)}
+                    />
+                    {" Sem CDO Associada"}
+                  </label>
+              </div>
+              </div>
+
+               <div style={{display:'flex', flexDirection: 'column'}}>
                 <div style={{marginTop: '0.6rem', marginLeft:'1rem', border:"1px solid #aaaaaa", backgroundColor:"#e7e7e7", padding: '0.8rem'}}>
                   <label>
                     <input
@@ -760,7 +847,7 @@ return (
                   width: '200px',
                   height: '24px',
                   textTransform: 'uppercase'
-                }} label={"Survey"} maxLength="30" onChange={handleSurvey} value={surveyInput === "" ? chaveInput : surveyInput} />
+                }} label={"Survey"} maxLength="30" onChange={handleSurvey} value={chaveCelulaInput === "" ? (surveyInput === "" ? chaveInput : surveyInput): chaveCelulaInput} />
               )
               }
               <ButtonUpload name="upload" onClick={handleImportSurvey} >Lista</ButtonUpload>
@@ -833,13 +920,14 @@ return (
               <DropBox width={"150px"} height={"25px"} valueDefaut={""} event={handleDispComercial} label={"Disponibilidade"} lista={loadingDrop ? dispComercialOptions : []} text={inputDispComercial} />
               </div>
               <div style={{display: 'flex', flexDirection: 'column', marginLeft: '1rem', marginTop: '0.7rem'}}>
-              <label>CDO</label>  
-              <InputText style={{width: "150px"}} onChange={handleCdo} value={cdoInput} /> 
+              <label>CDO</label>
+              { semCdo || !loadingDrop ?  
+              <InputText style={{width: "150px"}} onChange={handleCdo} value={cdoInput} disabled/> : 
+              <InputText style={{width: "150px"}} onChange={handleCdo} value={cdoInput} />
+              } 
               </div>
               <div style={{ marginLeft: '1rem', marginTop: '0.7rem' }}>
-              <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Viabilidade"} event={handleViabilidade} lista={loadingDrop ? dropViabilidade.sort((a, b) => parseInt(a, 10) - parseInt(b, 10)) : []} text={viabilidade} >
-              <button key="carregarMaisButton" onClick={handleCarregarMais}>Carregar mais</button>
-              </DropBox>
+              <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Viabilidade"} event={handleViabilidade} lista={loadingDrop ? dropViabilidade.sort((a, b) => parseInt(a, 10) - parseInt(b, 10)) : []} text={viabilidade} />
               </div>
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
                 <DropBox width={"200px"} height={"25px"} valueDefaut={""} label={"Grupo Operacional"} event={handleGrupoOperacional} lista={loadingDrop ? dropGrupoOperacional.sort() : []} text={grupoOperacional} />
@@ -852,8 +940,13 @@ return (
               </div>
 
               <div style={{display: 'flex', marginRight:'1rem'}}>
-                  <ButtonDefaut event={loading && loadingDrop ? submit : null} text={"Filtrar"} />
-                  <ButtonDefaut event={loading && loadingDrop ? limparFiltro : null} text={"Limpar"} />
+                {loading && loadingDrop ? (
+                  <>
+                  <ButtonDefaut event={submit} text={"Filtrar"} />
+                  <ButtonDefaut event={limparFiltro} text={"Limpar"} />
+                  </>
+                ):(null)
+                }
               </div>
 
               </div>

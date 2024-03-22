@@ -1,10 +1,6 @@
-import { useState } from "react";
-import { Container, TableGridMenu, Button } from "./style";
+import { Container, TableGridMenu, Button } from "../style";
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6';
-import { useNavigate, Link } from 'react-router-dom';
-import DialogAlert from "../../components/Dialog";
-import { DeleteTesteOptico } from "../../api/testeOptico";
-import { formatarNumero } from "../../util/formatarNumeros";
+import { formatarNumero } from "../../../util/formatarNumeros";
 
 export default function DataGrid({ 
   columns, 
@@ -19,50 +15,27 @@ export default function DataGrid({
   const _paginasTotal = paginacao.totalPaginas == (paginacao.paginasCorrentes - 1) ? (paginacao.paginasCorrentes - 1) : paginacao.total;
   const _pagina = pagina == 1 ? 1 : (((pagina * 100) - 100) + 1);
 
-  const navigate = useNavigate();
-  
-  const [visible, setVisible] = useState(false);
-  const [id, setId] = useState();
-  const [analseDelete, setAnaliseDelete] = useState();
-
-  async function fetchDelete(){
-    try {
-      atualizar(false)
-      if(id !== undefined){
-        await DeleteTesteOptico(id);
-      }
-    } catch (error) {
-      atualizar(true);
-      
-    }finally{
-      atualizar(true);
-    }
-    
-  }
-
   const handleVisualizar = (id, idNetwin, survey) => {
     const viewHTML = `/TesteOptico/Visualizar/${id ?? null}/${idNetwin ?? null}/${survey ?? null}`;
     window.open(viewHTML, viewHTML);
   }
 
-  const HandleEditar = (id) => {
-    navigate(`/TesteOptico/Editar/${id ?? null}`);
-  }
+  const analiseState = (analise) => {
+    let reteste = analise?.map(value => value.dataAnalise)
+                   .filter((date, index, self) => self.indexOf(date) === index);
 
-  const HandleExcluir = (id, analise) => {
-    setId(id);
-    setVisible(true);
-
-    if(analise.length == 0) {
-      setAnaliseDelete(false);
-    }else{
-      setAnaliseDelete(true);
-    }  
-  }
-
-  const ExcluirFecth = async () => {
-    await fetchDelete();
-    setVisible(false);
+      if(analise != undefined) {
+        if(reteste.length > 1){
+          return 'RE-TESTE';
+        
+          }else{
+          return 'TESTADO';
+        }
+        
+      }else{
+        return '--';
+        
+      }
   }
 
   function getNestedValue(obj, key) {
@@ -73,34 +46,6 @@ export default function DataGrid({
   return (
     <>
     <Container>
-    <DialogAlert 
-            visibleDiag={visible} 
-            visibleHide={() => setVisible(false)}
-            header={<h4>Atenção</h4>}
-            colorType={'#ff0000'}
-            ConfirmaButton={analseDelete ? false : true}
-            textCloseButton={analseDelete ? 'OK' : 'Cancelar'}
-            text={
-              <>
-              { analseDelete ? (
-                <>
-                <p>Esse teste não pode ser excluído!</p>
-                <p></p>
-                <p>O teste possuí analises associadas.</p>
-                </>
-
-              ):(
-                <>
-                <p>Esta ação é irreversível</p>
-                <p></p>
-                <p>Tem certeza que gostaria de excluir esse teste?</p>
-                </>
-              )
-              }
-              </>
-            }
-            buttonConfirmar={() => ExcluirFecth()} 
-       />
         <TableGridMenu>
           <div className="total">
             <p>{formatarNumero(paginacao.total)} Registros {paginacao.totalUms > 0 ? `[Total Ums: ${formatarNumero(paginacao.totalUms)}]` : ""}</p>
@@ -124,12 +69,34 @@ export default function DataGrid({
 
                   <table id="tableContainer">
                   <tbody>
+                  <tr>
+                  <td style={
+                    row.sel > 0 ? 
+                    {
+                      height: '20px',
+                      fontSize: '0.6rem',
+                      fontWeight: '800',
+                      color:'#FB241C',
+                      backgroundColor: '#F2D7D5'
+                    }:{
+                      height: '20px',
+                      fontSize: '0.6rem',
+                      fontWeight: '800',
+                      color:'#145A32',
+                      backgroundColor: '#D4EFDF'
+                    }
+                  } colSpan={columns.length + 1}>
+                    {row.sel > 0 ? "REPROVADO":"APROVADO"}
+                  </td>
+                </tr>    
                 <tr>
+                <td className="th_column">STATUS</td>
                 {columns.map((column) => (
                 <td className="th_column" key={column.name} style={{width : column.width}}>{column.name}</td>
                 ))}
                 </tr>
                 <tr>
+                <td>{analiseState(row.getAnalise)}</td>
                   {columns.map((column) => (
                     <td key={column.key}
                       style={{width : column.width}}                   >
@@ -140,11 +107,8 @@ export default function DataGrid({
                   ))}
                 </tr>
                 <tr>
-                  <td className="th_column" colSpan={columns.length + 1}>ENDEREÇO</td>
-                </tr>
-                <tr>
                   <td colSpan={columns.length + 1}>
-                  <div>{`${row.logradouro ?? "-"}, ${row.numeroFachada ?? "-"} - ${row.bairro ?? "-"}, ${row.municipio ?? "-"} - ${row.cep ?? "-"}, ${row.materialRede.nomeFederativa_Mt ?? "-"} - ${row.uf ?? "-"}`}</div>
+                  
                   </td>
                     </tr>
                   </tbody>

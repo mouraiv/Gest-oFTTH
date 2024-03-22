@@ -15,6 +15,8 @@ namespace WebApiSwagger.Filters
         public int? Id_StatusGanhoDia { get; set; }
         public int? Id_Disponibilidade { get; set; }
         public string? AnoMes { get; set; }
+        public bool AnoMesBool { get; set; }
+        public bool SemCdo { get; set; }
         public string? UF { get; set; }
         public string? SiglaEstacao { get; set; }
         public string? Estacao { get; set; }

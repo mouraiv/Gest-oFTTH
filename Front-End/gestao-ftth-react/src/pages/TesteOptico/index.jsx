@@ -4,7 +4,7 @@ import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { DropTesteOptico, GetTesteOptico } from "../../api/testeOptico";
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
-import DataGridTable from '../../components/DataGrid';
+import DataGridTable from '../../components/DataGrid/DataGridTesteOptico';
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import TextInput from '../../components/TextInput';
@@ -191,7 +191,6 @@ function TesteOptico() {
   }, [fetchTesteOptico]);
 
   const columns = [
-    { key: 'id', name: 'ID' },
     { key: 'siglaEstacao', name: 'SIGLA' },
     { key: 'uf', name: 'UF' },
     { key: 'estacao', name: 'ESTACÃO' },
@@ -369,8 +368,13 @@ function TesteOptico() {
                 text={dateInputTeste}
                 placeholder={"__/__/____"} 
               />
-              <ButtonSearch event={submit} />
-              <ButtonDefaut event={limparFiltro} text={"Limpar"} />
+              { loading ? (
+                <>
+                <ButtonSearch event={submit} />
+                <ButtonDefaut event={limparFiltro} text={"Limpar"} />
+                 </>
+              ):(null)
+              }
               </div>
               </div>          
             </Filter>
