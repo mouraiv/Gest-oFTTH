@@ -9,11 +9,12 @@ namespace WebApiSwagger.Repository.Interface
     {
         Task<MaterialRede> CarregarId(int? id_MaterialRede);
         Task<MaterialRede> CarregarChave(string? chave);
-        Task<IEnumerable<MaterialRedeDropFilter>> ListaUnica(string uf, 
-            string cdo, 
+        Task<IEnumerable<EnderecoTotalDropListView>> ListaUnica(
+            string uf, 
             string sigla,
             string estacao,
-            bool semCdo,
-            bool anoMesBool);
+            string bairro,
+            string municipio
+            );
     }
 }

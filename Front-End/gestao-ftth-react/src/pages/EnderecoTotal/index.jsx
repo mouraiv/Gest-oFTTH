@@ -60,8 +60,8 @@ function EnderecoTotal() {
 
   /* --------------- ESTADO PESQUISA LOTE --------------------- */
   const [checkedCheckbox, setCheckedCheckbox] = useState('');
-  const [baseAcumulada, setBaseAcumulada] = useState();
-  const [semCdo, setSemCdo] = useState();
+  const [baseAcumulada, setBaseAcumulada] = useState(false);
+  const [semCdo, setSemCdo] = useState(false);
 
   const [surveyInput, setSurveyInput] = useState('');
   const [chaveInput, setChaveInput] = useState('');
@@ -222,6 +222,8 @@ function EnderecoTotal() {
     cdo, 
     sigla,
     estacao,
+    bairro,
+    municipio,
     semCdo,
     anoMesBool) => {
     
@@ -232,6 +234,8 @@ function EnderecoTotal() {
         cdo, 
         sigla,
         estacao,
+        bairro,
+        municipio,
         semCdo,
         anoMesBool);
 
@@ -407,17 +411,18 @@ function EnderecoTotal() {
     setSurveyInput("");
   };
 
+ 
+  
   const handleUf = (event) => {
     const input = event.target.value;
     setLoadingDrop(false);
     setUf(input);
     FetchDropFilterMaterialExec(
       input, 
-      cdoInput,
-      siglaEstacao, 
-      estacao,
-      semCdo,
-      baseAcumulada
+      "", 
+      "",
+      "",
+      ""
     );
     
   };
@@ -425,13 +430,13 @@ function EnderecoTotal() {
   const handleSiglaEstacao = (event) => {
     const input = event.target.value;
     setSiglaEstacao(input);
+    setLoadingDrop(false);
     FetchDropFilterMaterialExec(
       uf, 
-      cdoInput,
       input, 
       estacao,
-      semCdo,
-      baseAcumulada
+      bairro,
+      municipio
     );
   }
 
@@ -468,23 +473,39 @@ function EnderecoTotal() {
   const handleBairro = (event) => {
     const input = event.target.value;
     setBairro(input);
+    setLoadingDrop(false);
+    FetchDropFilterMaterialExec(
+      uf, 
+      siglaEstacao, 
+      estacao,
+      input,
+      municipio
+    );
   };
 
   const handleMunicipio = (event) => {
     const input = event.target.value;
     setMunicipio(input);
+    setLoadingDrop(false);
+    FetchDropFilterMaterialExec(
+      uf, 
+      siglaEstacao, 
+      estacao,
+      bairro,
+      input
+    );
   };
 
   const handleEstacao = (event) => {
     const input = event.target.value;
     setEstacao(input);
+    setLoadingDrop(false);
     FetchDropFilterMaterialExec(
       uf, 
-      cdoInput,
       siglaEstacao, 
       input,
-      semCdo,
-      baseAcumulada
+      bairro,
+      municipio
     );
   };
 
@@ -570,14 +591,10 @@ function EnderecoTotal() {
 
   const handleBaseAcumulada = (checkboxName) => {
     setBaseAcumulada(checkboxName === baseAcumulada ? false : checkboxName);
-    FetchDropFilterMaterialExec(uf, cdoInput, siglaEstacao, estacao, semCdo, checkboxName);
-    setLoadingDrop(false);
   }
 
   const handleSemCdo = (checkboxName) => {
     setSemCdo(checkboxName === semCdo ? false : checkboxName);
-    FetchDropFilterMaterialExec(uf, cdoInput, siglaEstacao, estacao, checkboxName,  baseAcumulada,);
-    setLoadingDrop(false);
   }
 
   const handleImportSurvey = () => {
@@ -605,13 +622,13 @@ function EnderecoTotal() {
       setCarregarListSurvey(false);
       
     }
+    setLoadingDrop(false);
     FetchDropFilterMaterialExec(
       uf, 
-      cdoInput,
       siglaEstacao, 
       estacao,
-      semCdo,
-      baseAcumulada
+      bairro,
+      municipio
     );
     
   };
@@ -882,11 +899,11 @@ return (
               <label>CEP</label>  
               <InputText onChange={handleCep} value={cep} style={{width: "150px"}} />
               </div>
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Bairro"} event={handleBairro} lista={loadingDrop ? dropBairro.sort() : []} text={bairro}/>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem', width: '245px', overflow: 'hidden'}}>
+                <DropBox width={"245px"} height={"25px"} valueDefaut={""} label={"Bairro"} event={handleBairro} lista={loadingDrop ? dropBairro.sort() : []} text={bairro}/>
                </div>
-                <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Município"} event={handleMunicipio} lista={loadingDrop ? dropMunicipio.sort() : []} text={municipio}/>
+               <div style={{marginLeft: '1rem', marginTop: '0.7rem', width: '250px', overflow: 'hidden'}}>
+                <DropBox width={"250px"} height={"25px"} valueDefaut={""} label={"Município"} event={handleMunicipio} lista={loadingDrop ? dropMunicipio.sort() : []} text={municipio}/>
                </div>
               </>
               ):(
@@ -903,11 +920,11 @@ return (
               <label>CEP</label>  
               <InputText style={{width: "150px"}} value={cep} disabled/>
               </div>
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"194px"} height={"25px"} valueDefaut={""} label={"Bairro"} event={null} lista={[""]} text={bairro} disable={true}/>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem', width: '245px', overflow: 'hidden'}}>
+                <DropBox width={"245px"} height={"25px"} valueDefaut={""} label={"Bairro"} event={null} lista={[""]} text={bairro} disable={true}/>
               </div>
-              <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Município"} event={null} lista={[""]} text={municipio} disable={true}/>
+              <div style={{marginLeft: '1rem', marginTop: '0.7rem', width: '250px', overflow: 'hidden'}}>
+                <DropBox width={"250px"} height={"25px"} valueDefaut={""} label={"Município"} event={null} lista={[""]} text={municipio} disable={true}/>
               </div>
               </>
               

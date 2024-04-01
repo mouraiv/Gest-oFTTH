@@ -12,20 +12,18 @@ const DetalheMaterialRedeAny = async (id) => {
 
   const DropMaterialRede = async (
     uf, 
-    cdo, 
     sigla,
     estacao,
-    semCdo,
-    anoMesBool
+    bairro,
+    municipio
     ) => {
     const response = await Api.get('/MaterialRede/ListaUnica', {
       params: { 
         uf: uf, 
-        cdo: cdo,
         sigla : sigla,
         estacao : estacao,
-        semCdo : semCdo,
-        anoMesBool: anoMesBool 
+        bairro : bairro,
+        municipio: municipio
       },
       headers:{
         'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'

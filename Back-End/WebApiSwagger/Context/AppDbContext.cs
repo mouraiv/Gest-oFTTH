@@ -25,6 +25,7 @@ namespace WebApiSwagger.Context
         public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<EnderecoTotal> EnderecosTotais => Set<EnderecoTotal>();
         public DbSet<MaterialRede> MateriaisRedes => Set<MaterialRede>();
+        public DbSet<EnderecoTotalDropListView> DropEnderecosTotais  => Set<EnderecoTotalDropListView>();
         public DbSet<Ligacao> Ligacoes => Set<Ligacao>();
         public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
         public DbSet<Validacao> Validacoes => Set<Validacao>();
@@ -103,6 +104,9 @@ namespace WebApiSwagger.Context
                  .HasOne(p => p.GetEmpresa)
                  .WithOne()
                  .HasForeignKey<Tecnico>(p => p.Id_Empresa);
+
+            modelBuilder.Entity<EnderecoTotalDropListView>()
+            .HasKey(p => p.Id_DropEnderecosTotais);
 
             modelBuilder.Entity<ViewStatusGanho>().HasNoKey();
             

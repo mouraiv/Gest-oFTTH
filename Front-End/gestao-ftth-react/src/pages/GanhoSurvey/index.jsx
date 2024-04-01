@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { GetGanhoSurvey } from "../../api/enterecoTotais";
-import { ufOptions, estacaoOptions, statusGanhoOptions, disponibilidadeOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';

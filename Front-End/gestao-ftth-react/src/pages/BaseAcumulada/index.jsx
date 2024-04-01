@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { GetBaseAcumulada } from "../../api/enterecoTotais";
-import { ufOptions, grupoOperacionalOptions, estacaoOptions, viabilidadeOptions, controleOptions, operacionalOptions} from '../../components/dropbox/options';
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid';

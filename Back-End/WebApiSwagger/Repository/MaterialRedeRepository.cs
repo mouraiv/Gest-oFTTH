@@ -55,82 +55,60 @@ namespace WebApiSwagger.Repository
             }
             
         }
-        public async Task<IEnumerable<MaterialRedeDropFilter>> ListaUnica(
+        public async Task<IEnumerable<EnderecoTotalDropListView>> ListaUnica(
             string uf, 
-            string cdo, 
             string sigla,
             string estacao,
-            bool semCdo,
-            bool anoMesBool)
+            string bairro,
+            string municipio
+            )
         {
             try
             {
+                    var query = _context.DropEnderecosTotais.AsQueryable();
 
-                if(!string.IsNullOrEmpty(uf) || !string.IsNullOrEmpty(cdo) ||
-                   !string.IsNullOrEmpty(sigla) || !string.IsNullOrEmpty(estacao)){
-
-                        var query = (from endt in _context.EnderecosTotais
-                        join mt in _context.MateriaisRedes on endt.Id_MaterialRede equals mt.Id_MaterialRede into joinedMateriais
-                        from mt in joinedMateriais.DefaultIfEmpty()
-                        where 
-                        mt.SiglaFederativa_Mt == uf || endt.NomeCdo == cdo || mt.SiglaAbastecedora_Mt == sigla || mt.NomeAbastecedora_Mt == estacao || (semCdo ? endt.NomeCdo == "" : true)  && (anoMesBool ? !string.IsNullOrEmpty(endt.AnoMes) : true)   
-                        group new { endt, mt } by new
-                        {
-                            mt.SiglaFederativa_Mt,
-                            mt.SiglaAbastecedora_Mt,
-                            mt.NomeAbastecedora_Mt,
-                            endt.Cod_Viabilidade,
-                            endt.Bairro,
-                            endt.Municipio,
-                            mt.GrupoOperacional_Mt,
-                            mt.EstadoControle_Mt,
-                            mt.EstadoOperacional_Mt
-                        } into g
-                        select new MaterialRedeDropFilter
-                        {
-                            UF = g.Key.SiglaFederativa_Mt,
-                            SiglaEstacao = g.Key.SiglaAbastecedora_Mt,
-                            NomeAbastecedora = g.Key.NomeAbastecedora_Mt,
-                            Cod_Viabilidade = g.Key.Cod_Viabilidade,
-                            Bairro = g.Key.Bairro,
-                            Municipio = g.Key.Municipio,
-                            GrupoOperacional = g.Key.GrupoOperacional_Mt,
-                            EstadoControle = g.Key.EstadoControle_Mt,
-                            EstadoOperacional = g.Key.EstadoOperacional_Mt
-                            
-                        }).ToListAsync();
-
-                        return await query;
-
-                }else{
-
-                    var query =  (from endt in _context.EnderecosTotais
-                    join mt in _context.MateriaisRedes on endt.Id_MaterialRede equals mt.Id_MaterialRede into joinedMateriais
-                    from mt in joinedMateriais.DefaultIfEmpty()
-                    where
-                    (semCdo ? endt.NomeCdo == "" : true) && (anoMesBool ? !string.IsNullOrEmpty(endt.AnoMes) : true)
-                    group new { endt, mt } by new
+                    if (!string.IsNullOrEmpty(uf))
                     {
-                        mt.SiglaFederativa_Mt,
-                        endt.Cod_Viabilidade,
-                        mt.GrupoOperacional_Mt,
-                        mt.EstadoControle_Mt,
-                        mt.EstadoOperacional_Mt
+                        query = query.Where(endt => endt.UF == uf);
+                    }
 
-                    } into g
-                    select new MaterialRedeDropFilter
+                    if (!string.IsNullOrEmpty(sigla))
                     {
-                        UF = g.Key.SiglaFederativa_Mt,
-                        Cod_Viabilidade = g.Key.Cod_Viabilidade,
-                        GrupoOperacional = g.Key.GrupoOperacional_Mt,
-                        EstadoControle = g.Key.EstadoControle_Mt,
-                        EstadoOperacional = g.Key.EstadoOperacional_Mt
-                        
-                    }).ToListAsync();
+                        query = query.Where(endt => endt.SiglaEstacao == sigla);
+                    }
 
-                    return await query;
+                    if (!string.IsNullOrEmpty(estacao))
+                    {
+                        query = query.Where(endt => endt.NomeAbastecedora == estacao);
+                    }
 
-                }
+                    if (!string.IsNullOrEmpty(bairro))
+                    {
+                        query = query.Where(endt => endt.Bairro == bairro);
+                    }
+
+                    if (!string.IsNullOrEmpty(municipio))
+                    {
+                        query = query.Where(endt => endt.Municipio == municipio);
+                    }
+
+                    var result = await query.Select(endt => new EnderecoTotalDropListView
+                    {
+                        UF = endt.UF,
+                        SiglaEstacao = endt.SiglaEstacao,
+                        NomeAbastecedora = endt.NomeAbastecedora,
+                        Cod_Viabilidade = endt.Cod_Viabilidade,
+                        Bairro = endt.Bairro,
+                        Municipio = endt.Municipio,
+                        GrupoOperacional = endt.GrupoOperacional,
+                        EstadoControle = endt.EstadoControle,
+                        EstadoOperacional = endt.EstadoOperacional
+
+                    }).Distinct()
+                    .ToListAsync();
+
+                    return result;
+
             }
             catch (Exception ex)
             {

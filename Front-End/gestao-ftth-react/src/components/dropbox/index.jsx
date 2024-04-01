@@ -10,13 +10,21 @@ export default function DropBox({label, event, lista, text, valueDefaut, dropLoa
               {lista.length !== 0 ? (
                   valueDefaut === '' ? (
                     <>
-                    <option value="">- Selecionar -</option>
+                    <option value="">{lista.length < 2 ? lista[0] : "- todos -"}</option>
+                    { lista.length < 2 ? (
+                      <>
+                      <option value="">- todos -</option>
+                      </>
+                    ) : (
+                    <>   
                     {lista
                       .map((item, index) => (
                         <option key={index} value={item}>
                           {item}
                         </option>
                       ))}
+                      </> 
+                      )}
                       </>
                   ) : (
                     <>

@@ -457,12 +457,12 @@ namespace WebApiSwagger.Repository
 
                     }else{
                         if(_registros <= 1000000){
-                            progressoRepository.UpdateProgress(true, 70, "Calculando soma de Ums...", 100);
+                            progressoRepository.UpdateProgress(true, 90, "Calculando soma de Ums...", 100);
                             await Task.Delay(500);
 
                             paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
 
-                            progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);
+                            progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
 
                             return await query.ToListAsync();
 
