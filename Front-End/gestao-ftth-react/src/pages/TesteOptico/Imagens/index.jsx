@@ -83,9 +83,10 @@ function Imagem(){
 
           const response = await GetVisualizarArquivo(filtro);
          
-          if(response.status == 200) {
-            setTesteOptico(response.data)
-          }
+          if(response.status === 200 ) {
+            setTesteOptico(response.data);
+            
+          };
 
          }catch(error){
           setLoading(true);
@@ -94,29 +95,29 @@ function Imagem(){
           setLoading(true)
         }
       }
-    
+
       useEffect(() => {
           FetchVizualizarArquivo();
-          
+           
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [loading]);
 
       function groupUrlsByFolders(testeOptico) {
         const groupedUrls = {};
-
-        testeOptico.forEach((url) => {
-          const parts = url.split("/");
+      
+        testeOptico?.forEach((item) => {
+          const parts = item.caminho.split("\\");
           let folder = parts[parts.length - 2];
-
-          let currentGroup = groupedUrls;
-    
-          currentGroup[folder] = currentGroup[folder] || [];
-          currentGroup[folder].push(url);
+      
+          if (!groupedUrls[folder]) {
+            groupedUrls[folder] = [];
+          }
+          groupedUrls[folder].push(item);
         });
-
+      
         return groupedUrls;
       }
-
+      
       const groupedTesteOptico = groupUrlsByFolders(testeOptico);
 
       const Delete = () => {
@@ -277,8 +278,8 @@ function Imagem(){
                             <ul>
                               {groupedTesteOptico[folderName].map(
                                 (url, urlIndex) => (
-                                  <li key={urlIndex} onClick={() => handleButtonClick(url)}>
-                                    {url.replace(/^.*[\\\/]/, '')}
+                                  <li key={urlIndex} onClick={() => handleButtonClick(url.bytes)}>
+                                    {url.caminho.replace(/^.*[\\\/]/, '')}
                                   </li>
                                 )
                               )}      
@@ -288,21 +289,16 @@ function Imagem(){
                       </div>
                     </div>
                     <div className="displayImagem">
-                      {urlImage &&
-                      urlImage.replace(/^.*[\\\/]/, '').match(/\.[0-9a-z]+$/i)[0] == '.dwg' ? (
-                        <div>
-                          <ButtonDWG>Visualizar DWG</ButtonDWG>
-                        </div>
-                      ) : (
-                        urlImage !== "" ? (
-                        <>
-                        <div className="propImagem">
-                          <a onClick={Delete}>DELETAR</a>
-                        </div>
-                        <img src={urlImage} alt={`Imagem_${urlImage}`} />
-                        </>
+                      {
+                        loading ? (   
+                          <>
+                          <div className="propImagem">
+                            <a onClick={Delete}>DELETAR</a>
+                          </div>
+                          <img src={urlImage} alt={`Imagem_${urlImage}`} />
+                          </>
                         ):(<p style={{fontSize: '0.8rem', marginLeft: '1rem', fontWeight: '600'}}>Selecione uma imagem</p>)
-                      )}
+                      }
                     </div>
                   </>
                 ) : (

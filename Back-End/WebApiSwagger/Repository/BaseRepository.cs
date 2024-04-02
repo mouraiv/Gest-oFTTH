@@ -1,11 +1,7 @@
-using System.Diagnostics;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.RegularExpressions;
-using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSwagger.Filters;
+using WebApiSwagger.Models.ViewModel;
 using WebApiSwagger.Repository.Interface;
 
 namespace WebApiSwagger.Repository
@@ -13,24 +9,17 @@ namespace WebApiSwagger.Repository
     public class BaseRepository : IBaseRepository
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string pastaDoProjeto;
-        private readonly string ftpServer;
-        private readonly string ftpUsername;
-        private readonly string ftpPassword;
+      
         public BaseRepository(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            pastaDoProjeto = $"/Front-End/dataftpd/GestaoFTTH/TesteOptico/Uploads/Anexos/";
-            ftpServer = "ftp://192.168.4.10/";
-            ftpUsername = "mouraiv";
-            ftpPassword = "Wes2485";
         }
         
         public void UploadArquivo(List<IFormFile> path, [FromQuery] FiltroImagem filter)
         {
             try
             {
-                string _caminho = $"{ftpServer}{pastaDoProjeto}";
+                /*string _caminho = $"{ftpServer}{pastaDoProjeto}";
 
                 // Cria diretórios remotos se não existirem
                 CriarDiretorioRemoto($"{_caminho}{filter.UF?.ToUpper()}/");
@@ -76,199 +65,85 @@ namespace WebApiSwagger.Repository
 
                             }
                         }
-                    }
+                    }*/
             }
             catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro no upload do arquivo: " + ex.Message);
             }
         }
-
-        private string CriarDiretorioRemoto(string caminhoRemoto)
+       
+        public List<ArquivoView> ListarArquivo(FiltroImagem filter)
         {
-            if (!DiretorioRemotoExiste(caminhoRemoto))
-            {
-                try
-                {
-                    WebRequest request = WebRequest.Create(caminhoRemoto);
-                    request.Method = WebRequestMethods.Ftp.MakeDirectory;
-                    request.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
+            List<ArquivoView> arquivosImagem = new List<ArquivoView>();
 
-                    using (var resp = (FtpWebResponse) request.GetResponse())
-                    {
-                        return caminhoRemoto;
-                    }
-                }
-                catch(Exception ex)
-                {
-                    throw new Exception("Ocorreu um erro no upload do arquivo: " + ex.Message);
-                }
-            } else {
-
-                return caminhoRemoto;
-            }
-        }
-        private bool DiretorioRemotoExiste(string caminhoRemoto)
-        {
             try
             {
-                WebRequest request = WebRequest.Create(caminhoRemoto);
-                request.Method = WebRequestMethods.Ftp.ListDirectory;
-                request.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
+                // Construa o caminho completo para o diretório de rede
+                string caminhoDiretorio = Path.Combine(@"\\192.168.0.204\Grandes Clientes\Controle de Gestão FTTH\anexos", filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "");
 
-                using (var resp = (FtpWebResponse)request.GetResponse())
+               if (Directory.Exists(caminhoDiretorio))
                 {
-                    return true; // O diretório existe
-                }
-            }
-            catch (WebException ex)
-            {
-                FtpWebResponse response = (FtpWebResponse)ex.Response;
+                    // Obtenha uma lista de arquivos no diretório e suas subpastas
+                    string[] arquivos = Directory.GetFiles(caminhoDiretorio, "*", SearchOption.AllDirectories);
 
-                if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
-                {
-                    return false; // O diretório não existe
+                    // Itere sobre os arquivos encontrados
+                    foreach (string arquivo in arquivos)
+                    {
+                        // Verifique se o arquivo possui uma extensão de imagem permitida
+                        string extensao = Path.GetExtension(arquivo);
+                        if (ExtensaoPermitida(extensao))
+                        {
+                            // Leia o arquivo como array de bytes
+                            byte[] bytes = File.ReadAllBytes(arquivo);
+
+                            // Determine o tipo MIME da imagem
+                            string type = "image/jpeg"; // Tipo MIME padrão
+                            if (extensao.EndsWith(".jpg") || extensao.EndsWith(".jpeg"))
+                                type = "image/jpeg";
+                            else if (extensao.EndsWith(".png"))
+                                type = "image/png";
+                            else if (extensao.EndsWith(".gif"))
+                                type = "image/gif";
+                            else if (extensao.EndsWith(".jfif"))
+                                type = "image/jpeg";
+                            else if (extensao.EndsWith(".bmp"))
+                                type = "image/bmp";
+                            else if (extensao.EndsWith(".dwg"))
+                                type = "image/vnd.dwg";
+
+                            // Adicione o objeto ArquivoView à lista
+                            arquivosImagem.Add(new ArquivoView
+                            {
+                                Caminho = arquivo,
+                                Bytes = $"data:{type};base64,{Convert.ToBase64String(bytes)}"
+                            });
+                        }
+                    }
                 }
                 else
                 {
-                    throw new Exception("Ocorreu um erro: " + ex.Message);
-                }
-            }
-        }
-        private static byte[] LerBytesDoStream(Stream stream)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                stream.CopyTo(ms);
-                return ms.ToArray();
-            }
-        }
-        public List<string> ListarArquivo(FiltroImagem filter)
-        {
-            string caminhoRelativo = $"/Front-End/dataftpd/GestaoFTTH/TesteOptico/Uploads/Anexos/{filter.UF?.ToUpper()}/{filter.Estacao?.ToUpper()}/TESTE_OPTICO/{filter.CDO?.ToUpper()}/";
-
-            var request = (FtpWebRequest)WebRequest.Create(new Uri(new Uri($"{ftpServer}"), caminhoRelativo));
-            request.Method = WebRequestMethods.Ftp.ListDirectory;
-            request.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
-
-            try
-            {
-                using (var response = (FtpWebResponse)request.GetResponse())
-                using (var streamReader = new StreamReader(response.GetResponseStream()))
-                {
-                    // Lê a lista de nomes de arquivos do diretório
-                    string listaArquivos = streamReader.ReadToEnd();
-
-                    // Separa a lista em uma matriz de nomes de arquivos
-                    string[] linhas = listaArquivos.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    List<string> urls = new List<string>();
-
-                    foreach (var linha in linhas)
-                    {
-                        string nome = linha.Trim();
-                        // Constrói o caminho completo do arquivo ou diretório
-                        string caminhoCompleto = $"{caminhoRelativo}{nome}";
-
-                        string padrao = @"\.(jpg|jpeg|gif|png|bmp|jfif|dwg)$";
-
-                        // Verificar se a string corresponde ao padrão
-                        bool corresponde = Regex.IsMatch(nome, padrao);
-
-                        if (corresponde)
-                        {
-                            if(ExtensaoPermitida(nome, new string[] { ".jpg", ".jpeg", ".png", ".gif", ".jfif", ".bmp", ".dwg" })) {
-                            // Se for um arquivo, constrói a URL e adiciona à lista
-                            urls.Add(ConstruirUrlImagem(caminhoCompleto));
-
-                            }
-                        }
-                        else
-                        {
-                            urls.AddRange(ListarArquivosRecursivamente(filter, caminhoCompleto));
-                        }
-
-                    }
-
-                    return urls;
+                    Console.WriteLine("O diretório não existe: " + caminhoDiretorio);
                 }
             }
             catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro ao carregar a visualização: " + ex.Message);
             }
+            return arquivosImagem;
         }
 
-        private List<string> ListarArquivosRecursivamente(FiltroImagem filter, string caminhoRelativo)
+        private bool ExtensaoPermitida(string extensao)
         {
-            try
-            {
-                List<string> urls = new();
-
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(new Uri($"{ftpServer}"), caminhoRelativo));
-                request.Method = WebRequestMethods.Ftp.ListDirectoryDetails; // Obter detalhes para identificar se é um diretório ou arquivo
-                request.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
-
-                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
-                using (Stream responseStream = response.GetResponseStream())
-                using (StreamReader streamReader = new(responseStream))
-                {
-                    // Lê a lista de detalhes do diretório
-                    string listaDetalhes = streamReader.ReadToEnd();
-
-                    // Separa a lista em uma matriz de linhas
-                    string[] linhas = listaDetalhes.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (var linha in linhas)
-                    {
-                        //REGEX DE EXTRAÇÃO
-                        string padrao = @"\d{2}:\d{2}\s+(.+)$";
-                        // Se encontrar um espaço, extrai o nome após o espaço
-                        Match correspondencia = Regex.Match(linha, padrao);
-                        
-                        string _nome = correspondencia.Success ? correspondencia.Groups[1].Value : string.Empty;
-
-                        var ehDiretorio = linha;
-                        // Constrói o caminho completo do arquivo ou diretório
-                        string caminhoCompleto = $"{caminhoRelativo}/{_nome}";
-
-                        if(ExtensaoPermitida(_nome, new string[] { ".jpg", ".jpeg", ".png", ".gif", ".jfif", ".bmp", ".dwg" })) {
-                            // Se for um arquivo, constrói a URL e adiciona à lista
-                            urls.Add(ConstruirUrlImagem(caminhoCompleto));
-
-                        }
-
-                    }
-                }
-
-                return urls;
-          
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocorreu um erro ao carregar a visualização recursiva: " + ex.Message);
-            }
-        }
-
-        private bool ExtensaoPermitida(string nomeArquivo, string[] extensoes)
-        {
-            string extensao = Path.GetExtension(nomeArquivo).ToLower();
-            return extensoes.Contains(extensao);
-        }
-
-        private static string ConstruirUrlImagem(string nomeArquivo)
-        {
-            var scheme = "http";
-            var host = "192.168.4.10/dataftpd/";
-
-            return $"{scheme}://{host}{nomeArquivo.Replace("/Front-End/dataftpd","")}";
+            string[] extensoesPermitidas = { ".jpg", ".jpeg", ".png", ".gif", ".jfif", ".bmp", ".dwg" };
+            return extensoesPermitidas.Contains(extensao.ToLower());
         }
 
         public bool DeletaArquivo(string url){
 
             try
             {
-                string _url = url.Replace("http://192.168.4.10/dataftpd/","ftp://192.168.4.10//Front-End/dataftpd");
+                /*string _url = url.Replace("http://192.168.4.10/dataftpd/","ftp://192.168.4.10//Front-End/dataftpd");
                 WebRequest request = WebRequest.Create(_url);
                 request.Method = WebRequestMethods.Ftp.DeleteFile;
                 request.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
@@ -277,7 +152,8 @@ namespace WebApiSwagger.Repository
                 {
                     Debug.WriteLine($"Arquivo excluído com sucesso.");
                     return true;
-                }
+                }*/
+                return false;
             }
             catch (WebException ex)
             {
