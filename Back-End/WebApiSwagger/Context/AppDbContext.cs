@@ -67,17 +67,19 @@ namespace WebApiSwagger.Context
              modelBuilder.Entity<TesteOptico>()
                 .HasMany(p => p.Validacoes) 
                 .WithOne()
-                .HasForeignKey(v => v.Id_TesteOptico);   
+                .HasForeignKey(v => v.Id_TesteOptico)
+                .OnDelete(DeleteBehavior.Cascade);  
                 
             modelBuilder.Entity<TesteOptico>()
                 .HasMany(p => p.Analises)
                 .WithOne()
-                .HasForeignKey(a => a.Id_TesteOptico);
-
-            modelBuilder.Entity<Analise>()
-                .HasMany(a => a.AnaliseCDOIAs)
+                .HasForeignKey(a => a.Id_TesteOptico)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+             modelBuilder.Entity<TesteOptico>()
+                .HasMany(p => p.AnaliseCDOIAs)
                 .WithOne()
-                .HasForeignKey(ac => ac.Id_Analise)
+                .HasForeignKey(a => a.Id_TesteOptico)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<EnderecoTotal>()
@@ -112,13 +114,7 @@ namespace WebApiSwagger.Context
             
             modelBuilder.Entity<ViewStatusGanhoDia>().HasNoKey();
 
-           /* modelBuilder.Entity<EnderecoTotal>()
-                .Property(e => e.Latitude)
-                .HasColumnType("decimal(9, 6)"); 
-
-            modelBuilder.Entity<EnderecoTotal>()
-                .Property(e => e.Longitude)
-                .HasColumnType("decimal(9, 6)");*/
+            modelBuilder.Entity<TesteOptico>().HasKey(k => k.Id_TesteOptico);
 
             base.OnModelCreating(modelBuilder);
         }

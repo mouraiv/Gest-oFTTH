@@ -11,6 +11,5 @@ namespace WebApiSwagger.Models
         public DateTime? DataAnalise {get; set;}
         public string? AnaliseObservacao {get; set;}
         public int? Id_TesteOptico {get; set;}
-        public ICollection<AnaliseCDOIA> AnaliseCDOIAs {get;} = new List<AnaliseCDOIA>();
     }
 }

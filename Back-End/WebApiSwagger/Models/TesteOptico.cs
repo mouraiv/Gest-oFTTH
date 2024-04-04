@@ -41,6 +41,7 @@ namespace WebApiSwagger.Models
         public int? Id_MaterialRede { get; set; }
         public MaterialRede MaterialRede { get; set; } = null!;
         public ICollection<Analise> Analises { get; set; } = new List<Analise>();
+        public ICollection<AnaliseCDOIA> AnaliseCDOIAs  { get; set; } = new List<AnaliseCDOIA>();
         public ICollection<Validacao> Validacoes {get;} = new List<Validacao>();
     }
 }

@@ -7,6 +7,7 @@ import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
 import DialogAlert from "../../../components/Dialog";
+import ThreeModelViewer from "../../../components/ThreeModelViewer";
 
 function Imagem(){
     const [testeOptico, setTesteOptico] = useState([]);
@@ -16,6 +17,8 @@ function Imagem(){
     const { uf, sigla, estacao, cdo } = useParams();
     const [cdoia, setCdoia] = useState();
     const [urlImage, setUrlImage] = useState("");
+    const [imagemExt, setImageExt] = useState("");
+    const [imagemCaminho, setImageCaminho] = useState("");
     const [arquivo, setArquivo] = useState(null);
     const [mensagem, setMensagem] = useState({tipo: "", msg: ""});
     const [inputMensagem, setInputMensagem] = useState({tipo: "", msg: ""});
@@ -53,7 +56,7 @@ function Imagem(){
 
     async function FetchDeletaArquivo(){
       try {
-        const response = await DeleteImagem(urlImage);
+        const response = await DeleteImagem(imagemCaminho);
 
         if(response.status == 200) {
           setMensagem({tipo: 'sucesso', msg: response.data});
@@ -94,7 +97,7 @@ function Imagem(){
         } finally {
           setLoading(true)
         }
-      }
+    }
 
       useEffect(() => {
           FetchVizualizarArquivo();
@@ -114,6 +117,7 @@ function Imagem(){
           }
           groupedUrls[folder].push(item);
         });
+
       
         return groupedUrls;
       }
@@ -124,15 +128,17 @@ function Imagem(){
         setVisible(true);
       }
     
-      const ExcluirFecth = async () => {
-        await FetchDeletaArquivo();
+      const ExcluirFecth = () => {
+        FetchDeletaArquivo();
         setUrlImage("");
         setVisible(false);
         setLoading(false);
       }
 
-      const handleButtonClick = (url) => {
+      const handleButtonClick = (url, caminho) => {
         setUrlImage(url);
+        setImageCaminho(caminho);
+        setImageExt(caminho.match(/\.(jpg|jpeg|png|gif|bmp|tiff|tif|dwg|sor|msor)$/i)[0]);
       };
 
       const handleImportar = () => {
@@ -149,10 +155,11 @@ function Imagem(){
         setCdoia(_cdoia);
       }
     
-      const handleUpload = async () => {
+      const handleUpload = () => {
         
         if (arquivo) {
-          await FetchUploadImage();
+          FetchUploadImage();
+          setLoading(false);
           
           if (inputFile.current) {
             inputFile.current.value = null;
@@ -163,23 +170,11 @@ function Imagem(){
           setArquivo(null);
           setInputMensagem({});
           setCdoia("");
-          setLoading(false);
 
         } else {
           setInputMensagem({tipo: 'error', msg: 'Nenhum arquivo selecionado.'});
         }
       };
-
-      const subpasta = (folder) => {
-        const suaString = folder;
-        const padrao = /^[A-Za-z]+-\d+_\d+\.[A-Za-z]+$/;
-
-        if (padrao.test(suaString)) {
-          return true;
-        } else {
-          return false
-        }
-      }
 
     GlobalStyle();
     return(
@@ -278,7 +273,7 @@ function Imagem(){
                             <ul>
                               {groupedTesteOptico[folderName].map(
                                 (url, urlIndex) => (
-                                  <li key={urlIndex} onClick={() => handleButtonClick(url.bytes)}>
+                                  <li key={urlIndex} onClick={() => handleButtonClick(url.bytes, url.caminho)}>
                                     {url.caminho.replace(/^.*[\\\/]/, '')}
                                   </li>
                                 )
@@ -292,10 +287,22 @@ function Imagem(){
                       {
                         loading ? (   
                           <>
-                          <div className="propImagem">
+                          {imagemExt === ".dwg" || imagemExt === ".sor" || imagemExt === ".msor" ?
+                          <ThreeModelViewer viewer={urlImage} />
+                          :
+                          <>
+                          {urlImage !== "" ?
+                          <>
+                            <div className="propImagem">
                             <a onClick={Delete}>DELETAR</a>
-                          </div>
-                          <img src={urlImage} alt={`Imagem_${urlImage}`} />
+                            </div>
+                            <img src={urlImage} alt={`Imagem_${urlImage}`} />
+                          </>
+                            :
+                            null
+                          }
+                          </>
+                          }
                           </>
                         ):(<p style={{fontSize: '0.8rem', marginLeft: '1rem', fontWeight: '600'}}>Selecione uma imagem</p>)
                       }

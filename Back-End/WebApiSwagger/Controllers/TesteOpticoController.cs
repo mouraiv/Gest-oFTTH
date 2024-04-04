@@ -149,7 +149,7 @@ namespace WebApiSwagger.Controllers
                                 BobinaRecepcao = _uploadXlsx.Worksheet?.Cells[row, 23].Value?.ToString()?.ToUpper(),
                                 QuantidadeTeste = _uploadXlsx.Worksheet?.Cells[row, 24].Value?.ToString()?.ToUpper(),
                                 Id_MaterialRede = _materialRedeRepository.CarregarChave(_chave).Result.Id_MaterialRede,
-                                Sel = 1      
+                                Sel = 2     
                             };
 
                             listaModelo.Add(modelo);

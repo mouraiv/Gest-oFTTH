@@ -76,7 +76,7 @@ function TesteOptico() {
               }
             })
             .filter((value) => value !== undefined);
-            setListSiglaEstacao(_dropListSiglaEstacao);
+            setListSiglaEstacao(_dropListSiglaEstacao);    
 
         const _dropListEstacao = dropList.data
             .map((value, index) => {
@@ -99,8 +99,7 @@ function TesteOptico() {
             .filter((value, index, self) => {
                 return self.indexOf(value) === index;
             });
-            setDropCelula(_dropListCelula);        
-            
+            setDropCelula(_dropListCelula);  
   
     }
       
@@ -168,7 +167,7 @@ function TesteOptico() {
 
   useEffect(() => {
     FetchDropFilter()
-
+  
   },[dropLoading])
 
   useEffect(() => {    
@@ -314,20 +313,20 @@ function TesteOptico() {
               <>
               { estacao !== '' ? (
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao != '' ? dropSiglaEstacao.sort() : [""]} text={siglaEstacao} disable={true}/>
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={[""]} text={siglaEstacao} disable={true}/>
               </div>
               ) : (
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao != '' ? dropSiglaEstacao.sort() : [""]} text={siglaEstacao} />
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao != '' ? dropSiglaEstacao.sort() : []} text={siglaEstacao} />
                 </div>
               )}
                { siglaEstacao !== '' ? (
               <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao != '' ? dropEstacao.sort() : [""]} text={estacao} disable={true}/>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={[""]} text={estacao} disable={true}/>
               </div>
                ):(
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao != '' ? dropEstacao.sort() : [""]} text={estacao}/>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao != '' ? dropEstacao.sort() : []} text={estacao}/>
               </div>
                )}
               </>

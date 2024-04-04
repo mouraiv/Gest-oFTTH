@@ -10,8 +10,8 @@ export default function DropBox({label, event, lista, text, valueDefaut, dropLoa
               {lista.length !== 0 ? (
                   valueDefaut === '' ? (
                     <>
-                    <option value="">{lista.length < 2 ? lista[0] : "- todos -"}</option>
-                    { lista.length < 2 ? (
+                    <option value="">{lista.length < 2 && label !== 'UF' ? lista[0] : "- todos -"}</option>
+                    { lista.length < 2 && label !== 'UF' ? (
                       <>
                       <option value="">- todos -</option>
                       </>

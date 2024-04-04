@@ -9,6 +9,8 @@ namespace WebApiSwagger.Repository
     public class BaseRepository : IBaseRepository
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly string server = @"\\192.168.0.204\";
+        private readonly string caminho = @"Grandes Clientes\Controle de Gestão FTTH\anexos";
       
         public BaseRepository(IHttpContextAccessor httpContextAccessor)
         {
@@ -19,53 +21,36 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                /*string _caminho = $"{ftpServer}{pastaDoProjeto}";
+                // Construa o caminho completo para o diretório no servidor
+                string caminhoDiretorio = Path.Combine(server, caminho, filter.UF?.ToUpper() ?? "", filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "", filter.CDOIA?.ToUpper() ?? "");
 
-                // Cria diretórios remotos se não existirem
-                CriarDiretorioRemoto($"{_caminho}{filter.UF?.ToUpper()}/");
-                CriarDiretorioRemoto($"{_caminho}{filter.UF?.ToUpper()}/{filter.Estacao?.ToUpper()}/");
-                CriarDiretorioRemoto($"{_caminho}{filter.UF?.ToUpper()}/{filter.Estacao?.ToUpper()}/TESTE_OPTICO/");
-
-                string caminho = "";
-                
-                if(filter.CDOIA == null) {
-                    caminho = CriarDiretorioRemoto($"{_caminho}{filter.UF?.ToUpper()}/{filter.Estacao?.ToUpper()}/TESTE_OPTICO/{filter.CDO?.ToUpper()}/");
-                } else {
-                    CriarDiretorioRemoto($"{_caminho}{filter.UF?.ToUpper()}/{filter.Estacao?.ToUpper()}/TESTE_OPTICO/{filter.CDO?.ToUpper()}/"); 
-                    caminho = CriarDiretorioRemoto($"{_caminho}{filter.UF?.ToUpper()}/{filter.Estacao?.ToUpper()}/TESTE_OPTICO/{filter.CDO?.ToUpper()}/{filter.CDOIA?.ToUpper()}/");
+                // Verifique se o diretório existe e crie-o se não existir
+                if (!Directory.Exists(caminhoDiretorio) || !string.IsNullOrEmpty(filter.CDOIA))
+                {
+                    Directory.CreateDirectory(caminhoDiretorio);
                 }
 
-                // Envia o arquivo para o servidor FTP
-                using (WebClient client = new WebClient())
-                {    
-                    
-                    foreach (var file in path)
+                // Faça o upload de cada arquivo para o diretório no servidor
+                foreach (var arquivo in path)
+                {
+                    if (arquivo != null && arquivo.Length > 0)
                     {
-                        if (file != null && file.Length > 0)
+                        // Obtém a extensão do arquivo original
+                        var extensaoArquivo = Path.GetExtension(arquivo.FileName);
+
+                        // Renomeia o arquivo para evitar colisões de nomes
+                        string nomeArquivo = $"{Guid.NewGuid()}{extensaoArquivo}";
+
+                        // Construa o caminho completo para o arquivo no servidor
+                        string caminhoArquivo = Path.Combine(caminhoDiretorio, nomeArquivo);
+
+                        // Salva o arquivo no disco do servidor
+                        using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
                         {
-
-                            // Obtém a extensão do arquivo original
-                            var fileExtension = Path.GetExtension(file.FileName);
-
-                            //Renomear aquivos para uptload
-                            string name = filter.CDOIA != null ? $"{filter.CDOIA?.ToUpper().Replace("-","_")}_{DateTime.Now.Ticks}{fileExtension}" :
-                            $"{filter.CDO?.ToUpper().Replace("-","_")}_{DateTime.Now.Ticks}{fileExtension}";
-
-                            // Salva o arquivo no diretório criado
-                            var filePath = $"{caminho}{name}";
-
-                            using (var stream = file.OpenReadStream())
-                            {
-                                //Autenticar FTP server
-                                client.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
-
-                                // Faz upload diretamente para o FTP
-                                client.UploadData($"{filePath}", "STOR", LerBytesDoStream(stream));
-                            }
-
-                            }
+                            arquivo.CopyTo(stream);
                         }
-                    }*/
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -80,7 +65,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 // Construa o caminho completo para o diretório de rede
-                string caminhoDiretorio = Path.Combine(@"\\192.168.0.204\Grandes Clientes\Controle de Gestão FTTH\anexos", filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "");
+                string caminhoDiretorio = Path.Combine(server, caminho, filter.UF?.ToUpper() ?? "",  filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "");
 
                if (Directory.Exists(caminhoDiretorio))
                 {
@@ -111,13 +96,27 @@ namespace WebApiSwagger.Repository
                                 type = "image/bmp";
                             else if (extensao.EndsWith(".dwg"))
                                 type = "image/vnd.dwg";
+                            else if (extensao.EndsWith(".sor")) 
+                                type = "application/octet-stream"; 
+                            else if (extensao.EndsWith(".msor")) 
+                                type = "application/octet-stream";    
 
                             // Adicione o objeto ArquivoView à lista
-                            arquivosImagem.Add(new ArquivoView
+                            if(type == "application/octet-stream"){
+                                arquivosImagem.Add(new ArquivoView
+                                {
+                                    Caminho = arquivo,
+                                    Bytes = Convert.ToBase64String(bytes)
+                                });
+                            }
+                            else
                             {
-                                Caminho = arquivo,
-                                Bytes = $"data:{type};base64,{Convert.ToBase64String(bytes)}"
-                            });
+                                arquivosImagem.Add(new ArquivoView
+                                {
+                                    Caminho = arquivo,
+                                    Bytes = $"data:{type};base64,{Convert.ToBase64String(bytes)}"
+                                });
+                            }
                         }
                     }
                 }
@@ -135,7 +134,7 @@ namespace WebApiSwagger.Repository
 
         private bool ExtensaoPermitida(string extensao)
         {
-            string[] extensoesPermitidas = { ".jpg", ".jpeg", ".png", ".gif", ".jfif", ".bmp", ".dwg" };
+            string[] extensoesPermitidas = { ".jpg", ".jpeg", ".png", ".gif", ".jfif", ".bmp"};
             return extensoesPermitidas.Contains(extensao.ToLower());
         }
 
@@ -143,21 +142,21 @@ namespace WebApiSwagger.Repository
 
             try
             {
-                /*string _url = url.Replace("http://192.168.4.10/dataftpd/","ftp://192.168.4.10//Front-End/dataftpd");
-                WebRequest request = WebRequest.Create(_url);
-                request.Method = WebRequestMethods.Ftp.DeleteFile;
-                request.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
-
-                using (var resp = (FtpWebResponse)request.GetResponse())
+                // Verifique se o arquivo existe antes de excluí-lo
+                if (File.Exists(url))
                 {
-                    Debug.WriteLine($"Arquivo excluído com sucesso.");
+                    // Exclui o arquivo
+                    File.Delete(url);
                     return true;
-                }*/
-                return false;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                throw new Exception("Ocorreu um erro ao excluir o arquivo: " + ex.Message);
+                throw new Exception($"Ocorreu um erro ao excluir o arquivo: {ex.Message}");
             }
         }
     }

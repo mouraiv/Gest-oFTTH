@@ -131,6 +131,7 @@ export const ImagemArea = styled("div", {
 
     "img":{
         borderRadius: '0.5rem',
+        minWidth:'400px'
     }
 
 });

@@ -199,7 +199,7 @@ function Vizualizar(){
         let reteste = analises?.map(value => value.dataAnalise)
                      .filter((date, index, self) => self.indexOf(date) === index);
 
-        if(analises != undefined) {
+        if(analises !== undefined && reteste.length !== 0) {
             if(reteste.length > 1){
                 return 'RE-TESTE';
 
@@ -208,7 +208,7 @@ function Vizualizar(){
             }
 
             }else{
-                return '--';
+                return 'TESTE PENDENTE';
 
             }
 
@@ -518,19 +518,30 @@ function Vizualizar(){
             <TableGrid>
                 <thead>
                     <tr>
-                        <th colSpan={3}>-- TESTE ÓPTICO - {testeOptico.chave} --</th>
+                        <th colSpan={3}>TESTE ÓPTICO - {testeOptico.chave}</th>
                     </tr>
                     <tr>
                     <th style={{ backgroundColor:'#2C3E50', border: '1px solid #13293d' }}>{statusAnalise()}</th>    
-                    <th style={testeOptico.sel == 0 ? {
-                        backgroundColor: '#D4EFDF',
-                        color: '#145A32',
-                        border: '1px solid #145A32'
-                    } : {
-                        backgroundColor: '#E6B0AA',
-                        color: '#641E16',
-                        border: '1px solid #641E16'
-                    }}> {testeOptico.sel == 0 ? `VALIDADO${analises?.[0]?.status != null ? ` - ${analises?.[0]?.status}` : ''}` : `NÃO VALIDADO${analises?.[0]?.status != null ? ` - ${analises?.[0]?.status}` : ''}`} </th>
+                    <th style={testeOptico.sel === 2  ? {
+                                backgroundColor: '#d6d6d6',
+                                color: '#000000',
+                                border: '1px solid #797979'
+                                
+                            } : testeOptico.sel === 0 && testeOptico.sel !== 2 ? {
+                                backgroundColor: '#D4EFDF',
+                                color: '#145A32',
+                                border: '1px solid #145A32'
+                                
+                            } : {
+                                backgroundColor: '#E6B0AA',
+                                color: '#641E16',
+                                border: '1px solid #641E16'
+                            }
+                        }>  {testeOptico.sel !== 2 ?
+                             analises?.[0]?.status
+                            :
+                            "PENDENTE"
+                        } </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -588,11 +599,16 @@ function Vizualizar(){
             <FooterButton>
                 <div style={{width: '100%'}}>
                     <>
+                    {statusAnalise !== 'TESTE PENDENTE' ?
+                    <>
                     {testeOptico.sel == 1 ? (
                         <ButtonValidar onClick={handleValidar}>Validar</ButtonValidar>
                         ) : (
                         <ButtonReValidar onClick={handleRevalidar}>Re-Validar</ButtonReValidar>
                     )}
+                    </>
+                    : (null)
+                    }
                     { loadingMaterial ?
                     <ButtonImagem onClick={handleImagens}>Imagens</ButtonImagem> 
                     :

@@ -53,20 +53,18 @@ function Vizualizar(){
       estadoCampo,
       fibraDGO, 
       analises,
+      analiseCDOIAs
 
     } = testeOptico ?? {};
 
     const {
-      enderecoTotal,
-      siglaAbastecedora_Mt
+      enderecoTotal
 
     } = materialRede ?? {};
 
     const { 
-      analista, 
       dataAnalise, 
       status, 
-      analiseCDOIAs,
       analiseObservacao,
       id_Analise
       
@@ -210,7 +208,7 @@ function Vizualizar(){
             analista: user.nome.toUpperCase(),
             dataAnalise: _dataAtual,
             cdoiaObservacao: inputValue.analiseObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${inputValue.analiseObservacao.replace(removeDateObs,"")}` : "",
-            id_Analise: id_Analise
+            id_TesteOptico: id
           }
 
           const analiseResponse = await CreateAnaliseCdoia(analiseInsert);
@@ -327,7 +325,7 @@ function Vizualizar(){
       let reteste = analises?.map(value => value.dataAnalise)
                      .filter((date, index, self) => self.indexOf(date) === index);
 
-        if(analises != undefined) {
+        if(analises !== undefined && reteste.length !== 0) {
           if(reteste.length > 1){
             return 'RE-TESTE';
           
@@ -336,7 +334,7 @@ function Vizualizar(){
           }
           
         }else{
-          return '--';
+          return 'TESTE PENDENTE';
           
         }
     }
@@ -388,6 +386,7 @@ function Vizualizar(){
     };
     
     const handleAdicionarCdoia = (e) => {
+      setMensagem("");
       setSelectedOption("OK");
       setInputValue({analiseObservacao:"", status: ""});
       setEvent(e);
@@ -453,11 +452,11 @@ function Vizualizar(){
     const ConfirmarAnalise = () => {
       if(status === undefined) {
         if(name === 'aprovado') {
-          fetchInsertValidar("APROVADO");
+          FetchInsertValidar("APROVADO");
           setVisible(false);
 
         }else{
-          fetchInsertValidar("REPROVADO");
+          FetchInsertValidar("REPROVADO");
           setVisible(false);
 
         }
@@ -530,9 +529,10 @@ function Vizualizar(){
                                 <tbody>
                                   {Observacao().map((observacao, innerIndex) => (
                                       <tr key={`${innerIndex}`}>
+                                        {console.log(observacao)}
                                         <td style={{padding:'0.5rem'}}>{observacao}</td>
                                       </tr>
-                                  ))}
+                                  )).filter((value) => value !== 'undefined')}
                                   </tbody>
                                   </TableGrid>
                                 </>
@@ -999,12 +999,7 @@ function Vizualizar(){
                 </thead>
                 <tbody>
                         <tr>
-                          { status !== undefined ? (
                             <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>{analiseState()}</td> 
-                          ): ( 
-                            <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>TESTE</td>
-                          )
-                          }
                             <td style={{backgroundColor: '#34495E', color: '#ffffff'}}>ANALISTA : {user.nome.toUpperCase() ?? '-------'}</td>
                         </tr>
                         <tr>
@@ -1056,7 +1051,10 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                              {status !== undefined && analises?.map((value, index) => (
+                              {status !== undefined ?
+                              <>
+                              {
+                              analises?.map((value, index) => (
                                 <tr key={index} style={value.status === 'APROVADO' ? { backgroundColor: '#D5F5E3' } : { backgroundColor: '#F5B7B1' }}>
                                   <td>{value.analista}</td>
                                   <td>{new Date(value.dataAnalise).toLocaleDateString()}</td>
@@ -1081,6 +1079,9 @@ function Vizualizar(){
                                   }
                                 </tr>
                               ))}
+                              </>
+                              : <tr><td colSpan={5}>Nenhum resultado.</td></tr> 
+                              }
                             </tbody>
                             </table>
                           </td>

@@ -4,8 +4,6 @@ using WebApiSwagger.Repository.Interface;
 using WebApiSwagger.Filters;
 using Microsoft.EntityFrameworkCore;
 using WebApiSwagger.Utils;
-using Microsoft.AspNetCore.Mvc;
-using GroupDocs.Conversion.Contracts;
 
 namespace WebApiSwagger.Repository
 {
@@ -86,7 +84,7 @@ namespace WebApiSwagger.Repository
             {
                 return await _context.TestesOpticos
                         .Include(p => p.Analises)
-                            .ThenInclude(p => p.AnaliseCDOIAs)
+                        .Include(p => p.AnaliseCDOIAs)
                         .Where(p => p.Id_TesteOptico == id)
                         .AsSplitQuery()
                         .FirstOrDefaultAsync() ?? new TesteOptico();
@@ -127,7 +125,7 @@ namespace WebApiSwagger.Repository
                     .Where(p => p.Sel == 0)
                     .Include(p => p.Validacoes)
                     .Include(p => p.Analises)
-                    .ThenInclude(p => p.AnaliseCDOIAs)
+                    .Include(p => p.AnaliseCDOIAs)
                     .AsQueryable();
 
                 progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
