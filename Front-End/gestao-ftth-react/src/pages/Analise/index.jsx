@@ -56,7 +56,7 @@ function Vizualizar(){
       analiseCDOIAs
 
     } = testeOptico ?? {};
-
+    
     const {
       enderecoTotal
 
@@ -72,6 +72,11 @@ function Vizualizar(){
 
     const cdoia = () => {
       return analiseCDOIAs.length > 0 ? false : true;
+    }
+
+    const cdoiaDay = () => {
+      const _dataAtualCdoia = analiseCDOIAs?.[analiseCDOIAs.length - 1].dataAnalise;
+      return new Date(_dataAtualCdoia).toLocaleDateString() === new Date(_dataAtual).toLocaleDateString() ? true : false;
     }
 
     const day = (dataAnalise) => {
@@ -498,11 +503,10 @@ function Vizualizar(){
     }
 
     const ConfirmarAnaliseCdoia = () => {
-      const _cdoiaRepeat = analiseCDOIAs.filter(p => p.cdoia == inputCdoia)
-      .map(value => value.cdoia);
+      const dataAtual = new Date(_dataAtual).toLocaleDateString();
       
-      if(_cdoiaRepeat.length > 0){
-        setMensagem(`${cdo}.${inputCdoia} já existe.`)
+      if(cdoiaDay() === true){
+        setMensagem(`${cdo}.${inputCdoia} já possui registro com a data ${dataAtual}.`)
         setInputCdoia("1")
 
       }else{
@@ -992,7 +996,7 @@ function Vizualizar(){
             <TableGrid>
                 <thead>
                     <tr>
-                        <th colSpan={3}>-- ANALISE : {uf} - {estacao} - {cdo} --</th>
+                        <th colSpan={3}>ANALISE : {uf} - {estacao} - {cdo}</th>
                     </tr>
                     { status !== undefined && status === "APROVADO" ? (
                     <tr>
