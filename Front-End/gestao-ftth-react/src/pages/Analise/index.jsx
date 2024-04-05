@@ -34,7 +34,7 @@ function Vizualizar(){
     const { user } = UseAuth();
     const _dataAtual = dataAtual.toISOString();
     const{ name } = event.target ?? "";
-    const removeDateObs = /\[ \d{2}\/\d{2}\/\d{4} \]/g;
+    const removeDateObs = /\[\s*\d{2}\/\d{2}\/\d{4}\s*\]/g;
 
     const {
       uf, 
@@ -70,6 +70,13 @@ function Vizualizar(){
       
     } = analises?.[analises.length - 1] ?? {};
 
+    const cdoia = () => {
+      return analiseCDOIAs.length > 0 ? false : true;
+    }
+
+    const day = (dataAnalise) => {
+       return new Date(dataAnalise).toLocaleDateString() === new Date(_dataAtual).toLocaleDateString() ? true : false;
+    }
 
     async function FetchValidar(hd_status) {
         try {
@@ -78,7 +85,7 @@ function Vizualizar(){
 
             if(name !== 'editar') {
 
-              if(new Date(dataAnalise).toLocaleDateString() === new Date(_dataAtual).toLocaleDateString()){
+              if(day(dataAnalise) === true){
                 const ultimaAnalise = {}
 
                 ultimaAnalise.id_Analise = id_Analise;
@@ -109,6 +116,7 @@ function Vizualizar(){
             }
 
             if(name === 'editar') {
+             
               const analiseEditId = analises?.filter((f) => f.id_Analise === idAnalise).map((value) => {return value});
               const editObs = {...analiseEditId?.[0]};
 
@@ -120,11 +128,10 @@ function Vizualizar(){
 
               const _observacao = observacao.join(';');
               
-              if(new Date(dataAnalise).toLocaleDateString() === new Date(_dataAtual).toLocaleDateString()){
+              if(day(dataAnalise) === true){
                 editObs.analiseObservacao = inputObs != "" ? `${_observacao}` : `${editObs.analiseObservacao}`;
-                console.log(editObs)
                 
-                const analiseResponse = await updateAnalise(editObs);
+                const analiseResponse = await UpdateAnalise(editObs);
     
                 if (analiseResponse.status === 200) {
                     console.log("Validado com sucesso")
@@ -230,6 +237,7 @@ function Vizualizar(){
 
     async function FetchEditarCdoia() {
       try {
+          const _cdoiaObservacao = currentCdoia.cdoiaObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${currentCdoia.cdoiaObservacao.replace(removeDateObs,"").trim()}` : "";
           const analiseData = {
               ...analiseCDOIAs[0]
             };
@@ -239,7 +247,7 @@ function Vizualizar(){
             analiseData.analista = user.nome.toUpperCase();
             analiseData.cdoiaStatus = currentCdoia.cdoiaStatus;
             analiseData.dataAnalise = _dataAtual;
-            analiseData.cdoiaObservacao = currentCdoia.cdoiaObservacao != "" ? `[ ${new Date(_dataAtual).toLocaleDateString()} ] ${currentCdoia.cdoiaObservacao.replace(removeDateObs,"")}` : "";
+            analiseData.cdoiaObservacao = _cdoiaObservacao;
 
             const analiseResponse = await UpdateAnaliseCdoia(analiseData);
   
@@ -349,7 +357,7 @@ function Vizualizar(){
 
     const Observacao = () => {
       if (analiseObservacao !== null) {
-          const _observacoes = analises?.filter((f) => f.id_Analise == idAnalise).map((value, index) => (value.analiseObservacao.replace(';.','').split(';')));
+          const _observacoes = analises?.filter((f) => f.id_Analise == idAnalise && f.analiseObservacao !== 'undefined').map((value, index) => (value.analiseObservacao.replace(';.','').split(';')));
           return _observacoes;
       }
       return [];
@@ -476,6 +484,19 @@ function Vizualizar(){
       setLoading(false);
     }
 
+    const EditeObsAnalise = () => {
+        if(status === 'APROVADO') {
+          FetchValidar("APROVADO");
+          setVisible(false);
+
+        }else if(status === 'REPROVADO'){
+          FetchValidar("REPROVADO");
+          setVisible(false);
+
+        }
+      setLoading(false);
+    }
+
     const ConfirmarAnaliseCdoia = () => {
       const _cdoiaRepeat = analiseCDOIAs.filter(p => p.cdoia == inputCdoia)
       .map(value => value.cdoia);
@@ -529,7 +550,6 @@ function Vizualizar(){
                                 <tbody>
                                   {Observacao().map((observacao, innerIndex) => (
                                       <tr key={`${innerIndex}`}>
-                                        {console.log(observacao)}
                                         <td style={{padding:'0.5rem'}}>{observacao}</td>
                                       </tr>
                                   )).filter((value) => value !== 'undefined')}
@@ -567,7 +587,7 @@ function Vizualizar(){
                     colorType={'#13293d'}
                     ConfirmaButton={true}
                     textCloseButton={'Cancelar'}
-                    buttonConfirmar={ConfirmarAnalise}
+                    buttonConfirmar={EditeObsAnalise}
                     text={
                       <>
                       { status === "APROVADO" ? (
@@ -1067,12 +1087,16 @@ function Vizualizar(){
                                   { testeOptico.sel === 1 ?
                                   <td>
                                     <>
+                                    { day(value.dataAnalise) === true &&
                                       <Button name="editar" style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }} onClick={(e) => handleEdit(e, value.id_Analise)}>
                                         Editar
                                       </Button>
+                                    }
+                                    { cdoia() === true &&
                                       <Button name="excluirCdo" onClick={(e) => handleExcluirCdo(e ,value.id_Analise)}>
                                         Excluir
                                       </Button>
+                                    }
                                     </>
                                   </td>
                                   : null
@@ -1124,7 +1148,7 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                              { testeOptico.sel == 1 &&
+                              { testeOptico.sel == 1 && status !== undefined &&
                                 <tr>
                                   <td>
                                       <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>      
