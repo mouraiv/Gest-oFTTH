@@ -6,7 +6,7 @@ import DataGridTable from '../../../components/DataGrid/DataGridTesteOptico';
 import { ImportArea, InputImport, ButtonUpload, ButtonDownload, LinhaVertical } from "./style";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
-import Spinner from '../../../components/Spinner';
+import { UseAuth } from "../../../contexts/auth";
 import DialogAlert from "../../../components/Dialog";
 import InfoDataBase from '../../../components/DbInfo';
 import ProgressComponent from '../../../components/progress/ProgressComponent';
@@ -25,6 +25,8 @@ function ImportFile(){
 
     const inputRef = useRef(null);
     const { name } = event.target ?? "";
+    const { user } = UseAuth();
+    const userPrivate = user.tipo ?? 1;
 
     const controller = new AbortController();
     const signal = controller.signal;
@@ -178,6 +180,8 @@ function ImportFile(){
         <Template>
         <Header title={"Teste Óptico - Importação"} />
         <Content>
+          { userPrivate !== 1 ?
+          <>
           { dialogAviso ? (
             <DialogAlert 
                   visibleDiag={visible} 
@@ -250,6 +254,17 @@ function ImportFile(){
               ):(<ProgressComponent />)
             ) : ( <ProgressComponent /> )
             }
+            </>
+            : <p style={{
+              border: "1px solid red",
+              color: "red",
+              padding: "1rem",
+              fontSize: "1rem",
+              fontWeight: "600",
+              marginTop: "1rem",
+              backgroundColor: "#fff4f4" 
+          }}>ACESSO NEGADO!</p>
+          }
         </Content>
         <Footer />
         </Template>

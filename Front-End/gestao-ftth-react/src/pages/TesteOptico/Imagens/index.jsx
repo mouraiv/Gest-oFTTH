@@ -8,6 +8,7 @@ import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
 import DialogAlert from "../../../components/Dialog";
 import ThreeModelViewer from "../../../components/ThreeModelViewer";
+import { UseAuth } from "../../../contexts/auth";
 
 function Imagem(){
     const [testeOptico, setTesteOptico] = useState([]);
@@ -25,6 +26,8 @@ function Imagem(){
 
     const inputFile= useRef();
     const inputRef = useRef();
+    const { user } = UseAuth();
+    const userPrivate = user.tipo ?? 1;
  
     async function FetchUploadImage(){
 
@@ -250,7 +253,9 @@ function Imagem(){
                   buttonConfirmar={() => ExcluirFecth()} 
                 />
             <NavArea>
+            {userPrivate !== 1 && 
                 <ButtonImport onClick={handleImportar} >Importar</ButtonImport>
+            }
             </NavArea>
             <RotuloTitulo><p>{`${uf ?? ""} - ${sigla ?? ""} - ${cdo ?? ""}`}</p></RotuloTitulo>
             <ImagemArea>
@@ -293,9 +298,11 @@ function Imagem(){
                           <>
                           {urlImage !== "" ?
                           <>
+                          {userPrivate !== 1 &&
                             <div className="propImagem">
                             <a onClick={Delete}>DELETAR</a>
                             </div>
+                          }
                             <img src={urlImage} alt={`Imagem_${urlImage}`} />
                           </>
                             :

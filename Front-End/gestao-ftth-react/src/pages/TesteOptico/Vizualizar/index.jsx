@@ -3,10 +3,10 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Tab, Tabs } from 'react-bootstrap';
 import { useNavigate, useParams } from "react-router-dom";
-import { ButtonCancelar, ButtonConfirma, Content, GlobalStyle, Template } from "../../../GlobalStyle";
+import { ButtonConfirma, Content, GlobalStyle, Template } from "../../../GlobalStyle";
 import { DetalheMaterialRedeAny } from "../../../api/materialRede";
 import { GetEnderecoTotalAny } from "../../../api/enterecoTotais";
-import { DetalheTesteOptico, UpdateTesteOptico } from "../../../api/testeOptico";
+import { DetalheTesteOptico, UpdateTesteOptico, DeleteTesteOptico } from "../../../api/testeOptico";
 import { CreateValidacao } from '../../../api/validacao';
 import DialogAlert from "../../../components/Dialog";
 import Footer from "../../../components/Footer";
@@ -47,24 +47,28 @@ function Vizualizar(){
 
     const navigate = useNavigate();
     const { user } = UseAuth();
+    const userPrivate = user.tipo ?? 1;
 
     const { analises } = testeOptico;
     const { ligacao, enderecoTotal = enderecoTotalAny } = materialRede ?? {};
+    const status = analises?.[0]?.status;
+    const testeOpticoSel = testeOptico.id_TesteOptico;
 
     async function fetchDelete(){
         try {
-          atualizar(false)
+          setLoading(false)
           if(id !== undefined){
             await DeleteTesteOptico(id);
           }
         } catch (error) {
-          atualizar(true);
+          setLoading(true);
           
         }finally{
-          atualizar(true);
+          setLoading(true);
+          window.location.reload();
         }
         
-      }
+    }
 
     async function fetchValidar(sel) {
         try {
@@ -268,7 +272,6 @@ function Vizualizar(){
         navigate(`/Analise/${id}/${idNetwin}`); 
     };
     
-
     const filterEnderecoTotalObj = (survey) => {
         const _enderecoTotal = enderecoTotal;
         const filter = _enderecoTotal?.filter(p => p.cod_Survey === survey).map((value, index) => {
@@ -324,6 +327,8 @@ function Vizualizar(){
         <Template>
         <Header navbar={false} title={"Teste Óptico - Visualizar"}  />
         <Content>
+        {testeOpticoSel !== 0 ? 
+        <>    
         <DialogAlert 
             visibleDiag={visibleExcluir} 
             visibleHide={() => setVisibleExcluir(false)}
@@ -520,14 +525,11 @@ function Vizualizar(){
                     <tr>
                         <th colSpan={3}>TESTE ÓPTICO - {testeOptico.chave}</th>
                     </tr>
+                    { status &&
+                    <>
                     <tr>
-                    <th style={{ backgroundColor:'#2C3E50', border: '1px solid #13293d' }}>{statusAnalise()}</th>    
-                    <th style={testeOptico.sel === 2  ? {
-                                backgroundColor: '#d6d6d6',
-                                color: '#000000',
-                                border: '1px solid #797979'
-                                
-                            } : testeOptico.sel === 0 && testeOptico.sel !== 2 ? {
+                    <th colSpan={2} style={
+                                analises?.[0]?.status === 'APROVADO' ? {
                                 backgroundColor: '#D4EFDF',
                                 color: '#145A32',
                                 border: '1px solid #145A32'
@@ -537,11 +539,14 @@ function Vizualizar(){
                                 color: '#641E16',
                                 border: '1px solid #641E16'
                             }
-                        }>  {testeOptico.sel !== 2 ?
-                             analises?.[0]?.status
-                            :
-                            "PENDENTE"
-                        } </th>
+                        }> {status}</th>    
+                    </tr>
+                    </>
+                    }
+                    <tr>
+                    <th style={{ backgroundColor:'#2C3E50', border: '1px solid #13293d' }}>{statusAnalise()}</th>    
+                    <th style={{ backgroundColor:'#2C3E50', border: '1px solid #13293d' }
+                        }>  {testeOptico.sel === 1  ? "VALIDAÇÃO PENDENTE" :  "VALIDADO" } </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -599,15 +604,14 @@ function Vizualizar(){
             <FooterButton>
                 <div style={{width: '100%'}}>
                     <>
-                    {statusAnalise !== 'TESTE PENDENTE' ?
+                    {userPrivate !== 1 && status &&
                     <>
-                    {testeOptico.sel == 1 ? (
+                    {testeOptico.sel === 1 ? (
                         <ButtonValidar onClick={handleValidar}>Validar</ButtonValidar>
                         ) : (
-                        <ButtonReValidar onClick={handleRevalidar}>Re-Validar</ButtonReValidar>
+                        <ButtonReValidar onClick={handleRevalidar}>Pendente</ButtonReValidar>
                     )}
                     </>
-                    : (null)
                     }
                     { loadingMaterial ?
                     <ButtonImagem onClick={handleImagens}>Imagens</ButtonImagem> 
@@ -616,9 +620,13 @@ function Vizualizar(){
                     }
                     </>
                 </div>
+                { userPrivate !== 1 && testeOptico.sel === 1 &&
+                <>
                     <ButtonEditar onClick={() => HandleEditar()} >Editar</ButtonEditar>
                     <ButtonEditar onClick={() => HandleExcluir()} >Excluir</ButtonEditar>
-                    <ButtonConfirma onClick={handleAnalise}>Analisar</ButtonConfirma>
+                </>
+                }
+                    <ButtonConfirma onClick={handleAnalise}>Analise</ButtonConfirma>
             </FooterButton>
             </Tab>
             <Tab eventKey="MaterialRede" title="Netwin">
@@ -867,10 +875,21 @@ function Vizualizar(){
             </ContentTabs>
             ):(<Spinner />)
         }
+        </>
+        : (<p style={{
+            border: "1px solid red",
+            color: "red",
+            padding: "1rem",
+            fontSize: "1rem",
+            fontWeight: "600",
+            marginTop: "1rem",
+            backgroundColor: "#fff4f4" 
+        }}>TESTE ÓPTICO EXCLUÍDO!</p>)}
         </Content>
             <Footer />
         </Template>
         </>
+    
     ):(
         <>
         <Template>
@@ -1263,7 +1282,8 @@ function Vizualizar(){
             <Footer />
         </Template>
         </>
-    )}
+    )
+    }
     </>
     );
 }

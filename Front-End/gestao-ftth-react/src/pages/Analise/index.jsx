@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, ButtonImagem, FooterButton, ButtonCdoia, TableGrid} from "./styles";
-import { DetalheTesteOptico} from "../../api/testeOptico";
+import { DetalheTesteOptico, UpdateTesteOptico} from "../../api/testeOptico";
 import { DetalheMaterialRedeAny} from "../../api/materialRede";
 import { UpdateAnalise, CreateAnalise, DeleteAnalise } from "../../api/analise";
 import { UpdateAnaliseCdoia, CreateAnaliseCdoia, DeleteAnaliseCdoia } from "../../api/cdoia";
@@ -32,6 +32,7 @@ function Vizualizar(){
     const navigate = useNavigate();
     const inputRef = useRef();
     const { user } = UseAuth();
+    const userPrivate = user.tipo ?? 1;
     const _dataAtual = dataAtual.toISOString();
     const{ name } = event.target ?? "";
     const removeDateObs = /\[\s*\d{2}\/\d{2}\/\d{4}\s*\]/g;
@@ -75,7 +76,7 @@ function Vizualizar(){
     }
 
     const cdoiaDay = () => {
-      const _dataAtualCdoia = analiseCDOIAs?.[analiseCDOIAs.length - 1].dataAnalise;
+      const _dataAtualCdoia = analiseCDOIAs?.[analiseCDOIAs.length - 1]?.dataAnalise;
       return new Date(_dataAtualCdoia).toLocaleDateString() === new Date(_dataAtual).toLocaleDateString() ? true : false;
     }
 
@@ -295,7 +296,6 @@ function Vizualizar(){
             
             if(detalheTesteOptico.status == 200) {
                 setTesteOptico(detalheTesteOptico.data);
-
                 const detalheMaterialRede = await DetalheMaterialRedeAny(idNetwin);
 
                 if(detalheMaterialRede.status == 200) {
@@ -312,16 +312,16 @@ function Vizualizar(){
         }
   }
 
-    useEffect(() => {
-      FecthDetalheTesteOptico();
-      
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[loading]);
+  useEffect(() => {
+    FecthDetalheTesteOptico();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[loading]);
 
     const tipoCdoe = () => {
       const regex = /[A-Z]+-(\d+)/;
       
-      if(cdo !== undefined){
+      if(cdo !== undefined && cdo !== null){
       const match = cdo !== undefined ? cdo.match(regex) : '';
 
         if (match) {
@@ -452,7 +452,6 @@ function Vizualizar(){
       FetchDeleteCdo();
       setVisible(false);
       setLoading(false);
-
     }
 
     const handleObservacaoCdoia = (e, cdoiaObservacao) => {
@@ -501,11 +500,10 @@ function Vizualizar(){
         }
       setLoading(false);
     }
-
     const ConfirmarAnaliseCdoia = () => {
       const dataAtual = new Date(_dataAtual).toLocaleDateString();
       
-      if(cdoiaDay() === true){
+      if(cdoiaDay() === true && inputCdoia){
         setMensagem(`${cdo}.${inputCdoia} já possui registro com a data ${dataAtual}.`)
         setInputCdoia("1")
 
@@ -1068,9 +1066,18 @@ function Vizualizar(){
                                   <th style={{width: '25%'}}>ANALISTA</th>
                                   <th style={{width: '15%'}}>DATA ANALISE</th>
                                   <th style={{width: '15%'}}>STATUS</th>
-                                  <th style={testeOptico.sel === 1 ? {width: '20%'} : {width: '50%'}}>OBSERVAÇÃO</th>
-                                  { testeOptico.sel === 1 ?
+                                  {userPrivate !== 1 ?
+                                  <>
+                                  <th style={day(dataAnalise) === true || cdoia() === true ? {width: '20%'} : testeOptico.sel === 1 ? {width: '50%'} : {width: '20%'}}>OBSERVAÇÃO</th>
+                                  {testeOptico.sel === 1 &&
+                                  <>
+                                  {day(dataAnalise) === true || cdoia() === true ?
                                   <th># AÇÕES #</th> : null
+                                  }
+                                  </>
+                                  }
+                                  </>
+                                  : <th style={{width: '50%'}}>OBSERVAÇÃO</th>
                                   } 
                                 </tr>
                               </thead>
@@ -1088,7 +1095,7 @@ function Vizualizar(){
                                       OBSERVAÇÕES
                                     </Button>
                                   </td>
-                                  { testeOptico.sel === 1 ?
+                                  {userPrivate !== 1 && testeOptico.sel === 1 ?
                                   <td>
                                     <>
                                     { day(value.dataAnalise) === true &&
@@ -1147,18 +1154,22 @@ function Vizualizar(){
                                   <th style={{width: '20%'}}>ANALISTA</th>
                                   <th style={{width: '15%'}}>DATA ANALISE</th>
                                   <th style={{width: '8%'}}>STATUS</th>
-                                  <th style={{width: '15%'}}>OBSERVAÇÃO</th>
+                                  <th style={ userPrivate !== 1 ? {width: '15%'} : {width: '35%'}}>OBSERVAÇÃO</th>
+                                  { userPrivate !== 1 &&
                                   <th># AÇÕES #</th>
+                                  }
                                 </tr>
                               </thead>
                               <tbody>
-                              { testeOptico.sel == 1 && status !== undefined &&
+                              {userPrivate !== 1 && analises !== undefined && analises.length !== 0 && testeOptico.sel === 1 &&
                                 <tr>
                                   <td>
                                       <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>      
                                   </td>
                                 </tr>
                                 }
+                                { analiseCDOIAs !== undefined && analiseCDOIAs.length !== 0 ?
+                                <>
                                 {analiseCDOIAs?.map((analise, index) => (
                                   <tr key={index} style={analise.cdoiaStatus == 'OK' ?
                                   {backgroundColor:'#D5F5E3'} : {backgroundColor:'#F5B7B1'}}>
@@ -1170,15 +1181,20 @@ function Vizualizar(){
                                       <>
                                         <Button name="observacaoCdoia" style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={(e) => handleObservacaoCdoia(e, analise.cdoiaObservacao)} >OBSERVAÇÕES</Button>
                                       </> 
-                                     </td> 
+                                     </td>
+                                     {userPrivate !== 1 && 
                                      <td>
                                       <>
                                         <Button name="editarCdoia" style={{marginLeft:'0.5rem', marginRight: '0.5rem'}} onClick={(e) => handleEditarCdoia(e, analise.id_AnaliseCDOIA, analise.cdoia, analise.cdoiaStatus, analise.cdoiaObservacao)} >Editar</Button>
                                         <Button name="excluirCdoia" onClick={(e) => handleExcluirCdoia(e, analise.id_AnaliseCDOIA)} >Excluir</Button>
-                                      </> 
-                                    </td> 
+                                      </>
+                                    </td>
+                                     } 
                                   </tr>
                                 ))}
+                                </>
+                                : <tr><td colSpan={6}>Nenhum resultado</td></tr>
+                              }
                               </tbody>
                             </table>
                             ):(null)
@@ -1189,7 +1205,7 @@ function Vizualizar(){
             </TableGrid>
             <FooterButton>
               <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-              { testeOptico.sel == 1 &&
+              { userPrivate !== 1 && testeOptico.sel == 1 &&
                   <>
                   {status === undefined ? (
                       <>

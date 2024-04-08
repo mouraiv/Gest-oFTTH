@@ -13,6 +13,7 @@ import DropBox from '../../components/dropbox';
 import { Filter, ButtonImport, SubMenu } from './styles';
 import InfoDataBase from '../../components/DbInfo';
 import ProgressComponent from '../../components/progress/ProgressComponent';
+import { UseAuth } from "../../contexts/auth";
 
 
 function TesteOptico() {
@@ -55,6 +56,8 @@ function TesteOptico() {
 
   const controller = new AbortController();
   const signal = controller.signal;
+  const { user } = UseAuth();
+  const userPrivate = user.tipo ?? 1;
 
   async function FetchDropFilter () {
     
@@ -300,9 +303,11 @@ function TesteOptico() {
         <Header title={"Teste Óptico"} />
           <Content>
           <InfoDataBase />
+            {userPrivate !== 1 &&
             <SubMenu>
               <ButtonImport onClick={handleImportar} >Controler CDOs</ButtonImport>
              </SubMenu>
+            }
             <Filter>
               <div>
               <div style={{display: 'flex'}}>
