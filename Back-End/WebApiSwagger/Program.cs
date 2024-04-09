@@ -23,6 +23,7 @@ builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 builder.Services.AddScoped<ICargoRepository, CargoRepository>();
 builder.Services.AddScoped<ITecnicoRepository, TecnicoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IDiretorioRepository, DiretorioRepository>();
 builder.Services.AddScoped<IStatusAnaliseRepository, StatusAnaliseRepository>();
 builder.Services.AddScoped<IStatusNetwinRepository, StatusNetwinRepository>();
 builder.Services.AddScoped<IStatusControleRepository, StatusControleRepository>();

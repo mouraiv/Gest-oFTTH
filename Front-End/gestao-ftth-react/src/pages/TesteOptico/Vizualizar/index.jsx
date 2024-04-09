@@ -166,8 +166,8 @@ function Vizualizar(){
                         setMaterialRede(detalheMaterialRede.data);
                         
                         const somaUMS = detalheMaterialRede.data.enderecoTotal?.reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
-                        const somaUMSComGanho = detalheMaterialRede.data.enderecoTotal?.filter(value => value.id_StatusGanho === 1).reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
-                        const somaUMSSemGanho = detalheMaterialRede.data.enderecoTotal?.filter(value => value.id_StatusGanho === 2).reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+                        const somaUMSComGanho = detalheMaterialRede.data.enderecoTotal?.filter(value => value.statusGanho == 'COM GANHO').reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
+                        const somaUMSSemGanho = detalheMaterialRede.data.enderecoTotal?.filter(value => value.statusGanho === 'SEM GANHO').reduce((acc, value) => acc + (value.quantidadeUMS || 0), 0);
                         setTotalUms({
                             totalUms: somaUMS,
                             totalUmsComGanho: somaUMSComGanho,
@@ -417,15 +417,15 @@ function Vizualizar(){
                                         <tbody>
                                         <>     
                                         <tr>   
-                                        <th colSpan={2} style={valueEndereco.id_StatusGanho == 1 ? {
+                                        <th colSpan={2} style={valueEndereco.statusGanho == 'COM GANHO' ? {
                                             backgroundColor: '#D4EFDF',
                                             color: '#145A32',
                                             border: '1px solid #145A32'
-                                        } : {
+                                        } : valueEndereco.statusGanho == 'SEM GANHO' ? {
                                             backgroundColor: '#E6B0AA',
                                             color: '#641E16',
                                             border: '1px solid #641E16'
-                                        }}> {valueEndereco.statusGanho} </th>
+                                        }: null}> {valueEndereco.statusGanho} </th>
                                         </tr>
                                         <tr>
                                             <td>{valueEndereco.uf ?? '-------'}</td>
@@ -814,9 +814,10 @@ function Vizualizar(){
                                         .filter((value) => value.cod_Survey !== survey)
                                         .map((valueEndereco, index) => (
                                         <tr
-                                        style={valueEndereco.id_StatusGanho === 1 ?
-                                            { backgroundColor: '#D5F5E3'} : 
-                                            { backgroundColor: '#FADBD8'}}
+                                        style={valueEndereco.statusGanho == 'COM GANHO' ?
+                                            { backgroundColor: '#D5F5E3'} 
+                                            : valueEndereco.statusGanho == 'SEM GANHO' ?
+                                            { backgroundColor: '#FADBD8'} : null}
                                             
                                             key={index + 1}
                                             id={valueEndereco.cod_Survey}
@@ -942,15 +943,15 @@ function Vizualizar(){
                                         <tbody>
                                         <>
                                         <tr>   
-                                        <th colSpan={2} style={valueEndereco.id_StatusGanho == 1 ? {
+                                        <th colSpan={2} style={valueEndereco.statusGanho == 'COM GANHO' ? {
                                             backgroundColor: '#D4EFDF',
                                             color: '#145A32',
                                             border: '1px solid #145A32'
-                                        } : {
+                                        } : valueEndereco.statusGanho == 'SEM GANHO' ? {
                                             backgroundColor: '#E6B0AA',
                                             color: '#641E16',
                                             border: '1px solid #641E16'
-                                        }}> {valueEndereco.statusGanho} </th>
+                                        } : null}> {valueEndereco.statusGanho} </th>
                                         </tr>
                                         <tr>
                                             <td>{valueEndereco.uf ?? '-------'}</td>
@@ -1221,9 +1222,10 @@ function Vizualizar(){
                                         .filter((value) => value.cod_Survey !== survey)
                                         .map((valueEndereco, index) => (
                                         <tr
-                                            style={valueEndereco.id_StatusGanho === 1 ?
-                                                { backgroundColor: '#D5F5E3'} : 
-                                                { backgroundColor: '#FADBD8'}}
+                                            style={valueEndereco.statusGanho == 'COM GANHO' ?
+                                                { backgroundColor: '#D5F5E3'} :
+                                                valueEndereco.statusGanho == 'SEM GANHO' ? 
+                                                { backgroundColor: '#FADBD8'} : null}
                                             key={index + 1}
                                             id={valueEndereco.cod_Survey}
                                             onClick={handleTesteOpticoDetalhe}

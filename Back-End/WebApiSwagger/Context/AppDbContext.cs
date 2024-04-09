@@ -21,6 +21,7 @@ namespace WebApiSwagger.Context
 
         public DbSet<Cargo> Cargos => Set<Cargo>();
         public DbSet<Info> Infos => Set<Info>();
+        public DbSet<Diretorio> Diretorios => Set<Diretorio>();
         public DbSet<Analise> Analises => Set<Analise>();
         public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<EnderecoTotal> EnderecosTotais => Set<EnderecoTotal>();
@@ -113,6 +114,8 @@ namespace WebApiSwagger.Context
             modelBuilder.Entity<ViewStatusGanho>().HasNoKey();
             
             modelBuilder.Entity<ViewStatusGanhoDia>().HasNoKey();
+            
+            modelBuilder.Entity<Diretorio>().HasKey(k => k.Id_Diretorio);
 
             modelBuilder.Entity<TesteOptico>().HasKey(k => k.Id_TesteOptico);
 

@@ -322,7 +322,7 @@ namespace WebApiSwagger.Repository
                     progressoRepository.UpdateProgress(true, 85, "Calculando soma de Ums...", 100);
                     await Task.Delay(500);
 
-                    paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
+                    paginacao.TotalUms = query.Where(p => p.Id_StatusGanho != 3).Sum(p => p.QuantidadeUMS) ?? 0;
 
                      progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
 
@@ -367,7 +367,7 @@ namespace WebApiSwagger.Repository
                     progressoRepository.UpdateProgress(true, 85, "Calculando soma de Ums...", 100);
                     await Task.Delay(500);
 
-                    paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
+                    paginacao.TotalUms = query.Where(p => p.Id_StatusGanho != 3).Sum(p => p.QuantidadeUMS) ?? 0;
 
                     progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100); 
 
@@ -411,7 +411,7 @@ namespace WebApiSwagger.Repository
                     progressoRepository.UpdateProgress(true, 85, "Calculando soma de Ums...", 100);
                     await Task.Delay(500);
 
-                    paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
+                    paginacao.TotalUms = query.Where(p => p.Id_StatusGanho != 3).Sum(p => p.QuantidadeUMS) ?? 0;
 
                     progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100); 
 
@@ -460,7 +460,7 @@ namespace WebApiSwagger.Repository
                             progressoRepository.UpdateProgress(true, 90, "Calculando soma de Ums...", 100);
                             await Task.Delay(500);
 
-                            paginacao.TotalUms = query.Sum(p => p.QuantidadeUMS) ?? 0;
+                            paginacao.TotalUms = query.Where(p => p.Id_StatusGanho != 3).Sum(p => p.QuantidadeUMS) ?? 0;
 
                             progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
 

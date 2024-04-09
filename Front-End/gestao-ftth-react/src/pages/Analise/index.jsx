@@ -357,7 +357,7 @@ function Vizualizar(){
     };
 
     const handleImagens = () => {
-        navigate(`/TesteOptico/Imagem/${uf}/${estacao}/${cdo}`); 
+        navigate(`/TesteOptico/Imagem/${uf}/${enderecoTotal?.[0]?.siglaEstacao}/${cdo}`); 
     };
 
     const Observacao = () => {

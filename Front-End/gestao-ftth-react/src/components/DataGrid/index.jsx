@@ -144,7 +144,7 @@ export default function DataGrid({
                 </tr>
                 <tr>
                   <td colSpan={columns.length + 1}>
-                  <div>{`${row.logradouro ?? "-"}, ${row.numeroFachada ?? "-"} - ${row.bairro ?? "-"}, ${row.municipio ?? "-"} - ${row.cep ?? "-"}, ${row.materialRede.nomeFederativa_Mt ?? "-"} - ${row.uf ?? "-"}`}</div>
+                  <div>{row.cod_Survey === '-' ? "-" : `${row.logradouro ?? "-"}, ${row.numeroFachada ?? "-"} - ${row.bairro ?? "-"}, ${row.municipio ?? "-"} - ${row.cep ?? "-"}, ${row.materialRede.nomeFederativa_Mt ?? "-"} - ${row.uf ?? "-"}`}</div>
                   </td>
                     </tr>
                   </tbody>
