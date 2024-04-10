@@ -21,16 +21,19 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = await _context.MateriaisRedes
-                                .FirstOrDefaultAsync(p => p.Id_MaterialRede == id_MaterialRede) ?? new MaterialRede();
+                    .Include(p => p.EnderecoTotal)
+                    .ThenInclude(p => p.ServicosAssociados)
+                    .Include(p => p.Ligacao)
+                        .FirstOrDefaultAsync(p => p.Id_MaterialRede == id_MaterialRede) ?? new MaterialRede();
 
-                            await _context.Entry(query)
-                                .Reference(p => p.Ligacao)
+                            /*await _context.Entry(query)
+                                .Collection(p => p.Ligacao)
                                 .LoadAsync();    
 
                             await _context.Entry(query)
                                 .Collection(p => p.EnderecoTotal)
-                                .LoadAsync();              
-
+                                .LoadAsync();*/   
+                                                                    
                 return query;
 
             }

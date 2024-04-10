@@ -28,6 +28,7 @@ namespace WebApiSwagger.Context
         public DbSet<MaterialRede> MateriaisRedes => Set<MaterialRede>();
         public DbSet<EnderecoTotalDropListView> DropEnderecosTotais  => Set<EnderecoTotalDropListView>();
         public DbSet<Ligacao> Ligacoes => Set<Ligacao>();
+        public DbSet<ServicoAssociado> ServicoAssociados => Set<ServicoAssociado>();
         public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
         public DbSet<Validacao> Validacoes => Set<Validacao>();
         public DbSet<TesteOptico> TestesOpticos => Set<TesteOptico>();
@@ -88,10 +89,15 @@ namespace WebApiSwagger.Context
                 .WithMany(p => p.EnderecoTotal)
                 .HasForeignKey(p => p.Id_MaterialRede);  
 
-            modelBuilder.Entity<MaterialRede>()
-                .HasOne(t => t.Ligacao)
-                .WithOne()
-                .HasForeignKey<Ligacao>(p => p.Id_MaterialRede);
+            modelBuilder.Entity<Ligacao>()
+                .HasOne(t => t.MaterialRede)
+                .WithMany(p => p.Ligacao)
+                .HasForeignKey(p => p.Id_MaterialRede);
+
+            modelBuilder.Entity<ServicoAssociado>()
+                .HasOne(t => t.EnderecosTotais)
+                .WithMany(p => p.ServicosAssociados)
+                .HasForeignKey(p => p.Id_EnderecoTotal);    
                    
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)

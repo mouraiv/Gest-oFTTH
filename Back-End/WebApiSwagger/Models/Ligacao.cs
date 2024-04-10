@@ -38,6 +38,7 @@ namespace WebApiSwagger.Models
       public string? Destinacao_ls { get; set; }
       public string? EstadoCicloVida_ls { get; set; }
       public int? Id_MaterialRede { get; set; }
+      public MaterialRede MaterialRede { get; set; } = null!;
        
     }
 }

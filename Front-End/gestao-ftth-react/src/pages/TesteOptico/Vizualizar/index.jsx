@@ -613,11 +613,7 @@ function Vizualizar(){
                     )}
                     </>
                     }
-                    { loadingMaterial ?
                     <ButtonImagem onClick={handleImagens}>Imagens</ButtonImagem> 
-                    :
-                    <ButtonImagem disabled>Carregando...</ButtonImagem>
-                    }
                     </>
                 </div>
                 { userPrivate !== 1 && testeOptico.sel === 1 &&
@@ -700,77 +696,99 @@ function Vizualizar(){
                             <th style={{backgroundColor: '#13293d'}} colSpan={2}>LIGAÇÕES</th>
                         </tr>
                         {ligacao != undefined ? (
-                            <>
-                        <tr>
-                            <td>Cabo Primário: {ligacao.caboPrimario_ls ?? '-------'}</td>
-                            <td>Cabo Secundário: {ligacao.caboSecundario_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Nome OLT: {ligacao.nomeOlt_ls ?? '-------'}</td>
-                            <td>Porta OLT: {ligacao.portaOlt_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>ICX: {ligacao.icX_ls ?? '-------'}</td>
-                            <td>BSP: {ligacao.bsP_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>DGO: {ligacao.dgO_ls ?? '-------'}</td>
-                            <td>Fibra DGO: {ligacao.fibraDgo_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Cabo DGO: {ligacao.caboDgo_ls ?? '-------'}</td>
-                            <td>SplitterCEOS: {ligacao.splitterCEOS_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Out SplitterCEOS: {ligacao.outSplitterCEOS_ls ?? '-------'}</td>
-                            <td>Cabo CDO: {ligacao.caboCdo_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Fibra CDO: {ligacao.fibraCdo_ls ?? '-------'}</td>
-                            <td>Porta CDO: {ligacao.portaCdo_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Splitter CDO: {ligacao.splitteR_CDO_ls ?? '-------'}</td>
-                            <td>CDO: {ligacao.cdO_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td colSpan={2} style={{margin:0, padding:0}}>
-                                <table>
-                                    <tbody>
-                                    <tr>
-                                    <td>Etiqueta Padrão: {ligacao.etiquetaPadrao_ls ?? '-------'}</td>
-                                    <td>Fora Do Padrão: {ligacao.foraPadrao_ls ?? '-------'}</td>
-                                    <td>Projeto: {ligacao.projeto_ls ?? '-------'}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Etiqueta Campo: {ligacao.etiquetaCampo_ls ?? '-------'}</td>
-                            <td>Identificação Terceiro: {ligacao.identificacaoTerceiro_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Etiqueta Terceiros: {ligacao.etiquetaTerceiro_ls ?? '-------'}</td>
-                            <td>Rede: {ligacao.rede_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Destinação: {ligacao.destinacao_ls ?? '-------'}</td>
-                            <td>Estado Ciclo Vida: {ligacao.estadoCicloVida_ls ?? '-------'}</td>
-                        </tr>
+                         <>
+                         <tr>
+                             <td>Cabo Primário: {ligacao[0].caboPrimario_ls ?? '-------'}</td>
+                             <td>Cabo Secundário: {ligacao[0].caboSecundario_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                             <td>Nome OLT: {ligacao[0].nomeOlt_ls ?? '-------'}</td>
+                             <td>Porta OLT: {ligacao[0].portaOlt_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                             <td>ICX: {ligacao[0].icX_ls ?? '-------'}</td>
+                             <td>BSP: {ligacao[0].bsP_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                             <td>DGO: {ligacao[0].dgO_ls ?? '-------'}</td>
+                             <td>Fibra DGO: {ligacao[0].fibraDgo_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                             <td>Cabo DGO: {ligacao[0].caboDgo_ls ?? '-------'}</td>
+                             <td>SplitterCEOS: {ligacao[0].splitterCEOS_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                             <td>CDO: {ligacao[0].cdO_ls ?? '-------'}</td>
+                             <td>Cabo CDO: {ligacao[0].caboCdo_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                             <td colSpan={2} style={{margin:0, padding:0}}>
+                                 <table>
+                                     <tbody>
+                                     <tr>
+                                     <td>Etiqueta Padrão: {ligacao[0].etiquetaPadrao_ls ?? '-------'}</td>
+                                     <td>Fora Do Padrão: {ligacao[0].foraPadrao_ls ?? '-------'}</td>
+                                     <td>Projeto: {ligacao[0].projeto_ls ?? '-------'}</td>
+                                     </tr>
+                                     </tbody>
+                                 </table>
+                             </td>
+                         </tr>
+                         <tr>
+                             <td>Etiqueta Campo: {ligacao[0].etiquetaCampo_ls ?? '-------'}</td>
+                             <td>Identificação Terceiro: {ligacao[0].identificacaoTerceiro_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                             <td>Etiqueta Terceiros: {ligacao[0].etiquetaTerceiro_ls ?? '-------'}</td>
+                             <td>Rede: {ligacao[0].rede_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                             <td>Destinação: {ligacao[0].destinacao_ls ?? '-------'}</td>
+                             <td>Estado Ciclo Vida: {ligacao[0].estadoCicloVida_ls ?? '-------'}</td>
+                         </tr>
+                         <tr>
+                           <td colSpan={2} style={{padding: '0'}}>
+                             <table className="tableEnderecoTotal">
+                               <thead>
+                                 <tr style={{backgroundColor:'#34495E'}}>
+                                   <th style={{width: '15%'}}>Fibra CDO</th>
+                                   <th style={{width: '45%'}}>Portas CDO</th>
+                                   <th style={{width: '15%'}}>Splitter CDO</th>
+                                   <th style={{width: '25%'}}>Out Splitter CEOS</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                               {ligacao
+                                        .sort((a, b) => parseInt(a.fibraCdo_ls) - parseInt(b.fibraCdo_ls))
+                                        .map((valueLigacao, index) => (
+                                        <tr key={index} className="enderecoTr">
+                                            <td>{valueLigacao.fibraCdo_ls === "" || valueLigacao.fibraCdo_ls === null ? '--' : valueLigacao.fibraCdo_ls}</td>
+                                            <td>{valueLigacao.portaCdo_ls === "" || valueLigacao.portaCdo_ls === null ? '--' : valueLigacao.portaCdo_ls}</td>
+                                            <td>{valueLigacao.splitteR_CDO === "" || valueLigacao.splitteR_CDO === null ? '--' : valueLigacao.splitteR_CDO}</td>
+                                            <td>{valueLigacao.outSplitterCEOS_ls === "" || valueLigacao.outSplitterCEOS_ls === null ? '--' : valueLigacao.outSplitterCEOS_ls}</td>
+                                        </tr>
+                                        ))}
+                                        </tbody>
+                                        </table>
+                                        </td>
+                                        </tr>
                         </>
                         ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
                         }
                         <tr>
-                          <td colSpan={2} style={{padding: '0'}}>
-                            <table className="tableEnderecoTotal">
+                          <td colSpan={2} style={{paddingBottom: '0.3rem', paddingLeft:0, paddingRight:0}}>
+                          <table className="tableEnderecoTotal">
                               <thead>
                                 <tr>
-                                <th colSpan={8}>ENDEREÇOS TOTAIS</th>
+                                <th colSpan={9}>ENDEREÇOS TOTAIssS</th>
                                 </tr>
+                                <tr><td colSpan={9}>
+                                <div style={{textAlign: 'left', border:"1px solid", backgroundColor:"#ffffff", borderRadius: "0.2rem", padding:"0.7rem", marginTop:"0.3rem", marginBottom:"0.3rem"}}>- (M) - Multipla associação de CDO</div>    
+                                </td></tr>
                                 <tr style={{backgroundColor:'#34495E'}}>
+                                  <th style={{width: '10%'}}>ASSOCIACAO</th>
                                   <th style={{width: '10%'}}>STATUS</th>
-                                  <th style={{width: '20%'}}>CELULA</th>
+                                  <th style={{width: '15%'}}>CELULA</th>
                                   <th style={{width: '5%'}}>SURVEY</th>
                                   <th style={{width: '5%'}}>UMS</th>
                                   <th style={{width: '8%'}}>COD. VIAB</th>
@@ -780,7 +798,7 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                                {enderecoTotal !== undefined && enderecoTotal?.length !== 0 ? (
+                                {enderecoTotal !== undefined ? (
                                     [
                                     ...enderecoTotal
                                         .filter((value) => value.cod_Survey === survey)
@@ -796,6 +814,7 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
+                                            <td>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
                                             <td>{valueEndereco.statusGanho ?? '--'}</td>
                                             <td>{valueEndereco.celula ?? '--'}</td>
                                             <td>{valueEndereco.cod_Survey ?? '--'}</td>
@@ -814,16 +833,16 @@ function Vizualizar(){
                                         .filter((value) => value.cod_Survey !== survey)
                                         .map((valueEndereco, index) => (
                                         <tr
-                                        style={valueEndereco.statusGanho == 'COM GANHO' ?
-                                            { backgroundColor: '#D5F5E3'} 
-                                            : valueEndereco.statusGanho == 'SEM GANHO' ?
-                                            { backgroundColor: '#FADBD8'} : null}
-                                            
+                                            style={valueEndereco.statusGanho == 'COM GANHO' ?
+                                                { backgroundColor: '#D5F5E3'} :
+                                                valueEndereco.statusGanho == 'SEM GANHO' ? 
+                                                { backgroundColor: '#FADBD8'} : null}
                                             key={index + 1}
                                             id={valueEndereco.cod_Survey}
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
+                                            <td>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
                                             <td>{valueEndereco.statusGanho ?? '--'}</td>
                                             <td>{valueEndereco.celula ?? '--'}</td>
                                             <td>{valueEndereco.cod_Survey ?? '--'}</td>
@@ -841,7 +860,7 @@ function Vizualizar(){
                                     ]
                                 ) : (
                                     <tr>
-                                     <td colSpan={8} style={{ fontSize: '0.7rem', cursor: 'default', minWidth: '700px', backgroundColor: '#ffffff' }}>
+                                    <td colSpan={8} style={{ fontSize: '0.7rem', cursor: 'default', minWidth: '700px', backgroundColor: '#ffffff' }}>
                                         Nenhum resultado.
                                     </td>
                                     </tr>
@@ -869,7 +888,7 @@ function Vizualizar(){
             </TableGrid>
             ):(<Spinner />)}
              </>
-             ):(<p style={{textAlign: 'center', marginTop: '1rem'}}>Nenhum resultado.</p>)
+             ):(!loadingMaterial ? <Spinner /> : <p style={{textAlign: 'center', marginTop: '1rem'}}>Nenhum resultado.</p>)
              }
             </Tab>
             </Tabs>
@@ -1110,62 +1129,80 @@ function Vizualizar(){
                         {ligacao != undefined ? (
                             <>
                         <tr>
-                            <td>Cabo Primário: {ligacao.caboPrimario_ls ?? '-------'}</td>
-                            <td>Cabo Secundário: {ligacao.caboSecundario_ls ?? '-------'}</td>
+                            <td>Cabo Primário: {ligacao[0].caboPrimario_ls ?? '-------'}</td>
+                            <td>Cabo Secundário: {ligacao[0].caboSecundario_ls ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Nome OLT: {ligacao.nomeOlt_ls ?? '-------'}</td>
-                            <td>Porta OLT: {ligacao.portaOlt_ls ?? '-------'}</td>
+                            <td>Nome OLT: {ligacao[0].nomeOlt_ls ?? '-------'}</td>
+                            <td>Porta OLT: {ligacao[0].portaOlt_ls ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>ICX: {ligacao.icX_ls ?? '-------'}</td>
-                            <td>BSP: {ligacao.bsP_ls ?? '-------'}</td>
+                            <td>ICX: {ligacao[0].icX_ls ?? '-------'}</td>
+                            <td>BSP: {ligacao[0].bsP_ls ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>DGO: {ligacao.dgO_ls ?? '-------'}</td>
-                            <td>Fibra DGO: {ligacao.fibraDgo_ls ?? '-------'}</td>
+                            <td>DGO: {ligacao[0].dgO_ls ?? '-------'}</td>
+                            <td>Fibra DGO: {ligacao[0].fibraDgo_ls ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Cabo DGO: {ligacao.caboDgo_ls ?? '-------'}</td>
-                            <td>SplitterCEOS: {ligacao.splitterCEOS_ls ?? '-------'}</td>
+                            <td>Cabo DGO: {ligacao[0].caboDgo_ls ?? '-------'}</td>
+                            <td>SplitterCEOS: {ligacao[0].splitterCEOS_ls ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Out SplitterCEOS: {ligacao.outSplitterCEOS_ls ?? '-------'}</td>
-                            <td>Cabo CDO: {ligacao.caboCdo_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Fibra CDO: {ligacao.fibraCdo_ls ?? '-------'}</td>
-                            <td>Porta CDO: {ligacao.portaCdo_ls ?? '-------'}</td>
-                        </tr>
-                        <tr>
-                            <td>Splitter CDO: {ligacao.splitteR_CDO_ls ?? '-------'}</td>
-                            <td>CDO: {ligacao.cdO_ls ?? '-------'}</td>
+                            <td>CDO: {ligacao[0].cdO_ls ?? '-------'}</td>
+                            <td>Cabo CDO: {ligacao[0].caboCdo_ls ?? '-------'}</td>
                         </tr>
                         <tr>
                             <td colSpan={2} style={{margin:0, padding:0}}>
                                 <table>
                                     <tbody>
                                     <tr>
-                                    <td>Etiqueta Padrão: {ligacao.etiquetaPadrao_ls ?? '-------'}</td>
-                                    <td>Fora Do Padrão: {ligacao.foraPadrao_ls ?? '-------'}</td>
-                                    <td>Projeto: {ligacao.projeto_ls ?? '-------'}</td>
+                                    <td>Etiqueta Padrão: {ligacao[0].etiquetaPadrao_ls ?? '-------'}</td>
+                                    <td>Fora Do Padrão: {ligacao[0].foraPadrao_ls ?? '-------'}</td>
+                                    <td>Projeto: {ligacao[0].projeto_ls ?? '-------'}</td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </td>
                         </tr>
                         <tr>
-                            <td>Etiqueta Campo: {ligacao.etiquetaCampo_ls ?? '-------'}</td>
-                            <td>Identificação Terceiro: {ligacao.identificacaoTerceiro_ls ?? '-------'}</td>
+                            <td>Etiqueta Campo: {ligacao[0].etiquetaCampo_ls ?? '-------'}</td>
+                            <td>Identificação Terceiro: {ligacao[0].identificacaoTerceiro_ls ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Etiqueta Terceiros: {ligacao.etiquetaTerceiro_ls ?? '-------'}</td>
-                            <td>Rede: {ligacao.rede_ls ?? '-------'}</td>
+                            <td>Etiqueta Terceiros: {ligacao[0].etiquetaTerceiro_ls ?? '-------'}</td>
+                            <td>Rede: {ligacao[0].rede_ls ?? '-------'}</td>
                         </tr>
                         <tr>
-                            <td>Destinação: {ligacao.destinacao_ls ?? '-------'}</td>
-                            <td>Estado Ciclo Vida: {ligacao.estadoCicloVida_ls ?? '-------'}</td>
+                            <td>Destinação: {ligacao[0].destinacao_ls ?? '-------'}</td>
+                            <td>Estado Ciclo Vida: {ligacao[0].estadoCicloVida_ls ?? '-------'}</td>
                         </tr>
+                        <tr>
+                          <td colSpan={2} style={{padding: '0'}}>
+                            <table className="tableEnderecoTotal">
+                              <thead>
+                                <tr style={{backgroundColor:'#34495E'}}>
+                                  <th style={{width: '15%'}}>Fibra CDO</th>
+                                  <th style={{width: '45%'}}>Portas CDO</th>
+                                  <th style={{width: '15%'}}>Splitter CDO</th>
+                                  <th style={{width: '25%'}}>Out Splitter CEOS</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {ligacao
+                                        .sort((a, b) => parseInt(a.fibraCdo_ls) - parseInt(b.fibraCdo_ls))
+                                        .map((valueLigacao, index) => (
+                                        <tr key={index} className="enderecoTr">
+                                            <td>{valueLigacao.fibraCdo_ls === "" || valueLigacao.fibraCdo_ls === null ? '--' : valueLigacao.fibraCdo_ls}</td>
+                                            <td>{valueLigacao.portaCdo_ls === "" || valueLigacao.portaCdo_ls === null ? '--' : valueLigacao.portaCdo_ls}</td>
+                                            <td>{valueLigacao.splitteR_CDO === "" || valueLigacao.splitteR_CDO === null ? '--' : valueLigacao.splitteR_CDO}</td>
+                                            <td>{valueLigacao.outSplitterCEOS_ls === "" || valueLigacao.outSplitterCEOS_ls === null ? '--' : valueLigacao.outSplitterCEOS_ls}</td>
+                                        </tr>
+                                        ))}
+                                        </tbody>
+                                        </table>
+                                        </td>
+                                        </tr>
                         </>
                         ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
                         }
@@ -1174,11 +1211,16 @@ function Vizualizar(){
                           <table className="tableEnderecoTotal">
                               <thead>
                                 <tr>
-                                <th colSpan={8}>ENDEREÇOS TOTAIS</th>
+                                <th colSpan={9}>ENDEREÇOS TOTAIS</th>
+                                {console.log(enderecoTotal)}
                                 </tr>
+                                <tr><td colSpan={9}>
+                                <div style={{textAlign: 'left', border:"1px solid", backgroundColor:"#ffffff", borderRadius: "0.2rem", padding:"0.7rem", marginTop:"0.3rem", marginBottom:"0.3rem"}}>- (M) - Multipla associação de CDO</div>    
+                                </td></tr>
                                 <tr style={{backgroundColor:'#34495E'}}>
+                                  <th style={{width: '10%'}}>ASSOCIACAO</th>
                                   <th style={{width: '10%'}}>STATUS</th>
-                                  <th style={{width: '20%'}}>CELULA</th>
+                                  <th style={{width: '15%'}}>CELULA</th>
                                   <th style={{width: '5%'}}>SURVEY</th>
                                   <th style={{width: '5%'}}>UMS</th>
                                   <th style={{width: '8%'}}>COD. VIAB</th>
@@ -1193,6 +1235,8 @@ function Vizualizar(){
                                     ...enderecoTotal
                                         .filter((value) => value.cod_Survey === survey)
                                         .map((valueEndereco, index) => (
+                                        <>
+                                        <tr><td colSpan={9} style={{border:'1px solid #34495e', borderBottom:'3px solid #34495e', width:'100%'}}>   
                                         <tr
                                             style={
                                             valueEndereco.cod_Survey === survey
@@ -1204,6 +1248,7 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
+                                            <td>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
                                             <td>{valueEndereco.statusGanho ?? '--'}</td>
                                             <td>{valueEndereco.celula ?? '--'}</td>
                                             <td>{valueEndereco.cod_Survey ?? '--'}</td>
@@ -1217,10 +1262,38 @@ function Vizualizar(){
                                             
                                             }}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                         </tr>
+                                        {valueEndereco.servicosAssociados.length > 0 ?
+                                        <tr>
+                                        <td colSpan={9} style={{padding: '0'}}>
+                                        <table>
+                                        <tbody>
+                                        {valueEndereco.servicosAssociados
+                                        .map((valueAssociado, index) => (
+                                            <tr key={index} className="enderecoTr">
+                                                <td>{`CSF GPON : ${valueAssociado.cfsAcessoGPON}`}</td>
+                                                <td>{`ESTADO HSI : ${valueAssociado.estadoHSI}`}</td>
+                                                <td>{`ESTADO GPON : ${valueAssociado.estadoAcessoGPON}`}</td>
+                                                <td>{`PROV. PORTA FISICA : ${valueAssociado.estadoProvPortaFisica}`}</td>
+                                            </tr>
+                                            ))}
+                                        </tbody>
+                                        </table>
+                                        </td>
+                                        </tr>
+                                        : <tr>
+                                            <td colSpan={3}>--</td>
+                                            <td colSpan={3}>--</td>
+                                            <td colSpan={3}>--</td>
+                                          </tr>
+                                        }
+                                        </td></tr>
+                                        </>
                                         )),
                                     ...enderecoTotal
                                         .filter((value) => value.cod_Survey !== survey)
                                         .map((valueEndereco, index) => (
+                                        <>
+                                        <tr><td colSpan={9} style={{border:'1px solid #34495e', borderBottom:'3px solid #34495e'}}>
                                         <tr
                                             style={valueEndereco.statusGanho == 'COM GANHO' ?
                                                 { backgroundColor: '#D5F5E3'} :
@@ -1231,6 +1304,7 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
+                                            <td>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
                                             <td>{valueEndereco.statusGanho ?? '--'}</td>
                                             <td>{valueEndereco.celula ?? '--'}</td>
                                             <td>{valueEndereco.cod_Survey ?? '--'}</td>
@@ -1244,6 +1318,32 @@ function Vizualizar(){
                                             
                                             }}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                         </tr>
+                                        {valueEndereco.servicosAssociados.length > 0 ?
+                                        <tr>
+                                        <td colSpan={9} style={{padding: '0'}}>
+                                        <table>
+                                        <tbody>
+                                        {valueEndereco.servicosAssociados
+                                        .map((valueAssociado, index) => (
+                                            <tr key={index} className="enderecoTr">
+                                                <td>{`CSF GPON : ${valueAssociado.cfsAcessoGPON}`}</td>
+                                                <td>{`ESTADO HSI : ${valueAssociado.estadoHSI}`}</td>
+                                                <td>{`ESTADO GPON : ${valueAssociado.estadoAcessoGPON}`}</td>
+                                                <td>{`PROV. PORTA FISICA : ${valueAssociado.estadoProvPortaFisica}`}</td>
+                                            </tr>
+                                            ))}
+                                        </tbody>
+                                        </table>
+                                        </td>
+                                        </tr>
+                                        : <tr>
+                                            <td colSpan={3}>--</td>
+                                            <td colSpan={3}>--</td>
+                                            <td colSpan={3}>--</td>
+                                          </tr>
+                                        }
+                                        </td></tr>
+                                        </>
                                         )),
                                     ]
                                 ) : (

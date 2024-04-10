@@ -199,6 +199,8 @@ namespace WebApiSwagger.Repository
                         UCS_Residenciais = et.UCS_Residenciais,
                         UCS_Comerciais = et.UCS_Comerciais,
                         Id_MaterialRede = et.Id_MaterialRede,
+                        Id_Associacao = et.Id_Associacao,
+                        DataAssociacao = et.DataAssociacao,
                         MaterialRede = new MaterialRede
                             {
                                 CHAVE = et.MaterialRede.CHAVE,

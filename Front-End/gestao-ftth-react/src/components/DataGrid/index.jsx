@@ -124,6 +124,11 @@ export default function DataGrid({
 
                   <table id="tableContainer">
                   <tbody>
+                  {row.id_Associacao === '2' && row.cod_Survey !== '-' &&
+                    <tr>
+                      <td className="td_ass" colSpan={15}><a>{`SURVEY COM MULTIPLAS ASSOCIAÇÕES | DATA DA ASSOCIAÇÃO: ${row.dataAssociacao ?? ""}`}</a></td>  
+                    </tr>
+                  }
                 <tr>
                 {columns.map((column) => (
                 <td className="th_column" key={column.name} style={{width : column.width}}>{column.name}</td>
@@ -132,7 +137,7 @@ export default function DataGrid({
                 <tr>
                   {columns.map((column) => (
                     <td key={column.key}
-                      style={{width : column.width}}                   >
+                      style={{width : column.width}}>
                       {column.key.includes('.') 
                       ? getNestedValue(row, column.key) || "-"
                       : row[column.key] || "-"}

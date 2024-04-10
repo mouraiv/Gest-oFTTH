@@ -43,6 +43,17 @@ export const Container = styled("div", {
 
     "#tableContainer tbody:hover" : {
         borderLeft: '1px solid',
+    },
+
+    "#tableContainer .td_ass" : {
+        backgroundColor:"#212529",  
+        height: '10px'
+    },
+
+    "#tableContainer .td_ass a" : {
+        color: '#ffffff',
+        fontSize: '0.6rem',
+        fontWeight: '500'
     }
 
 });
