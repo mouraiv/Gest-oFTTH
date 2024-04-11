@@ -507,6 +507,45 @@ function Vizualizar(){
                                             <td>Latitude: {valueEndereco.latitude ?? '-------'}</td>
                                             <td>Longitude: {valueEndereco.longitude ?? '-------'}</td>
                                         </tr>
+                                        <tr>
+                                        <td colSpan={9} style={{padding: '0'}}>
+                                        <table>
+                                        <thead>
+                                            <tr>
+                                                <th colSpan={4}>SERVIÇO ASSOCIADO</th>
+                                            </tr>
+                                            <tr style={{backgroundColor:'#34495E'}}>
+                                                <th style={{width: '25%'}}>CSF GPON</th>
+                                                <th style={{width: '25%'}}>ESTADO HSI</th>
+                                                <th style={{width: '25%'}}>ESTADO GPON</th>
+                                                <th style={{width: '25%'}}>PROV. PORTA FISICA</th>
+                                            </tr>
+                                        </thead>
+                                        {valueEndereco.servicosAssociados.length > 0 ?
+                                        <tbody>
+                                        {valueEndereco.servicosAssociados
+                                        .map((valueAssociado, index) => (
+                                            <tr key={index} className="enderecoTr">
+                                                <td>{`${valueAssociado.cfsAcessoGPON}`}</td>
+                                                <td>{`${valueAssociado.estadoHSI}`}</td>
+                                                <td>{`${valueAssociado.estadoAcessoGPON}`}</td>
+                                                <td>{`${valueAssociado.estadoProvPortaFisica}`}</td>
+                                            </tr>
+                                            ))}
+                                        </tbody>
+                                        : 
+                                        <tbody>
+                                        <tr>
+                                            <td>--</td>
+                                            <td>--</td>
+                                            <td>--</td>
+                                            <td>--</td>
+                                          </tr>
+                                        </tbody>
+                                        }
+                                        </table>
+                                        </td>
+                                        </tr>
                                         </>
                                         </tbody>) : (null)}
                             </TableGrid>
@@ -777,21 +816,21 @@ function Vizualizar(){
                         }
                         <tr>
                           <td colSpan={2} style={{paddingBottom: '0.3rem', paddingLeft:0, paddingRight:0}}>
-                          <table className="tableEnderecoTotal">
+                          <table className="tableEnderecoTotal" style={{width:'100%'}}>
                               <thead>
                                 <tr>
-                                <th colSpan={9}>ENDEREÇOS TOTAIssS</th>
+                                <th colSpan={9}>ENDEREÇOS TOTAIS</th>
                                 </tr>
                                 <tr><td colSpan={9}>
                                 <div style={{textAlign: 'left', border:"1px solid", backgroundColor:"#ffffff", borderRadius: "0.2rem", padding:"0.7rem", marginTop:"0.3rem", marginBottom:"0.3rem"}}>- (M) - Multipla associação de CDO</div>    
                                 </td></tr>
                                 <tr style={{backgroundColor:'#34495E'}}>
-                                  <th style={{width: '10%'}}>ASSOCIACAO</th>
-                                  <th style={{width: '10%'}}>STATUS</th>
+                                  <th style={{width: '15%'}}>ASSOCIACAO</th>
+                                  <th style={{width: '15%'}}>STATUS</th>
                                   <th style={{width: '15%'}}>CELULA</th>
-                                  <th style={{width: '5%'}}>SURVEY</th>
+                                  <th style={{width: '10%'}}>SURVEY</th>
                                   <th style={{width: '5%'}}>UMS</th>
-                                  <th style={{width: '8%'}}>COD. VIAB</th>
+                                  <th style={{width: '5%'}}>COD. VIAB</th>
                                   <th style={{width: '20%'}}>TIPO VIAB</th>
                                   <th style={{width: '10%'}}>DISP. COMERCIAL</th>
                                   <th style={{width: '5%'}}>MAPS</th>
@@ -803,6 +842,8 @@ function Vizualizar(){
                                     ...enderecoTotal
                                         .filter((value) => value.cod_Survey === survey)
                                         .map((valueEndereco, index) => (
+                                        <>
+                                        <tr style={{}}><td colSpan={9} style={{border:'1px solid #34495e', borderBottom:'3px solid #34495e'}}>   
                                         <tr
                                             style={
                                             valueEndereco.cod_Survey === survey
@@ -814,24 +855,53 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
-                                            <td>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
-                                            <td>{valueEndereco.statusGanho ?? '--'}</td>
-                                            <td>{valueEndereco.celula ?? '--'}</td>
-                                            <td>{valueEndereco.cod_Survey ?? '--'}</td>
-                                            <td>{valueEndereco.quantidadeUMS ?? '--'}</td>
-                                            <td>{valueEndereco.cod_Viabilidade ?? '--'}</td>
-                                            <td>{valueEndereco.tipoViabilidade ?? '--'}</td>
-                                            <td>{valueEndereco.disp_Comercial ?? '--'}</td>
-                                            <td className="mapsTdEnd" onClick={(e) => {
+                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
+                                            <td style={{width: '15%'}}>{valueEndereco.statusGanho ?? '--'}</td>
+                                            <td style={{width: '15%'}}>{valueEndereco.celula ?? '--'}</td>
+                                            <td style={{width: '10%'}}>{valueEndereco.cod_Survey ?? '--'}</td>
+                                            <td style={{width: '5%'}}>{valueEndereco.quantidadeUMS ?? '--'}</td>
+                                            <td style={{width: '5%'}}>{valueEndereco.cod_Viabilidade ?? '--'}</td>
+                                            <td style={{width: '20%'}}>{valueEndereco.tipoViabilidade ?? '--'}</td>
+                                            <td style={{width: '10%'}}>{valueEndereco.disp_Comercial ?? '--'}</td>
+                                            <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleOpenMapDialog(valueEndereco.latitude,valueEndereco.longitude, `${valueEndereco.logradouro}, ${valueEndereco.numeroFachada}, ${valueEndereco.bairro}, ${valueEndereco.municipio}, ${valueEndereco.uf} ${valueEndereco.cep}`, valueEndereco.nomeCdo);
                                             
                                             }}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                         </tr>
+                                        {valueEndereco.servicosAssociados.length > 0 ?
+                                        <tr>
+                                        <td colSpan={9} style={{padding: '0' ,width:"100%"}}>
+                                        <table>
+                                        <tbody>
+                                        {valueEndereco.servicosAssociados
+                                        .map((valueAssociado, index) => (
+                                            <tr key={index} className="enderecoTr">
+                                                <td>{`CSF GPON : ${valueAssociado.cfsAcessoGPON}`}</td>
+                                                <td>{`ESTADO HSI : ${valueAssociado.estadoHSI}`}</td>
+                                                <td>{`ESTADO GPON : ${valueAssociado.estadoAcessoGPON}`}</td>
+                                                <td>{`PROV. PORTA FISICA : ${valueAssociado.estadoProvPortaFisica}`}</td>
+                                            </tr>
+                                            ))}
+                                        </tbody>
+                                        </table>
+                                        </td>
+                                        </tr>
+                                        : <tr>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={3}>--</td>
+                                          </tr>
+                                        }
+                                        </td></tr>
+                                        </>
                                         )),
                                     ...enderecoTotal
                                         .filter((value) => value.cod_Survey !== survey)
                                         .map((valueEndereco, index) => (
+                                        <>
+                                        <tr><td colSpan={9} style={{border:'1px solid #34495e', borderBottom:'3px solid #34495e'}}>
                                         <tr
                                             style={valueEndereco.statusGanho == 'COM GANHO' ?
                                                 { backgroundColor: '#D5F5E3'} :
@@ -842,20 +912,47 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
-                                            <td>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
-                                            <td>{valueEndereco.statusGanho ?? '--'}</td>
-                                            <td>{valueEndereco.celula ?? '--'}</td>
-                                            <td>{valueEndereco.cod_Survey ?? '--'}</td>
-                                            <td>{valueEndereco.quantidadeUMS ?? '--'}</td>
-                                            <td>{valueEndereco.cod_Viabilidade ?? '--'}</td>
-                                            <td>{valueEndereco.tipoViabilidade ?? '--'}</td>
-                                            <td>{valueEndereco.disp_Comercial ?? '--'}</td>
-                                            <td className="mapsTdEnd" onClick={(e) => {
+                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
+                                            <td style={{width: '15%'}}>{valueEndereco.statusGanho ?? '--'}</td>
+                                            <td style={{width: '15%'}}>{valueEndereco.celula ?? '--'}</td>
+                                            <td style={{width: '10%'}}>{valueEndereco.cod_Survey ?? '--'}</td>
+                                            <td style={{width: '5%'}}>{valueEndereco.quantidadeUMS ?? '--'}</td>
+                                            <td style={{width: '5%'}}>{valueEndereco.cod_Viabilidade ?? '--'}</td>
+                                            <td style={{width: '20%'}}>{valueEndereco.tipoViabilidade ?? '--'}</td>
+                                            <td style={{width: '10%'}}>{valueEndereco.disp_Comercial ?? '--'}</td>
+                                            <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleOpenMapDialog(valueEndereco.latitude,valueEndereco.longitude, `${valueEndereco.logradouro}, ${valueEndereco.numeroFachada}, ${valueEndereco.bairro}, ${valueEndereco.municipio}, ${valueEndereco.uf} ${valueEndereco.cep}`, valueEndereco.nomeCdo);
                                             
                                             }}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                         </tr>
+                                        {valueEndereco.servicosAssociados.length > 0 ?
+                                        <tr>
+                                        <td colSpan={9} style={{padding: '0', width:"100%"}}>
+                                        <table>
+                                        <tbody>
+                                        {valueEndereco.servicosAssociados
+                                        .map((valueAssociado, index) => (
+                                            <tr key={index}>
+                                                <td>{`CSF GPON : ${valueAssociado.cfsAcessoGPON}`}</td>
+                                                <td>{`ESTADO HSI : ${valueAssociado.estadoHSI}`}</td>
+                                                <td>{`ESTADO GPON : ${valueAssociado.estadoAcessoGPON}`}</td>
+                                                <td>{`PROV. PORTA FISICA : ${valueAssociado.estadoProvPortaFisica}`}</td>
+                                            </tr>
+                                            ))}
+                                        </tbody>
+                                        </table>
+                                        </td>
+                                        </tr>
+                                        : <tr>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={3}>--</td>
+                                          </tr>
+                                        }
+                                        </td></tr>
+                                        </>
                                         )),
                                     ]
                                 ) : (
@@ -1052,6 +1149,45 @@ function Vizualizar(){
                                             <td>Latitude: {valueEndereco.latitude ?? '-------'}</td>
                                             <td>Longitude: {valueEndereco.longitude ?? '-------'}</td>
                                         </tr>
+                                        <tr>
+                                        <td colSpan={9} style={{padding: '0'}}>
+                                        <table>
+                                        <thead>
+                                            <tr>
+                                                <th colSpan={4}>SERVIÇO ASSOCIADO</th>
+                                            </tr>
+                                            <tr style={{backgroundColor:'#34495E'}}>
+                                                <th style={{width: '25%'}}>CSF GPON</th>
+                                                <th style={{width: '25%'}}>ESTADO HSI</th>
+                                                <th style={{width: '25%'}}>ESTADO GPON</th>
+                                                <th style={{width: '25%'}}>PROV. PORTA FISICA</th>
+                                            </tr>
+                                        </thead>
+                                        {valueEndereco.servicosAssociados.length > 0 ?
+                                        <tbody>
+                                        {valueEndereco.servicosAssociados
+                                        .map((valueAssociado, index) => (
+                                            <tr key={index} className="enderecoTr">
+                                                <td>{`${valueAssociado.cfsAcessoGPON}`}</td>
+                                                <td>{`${valueAssociado.estadoHSI}`}</td>
+                                                <td>{`${valueAssociado.estadoAcessoGPON}`}</td>
+                                                <td>{`${valueAssociado.estadoProvPortaFisica}`}</td>
+                                            </tr>
+                                            ))}
+                                        </tbody>
+                                        : 
+                                        <tbody>
+                                        <tr>
+                                            <td>--</td>
+                                            <td>--</td>
+                                            <td>--</td>
+                                            <td>--</td>
+                                          </tr>
+                                        </tbody>
+                                        }
+                                        </table>
+                                        </td>
+                                        </tr>
                                         </>
                                         </tbody>) : (null)}
                             </TableGrid>
@@ -1208,22 +1344,21 @@ function Vizualizar(){
                         }
                         <tr>
                           <td colSpan={2} style={{paddingBottom: '0.3rem', paddingLeft:0, paddingRight:0}}>
-                          <table className="tableEnderecoTotal">
+                          <table className="tableEnderecoTotal" style={{width:'100%'}}>
                               <thead>
                                 <tr>
                                 <th colSpan={9}>ENDEREÇOS TOTAIS</th>
-                                {console.log(enderecoTotal)}
                                 </tr>
                                 <tr><td colSpan={9}>
                                 <div style={{textAlign: 'left', border:"1px solid", backgroundColor:"#ffffff", borderRadius: "0.2rem", padding:"0.7rem", marginTop:"0.3rem", marginBottom:"0.3rem"}}>- (M) - Multipla associação de CDO</div>    
                                 </td></tr>
                                 <tr style={{backgroundColor:'#34495E'}}>
-                                  <th style={{width: '10%'}}>ASSOCIACAO</th>
-                                  <th style={{width: '10%'}}>STATUS</th>
+                                  <th style={{width: '15%'}}>ASSOCIACAO</th>
+                                  <th style={{width: '15%'}}>STATUS</th>
                                   <th style={{width: '15%'}}>CELULA</th>
-                                  <th style={{width: '5%'}}>SURVEY</th>
+                                  <th style={{width: '10%'}}>SURVEY</th>
                                   <th style={{width: '5%'}}>UMS</th>
-                                  <th style={{width: '8%'}}>COD. VIAB</th>
+                                  <th style={{width: '5%'}}>COD. VIAB</th>
                                   <th style={{width: '20%'}}>TIPO VIAB</th>
                                   <th style={{width: '10%'}}>DISP. COMERCIAL</th>
                                   <th style={{width: '5%'}}>MAPS</th>
@@ -1236,7 +1371,7 @@ function Vizualizar(){
                                         .filter((value) => value.cod_Survey === survey)
                                         .map((valueEndereco, index) => (
                                         <>
-                                        <tr><td colSpan={9} style={{border:'1px solid #34495e', borderBottom:'3px solid #34495e', width:'100%'}}>   
+                                        <tr style={{}}><td colSpan={9} style={{border:'1px solid #34495e', borderBottom:'3px solid #34495e'}}>   
                                         <tr
                                             style={
                                             valueEndereco.cod_Survey === survey
@@ -1248,15 +1383,15 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
-                                            <td>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
-                                            <td>{valueEndereco.statusGanho ?? '--'}</td>
-                                            <td>{valueEndereco.celula ?? '--'}</td>
-                                            <td>{valueEndereco.cod_Survey ?? '--'}</td>
-                                            <td>{valueEndereco.quantidadeUMS ?? '--'}</td>
-                                            <td>{valueEndereco.cod_Viabilidade ?? '--'}</td>
-                                            <td>{valueEndereco.tipoViabilidade ?? '--'}</td>
-                                            <td>{valueEndereco.disp_Comercial ?? '--'}</td>
-                                            <td className="mapsTdEnd" onClick={(e) => {
+                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
+                                            <td style={{width: '15%'}}>{valueEndereco.statusGanho ?? '--'}</td>
+                                            <td style={{width: '15%'}}>{valueEndereco.celula ?? '--'}</td>
+                                            <td style={{width: '10%'}}>{valueEndereco.cod_Survey ?? '--'}</td>
+                                            <td style={{width: '5%'}}>{valueEndereco.quantidadeUMS ?? '--'}</td>
+                                            <td style={{width: '5%'}}>{valueEndereco.cod_Viabilidade ?? '--'}</td>
+                                            <td style={{width: '20%'}}>{valueEndereco.tipoViabilidade ?? '--'}</td>
+                                            <td style={{width: '10%'}}>{valueEndereco.disp_Comercial ?? '--'}</td>
+                                            <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleOpenMapDialog(valueEndereco.latitude,valueEndereco.longitude, `${valueEndereco.logradouro}, ${valueEndereco.numeroFachada}, ${valueEndereco.bairro}, ${valueEndereco.municipio}, ${valueEndereco.uf} ${valueEndereco.cep}`, valueEndereco.nomeCdo);
                                             
@@ -1264,7 +1399,7 @@ function Vizualizar(){
                                         </tr>
                                         {valueEndereco.servicosAssociados.length > 0 ?
                                         <tr>
-                                        <td colSpan={9} style={{padding: '0'}}>
+                                        <td colSpan={9} style={{padding: '0' ,width:"100%"}}>
                                         <table>
                                         <tbody>
                                         {valueEndereco.servicosAssociados
@@ -1281,8 +1416,9 @@ function Vizualizar(){
                                         </td>
                                         </tr>
                                         : <tr>
-                                            <td colSpan={3}>--</td>
-                                            <td colSpan={3}>--</td>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={2}>--</td>
                                             <td colSpan={3}>--</td>
                                           </tr>
                                         }
@@ -1304,15 +1440,15 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
-                                            <td>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
-                                            <td>{valueEndereco.statusGanho ?? '--'}</td>
-                                            <td>{valueEndereco.celula ?? '--'}</td>
-                                            <td>{valueEndereco.cod_Survey ?? '--'}</td>
-                                            <td>{valueEndereco.quantidadeUMS ?? '--'}</td>
-                                            <td>{valueEndereco.cod_Viabilidade ?? '--'}</td>
-                                            <td>{valueEndereco.tipoViabilidade ?? '--'}</td>
-                                            <td>{valueEndereco.disp_Comercial ?? '--'}</td>
-                                            <td className="mapsTdEnd" onClick={(e) => {
+                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
+                                            <td style={{width: '15%'}}>{valueEndereco.statusGanho ?? '--'}</td>
+                                            <td style={{width: '15%'}}>{valueEndereco.celula ?? '--'}</td>
+                                            <td style={{width: '10%'}}>{valueEndereco.cod_Survey ?? '--'}</td>
+                                            <td style={{width: '5%'}}>{valueEndereco.quantidadeUMS ?? '--'}</td>
+                                            <td style={{width: '5%'}}>{valueEndereco.cod_Viabilidade ?? '--'}</td>
+                                            <td style={{width: '20%'}}>{valueEndereco.tipoViabilidade ?? '--'}</td>
+                                            <td style={{width: '10%'}}>{valueEndereco.disp_Comercial ?? '--'}</td>
+                                            <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleOpenMapDialog(valueEndereco.latitude,valueEndereco.longitude, `${valueEndereco.logradouro}, ${valueEndereco.numeroFachada}, ${valueEndereco.bairro}, ${valueEndereco.municipio}, ${valueEndereco.uf} ${valueEndereco.cep}`, valueEndereco.nomeCdo);
                                             
@@ -1320,12 +1456,12 @@ function Vizualizar(){
                                         </tr>
                                         {valueEndereco.servicosAssociados.length > 0 ?
                                         <tr>
-                                        <td colSpan={9} style={{padding: '0'}}>
+                                        <td colSpan={9} style={{padding: '0', width:"100%"}}>
                                         <table>
                                         <tbody>
                                         {valueEndereco.servicosAssociados
                                         .map((valueAssociado, index) => (
-                                            <tr key={index} className="enderecoTr">
+                                            <tr key={index}>
                                                 <td>{`CSF GPON : ${valueAssociado.cfsAcessoGPON}`}</td>
                                                 <td>{`ESTADO HSI : ${valueAssociado.estadoHSI}`}</td>
                                                 <td>{`ESTADO GPON : ${valueAssociado.estadoAcessoGPON}`}</td>
@@ -1337,8 +1473,9 @@ function Vizualizar(){
                                         </td>
                                         </tr>
                                         : <tr>
-                                            <td colSpan={3}>--</td>
-                                            <td colSpan={3}>--</td>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={2}>--</td>
+                                            <td colSpan={2}>--</td>
                                             <td colSpan={3}>--</td>
                                           </tr>
                                         }
