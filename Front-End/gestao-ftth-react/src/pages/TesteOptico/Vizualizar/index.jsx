@@ -47,7 +47,7 @@ function Vizualizar(){
 
     const navigate = useNavigate();
     const { user } = UseAuth();
-    const userPrivate = user.tipo ?? 1;
+    const userPrivate = user?.tipo ?? 1;
 
     const { analises } = testeOptico;
     const { ligacao, enderecoTotal = enderecoTotalAny } = materialRede ?? {};
@@ -643,7 +643,7 @@ function Vizualizar(){
             <FooterButton>
                 <div style={{width: '100%'}}>
                     <>
-                    {userPrivate !== 1 && status &&
+                    {userPrivate !== 1 ||  userPrivate === 3 && status ?
                     <>
                     {testeOptico.sel === 1 ? (
                         <ButtonValidar onClick={handleValidar}>Validar</ButtonValidar>
@@ -651,15 +651,17 @@ function Vizualizar(){
                         <ButtonReValidar onClick={handleRevalidar}>Pendente</ButtonReValidar>
                     )}
                     </>
+                    :null
                     }
                     <ButtonImagem onClick={handleImagens}>Imagens</ButtonImagem> 
                     </>
                 </div>
-                { userPrivate !== 1 && testeOptico.sel === 1 &&
+                { userPrivate !== 1 ||  userPrivate === 3 && testeOptico.sel === 1 ?
                 <>
                     <ButtonEditar onClick={() => HandleEditar()} >Editar</ButtonEditar>
                     <ButtonEditar onClick={() => HandleExcluir()} >Excluir</ButtonEditar>
                 </>
+                :null
                 }
                     <ButtonConfirma onClick={handleAnalise}>Analise</ButtonConfirma>
             </FooterButton>

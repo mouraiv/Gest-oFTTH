@@ -4,7 +4,7 @@ export default function Footer() {
       return (
         <>
         <FooterStyle>
-          <p>Logictel S/A - @2023</p>
+          <p>SGF | Sistema de Gestão FTTH - @2023</p>
         </FooterStyle>
         </>
       )

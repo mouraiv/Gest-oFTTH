@@ -27,7 +27,7 @@ function Imagem(){
     const inputFile= useRef();
     const inputRef = useRef();
     const { user } = UseAuth();
-    const userPrivate = user.tipo ?? 1;
+    const userPrivate = user?.tipo ?? 1;
  
     async function FetchUploadImage(){
 
@@ -253,8 +253,9 @@ function Imagem(){
                   buttonConfirmar={() => ExcluirFecth()} 
                 />
             <NavArea>
-            {userPrivate !== 1 && 
+            {userPrivate !== 1 ||  userPrivate === 3 ? 
                 <ButtonImport onClick={handleImportar} >Importar</ButtonImport>
+                :null
             }
             </NavArea>
             <RotuloTitulo><p>{`${uf ?? ""} - ${sigla ?? ""} - ${cdo ?? ""}`}</p></RotuloTitulo>
@@ -298,10 +299,11 @@ function Imagem(){
                           <>
                           {urlImage !== "" ?
                           <>
-                          {userPrivate !== 1 &&
+                          {userPrivate !== 1 ||  userPrivate === 3 ?
                             <div className="propImagem">
                             <a onClick={Delete}>DELETAR</a>
                             </div>
+                            :null
                           }
                             <img src={urlImage} alt={`Imagem_${urlImage}`} />
                           </>

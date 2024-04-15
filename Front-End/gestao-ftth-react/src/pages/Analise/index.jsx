@@ -32,7 +32,7 @@ function Vizualizar(){
     const navigate = useNavigate();
     const inputRef = useRef();
     const { user } = UseAuth();
-    const userPrivate = user.tipo ?? 1;
+    const userPrivate = user?.tipo ?? 1;
     const _dataAtual = dataAtual.toISOString();
     const{ name } = event.target ?? "";
     const removeDateObs = /\[\s*\d{2}\/\d{2}\/\d{4}\s*\]/g;
@@ -1066,16 +1066,10 @@ function Vizualizar(){
                                   <th style={{width: '25%'}}>ANALISTA</th>
                                   <th style={{width: '15%'}}>DATA ANALISE</th>
                                   <th style={{width: '15%'}}>STATUS</th>
-                                  {userPrivate !== 1 ?
+                                  {userPrivate !== 1 ||  userPrivate === 3 ?
                                   <>
                                   <th style={day(dataAnalise) === true || cdoia() === true ? {width: '20%'} : testeOptico.sel === 1 ? {width: '50%'} : {width: '20%'}}>OBSERVAÇÃO</th>
-                                  {testeOptico.sel === 1 &&
-                                  <>
-                                  {day(dataAnalise) === true || cdoia() === true ?
-                                  <th># AÇÕES #</th> : null
-                                  }
-                                  </>
-                                  }
+                                  <th># AÇÕES #</th>                                
                                   </>
                                   : <th style={{width: '50%'}}>OBSERVAÇÃO</th>
                                   } 
@@ -1095,18 +1089,20 @@ function Vizualizar(){
                                       OBSERVAÇÕES
                                     </Button>
                                   </td>
-                                  {userPrivate !== 1 && testeOptico.sel === 1 ?
+                                  {userPrivate !== 1 ||  userPrivate === 3 && testeOptico.sel === 1 ?
                                   <td>
                                     <>
-                                    { day(value.dataAnalise) === true &&
+                                    { day(value.dataAnalise) === true ?
                                       <Button name="editar" style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }} onClick={(e) => handleEdit(e, value.id_Analise)}>
                                         Editar
                                       </Button>
+                                      : null
                                     }
-                                    { cdoia() === true &&
+                                    { cdoia() === true ?
                                       <Button name="excluirCdo" onClick={(e) => handleExcluirCdo(e ,value.id_Analise)}>
                                         Excluir
                                       </Button>
+                                      : null
                                     }
                                     </>
                                   </td>
@@ -1154,19 +1150,21 @@ function Vizualizar(){
                                   <th style={{width: '20%'}}>ANALISTA</th>
                                   <th style={{width: '15%'}}>DATA ANALISE</th>
                                   <th style={{width: '8%'}}>STATUS</th>
-                                  <th style={ userPrivate !== 1 ? {width: '15%'} : {width: '35%'}}>OBSERVAÇÃO</th>
-                                  { userPrivate !== 1 &&
+                                  <th style={ userPrivate !== 1 ||  userPrivate === 3 ? {width: '15%'} : {width: '35%'}}>OBSERVAÇÃO</th>
+                                  { userPrivate !== 1 ||  userPrivate === 3 ? 
                                   <th># AÇÕES #</th>
+                                  : null
                                   }
                                 </tr>
                               </thead>
                               <tbody>
-                              {userPrivate !== 1 && analises !== undefined && analises.length !== 0 && testeOptico.sel === 1 &&
+                              {userPrivate !== 1 ||  userPrivate === 3 && analises !== undefined && analises.length !== 0 && testeOptico.sel === 1 ?
                                 <tr>
                                   <td>
                                       <ButtonCdoia name="adicionarCdoia" onClick={handleAdicionarCdoia} >ADICIONAR</ButtonCdoia>      
                                   </td>
                                 </tr>
+                                :null
                                 }
                                 { analiseCDOIAs !== undefined && analiseCDOIAs.length !== 0 ?
                                 <>
@@ -1182,13 +1180,14 @@ function Vizualizar(){
                                         <Button name="observacaoCdoia" style={{fontSize: '0.6rem', fontWeight: '700'}} onClick={(e) => handleObservacaoCdoia(e, analise.cdoiaObservacao)} >OBSERVAÇÕES</Button>
                                       </> 
                                      </td>
-                                     {userPrivate !== 1 && 
+                                     {userPrivate !== 1 ||  userPrivate === 3 ? 
                                      <td>
                                       <>
                                         <Button name="editarCdoia" style={{marginLeft:'0.5rem', marginRight: '0.5rem'}} onClick={(e) => handleEditarCdoia(e, analise.id_AnaliseCDOIA, analise.cdoia, analise.cdoiaStatus, analise.cdoiaObservacao)} >Editar</Button>
                                         <Button name="excluirCdoia" onClick={(e) => handleExcluirCdoia(e, analise.id_AnaliseCDOIA)} >Excluir</Button>
                                       </>
                                     </td>
+                                    :null
                                      } 
                                   </tr>
                                 ))}
@@ -1205,7 +1204,7 @@ function Vizualizar(){
             </TableGrid>
             <FooterButton>
               <ButtonCancelar onClick={handleVoltar}>Voltar</ButtonCancelar>
-              { userPrivate !== 1 && testeOptico.sel == 1 &&
+              { userPrivate !== 1 ||  userPrivate === 3 && testeOptico.sel == 1 ?
                   <>
                   {status === undefined ? (
                       <>
@@ -1220,6 +1219,7 @@ function Vizualizar(){
                       <ButtonConfirma name="reprovado" style={{backgroundColor:'#fa1e1e'}} onClick={Adicionar} >REPROVAR</ButtonConfirma>
                   ) : null}
                   </>
+                  :null
                 }
               </FooterButton>
             </>

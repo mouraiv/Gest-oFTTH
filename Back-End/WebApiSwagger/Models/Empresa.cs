@@ -7,5 +7,6 @@ namespace WebApiSwagger.Models
          [Key]
         public int Id_Empresa {get; set;}
         public string? Nome {get; set;}
+
     }
 }

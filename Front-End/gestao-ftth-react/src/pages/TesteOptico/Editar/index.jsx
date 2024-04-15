@@ -9,6 +9,7 @@ import Spinner from "../../../components/Spinner";
 import DialogAlert from "../../../components/Dialog";
 import DropBox from '../../../components/dropbox';
 import { DateMask } from "../../../components/TextInput/mask/index";
+import { UseAuth } from "../../../contexts/auth";
 
 
 function Editar() {
@@ -27,6 +28,9 @@ function Editar() {
     const [dateInputTeste, setDateInputTeste] = useState('');
     const [dateInputConstrucao, setDateInputConstrucao] = useState('');
     const [submitClicked, setSubmitClicked] = useState(false);
+
+    const { user } = UseAuth();
+    const userPrivate = user?.tipo ?? 1;
 
 
     async function FetchDropFilter () {
@@ -191,6 +195,8 @@ function Editar() {
         <Template>
           <Header navbar={false} title={"Teste Óptico - Editar"} />
             <Container>
+                { userPrivate !== 1 || userPrivate === 3 ?
+                <>
                 { dialogAviso ? (
                 <DialogAlert 
                     visibleDiag={visible} 
@@ -356,6 +362,18 @@ function Editar() {
                     </div>
                 </div>
                 ):(<Spinner />)
+                }
+                </>
+                :
+                <p style={{
+                    border: "1px solid red",
+                    color: "red",
+                    padding: "1rem",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    marginTop: "1rem",
+                    backgroundColor: "#fff4f4" 
+                }}>ACESSO NEGADO!</p>
                 }
               </Container>
             <Footer />

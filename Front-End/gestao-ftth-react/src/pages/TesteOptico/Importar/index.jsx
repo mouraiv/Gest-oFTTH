@@ -26,7 +26,7 @@ function ImportFile(){
     const inputRef = useRef(null);
     const { name } = event.target ?? "";
     const { user } = UseAuth();
-    const userPrivate = user.tipo ?? 1;
+    const userPrivate = user?.tipo ?? 1;
 
     const controller = new AbortController();
     const signal = controller.signal;
@@ -180,7 +180,7 @@ function ImportFile(){
         <Template>
         <Header title={"Teste Óptico - Importação"} />
         <Content>
-          { userPrivate !== 1 ?
+          { userPrivate !== 1 ||  userPrivate === 3 ?
           <>
           { dialogAviso ? (
             <DialogAlert 

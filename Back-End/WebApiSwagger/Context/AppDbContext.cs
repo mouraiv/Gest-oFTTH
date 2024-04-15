@@ -36,6 +36,7 @@ namespace WebApiSwagger.Context
         public DbSet<StatusAnalise> StatusAnalises => Set<StatusAnalise>();
         public DbSet<AnaliseCDOIA> AnaliseCDOIAs => Set<AnaliseCDOIA>();
         public DbSet<StatusControle> StatusControles => Set<StatusControle>();
+        public DbSet<StatusLogin> StatusLogins => Set<StatusLogin>();
         public DbSet<StatusNetwin> StatusNetwins => Set<StatusNetwin>();
         public DbSet<StatusProjeto> StatusProjetos => Set<StatusProjeto>();
         public DbSet<ViewStatusGanho> ViewStatusGanhos => Set<ViewStatusGanho>();
@@ -104,15 +105,20 @@ namespace WebApiSwagger.Context
                  .WithOne()
                  .HasForeignKey<Tecnico>(p => p.Id_Tecnico);
 
+            modelBuilder.Entity<Usuario>()
+                 .HasOne(p => p.StatusLogin)
+                 .WithOne()
+                 .HasForeignKey<StatusLogin>(p => p.Id_Usuario);     
+
             modelBuilder.Entity<Tecnico>()
                  .HasOne(p => p.GetCargo)
-                 .WithOne()
-                 .HasForeignKey<Tecnico>(p => p.Id_Cargo);
+                 .WithMany()
+                 .HasForeignKey(p => p.Id_Cargo);
 
             modelBuilder.Entity<Tecnico>()
                  .HasOne(p => p.GetEmpresa)
-                 .WithOne()
-                 .HasForeignKey<Tecnico>(p => p.Id_Empresa);
+                 .WithMany()
+                 .HasForeignKey(p => p.Id_Empresa);
 
             modelBuilder.Entity<EnderecoTotalDropListView>()
             .HasKey(p => p.Id_DropEnderecosTotais);

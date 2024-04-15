@@ -17,6 +17,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.Usuarios
+                           .Include(p => p.StatusLogin)
                            .Where(p => p.Id_Usuario == id)
                            .FirstOrDefaultAsync() ?? new Usuario(); 
             }
@@ -85,7 +86,11 @@ namespace WebApiSwagger.Repository
              try
             {
                 return await _context.Usuarios
-                    .Include(u => u.GetTecnico)
+                    .Include(p => p.StatusLogin)
+                    .Include(p => p.GetTecnico)
+                    .ThenInclude(p => p.GetCargo)
+                    .Include(p => p.GetTecnico)
+                    .ThenInclude(p => p.GetEmpresa)
                         .ToListAsync();             
             }
             catch (Exception ex)
@@ -99,6 +104,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.Usuarios
+                            .Include(p => p.StatusLogin)
                             .Include(p => p.GetTecnico)
                             .ThenInclude(p => p.GetCargo)
                             .Include(p => p.GetTecnico)

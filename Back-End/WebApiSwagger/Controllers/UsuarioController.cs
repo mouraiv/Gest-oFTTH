@@ -100,6 +100,28 @@ namespace WebApiSwagger.Controllers
             }
             
         }
+        
+        [HttpGet("TestarUsuario")]
+        public async Task<IActionResult> TestarUsuario([FromQuery] string? login)
+        {
+            try
+            {
+                var resultado = await _UsuarioRepository.VerificarUsuario(login ?? "");
+
+                if (resultado == null)
+                {
+                    return NotFound("Nenhum resultado."); 
+                }
+                
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
+            }
+           
+        }
+
         [HttpPost("Verificar")]
         public async Task<IActionResult> VerificarUsuario([FromBody] UsuarioView usuario)
         {
@@ -137,6 +159,7 @@ namespace WebApiSwagger.Controllers
                     cargo = usuarioExiste.GetTecnico?.GetCargo?.Nome,
                     empresa = usuarioExiste.GetTecnico?.GetEmpresa?.Nome,
                     tipo = usuarioExiste.Tipo,
+                    online = usuarioExiste.StatusLogin?.Status,
                     error = usuarioExiste.Error,
                     token = chave
                 };

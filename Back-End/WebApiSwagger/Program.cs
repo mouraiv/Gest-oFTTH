@@ -30,6 +30,7 @@ builder.Services.AddScoped<IStatusControleRepository, StatusControleRepository>(
 builder.Services.AddScoped<IStatusProjetoRepository, StatusProjetoRepository>();
 builder.Services.AddScoped<IAnaliseCDOIARepository, AnaliseCDOIARepository>();
 builder.Services.AddScoped<IValidacaoRepository, ValidacaoRepository>();
+builder.Services.AddScoped<IStatusLoginRepository, StatusLoginRepository>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<UploadXlsx>();
 builder.Services.AddSingleton<ConversorDwg>();

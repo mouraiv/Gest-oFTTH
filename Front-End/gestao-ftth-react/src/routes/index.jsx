@@ -12,6 +12,7 @@ import Home from "../pages/Home";
 import EnderecoTotal from "../pages/EnderecoTotal";
 import BaseAcumulada from "../pages/BaseAcumulada";
 import GanhoSurvey from "../pages/GanhoSurvey";
+import Usuarios from "../pages/Administrador/Usuarios";
 
 export default function AppRoutes(){
     return (
@@ -20,6 +21,7 @@ export default function AppRoutes(){
                 <Route element={<ProtectedRoute />}>
                     <Route path="/Home" element={<Home />} />
                     <Route path="/TesteOptico" element={<TesteOptico />} />
+                    <Route path="/Usuario" element={<Usuarios />} />
                     <Route path="/TesteOptico/Editar/:id" element={<Editar />} />
                     <Route path="/TesteOptico/Importar" element={<ImportFile />} />
                     <Route path="/TesteOptico/Visualizar/:id/:idNetwin/:survey" element={<Vizualizar />} />

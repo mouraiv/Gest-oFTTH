@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect} from "react";
 import Api from "../services/api";
 import { VerificarUsuario } from "../Api/usuario";
+import { UpdateStatusLogin } from "../Api/statusLogin";
 
 const AuthContext = createContext({
     user: {},
@@ -34,23 +35,42 @@ export const AuthProvider = ({ children }) => {
       const storagedToken = sessionStorage.getItem('@App:token');
       Api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
       setUser(storagedUser);
-    },[]);   
-  
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[]);
+    
+    async function FetchEditarStatus(user, status) {
+      try {
+          const statusData = {};
+
+          statusData.status = status;
+          statusData.id_Usuario = user.id;
+
+          UpdateStatusLogin(statusData);
+              
+      } catch (error) {
+
+      } 
+    }
+      
     async function Login(data) {
       try {
         const response = await VerificarUsuario(data);
 
         if (response.status === 200) {
-            if (response.data.login || response.data.pws) {
-            setUser(response.data);
-            Api.defaults.headers.Authorization = `Bearer ${response.data.token}`;
-            sessionStorage.setItem('@App:user', JSON.stringify(response.data));
-            sessionStorage.setItem('@App:token', response.data.token);
+            const usuario = response.data;  
+            if (usuario.login || usuario.pws) { 
+            setUser(usuario);
+
+            if(usuario.online !== 2) {
+            Api.defaults.headers.Authorization = `Bearer ${usuario.token}`;
+            sessionStorage.setItem('@App:user', JSON.stringify(usuario));
+            sessionStorage.setItem('@App:token', usuario.token);
+            }
             
           }
 
         } 
-        
         return response;
 
       } catch (error) {
@@ -59,8 +79,16 @@ export const AuthProvider = ({ children }) => {
     }
   
     function Logout() {
+      FetchEditarStatus(user, 1)
       sessionStorage.removeItem('@App:user');
       sessionStorage.removeItem('@App:token');
+    }
+
+    function handleBeforeUnload(event) {
+      console.log(user);
+      event.preventDefault();
+      // Antes de descarregar a página, atualize o status do usuário para offline
+      FetchEditarStatus(user, 1);
     }
   
     // Função para verificar se o token está expirado

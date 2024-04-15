@@ -12,5 +12,6 @@ namespace WebApiSwagger.Models
         public int? Publico {get; set;}
         public int? Error {get; set;}
         public Tecnico GetTecnico {get; set;} = null!;
+        public StatusLogin StatusLogin {get; set;} = null!;
     }
 }

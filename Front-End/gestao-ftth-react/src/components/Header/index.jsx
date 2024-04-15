@@ -7,6 +7,7 @@ import logo from "../../../public/imagens/logictel.png";
 // eslint-disable-next-line react/prop-types
 export default function Header({title, navbar = true}) {
   const { user, Logout } = UseAuth();
+  const userPrivate = user?.tipo ?? 1;
 
   const refreshToken = sessionStorage.getItem("@App:token");
   let auth = { token: refreshToken};
@@ -18,6 +19,10 @@ export default function Header({title, navbar = true}) {
     Logout();
     navigate('/');
   }
+
+  const handleUsuario = () => {
+    navigate(`/Usuario`); 
+  };
 
   const handleInicio = () => {
     navigate(`/Home`); 
@@ -34,7 +39,7 @@ export default function Header({title, navbar = true}) {
           <HeaderStyleUser>
             <div className="logoContainer">
               <div className="logo">
-                <img src={logo} />
+                <a style={{color: 'white', fontWeight: '600', fontSize: '1.6rem', marginLeft: '0.5rem'}}>SGF</a>
               </div>
               <div>
                 <p className="title">| {title}</p>
@@ -47,10 +52,17 @@ export default function Header({title, navbar = true}) {
               {location.pathname !== '/Home' && (
                 <li><a onClick={handleInicio}>Início</a></li>
               )}
-                <li><a onClick={handleTesteOptico}>TesteOptico</a></li>
-                <li><a>Netwin</a>
+              { userPrivate === 3 &&
+              <li style={{position: 'relative'}}><a style={{backgroundColor: '#CB4335'}}>Administrador</a>
                   <ul>
-                    <li><a onClick={handleEnderecoTotal}>Endereços Totais</a></li>
+                    <li style={{left: 0, marginTop: '32%', position:'absolute'}}><a onClick={handleUsuario}>Usuários</a></li>
+                  </ul>
+                </li>
+                }
+                <li><a onClick={handleTesteOptico}>TesteOptico</a></li>
+                <li style={{position: 'relative'}}><a>Netwin</a>
+                  <ul>
+                    <li style={{left:0, marginTop: '50%', position:'absolute'}}><a onClick={handleEnderecoTotal}>Endereços Totais</a></li>
                   </ul>
                 </li>
               </ul>

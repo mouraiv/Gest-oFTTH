@@ -29,7 +29,7 @@ export const HeaderStyleUser = styled("header", {
         position: 'absolute',
         top:0,
         right: 0,
-        marginRight: '15rem',
+        marginRight: '20rem',
     },
 
     ".navBar ul" : {
@@ -44,19 +44,17 @@ export const HeaderStyleUser = styled("header", {
     },
 
     ".navBar li ul" : {
-        position: 'absolute',
-        top: '40px',
-        right: 0,
+        //position: 'absolute',
         display: 'none',
     },
 
     ".navBar li:hover ul" : {
-        display: 'block',
+        display: 'inline',
     },
 
     ".navBar li ul li" : {
-        display: 'block',
-        width: '141px',
+        right: 0,
+        width: '141px'
     },
 
     ".navBar li ul li a" : {
@@ -64,7 +62,7 @@ export const HeaderStyleUser = styled("header", {
         fontSize: '0.9rem',
         fontWeight: '500',
         backgroundColor: '#13293d',
-        borderBottom: '1px solid #2C3E50'
+        borderBottom: '1px solid #2C3E50',
     },
 
     ".navBar li a": {

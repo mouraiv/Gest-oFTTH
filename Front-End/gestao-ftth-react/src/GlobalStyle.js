@@ -26,6 +26,7 @@ export const GlobalStyle = globalCss({
 
 export const Template = styled("div", {
         height: '100vh',
+        minWidth: '900px',
         display: 'grid',
         gridTemplateAreas: '"header" "content" "footer"',
         gridTemplateRows: '40px 1fr 40px',

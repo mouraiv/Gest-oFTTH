@@ -57,7 +57,7 @@ function TesteOptico() {
   const controller = new AbortController();
   const signal = controller.signal;
   const { user } = UseAuth();
-  const userPrivate = user.tipo ?? 1;
+  const userPrivate = user?.tipo ?? 1;
 
   async function FetchDropFilter () {
     
@@ -303,10 +303,11 @@ function TesteOptico() {
         <Header title={"Teste Óptico"} />
           <Content>
           <InfoDataBase />
-            {userPrivate !== 1 &&
+            {userPrivate !== 1 || userPrivate === 3 ?
             <SubMenu>
               <ButtonImport onClick={handleImportar} >Controler CDOs</ButtonImport>
              </SubMenu>
+             : null
             }
             <Filter>
               <div>

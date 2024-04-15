@@ -60,8 +60,8 @@ export const Button = styled("button", {
 });
 
 export const Title = styled("p", {
-    margin: '0.3rem',
     fontWeight: '700',
-    padding: '0.5rem',
-    textAlign: 'center'
+    fontSize: '1rem',
+    marginTop: '0.3rem',
+    marginBottom: '0.8rem'
 });
