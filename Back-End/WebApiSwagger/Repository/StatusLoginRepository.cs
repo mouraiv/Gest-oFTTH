@@ -39,6 +39,7 @@ namespace WebApiSwagger.Repository
                 db.Id_StatusLogin = statusLogin.Id_StatusLogin;
                 db.Status = statusLogin.Status;
                 db.LoginDate = statusLogin.LoginDate;
+                db.Token = statusLogin.Token;
                 db.Id_Usuario = statusLogin.Id_Usuario;
                 
                 _context.StatusLogins.Update(db);

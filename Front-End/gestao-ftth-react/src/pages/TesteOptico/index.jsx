@@ -56,7 +56,7 @@ function TesteOptico() {
 
   const controller = new AbortController();
   const signal = controller.signal;
-  const { user } = UseAuth();
+  const { user, ValidarToken } = UseAuth();
   const userPrivate = user?.tipo ?? 1;
 
   async function FetchDropFilter () {
@@ -167,6 +167,14 @@ function TesteOptico() {
     }
     setSubmitClicked(true)
   };
+
+  useEffect(() => {
+    if(user && Object.keys(user).length !== 0){
+    ValidarToken(user);
+    }
+      
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[user])
 
   useEffect(() => {
     FetchDropFilter()

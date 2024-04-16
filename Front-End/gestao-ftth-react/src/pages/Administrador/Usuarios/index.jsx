@@ -22,7 +22,7 @@ function Usuarios() {
 
   const navigate = useNavigate();
 
-  const { user } = UseAuth();
+  const { user, ValidarToken } = UseAuth();
   const userPrivate = user.tipo ?? 1;
 
   const fetchUsuario = async () => {
@@ -58,6 +58,14 @@ function Usuarios() {
     }
     setSubmitClicked(true)
   };
+
+  useEffect(() => {
+    if(user && Object.keys(user).length !== 0){
+    ValidarToken(user);
+    }
+      
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[user])
 
   useEffect(() => {    
       fetchUsuario();

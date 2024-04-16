@@ -8,6 +8,7 @@ namespace WebApiSwagger.Models
         public int Id_StatusLogin {get; set;}
         public int? Status {get; set;}
         public DateTime? LoginDate {get; set;}
+        public string? Token {get; set;}
         public int? Id_Usuario {get; set;}
        
     }

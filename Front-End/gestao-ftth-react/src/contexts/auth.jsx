@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect} from "react";
 import Api from "../services/api";
-import { VerificarUsuario } from "../Api/usuario";
+import { VerificarUsuario, TestarUsuario } from "../Api/usuario";
 import { UpdateStatusLogin } from "../Api/statusLogin";
 
 const AuthContext = createContext({
     user: {},
     Login: async (data) => {},
     Logout: () => {},
+    ValidarToken: async (user) => {},
     status: true,
     loading: false,
     IsTokenExpired: () => false, // Função para verificar se o token está expirado
@@ -16,6 +17,8 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({});
     const [status, setStatus] = useState();
     const [loading, setLoading] = useState();
+ 
+    const refreshToken = sessionStorage.getItem('@App:token');
 
     async function ServerStatus(){
       await VerificarUsuario({login: ''}) 
@@ -27,8 +30,8 @@ export const AuthProvider = ({ children }) => {
           // Não foi possível conectar ao servidor, então está offline
           setStatus(false);
         }).finally(() => { setLoading(true)});
-      }
-            
+    }
+        
     useEffect(()=>{
       ServerStatus();
       const storagedUser = JSON.parse(sessionStorage.getItem('@App:user'));
@@ -39,11 +42,12 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     
-    async function FetchEditarStatus(user, status) {
+    async function FetchEditarStatus(user, status, token) {
       try {
           const statusData = {};
 
           statusData.status = status;
+          statusData.token = token;
           statusData.id_Usuario = user.id;
 
           UpdateStatusLogin(statusData);
@@ -79,16 +83,32 @@ export const AuthProvider = ({ children }) => {
     }
   
     function Logout() {
-      FetchEditarStatus(user, 1)
+      FetchEditarStatus(user, 1,null)
+      sessionStorage.removeItem('@App:msg');
       sessionStorage.removeItem('@App:user');
       sessionStorage.removeItem('@App:token');
     }
 
-    function handleBeforeUnload(event) {
-      console.log(user);
-      event.preventDefault();
-      // Antes de descarregar a página, atualize o status do usuário para offline
-      FetchEditarStatus(user, 1);
+    const ValidarToken = async (user) => {
+
+      try {
+      const response = await TestarUsuario(user.login);
+             
+      if(response.status === 200){
+        const usuario = response.data;
+            
+        if(refreshToken !== usuario.statusLogin?.token){
+          sessionStorage.setItem('@App:msg', "Voçe foi desconectado por outro usuário!");
+          sessionStorage.removeItem('@App:token');
+
+        }
+
+      }
+      
+      }catch (error) {
+        console.error('Erro de conexão: ' + error)
+      }
+
     }
   
     // Função para verificar se o token está expirado
@@ -101,7 +121,7 @@ export const AuthProvider = ({ children }) => {
     }
   
     return (
-      <AuthContext.Provider value={{ user, Login, Logout, status, loading, IsTokenExpired }}>
+      <AuthContext.Provider value={{ user, Login, Logout, ValidarToken, status, loading, IsTokenExpired }}>
         {children}
       </AuthContext.Provider>
     );

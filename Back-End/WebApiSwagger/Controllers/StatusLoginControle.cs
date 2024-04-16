@@ -45,6 +45,7 @@ namespace WebApiSwagger.Controllers
                  var modelo = new StatusLogin{
                     Status = statusLogin.Status,
                     LoginDate =  DateTime.Now,
+                    Token = statusLogin.Token,
                     Id_Usuario = statusLogin.Id_Usuario
                 };
 
@@ -68,6 +69,7 @@ namespace WebApiSwagger.Controllers
                     Id_StatusLogin = _statusLoginRepository.CarregarId(id).Result.Id_StatusLogin,
                     Status = statusLogin.Status,
                     LoginDate =  DateTime.Now,
+                    Token = statusLogin.Token,
                     Id_Usuario = statusLogin.Id_Usuario
                 };
 

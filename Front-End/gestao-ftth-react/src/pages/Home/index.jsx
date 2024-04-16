@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Container } from "./styles";
 import { UseAuth } from "../../contexts/auth";
 import { GlobalStyle, Template } from "../../GlobalStyle";
@@ -7,7 +7,15 @@ import InfoDataBase from "../../components/DbInfo"
 import Footer from "../../components/Footer"
 
 function Home() {
-    const { user } = UseAuth();
+    const { user, ValidarToken } = UseAuth();
+
+    useEffect(() => {
+      if(user && Object.keys(user).length !== 0){
+      ValidarToken(user);
+      }
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[user])
 
     GlobalStyle();
 

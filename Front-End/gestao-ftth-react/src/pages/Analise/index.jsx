@@ -31,7 +31,7 @@ function Vizualizar(){
 
     const navigate = useNavigate();
     const inputRef = useRef();
-    const { user } = UseAuth();
+    const { user, ValidarToken } = UseAuth();
     const userPrivate = user?.tipo ?? 1;
     const _dataAtual = dataAtual.toISOString();
     const{ name } = event.target ?? "";
@@ -311,6 +311,14 @@ function Vizualizar(){
             setLoading(true);
         }
   }
+
+  useEffect(() => {
+    if(user && Object.keys(user).length !== 0){
+    ValidarToken(user);
+    }
+      
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[user])
 
   useEffect(() => {
     FecthDetalheTesteOptico();

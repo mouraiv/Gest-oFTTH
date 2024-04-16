@@ -10,13 +10,13 @@ import Spinner from "../../components/Spinner";
 import StatusInforme from "../../components/StatusInforme";
 //import logo from "../../../public/imagens/logictel.png";
 import wp from '../../../public/imagens/wp_ftth.png'
-import { VerificarStatusLogin, UpdateStatusLogin } from "../../Api/statusLogin";
+import { UpdateStatusLogin } from "../../Api/statusLogin";
 import { TestarUsuario } from "../../Api/usuario";
 
 function Login() {
     GlobalStyle();
 
-    const {Login, status, loading} = UseAuth();
+    const {Login, ValidarToken, status, loading} = UseAuth();
     const navigate = useNavigate();
 
     const [msg, setMsg] = useState("");
@@ -25,7 +25,8 @@ function Login() {
     const [forceLogout, setForceLogout] = useState(false);
 
     const refreshToken = sessionStorage.getItem("@App:token");
-;
+    const msgAuth = sessionStorage.getItem("@App:msg");
+
     const valueRef = useRef(null);
 
     async function FetchVerificarStatus() {
@@ -54,7 +55,9 @@ function Login() {
                           });
               
                           if(responseUsuario.status === 200){
-                            await FetchEditarStatus(usuario.id_Usuario,2);
+                            const _responseUsuario = responseUsuario.data;
+
+                            await FetchEditarStatus(usuario.id_Usuario,2, _responseUsuario.token);
                             navigate('/Home');
                             setMsg("");
                           }
@@ -62,7 +65,7 @@ function Login() {
                         }
 
                       }else{
-                        await FetchEditarStatus(usuario.id_Usuario, 1);
+                        await FetchEditarStatus(usuario.id_Usuario, 1, null);
                           
                         const responseUsuario = await Login({
                           login: inputLogin,
@@ -70,7 +73,9 @@ function Login() {
                         });
               
                         if(responseUsuario.status === 200){
-                          await FetchEditarStatus(usuario.id_Usuario,2);
+                          const _responseUsuario = responseUsuario.data;
+
+                          await FetchEditarStatus(usuario.id_Usuario,2, _responseUsuario.token);
                           navigate('/Home');
                           setMsg("");
                         }
@@ -97,17 +102,18 @@ function Login() {
       } 
     }
 
-    async function FetchEditarStatus(id, status) {
+    async function FetchEditarStatus(id, status, token) {
       try {
           const statusData = {};
 
           statusData.status = status;
+          statusData.token = token;
           statusData.id_Usuario = id;
 
           const response = await UpdateStatusLogin(statusData);
 
           if(response.status === 200){
-            console.log("editado")
+            console.log("Sucesso")
           }
      
       } catch (error) {
@@ -119,8 +125,13 @@ function Login() {
       await loadCaptchaEnginge(5, '#CCD1D1', '#000000', 'lower');
     };
 
-    useEffect(() => {  
-      console.log(refreshToken);
+    useEffect(() => {
+      if(msgAuth !== null){
+        setMsg(`*${msgAuth}`);
+      }else{
+        setMsg("");
+      }
+
       if(refreshToken){
         navigate('/Home');
       }

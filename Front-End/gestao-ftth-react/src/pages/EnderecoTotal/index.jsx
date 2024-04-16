@@ -13,6 +13,7 @@ import DialogAlert from "../../components/Dialog";
 import InfoDataBase from '../../components/DbInfo';
 import { formatarNumero } from "../../util/formatarNumeros";
 import ProgressComponent from '../../components/progress/ProgressComponent';
+import { UseAuth } from "../../contexts/auth";
 
 function EnderecoTotal() {
   GlobalStyle();
@@ -88,6 +89,7 @@ function EnderecoTotal() {
   const [carregarListsurvey, setCarregarListSurvey] = useState(false);
   const [carregarExport, setCarregarExport] = useState(false);
 
+  const { user, ValidarToken } = UseAuth();
   const controller = new AbortController();
   const signal = controller.signal;
   const totalRegistros = enderecoTotal?.paginacao?.total;
@@ -365,6 +367,14 @@ function EnderecoTotal() {
     }
     setSubmitClicked(true);
   };
+
+  useEffect(() => {
+    if(user && Object.keys(user).length !== 0){
+    ValidarToken(user);
+    }
+      
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[user])
 
   useEffect(() => {    
     if (initialLoad) {

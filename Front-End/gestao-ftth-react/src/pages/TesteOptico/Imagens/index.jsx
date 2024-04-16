@@ -26,7 +26,7 @@ function Imagem(){
 
     const inputFile= useRef();
     const inputRef = useRef();
-    const { user } = UseAuth();
+    const { user, ValidarToken } = UseAuth();
     const userPrivate = user?.tipo ?? 1;
  
     async function FetchUploadImage(){
@@ -101,6 +101,14 @@ function Imagem(){
           setLoading(true)
         }
     }
+
+    useEffect(() => {
+      if(user && Object.keys(user).length !== 0){
+      ValidarToken(user);
+      }
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[user])
 
       useEffect(() => {
           FetchVizualizarArquivo();
