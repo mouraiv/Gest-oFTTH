@@ -800,19 +800,32 @@ function Vizualizar(){
                                </thead>
                                <tbody>
                                {ligacao
-                                        .sort((a, b) => parseInt(a.fibraCdo_ls) - parseInt(b.fibraCdo_ls))
-                                        .map((valueLigacao, index) => (
+                                    .map(valueLigacao => {
+                                        const numeros = valueLigacao.portaCdo_ls.split(' | ');
+
+                                        const numerosOrdenados = numeros.sort((a, b) => parseInt(a) - parseInt(b));
+
+                                        const portaCdoOrdenada = numerosOrdenados.join(' | ');
+
+                                        return { ...valueLigacao, portaCdo_ls: portaCdoOrdenada };
+                                    })
+                                    .sort((a, b) => {
+                                        return parseInt(a.portaCdo_ls.split(' | ')[0]) - parseInt(b.portaCdo_ls.split(' | ')[0]);
+
+                                    })
+                                    .map((valueLigacao, index) => (
                                         <tr key={index} className="enderecoTr">
-                                            <td>{valueLigacao.fibraCdo_ls === "" || valueLigacao.fibraCdo_ls === null ? '--' : valueLigacao.fibraCdo_ls}</td>
-                                            <td>{valueLigacao.portaCdo_ls === "" || valueLigacao.portaCdo_ls === null ? '--' : valueLigacao.portaCdo_ls}</td>
-                                            <td>{valueLigacao.splitteR_CDO === "" || valueLigacao.splitteR_CDO === null ? '--' : valueLigacao.splitteR_CDO}</td>
-                                            <td>{valueLigacao.outSplitterCEOS_ls === "" || valueLigacao.outSplitterCEOS_ls === null ? '--' : valueLigacao.outSplitterCEOS_ls}</td>
+                                        <td>{valueLigacao.fibraCdo_ls === "" || valueLigacao.fibraCdo_ls === null ? '--' : valueLigacao.fibraCdo_ls}</td>
+                                        <td>{valueLigacao.portaCdo_ls === "" || valueLigacao.portaCdo_ls === null ? '--' : valueLigacao.portaCdo_ls}</td>
+                                        <td>{valueLigacao.splitteR_CDO === "" || valueLigacao.splitteR_CDO === null ? '--' : valueLigacao.splitteR_CDO}</td>
+                                        <td>{valueLigacao.outSplitterCEOS_ls === "" || valueLigacao.outSplitterCEOS_ls === null ? '--' : valueLigacao.outSplitterCEOS_ls}</td>
                                         </tr>
-                                        ))}
-                                        </tbody>
-                                        </table>
-                                        </td>
-                                        </tr>
+                                    ))
+                                }
+                                </tbody>
+                                </table>
+                                </td>
+                                </tr>
                         </>
                         ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
                         }
@@ -1328,19 +1341,32 @@ function Vizualizar(){
                               </thead>
                               <tbody>
                                 {ligacao
-                                        .sort((a, b) => parseInt(a.fibraCdo_ls) - parseInt(b.fibraCdo_ls))
-                                        .map((valueLigacao, index) => (
+                                    .map(valueLigacao => {
+                                        const numeros = valueLigacao.portaCdo_ls.split(' | ');
+
+                                        const numerosOrdenados = numeros.sort((a, b) => parseInt(a) - parseInt(b));
+
+                                        const portaCdoOrdenada = numerosOrdenados.join(' | ');
+
+                                        return { ...valueLigacao, portaCdo_ls: portaCdoOrdenada };
+                                    })
+                                    .sort((a, b) => {
+                                        return parseInt(a.portaCdo_ls.split(' | ')[0]) - parseInt(b.portaCdo_ls.split(' | ')[0]);
+
+                                    })
+                                    .map((valueLigacao, index) => (
                                         <tr key={index} className="enderecoTr">
-                                            <td>{valueLigacao.fibraCdo_ls === "" || valueLigacao.fibraCdo_ls === null ? '--' : valueLigacao.fibraCdo_ls}</td>
-                                            <td>{valueLigacao.portaCdo_ls === "" || valueLigacao.portaCdo_ls === null ? '--' : valueLigacao.portaCdo_ls}</td>
-                                            <td>{valueLigacao.splitteR_CDO === "" || valueLigacao.splitteR_CDO === null ? '--' : valueLigacao.splitteR_CDO}</td>
-                                            <td>{valueLigacao.outSplitterCEOS_ls === "" || valueLigacao.outSplitterCEOS_ls === null ? '--' : valueLigacao.outSplitterCEOS_ls}</td>
+                                        <td>{valueLigacao.fibraCdo_ls === "" || valueLigacao.fibraCdo_ls === null ? '--' : valueLigacao.fibraCdo_ls}</td>
+                                        <td>{valueLigacao.portaCdo_ls === "" || valueLigacao.portaCdo_ls === null ? '--' : valueLigacao.portaCdo_ls}</td>
+                                        <td>{valueLigacao.splitteR_CDO === "" || valueLigacao.splitteR_CDO === null ? '--' : valueLigacao.splitteR_CDO}</td>
+                                        <td>{valueLigacao.outSplitterCEOS_ls === "" || valueLigacao.outSplitterCEOS_ls === null ? '--' : valueLigacao.outSplitterCEOS_ls}</td>
                                         </tr>
-                                        ))}
-                                        </tbody>
-                                        </table>
-                                        </td>
-                                        </tr>
+                                    ))
+                                }
+                        </tbody>
+                        </table>
+                        </td>
+                        </tr>
                         </>
                         ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
                         }

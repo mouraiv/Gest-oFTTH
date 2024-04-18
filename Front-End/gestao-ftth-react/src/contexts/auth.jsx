@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }) => {
         const usuario = response.data;
             
         if(refreshToken !== usuario.statusLogin?.token){
-          sessionStorage.setItem('@App:msg', "Voçe foi desconectado por outro usuário!");
+          sessionStorage.setItem('@App:msg', "Voçê foi desconectado por outro usuário!");
           sessionStorage.removeItem('@App:token');
 
         }

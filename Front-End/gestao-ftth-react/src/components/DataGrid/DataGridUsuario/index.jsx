@@ -14,7 +14,7 @@ export default function DataGrid({
   atualizar
 }) {
   const _paginasCorrente = 1; //paginacao.total < paginacao.paginasCorrentes ? paginacao.total : paginacao.paginasCorrentes; 
-  const _paginasTotal = 1; //paginacao.totalPaginas == (paginacao.paginasCorrentes - 1) ? (paginacao.paginasCorrentes - 1) : paginacao.total;
+  const _paginasTotal = pagina; //paginacao.totalPaginas == (paginacao.paginasCorrentes - 1) ? (paginacao.paginasCorrentes - 1) : paginacao.total;
   const _pagina = pagina ;//pagina == 1 ? 1 : (((pagina * 100) - 100) + 1);
 
   const _rows = () => {
@@ -42,7 +42,7 @@ export default function DataGrid({
           <p>&nbsp;-&nbsp;</p>
           <p>{_paginasCorrente == 100 ? 100 : _pagina}</p>
           <p>&nbsp;de&nbsp;</p>
-          <p>{_paginasCorrente}</p>
+          <p>{_paginasTotal}</p>
           {_pagina > 100 ? <FaAngleLeft onClick={left} className="leftAngle" /> : <FaAngleLeft style={{color:'#AEB6BF', fill:'#AEB6BF', cursor:'default'}} className="leftAngle" />}
           {_paginasCorrente < _paginasTotal ? <FaAngleRight onClick={right} className="rightAngle" /> : <FaAngleRight style={{color:'#AEB6BF', fill:'#AEB6BF', cursor:'default'}} className="rightAngle" />}
         </TableGridMenu>

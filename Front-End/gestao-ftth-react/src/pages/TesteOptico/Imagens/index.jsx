@@ -120,7 +120,7 @@ function Imagem(){
         const groupedUrls = {};
       
         testeOptico?.forEach((item) => {
-          const parts = item.caminho.split("\\");
+          const parts = item.caminho.split("/");
           let folder = parts[parts.length - 2];
       
           if (!groupedUrls[folder]) {

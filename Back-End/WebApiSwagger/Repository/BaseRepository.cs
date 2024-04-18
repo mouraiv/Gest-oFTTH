@@ -1,4 +1,4 @@
-using System.Net;
+using WebApiSwagger.Context;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSwagger.Filters;
 using WebApiSwagger.Models.ViewModel;
@@ -8,13 +8,24 @@ namespace WebApiSwagger.Repository
 {
     public class BaseRepository : IBaseRepository
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string server = @"\\192.168.0.204\";
-        private readonly string caminho = @"Grandes Clientes\Controle de Gestão FTTH\anexos";
+        private readonly AppDbContext _context;
+        
+        private readonly string server;
       
-        public BaseRepository(IHttpContextAccessor httpContextAccessor)
+        public BaseRepository(AppDbContext context)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _context = context;
+            
+            // Recuperar o caminho do diretório do banco de dados
+            var diretorio = _context.Diretorios.FirstOrDefault();
+            if (diretorio != null)
+            {
+                server = diretorio.Caminho ?? "";
+            }
+            else
+            {
+                server = "";
+            }
         }
         
         public void UploadArquivo(List<IFormFile> path, [FromQuery] FiltroImagem filter)
@@ -22,7 +33,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 // Construa o caminho completo para o diretório no servidor
-                string caminhoDiretorio = Path.Combine(server, caminho, filter.UF?.ToUpper() ?? "", filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "", filter.CDOIA?.ToUpper() ?? "");
+                string caminhoDiretorio = Path.Combine(server, filter.UF?.ToUpper() ?? "", filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "", filter.CDOIA?.ToUpper() ?? "");
 
                 // Verifique se o diretório existe e crie-o se não existir
                 if (!Directory.Exists(caminhoDiretorio) || !string.IsNullOrEmpty(filter.CDOIA))
@@ -65,7 +76,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 // Construa o caminho completo para o diretório de rede
-                string caminhoDiretorio = Path.Combine(server, caminho, filter.UF?.ToUpper() ?? "",  filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "");
+                string caminhoDiretorio = Path.Combine(server, filter.UF?.ToUpper() ?? "",  filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "");
 
                if (Directory.Exists(caminhoDiretorio))
                 {

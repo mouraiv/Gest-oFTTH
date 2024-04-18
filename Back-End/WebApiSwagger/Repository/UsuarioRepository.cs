@@ -91,6 +91,7 @@ namespace WebApiSwagger.Repository
                     .ThenInclude(p => p.GetCargo)
                     .Include(p => p.GetTecnico)
                     .ThenInclude(p => p.GetEmpresa)
+                    .OrderByDescending(p => p.StatusLogin.Status)
                         .ToListAsync();             
             }
             catch (Exception ex)
