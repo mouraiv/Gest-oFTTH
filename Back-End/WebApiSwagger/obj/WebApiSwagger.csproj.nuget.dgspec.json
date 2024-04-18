@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\WebApiSwagger.csproj": {}
+    "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj": {}
   },
   "projects": {
-    "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\WebApiSwagger.csproj": {
+    "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\WebApiSwagger.csproj",
+        "projectUniqueName": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
         "projectName": "WebApiSwagger",
-        "projectPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\WebApiSwagger.csproj",
+        "projectPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
         "packagesPath": "C:\\Users\\wesley.moura\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\obj\\",
+        "outputPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\wesley.moura\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -98,20 +98,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
-              "version": "[7.0.1, 7.0.1]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.linux-x64",
-              "version": "[7.0.1, 7.0.1]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Runtime.linux-x64",
-              "version": "[7.0.1, 7.0.1]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -121,11 +107,6 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "linux-x64": {
-          "#import": []
         }
       }
     }

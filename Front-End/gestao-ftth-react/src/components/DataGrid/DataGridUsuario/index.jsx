@@ -29,7 +29,6 @@ export default function DataGrid({
     const keys = key.split('.');
     return keys.reduce((acc, currentKey) => (acc && acc[currentKey] ? acc[currentKey] : undefined), obj);
   }
-  console.log(rows)
   
   return (
     <>

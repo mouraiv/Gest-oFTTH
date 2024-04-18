@@ -6,6 +6,7 @@ export const ImportArea = styled("div", {
     width: '100%',
     fontSize: '0.8rem',
     fontWeight: '700',
+    marginLeft:'0.8rem',
 
     'input[type=file]::file-selector-button':{
         backgroundColor: '#D6DBDF',
@@ -82,6 +83,30 @@ export const LinhaVertical = styled("div", {
     marginRight: '0.3rem',
     borderLeft: '2px solid #5D6D7E'
 
+});
+
+export const SubMenu = styled("div", {
+    display: 'flex',
+    border: '0',
+    width:'100%',
+    marginBottom: '0.5rem',
+});
+
+export const ButtonImagem = styled("button", {
+    border: '1px solid #5D6D7E',
+    borderRadius: '0.3rem',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    marginLeft:'0.3rem',
+    marginBottom: '0.7rem',
+    width: '100px',
+    height: '30px',
+    color: '#17202A',
+    cursor: 'pointer',
+
+    '&:active' : {
+        backgroundColor: '#D6DBDF',   
+    }
 });
 
 

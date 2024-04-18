@@ -3,7 +3,7 @@ import { Content, GlobalStyle, RotuloTitulo, Template } from '../../../GlobalSty
 import { GetControleCdo, ImportarArquivo} from "../../../api/testeOptico";
 import { DownloadArquivo } from "../../../api/base";
 import DataGridTable from '../../../components/DataGrid/DataGridTesteOptico';
-import { ImportArea, InputImport, ButtonUpload, ButtonDownload, LinhaVertical } from "./style";
+import { ImportArea, InputImport, ButtonUpload, ButtonDownload, LinhaVertical, SubMenu, ButtonImagem } from "./style";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import { UseAuth } from "../../../contexts/auth";
@@ -166,6 +166,7 @@ function ImportFile(){
       const fetchLoading = (value) => {
         fetchTesteOptico();
         setLoading(value);
+        setLoading(false);
       }
 
       const ExcluirFecth = () => {
@@ -239,6 +240,9 @@ function ImportFile(){
                 <LinhaVertical />
                 <ButtonDownload onClick={downloadModelo} >Download Modelo</ButtonDownload>
             </ImportArea>
+            <SubMenu>
+              <ButtonImagem onClick={fetchLoading} >Atualizar</ButtonImagem>
+            </SubMenu>
             <RotuloTitulo><p>-- Controle de CDOs --</p></RotuloTitulo>
             { testeOptico.resultado !== undefined ? (
               loading ? (  

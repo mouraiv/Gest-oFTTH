@@ -14,7 +14,7 @@ import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
 import { UseAuth } from "../../../contexts/auth";
 import { FaLocationDot } from 'react-icons/fa6';
-import { ButtonAnalise, ButtonEditar, ButtonImagem, ButtonReValidar, ButtonValidar, ContentTabs, FooterButton, TableGrid } from "./style";
+import { ButtonEditar, ButtonImagem, ButtonReValidar, ButtonValidar, ContentTabs, FooterButton, TableGrid } from "./style";
 
 function Vizualizar(){
     const { id, idNetwin, survey } = useParams();
@@ -667,17 +667,16 @@ function Vizualizar(){
             </FooterButton>
             </Tab>
             <Tab eventKey="MaterialRede" title="Netwin">
-            { materialRede !== undefined && enderecoTotal !== undefined && enderecoTotalAny?.length !== 0 && ligacao !== undefined ? (
-            <>
             {loadingMaterial ? (
-            <TableGrid>
+            <>
+            <TableGrid style={{marginTop:'1rem'}}>
                 <thead>
                     <tr>
                         <th colSpan={3}>MATERIAIS DE REDE</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {materialRede.id_MaterialRede !== undefined ? (
+                    {materialRede !== null && materialRede !== undefined && materialRede?.length !== 0 && materialRede?.id_MaterialRede !== 0  ? (
                         <>
                         <tr>
                             <td>{materialRede.siglaFederativa_Mt ?? '-------'}</td>
@@ -712,7 +711,7 @@ function Vizualizar(){
                                     <tbody>
                                     <tr>
                                         <td style={{width:'90%', border:0}} >Endereço: {materialRede.endereco_Mt ?? '-------'}</td>
-                                        <td className="mapsTd" onClick={() => handleOpenMapDialog(materialRede.latitude_Mt,materialRede.longitude_Mt, materialRede.endereco_Mt, materialRede.codigo_Mt)}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
+                                        <td className="mapsTd" onClick={() => handleOpenMapDialog(materialRede.latitude_Mt,materialRede.longitude_Mt, materialRede.endereco_Mt,materialRede.codigo_Mt)}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -731,77 +730,77 @@ function Vizualizar(){
                             <td>Estado Controle: {materialRede.estadoControle_Mt ?? '-------'}</td>
                         </tr>
                         </>
-                        ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado</td></tr>)
+                        ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
                         }
                         <tr>
                             <th style={{backgroundColor: '#13293d'}} colSpan={2}>LIGAÇÕES</th>
                         </tr>
-                        {ligacao != undefined ? (
-                         <>
-                         <tr>
-                             <td>Cabo Primário: {ligacao[0].caboPrimario_ls ?? '-------'}</td>
-                             <td>Cabo Secundário: {ligacao[0].caboSecundario_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                             <td>Nome OLT: {ligacao[0].nomeOlt_ls ?? '-------'}</td>
-                             <td>Porta OLT: {ligacao[0].portaOlt_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                             <td>ICX: {ligacao[0].icX_ls ?? '-------'}</td>
-                             <td>BSP: {ligacao[0].bsP_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                             <td>DGO: {ligacao[0].dgO_ls ?? '-------'}</td>
-                             <td>Fibra DGO: {ligacao[0].fibraDgo_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                             <td>Cabo DGO: {ligacao[0].caboDgo_ls ?? '-------'}</td>
-                             <td>SplitterCEOS: {ligacao[0].splitterCEOS_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                             <td>CDO: {ligacao[0].cdO_ls ?? '-------'}</td>
-                             <td>Cabo CDO: {ligacao[0].caboCdo_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                             <td colSpan={2} style={{margin:0, padding:0}}>
-                                 <table>
-                                     <tbody>
-                                     <tr>
-                                     <td>Etiqueta Padrão: {ligacao[0].etiquetaPadrao_ls ?? '-------'}</td>
-                                     <td>Fora Do Padrão: {ligacao[0].foraPadrao_ls ?? '-------'}</td>
-                                     <td>Projeto: {ligacao[0].projeto_ls ?? '-------'}</td>
-                                     </tr>
-                                     </tbody>
-                                 </table>
-                             </td>
-                         </tr>
-                         <tr>
-                             <td>Etiqueta Campo: {ligacao[0].etiquetaCampo_ls ?? '-------'}</td>
-                             <td>Identificação Terceiro: {ligacao[0].identificacaoTerceiro_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                             <td>Etiqueta Terceiros: {ligacao[0].etiquetaTerceiro_ls ?? '-------'}</td>
-                             <td>Rede: {ligacao[0].rede_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                             <td>Destinação: {ligacao[0].destinacao_ls ?? '-------'}</td>
-                             <td>Estado Ciclo Vida: {ligacao[0].estadoCicloVida_ls ?? '-------'}</td>
-                         </tr>
-                         <tr>
-                           <td colSpan={2} style={{padding: '0'}}>
-                             <table className="tableEnderecoTotal">
-                               <thead>
-                                 <tr style={{backgroundColor:'#34495E'}}>
-                                   <th style={{width: '15%'}}>Fibra CDO</th>
-                                   <th style={{width: '45%'}}>Portas CDO</th>
-                                   <th style={{width: '15%'}}>Splitter CDO</th>
-                                   <th style={{width: '25%'}}>Out Splitter CEOS</th>
-                                 </tr>
-                               </thead>
-                               <tbody>
-                               {ligacao
+                        {ligacao !== undefined && ligacao !== null && ligacao?.length !== 0 && ligacao?.id_Ligacao !== 0 ? (
+                            <>
+                        <tr>
+                            <td>Cabo Primário: {ligacao[0]?.caboPrimario_ls ?? '-------'}</td>
+                            <td>Cabo Secundário: {ligacao[0]?.caboSecundario_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Nome OLT: {ligacao[0]?.nomeOlt_ls ?? '-------'}</td>
+                            <td>Porta OLT: {ligacao[0]?.portaOlt_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>ICX: {ligacao[0]?.icX_ls ?? '-------'}</td>
+                            <td>BSP: {ligacao[0]?.bsP_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>DGO: {ligacao[0]?.dgO_ls ?? '-------'}</td>
+                            <td>Fibra DGO: {ligacao[0]?.fibraDgo_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Cabo DGO: {ligacao[0]?.caboDgo_ls ?? '-------'}</td>
+                            <td>SplitterCEOS: {ligacao[0]?.splitterCEOS_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>CDO: {ligacao[0]?.cdO_ls ?? '-------'}</td>
+                            <td>Cabo CDO: {ligacao[0]?.caboCdo_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td colSpan={2} style={{margin:0, padding:0}}>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                    <td>Etiqueta Padrão: {ligacao[0]?.etiquetaPadrao_ls ?? '-------'}</td>
+                                    <td>Fora Do Padrão: {ligacao[0]?.foraPadrao_ls ?? '-------'}</td>
+                                    <td>Projeto: {ligacao[0]?.projeto_ls ?? '-------'}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Etiqueta Campo: {ligacao[0]?.etiquetaCampo_ls ?? '-------'}</td>
+                            <td>Identificação Terceiro: {ligacao[0]?.identificacaoTerceiro_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Etiqueta Terceiros: {ligacao[0]?.etiquetaTerceiro_ls ?? '-------'}</td>
+                            <td>Rede: {ligacao[0]?.rede_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                            <td>Destinação: {ligacao[0]?.destinacao_ls ?? '-------'}</td>
+                            <td>Estado Ciclo Vida: {ligacao[0]?.estadoCicloVida_ls ?? '-------'}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan={2} style={{padding: '0'}}>
+                            <table className="tableEnderecoTotal">
+                              <thead>
+                                <tr style={{backgroundColor:'#34495E'}}>
+                                  <th style={{width: '15%'}}>Fibra CDO</th>
+                                  <th style={{width: '45%'}}>Portas CDO</th>
+                                  <th style={{width: '15%'}}>Splitter CDO</th>
+                                  <th style={{width: '25%'}}>Out Splitter CEOS</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {ligacao
                                     .map(valueLigacao => {
-                                        const numeros = valueLigacao.portaCdo_ls.split(' | ');
+                                        const numeros = valueLigacao?.portaCdo_ls.split(' | ');
 
                                         const numerosOrdenados = numeros.sort((a, b) => parseInt(a) - parseInt(b));
 
@@ -822,10 +821,10 @@ function Vizualizar(){
                                         </tr>
                                     ))
                                 }
-                                </tbody>
-                                </table>
-                                </td>
-                                </tr>
+                        </tbody>
+                        </table>
+                        </td>
+                        </tr>
                         </>
                         ) : (<tr><td colSpan={2} style={{fontSize:'0.7rem'}}>Nenhum resultado.</td></tr>)
                         }
@@ -852,7 +851,7 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                                {enderecoTotal !== undefined ? (
+                                {enderecoTotal !== undefined && enderecoTotal !== null && enderecoTotal?.length !== 0 && Object.keys(enderecoTotal).length !== 0 && enderecoTotal?.id_EnderecoTotal !== 0 ? (
                                     [
                                     ...enderecoTotal
                                         .filter((value) => value.cod_Survey === survey)
@@ -879,8 +878,10 @@ function Vizualizar(){
                                             <td style={{width: '20%'}}>{valueEndereco.tipoViabilidade ?? '--'}</td>
                                             <td style={{width: '10%'}}>{valueEndereco.disp_Comercial ?? '--'}</td>
                                             <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => {
+                                                if(valueEndereco.cod_Survey !== "-" && valueEndereco.cod_Survey !== null){
                                                 e.stopPropagation();
                                                 handleOpenMapDialog(valueEndereco.latitude,valueEndereco.longitude, `${valueEndereco.logradouro}, ${valueEndereco.numeroFachada}, ${valueEndereco.bairro}, ${valueEndereco.municipio}, ${valueEndereco.uf} ${valueEndereco.cep}`, valueEndereco.nomeCdo);
+                                                }
                                             
                                             }}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                         </tr>
@@ -916,6 +917,7 @@ function Vizualizar(){
                                         .filter((value) => value.cod_Survey !== survey)
                                         .map((valueEndereco, index) => (
                                         <>
+                                        {console.log(valueEndereco.cod_Survey)}
                                         <tr><td colSpan={9} style={{border:'1px solid #34495e', borderBottom:'3px solid #34495e'}}>
                                         <tr
                                             style={valueEndereco.statusGanho == 'COM GANHO' ?
@@ -924,7 +926,7 @@ function Vizualizar(){
                                                 { backgroundColor: '#FADBD8'} : null}
                                             key={index + 1}
                                             id={valueEndereco.cod_Survey}
-                                            onClick={handleTesteOpticoDetalhe}
+                                            onClick={valueEndereco.cod_Survey === "-" || valueEndereco.cod_Survey === null ? null : handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
                                             <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
@@ -935,9 +937,11 @@ function Vizualizar(){
                                             <td style={{width: '5%'}}>{valueEndereco.cod_Viabilidade ?? '--'}</td>
                                             <td style={{width: '20%'}}>{valueEndereco.tipoViabilidade ?? '--'}</td>
                                             <td style={{width: '10%'}}>{valueEndereco.disp_Comercial ?? '--'}</td>
-                                            <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => {
+                                            <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => { 
+                                                if(valueEndereco.cod_Survey !== "-" && valueEndereco.cod_Survey !== null){
                                                 e.stopPropagation();
                                                 handleOpenMapDialog(valueEndereco.latitude,valueEndereco.longitude, `${valueEndereco.logradouro}, ${valueEndereco.numeroFachada}, ${valueEndereco.bairro}, ${valueEndereco.municipio}, ${valueEndereco.uf} ${valueEndereco.cep}`, valueEndereco.nomeCdo);
+                                                }
                                             
                                             }}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                         </tr>
@@ -972,7 +976,7 @@ function Vizualizar(){
                                     ]
                                 ) : (
                                     <tr>
-                                    <td colSpan={8} style={{ fontSize: '0.7rem', cursor: 'default', minWidth: '700px', backgroundColor: '#ffffff' }}>
+                                    <td colSpan={9} style={{ fontSize: '0.7rem', cursor: 'default', minWidth: '600px', backgroundColor: '#ffffff', margin: 0, padding: 0 }}>
                                         Nenhum resultado.
                                     </td>
                                     </tr>
@@ -998,10 +1002,12 @@ function Vizualizar(){
                         </tr>
                     </tbody>
             </TableGrid>
+             <FooterButton style={{width: '700px'}}>
+             <div>
+             </div>
+         </FooterButton>
+         </>
             ):(<Spinner />)}
-             </>
-             ):(!loadingMaterial ? <Spinner /> : <p style={{textAlign: 'center', marginTop: '1rem'}}>Nenhum resultado.</p>)
-             }
             </Tab>
             </Tabs>
             </ContentTabs>
@@ -1218,7 +1224,7 @@ function Vizualizar(){
                     </tr>
                 </thead>
                 <tbody>
-                    {materialRede !== null ? (
+                    {materialRede !== null && materialRede !== undefined && materialRede?.length !== 0 && materialRede?.id_MaterialRede !== 0 ? (
                         <>
                         <tr>
                             <td>{materialRede.siglaFederativa_Mt ?? '-------'}</td>
@@ -1277,7 +1283,7 @@ function Vizualizar(){
                         <tr>
                             <th style={{backgroundColor: '#13293d'}} colSpan={2}>LIGAÇÕES</th>
                         </tr>
-                        {ligacao != undefined ? (
+                        {ligacao !== null && ligacao !== undefined && ligacao?.length !== 0 && ligacao?.id_Ligacao !== 0 ? (
                             <>
                         <tr>
                             <td>Cabo Primário: {ligacao[0].caboPrimario_ls ?? '-------'}</td>
@@ -1393,7 +1399,7 @@ function Vizualizar(){
                                 </tr>
                               </thead>
                               <tbody>
-                                {enderecoTotal !== undefined ? (
+                                {enderecoTotal !== undefined && enderecoTotal !== null && enderecoTotal?.length !== 0 && enderecoTotal?.id_EnderecoTotal !== 0 ? (
                                     [
                                     ...enderecoTotal
                                         .filter((value) => value.cod_Survey === survey)
@@ -1408,7 +1414,7 @@ function Vizualizar(){
                                             }
                                             key={index}
                                             id={valueEndereco.cod_Survey}
-                                            onClick={handleTesteOpticoDetalhe}
+                                            onClick={valueEndereco.cod_Survey === "-" ? null : handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
                                             <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
@@ -1420,8 +1426,10 @@ function Vizualizar(){
                                             <td style={{width: '20%'}}>{valueEndereco.tipoViabilidade ?? '--'}</td>
                                             <td style={{width: '10%'}}>{valueEndereco.disp_Comercial ?? '--'}</td>
                                             <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => {
+                                                if(valueEndereco.cod_Survey !== "-" && valueEndereco.cod_Survey !== null){
                                                 e.stopPropagation();
                                                 handleOpenMapDialog(valueEndereco.latitude,valueEndereco.longitude, `${valueEndereco.logradouro}, ${valueEndereco.numeroFachada}, ${valueEndereco.bairro}, ${valueEndereco.municipio}, ${valueEndereco.uf} ${valueEndereco.cep}`, valueEndereco.nomeCdo);
+                                                }
                                             
                                             }}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                         </tr>
@@ -1477,8 +1485,10 @@ function Vizualizar(){
                                             <td style={{width: '20%'}}>{valueEndereco.tipoViabilidade ?? '--'}</td>
                                             <td style={{width: '10%'}}>{valueEndereco.disp_Comercial ?? '--'}</td>
                                             <td style={{width: '5%'}} className="mapsTdEnd" onClick={(e) => {
+                                                if(valueEndereco.cod_Survey !== "-" && valueEndereco.cod_Survey !== null){
                                                 e.stopPropagation();
                                                 handleOpenMapDialog(valueEndereco.latitude,valueEndereco.longitude, `${valueEndereco.logradouro}, ${valueEndereco.numeroFachada}, ${valueEndereco.bairro}, ${valueEndereco.municipio}, ${valueEndereco.uf} ${valueEndereco.cep}`, valueEndereco.nomeCdo);
+                                                }
                                             
                                             }}><FaLocationDot style={{fontSize:"1.7em", color:"red", fill:"red"}} /></td>
                                         </tr>

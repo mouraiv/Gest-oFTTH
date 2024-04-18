@@ -331,7 +331,7 @@ function TesteOptico() {
               </div>
               ) : (
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao != '' ? dropSiglaEstacao.sort() : []} text={siglaEstacao} />
+                <DropBox width={"150px"} height={"25px"} valueDefaut={""} label={"Sigla Estação"} event={handleSiglaEstacao} lista={dropSiglaEstacao !== '' || dropSiglaEstacao[0] !== 'null' ? dropSiglaEstacao.sort() : [""]} text={siglaEstacao} />
                 </div>
               )}
                { siglaEstacao !== '' ? (
@@ -340,7 +340,7 @@ function TesteOptico() {
               </div>
                ):(
                 <div style={{marginLeft: '1rem', marginTop: '0.7rem'}}>
-                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao != '' ? dropEstacao.sort() : []} text={estacao}/>
+                <DropBox width={"300px"} height={"25px"} valueDefaut={""} label={"Estação"} event={handleEstacao} lista={dropEstacao !== '' && dropEstacao[0] !== 'null' ? dropEstacao.sort() : [""]} text={estacao}/>
               </div>
                )}
               </>

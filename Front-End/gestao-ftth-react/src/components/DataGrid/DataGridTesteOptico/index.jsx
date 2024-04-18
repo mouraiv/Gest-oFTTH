@@ -48,7 +48,7 @@ export default function DataGrid({
     <Container>
         <TableGridMenu>
           <div className="total">
-            <p>{formatarNumero(paginacao.total)} Registros {paginacao.totalUms > 0 ? `[Total Ums: ${formatarNumero(paginacao.totalUms)}]` : ""}</p>
+            <p>{formatarNumero(paginacao.total)} Registros</p>
           </div>
           <p>{_paginasCorrente == 0 ? 0 : formatarNumero(_pagina)}</p>
           <p>&nbsp;-&nbsp;</p>
@@ -70,23 +70,14 @@ export default function DataGrid({
                   <table id="tableContainer">
                   <tbody>
                   <tr>
-                  <td style={
-                    row.sel > 0 ? 
-                    {
-                      height: '20px',
-                      fontSize: '0.6rem',
-                      fontWeight: '800',
-                      color:'#FB241C',
-                      backgroundColor: '#F2D7D5'
-                    }:{
-                      height: '20px',
-                      fontSize: '0.6rem',
-                      fontWeight: '800',
-                      color:'#145A32',
-                      backgroundColor: '#D4EFDF'
-                    }
-                  } colSpan={columns.length + 1}>
-                    {row.sel > 0 ? "REPROVADO":"APROVADO"}
+                  <td colSpan={columns.length + 1} style={
+                    row.sel === 0 ? {
+                      backgroundColor: '#D4EFDF',
+                      color: '#145A32',
+                      border: '1px solid #145A32'
+                      
+                  }:{ backgroundColor:'#c9c9c9', border: '1px solid #13293d' }
+                  }>  {row.sel === 1  ? "VALIDAÇÃO PENDENTE" :  "VALIDADO" }
                   </td>
                 </tr>    
                 <tr>

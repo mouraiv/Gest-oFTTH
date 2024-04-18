@@ -33,7 +33,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 // Construa o caminho completo para o diretório no servidor
-                string caminhoDiretorio = Path.Combine(server, filter.UF?.ToUpper() ?? "", filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "", filter.CDOIA?.ToUpper() ?? "");
+                string caminhoDiretorio = Path.Combine(server, filter.UF?.ToUpper() ?? "", filter.Estacao?.ToUpper() == "NULL" ? "SN" : filter.Estacao?.ToUpper() ?? "", "TESTE_OPTICO", filter.CDO?.ToUpper() ?? "", filter.CDOIA?.ToUpper() ?? "");
 
                 // Verifique se o diretório existe e crie-o se não existir
                 if (!Directory.Exists(caminhoDiretorio) || !string.IsNullOrEmpty(filter.CDOIA))
@@ -50,7 +50,8 @@ namespace WebApiSwagger.Repository
                         var extensaoArquivo = Path.GetExtension(arquivo.FileName);
 
                         // Renomeia o arquivo para evitar colisões de nomes
-                        string nomeArquivo = $"{Guid.NewGuid()}{extensaoArquivo}";
+                        string nomeArquivo = !string.IsNullOrEmpty(filter.CDOIA) ? 
+                        $"{filter.CDOIA}_{DateTime.UtcNow.Ticks}{extensaoArquivo}" : $"{filter.CDO}_{DateTime.UtcNow.Ticks}{extensaoArquivo}";
 
                         // Construa o caminho completo para o arquivo no servidor
                         string caminhoArquivo = Path.Combine(caminhoDiretorio, nomeArquivo);
