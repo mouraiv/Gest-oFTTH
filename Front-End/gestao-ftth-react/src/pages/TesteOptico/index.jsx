@@ -313,7 +313,7 @@ function TesteOptico() {
           <InfoDataBase />
             {userPrivate !== 1 || userPrivate === 3 ?
             <SubMenu>
-              <ButtonImport onClick={handleImportar} >Controler CDOs</ButtonImport>
+              <ButtonImport onClick={handleImportar} >Controle CDOs</ButtonImport>
              </SubMenu>
              : null
             }

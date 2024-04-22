@@ -25,7 +25,7 @@ function ImportFile(){
 
     const inputRef = useRef(null);
     const { name } = event.target ?? "";
-    const { user } = UseAuth();
+    const { user, ValidarToken } = UseAuth();
     const userPrivate = user?.tipo ?? 1;
 
     const controller = new AbortController();
@@ -102,8 +102,27 @@ function ImportFile(){
         }
         setSubmitClicked(true)
       };
+
+      useEffect(() => {
+        if(user && Object.keys(user).length !== 0){
+        ValidarToken(user);
+        }
+          
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      },[user]);
      
-      useEffect(() => {    
+      useEffect(() => {
+        const handleVisibilityChange = () => {
+          if (!document.hidden) {
+            // A aba do navegador está visível, então fazemos a chamada para fetchTesteOptico
+            fetchTesteOptico();
+            setLoading(false);
+            setSubmitClicked(false);
+          }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
         if (initialLoad) {
           // Realiza a pesquisa inicial apenas uma vez ao carregar a página
           fetchTesteOptico();
@@ -120,6 +139,10 @@ function ImportFile(){
             controller.abort(); 
           };
         }
+
+        return () => { 
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
         
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [fetchTesteOptico]);
@@ -243,7 +266,7 @@ function ImportFile(){
             <SubMenu>
               <ButtonImagem onClick={fetchLoading} >Atualizar</ButtonImagem>
             </SubMenu>
-            <RotuloTitulo><p>-- Controle de CDOs --</p></RotuloTitulo>
+            <RotuloTitulo><p>Controle de CDOs</p></RotuloTitulo>
             { testeOptico.resultado !== undefined ? (
               loading ? (  
             <DataGridTable 

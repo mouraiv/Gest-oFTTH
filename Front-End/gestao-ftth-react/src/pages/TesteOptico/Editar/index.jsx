@@ -29,7 +29,7 @@ function Editar() {
     const [dateInputConstrucao, setDateInputConstrucao] = useState('');
     const [submitClicked, setSubmitClicked] = useState(false);
 
-    const { user } = UseAuth();
+    const { user, ValidarToken } = UseAuth();
     const userPrivate = user?.tipo ?? 1;
 
 
@@ -126,8 +126,17 @@ function Editar() {
     }, [submitClicked]);
 
     useEffect(() => {
+        if(user && Object.keys(user).length !== 0){
+        ValidarToken(user);
+        }
+          
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[user])
+
+    useEffect(() => {
         FetchDropFilter();
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     useEffect(() => {

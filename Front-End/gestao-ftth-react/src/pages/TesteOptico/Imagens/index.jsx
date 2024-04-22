@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import { useParams } from 'react-router-dom';
 import { Content, GlobalStyle, RotuloTitulo, Template, ImputError, MsgError, MsgSucess } from '../../../GlobalStyle';
 import { GetVisualizarArquivo, DeleteImagem, FazerUploadDeArquivo } from "../../../api/base";
-import { ImportArea, NavArea, ButtonImport, InputImport, ButtonUpload, ImagemArea, ButtonDWG} from "./style";
+import { ImportArea, NavArea, ButtonImport, InputImport, ButtonUpload, ImagemArea, ButtonDWG, SubMenu, ButtonImagem, LinhaVertical} from "./style";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import Spinner from '../../../components/Spinner';
@@ -187,6 +187,10 @@ function Imagem(){
         }
       };
 
+      const fetchLoading = () => {
+        setLoading(false);
+      }
+
     GlobalStyle();
     return(
         <>
@@ -195,7 +199,10 @@ function Imagem(){
         <Content>
                 <DialogAlert 
                   visibleDiag={visibleImport} 
-                  visibleHide={() => setVisibleImport(false)}
+                  visibleHide={() => {
+                    setVisibleImport(false);
+                    setLoading(false);
+                  }}
                   header={<h4>Importação de Imagens</h4>}
                   colorType={'#13293d'}
                   ConfirmaButton={false}
@@ -265,8 +272,12 @@ function Imagem(){
                 <ButtonImport onClick={handleImportar} >Importar</ButtonImport>
                 :null
             }
+            <LinhaVertical />
+            <ButtonImagem onClick={fetchLoading} >Atualizar</ButtonImagem>
             </NavArea>
-            <RotuloTitulo><p>{`${uf ?? ""} - ${sigla ?? ""} - ${cdo ?? ""}`}</p></RotuloTitulo>
+            <SubMenu>            
+            </SubMenu>
+            <RotuloTitulo><p>{`${uf ?? ""} - ${sigla === 'undefined' ? "" : sigla} - ${cdo ?? ""}`}</p></RotuloTitulo>
             <ImagemArea>
               {loading ? (
                 testeOptico[0] !== undefined ? (

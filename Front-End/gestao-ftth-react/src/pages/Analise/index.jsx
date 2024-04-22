@@ -510,8 +510,9 @@ function Vizualizar(){
     }
     const ConfirmarAnaliseCdoia = () => {
       const dataAtual = new Date(_dataAtual).toLocaleDateString();
+      const _cdoiaObj = analiseCDOIAs?.filter(p => p.cdoia === inputCdoia);
       
-      if(cdoiaDay() === true && inputCdoia){
+      if(cdoiaDay() === true && _cdoiaObj[0]?.cdoia === inputCdoia){
         setMensagem(`${cdo}.${inputCdoia} já possui registro com a data ${dataAtual}.`)
         setInputCdoia("1")
 

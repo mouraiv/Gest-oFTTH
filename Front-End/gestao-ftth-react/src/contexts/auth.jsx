@@ -39,6 +39,10 @@ export const AuthProvider = ({ children }) => {
       Api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
       setUser(storagedUser);
 
+      /*setInterval(() => {
+        console.log("1")
+      }, 1000);*/
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     
@@ -100,7 +104,8 @@ export const AuthProvider = ({ children }) => {
         if(refreshToken !== usuario.statusLogin?.token){
           sessionStorage.setItem('@App:msg', "Voçê foi desconectado por outro usuário!");
           sessionStorage.removeItem('@App:token');
-
+          // Redirecionar para a tela de login
+          redirecionarParaLogin();
         }
 
       }
@@ -109,6 +114,10 @@ export const AuthProvider = ({ children }) => {
         console.error('Erro de conexão: ' + error)
       }
 
+    }
+
+    const redirecionarParaLogin = () => {
+      window.location.href = '/';
     }
   
     // Função para verificar se o token está expirado

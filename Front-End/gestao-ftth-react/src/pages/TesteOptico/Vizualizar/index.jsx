@@ -46,7 +46,7 @@ function Vizualizar(){
     const [analseDelete, setAnaliseDelete] = useState();
 
     const navigate = useNavigate();
-    const { user } = UseAuth();
+    const { user, ValidarToken } = UseAuth();
     const userPrivate = user?.tipo ?? 1;
 
     const { analises } = testeOptico;
@@ -186,8 +186,16 @@ function Vizualizar(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [submitClicked]);
 
-    useEffect(() => {    
-          fecthDetalheTesteOptico();
+    useEffect(() => {
+        if(user && Object.keys(user).length !== 0){
+        ValidarToken(user);
+        }
+          
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[user])
+
+    useEffect(() => {
+        fecthDetalheTesteOptico();
           
         if (initialLoad) {
           fecthDetalheMaterialRede();
@@ -562,7 +570,7 @@ function Vizualizar(){
             <TableGrid>
                 <thead>
                     <tr>
-                        <th colSpan={3}>TESTE ÓPTICO - {testeOptico.chave}</th>
+                        <th colSpan={3}>TESTE ÓPTICO</th>
                     </tr>
                     { status &&
                     <>

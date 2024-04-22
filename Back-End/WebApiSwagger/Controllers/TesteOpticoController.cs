@@ -220,7 +220,7 @@ namespace WebApiSwagger.Controllers
                     UF = testeOptico.UF,
                     Construtora = testeOptico.Construtora,
                     SiglaEstacao = testeOptico.SiglaEstacao,
-                    Estacao = _materialRedeRepository.CarregarChave(testeOptico.CHAVE).Result.NomeAbastecedora_Mt,
+                    Estacao = testeOptico.Estacao,
                     TipoObra = testeOptico.TipoObra,
                     CDO = testeOptico.CDO,
                     Cabo = testeOptico.Cabo,

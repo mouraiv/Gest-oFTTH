@@ -6,7 +6,7 @@ const useSignalR = () => {
   const [connection, setConnection] = useState(null);
 
   const signalrRun = async () => {
-    const apiUrl = "http://192.168.4.10:8000";
+    const apiUrl = "http://localhost:5226";
 
     const newConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${apiUrl}/progressoHub`, { withCredentials: true })  // ajuste conforme necessário

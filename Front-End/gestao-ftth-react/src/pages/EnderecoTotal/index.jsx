@@ -577,15 +577,17 @@ function EnderecoTotal() {
     const lines = e.target.value.split(/\r?\n|,/); // Divide por novas linhas
     const surveys = lines.filter(line => line.trim() !== ''); // Remove linhas vazias
 
+    const cleanedSurveys = surveys.map(survey => survey.trim()).join(',');
+    
     setCountListSurvey(surveys.length);
-    setSurveyList(surveys.join(','));
+    setSurveyList(cleanedSurveys);
   };
 
   const handleConfirm = () => {
     if (checkedCheckbox === 'chave_cdoe') {
       //console.log("CDOE");
-      setChave(surveyList)
-
+      setChave(surveyList);
+     
     }else if(checkedCheckbox === 'chave_celula') {
       //console.log("CELULA");
       setChaveCelula(surveyList)
