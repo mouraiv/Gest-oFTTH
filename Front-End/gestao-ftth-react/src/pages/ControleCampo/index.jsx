@@ -4,19 +4,19 @@ import { Content, GlobalStyle, Template } from "../../GlobalStyle";
 import { DropTesteOptico, GetTesteOptico } from "../../api/testeOptico";
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
-import DataGridTable from '../../components/DataGrid/DataGridTesteOptico';
+import DataGridTable from '../../components/DataGrid/DataGridControleCampo';
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import TextInput from '../../components/TextInput';
 import { DateMask } from "../../components/TextInput/mask/index";
 import DropBox from '../../components/dropbox';
-import { Filter, ButtonImport, SubMenu } from './styles';
+import { Filter, ButtonImport, SubMenu } from '../TesteOptico/styles';
 import InfoDataBase from '../../components/DbInfo';
 import ProgressComponent from '../../components/progress/ProgressComponent';
 import { UseAuth } from "../../contexts/auth";
 
 
-function TesteOptico() {
+function ControleCampo() {
   GlobalStyle();
 
   /* estado lista teste óptico grid */
@@ -201,18 +201,30 @@ function TesteOptico() {
   }, [fetchTesteOptico]);
 
   const columns = [
+    { key: 'chave', name: 'CHAVE', width: '5%'},
     { key: 'uf', name: 'UF', width: '2%'},
-    { key: 'construtora', name: 'CONSTRUTORA', width: '10%'},
     { key: 'siglaEstacao', name: 'SIGLA', width: '5%' },
-    { key: 'estacao', name: 'ESTACÃO', width: '10%'},
-    { key: 'dataRecebimento', name: 'DATA RECEBIMENTO',  width: '10%' },
-    { key: 'dataConstrucao', name: 'DATA CONSTRUÇÃO',  width: '10%' },
-    { key: 'dataTeste', name: 'DATA TESTE', width: '10%' },
-    { key: 'cdo', name: 'CDO',  width: '10%' },
-    { key: 'cabo', name: 'CABO',  width: '5%' },
-    { key: 'celula', name: 'CELULA', width: '5%' },
-    { key: 'totalUMs', name: 'UMS',  width: '5%' },
-    { key: 'tecnico', name: 'TECNICO',  width: '12%' },
+    { key: 'tipoObra', name: 'TIPO OBRA', width: '5%'},
+    { key: 'cabo', name: 'CABO',  width: '2%' },
+    { key: 'celula', name: 'CELULA', width: '2%' },
+    { key: 'cdo', name: 'CDO',  width: '5%' },
+    { key: 'capacidade', name: 'CAPACIDADE',  width: '2%' },
+    { key: 'totalUMs', name: 'UMS',  width: '2%' },
+    { key: 'construtora', name: 'CONSTRUTORA', width: '5%'},
+    { key: 'estadoProjeto', name: 'Estado Projeto', width: '8%'},
+    { key: 'estadoControle', name: 'Estado Controle', width: '8%'},
+    { key: 'aceitacaoData', name: 'Aceitação (Data)', width: '5%'},
+    
+    { key: 'Viab. Base Acum.', name: '', width: '5%'},
+    { key: 'dataRecebimento', name: 'DATA RECEBIMENTO',  width: '5%' }, 
+
+    { key: 'dataAnalise', name: 'DATA',  width: '5%' },  
+    { key: 'status', name: 'STATUS',  width: '5%' },  
+    { key: 'analista', name: 'ANALISTA',  width: '5%' },  
+    { key: 'obs', name: 'OBS',  width: '5%' },  
+     
+
+    { key: 'tecnico', name: 'TECNICO',  width: '5%' },
   ];
 
   const handleUf = (event) => {
@@ -268,20 +280,6 @@ function TesteOptico() {
     setDateInputRecebimento(formattedDate);
   };
 
-  const handleDateTeste = (event) => {
-    const formattedDate = DateMask(event);
-    setDateInputTeste(formattedDate);
-  };
-
-  const handleDateConstrucao = (event) => {
-    const formattedDate = DateMask(event);
-    setDateInputConstrucao(formattedDate);
-  };
-
-  const handleImportar = () => {
-    navigate('/TesteOptico/Importar');
-  };
-
   const submit = () => {
     setSubmitClicked(true);
     setCurrentPage(1);
@@ -308,12 +306,11 @@ function TesteOptico() {
   return (
       <>
       <Template>
-        <Header title={"Teste Óptico"} />
+        <Header title={"Controle de Campo"} />
           <Content>
           <InfoDataBase />
             {userPrivate !== 1 || userPrivate === 3 ?
             <SubMenu>
-              <ButtonImport onClick={handleImportar} >Controle CDOs</ButtonImport>
              </SubMenu>
              : null
             }
@@ -369,18 +366,6 @@ function TesteOptico() {
                 text={dateInputRecebimento}
                 placeholder={"__/__/____"} 
               />
-              <TextInput 
-                label={"Data Construção"}
-                event={handleDateConstrucao} 
-                text={dateInputConstrucao}
-                placeholder={"__/__/____"} 
-              />          
-              <TextInput 
-                label={"Data Teste"}
-                event={handleDateTeste} 
-                text={dateInputTeste}
-                placeholder={"__/__/____"} 
-              />
               { loading ? (
                 <>
                 <ButtonSearch event={submit} />
@@ -413,4 +398,4 @@ function TesteOptico() {
     )
   }
   
-  export default TesteOptico;
+  export default ControleCampo;

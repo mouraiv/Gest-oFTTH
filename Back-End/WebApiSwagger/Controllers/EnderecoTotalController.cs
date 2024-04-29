@@ -24,6 +24,28 @@ namespace WebApiSwagger.Controllers
 
         }
 
+        [HttpGet("GraficoPrincipal")]
+        public async Task<IActionResult> GraficoPrincipal()
+        {
+            try
+            {
+
+                var resultado = await _enderecoTotalRepository.GraficoPrincipal();
+
+                if (resultado == null)
+                {
+                    return NotFound("Nenhum resultado."); 
+                }
+                
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
+            }
+           
+        }
+
         [HttpPost("Listar")]
         public async Task<IActionResult> Listar(FiltroEnderecoTotal filtro)
         {

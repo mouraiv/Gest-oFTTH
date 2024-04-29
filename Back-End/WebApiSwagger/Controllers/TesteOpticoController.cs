@@ -158,9 +158,9 @@ namespace WebApiSwagger.Controllers
                     // Salvar os dados no banco de dados
                     foreach (var optico in listaModelo)
                     {
-                        var unique = await _testeOpticoRepository.Unique(optico.UF ?? "", optico.Estacao ?? "", optico.CDO ?? "");
+                        var unique = await _testeOpticoRepository.Unique(optico.UF ?? "", optico.SiglaEstacao ?? "", optico.CDO ?? "");
                         
-                        if(unique.UF != optico.UF && unique.Estacao != optico.Estacao && unique.CDO != optico.CDO){    
+                        if(unique.UF != optico.UF && unique.SiglaEstacao != optico.SiglaEstacao && unique.CDO != optico.CDO){    
                             await _testeOpticoRepository.Inserir(optico);
                         }else{
                             await _testeOpticoRepository.Editar(unique.Id_TesteOptico, optico);
@@ -315,6 +315,95 @@ namespace WebApiSwagger.Controllers
                         getValidacao = optico.Validacoes,
                         
                         
+                    };
+                    resultado.Add(modelo);
+                };
+
+                _paginacao.TotalPaginas = (int)Math.Ceiling((double)_paginacao.Total / _paginacao.Tamanho);
+
+                if (resultado == null)
+                {
+                    return NotFound("Nenhum resultado."); 
+                }
+                
+                return Ok(
+                    new {
+                            Paginacao = _paginacao,
+                            Resultado = resultado
+                        });
+            }
+            catch (Exception ex)
+            {
+               return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
+            }
+            
+        }
+
+        [HttpGet("ControleCampo")]
+        public async Task<IActionResult> ControleCampo([FromQuery] FiltroTesteOptico filtro)
+        {
+            try
+            {
+                _paginacao.Pagina = filtro.Pagina ?? 1;
+                _paginacao.Tamanho = 100;
+                _paginacao.PaginasCorrentes = filtro.Pagina * 100 ?? 100;
+
+                var lista = await _testeOpticoRepository.ControleCampo(_progressoRepository,filtro, _paginacao);
+                var resultado = new List<object>();
+
+                foreach(var optico in lista){
+                    DateTime? dataRecebimento = optico.DataRecebimento;
+                    string dataRecebimentoBr = dataRecebimento != null ? dataRecebimento.Value.ToString("dd-MM-yyyy") : "";
+                    
+                    string _tipo = optico.Analises?.Count > 1 ? "RE-TESTE" : "TESTE";
+
+                    var portasOcupadas = optico.MaterialRede?.Ligacao.Reverse().FirstOrDefault()?.PortaCdo_ls;
+                    string ultimoNumeroPorta = "";
+
+                    if (!string.IsNullOrEmpty(portasOcupadas))
+                    {
+                        // Divide a string em uma lista de números
+                        var numerosPortas = portasOcupadas
+                            .Split('|').Select(n => int.Parse(n.Trim())) // converte para int
+                                       .OrderBy(n => n) // ordena em ordem ascendente
+                                       .ToList();
+                     
+                        // Extrai o último número da lista
+                        ultimoNumeroPorta = numerosPortas.Last().ToString();
+
+                    }
+
+                    var modelo = new {
+                        CHAVE = optico.CHAVE,    
+                        UF = optico.UF,
+                        SiglaEstacao = optico.SiglaEstacao,
+                        TipoObra = optico.TipoObra,
+                        Cabo = optico.Cabo,
+                        Celula = optico.Celula,
+                        CDO = optico.CDO,
+                        Capacidade = optico.Capacidade,
+                        TotalUMs = optico.TotalUMs,
+                        Endereco = optico.MaterialRede?.Endereco_Mt,
+                        Construtora = optico.Construtora,
+                        EstadoProjeto = optico.EstadoProjeto,
+                        EstadoControle = optico.EstadoControle,
+                        AceitacaoData = optico.AceitacaoData,
+                        BaseAcumulada = optico.MaterialRede?.EnderecoTotal.FirstOrDefault()?.AnoMes,
+                        DataRecebimento = dataRecebimentoBr,
+                        DataAnalise = optico.Analises?.FirstOrDefault()?.DataAnalise,
+                        Tipo = _tipo,
+                        Status = optico.Analises?.FirstOrDefault()?.Status,
+                        Analista = optico.Analises?.FirstOrDefault()?.Analista,
+                        ObsAnalise = optico.Analises?.FirstOrDefault()?.AnaliseObservacao,
+                        StatusNetwin = optico.MaterialRede?.EnderecoTotal.FirstOrDefault()?.TipoViabilidade,
+                        CodNetwin = optico.MaterialRede?.EnderecoTotal.FirstOrDefault()?.Cod_Viabilidade,
+                        PendenciaViab = "",
+                        EstadoOperacional = optico.MaterialRede?.EstadoOperacional_Mt,
+                        GrupoControle = optico.MaterialRede?.GrupoOperacional_Mt,
+                        EstadoControle_Mt = optico.MaterialRede?.EstadoControle_Mt,
+                        PosicaoDGO = optico.MaterialRede?.Ligacao.FirstOrDefault()?.DGO_ls,
+                        FibraDGO = optico.MaterialRede?.Ligacao.FirstOrDefault()?.FibraDgo_ls,
+                        PortasOcupadas = ultimoNumeroPorta
                     };
                     resultado.Add(modelo);
                 };

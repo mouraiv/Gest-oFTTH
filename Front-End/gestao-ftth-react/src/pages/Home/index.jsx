@@ -1,21 +1,67 @@
-import React, {useEffect} from "react";
+import React, {useState,useEffect} from "react";
 import { Container } from "./styles";
 import { UseAuth } from "../../contexts/auth";
 import { GlobalStyle, Template } from "../../GlobalStyle";
 import Header from "../../components/Header"
 import InfoDataBase from "../../components/DbInfo"
 import Footer from "../../components/Footer"
+import { GetGraficoPrincipal } from "../../api/enterecoTotais";
+import Spinner from '../../components/Spinner';
+import { BarChart } from "../../components/Grafico/Bar";
 
 function Home() {
+    const [loading, setLoading] = useState(false);
+    //const [graficoPrincipal, setGraficoPrincial] = useState({});
+
+    const [chartData, setChartData] = useState({});
+
     const { user, ValidarToken } = UseAuth();
+
+    const fetchGraficoPrincial = async () => {    
+      try {
+      
+            const response = await GetGraficoPrincipal();
+
+            if(response.status == 200) {
+              const resultado = response.data;
+        
+              setChartData({
+                labels: resultado.map((data) => data.uf), 
+                datasets: [
+                  {
+                    label: "Users Gained ",
+                    data: resultado.map((data) => data.quantidadeSurvey),
+                    backgroundColor: [
+                      "#2a71d0"
+                    ],
+                    borderColor: "black",
+                    borderWidth: 2
+                  }
+                ]
+              })
+            }
+            
+          } catch (error) {
+            setMensagem(`Erro ao carregar : ${error}`)
+            
+          } finally {
+            setLoading(true)       
+          }
+    }
 
     useEffect(() => {
       if(user && Object.keys(user).length !== 0){
-      ValidarToken(user);
+        ValidarToken(user);
       }
         
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[user])
+
+    useEffect(() => {
+      fetchGraficoPrincial();
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
 
     GlobalStyle();
 
@@ -25,20 +71,13 @@ function Home() {
           <Header title={"Início"} />
             <Container>
               <InfoDataBase />
+              { loading ? 
              <div className="avisoInicial">
-               <h5>Bem-vindo ao Sistema Gestão FTTH (Beta)!</h5>
-                <br />
-                <p>Caro(a) <b>{user.nome}</b>,</p>
-                <br />
-                <p>Gostaríamos de informar que o sistema está atualmente em fase beta, o que significa que estamos em constante evolução para oferecer a você a melhor experiência possível. Durante este período, você pode encontrar novos recursos sendo adicionados, melhorias sendo implementadas e ajustes sendo feitos para garantir o desempenho e a confiabilidade.
-
-                A sua opinião é valiosa! Encorajamos você a compartilhar feedback, relatar qualquer problema que encontrar e sugerir melhorias. Estamos aqui para ouvir e tornar este sistema ainda melhor.
-
-                Fique à vontade para explorar e utilizar todas as funcionalidades disponíveis. Agradecemos por sua paciência e compreensão enquanto trabalhamos para oferecer a você a melhor experiência possível.</p>
-                <br />
-                <p><b>Atenciosamente,</b></p>
-                <p><b>Equipe Gestão FTTH</b></p>
+              
+              <BarChart chartData={chartData} />
              </div>
+             : <Spinner />
+              }
               </Container>
             <Footer />
           </Template>

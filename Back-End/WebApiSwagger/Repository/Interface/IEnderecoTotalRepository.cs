@@ -14,5 +14,6 @@ namespace WebApiSwagger.Repository.Interface
         Task<IEnumerable<EnderecoTotal>> ListarGanho(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho);
         Task<IEnumerable<EnderecoTotalDropFilter>> ListaUnica();
         Task<IEnumerable<LocalidadeDropFilter>> ListaUnicaLocalidade(FiltroEnderecoTotal filtro);
+        Task<IEnumerable<GraficoPrincipalView>> GraficoPrincipal();
     }
 }

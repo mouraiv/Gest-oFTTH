@@ -148,19 +148,18 @@ function ImportFile(){
       }, [fetchTesteOptico]);
 
       const columns = [
-        { key: 'id', name: 'ID' },
-        { key: 'id_MaterialRede', name: 'NETWIN' },
-        { key: 'uf', name: 'UF' },
-        { key: 'construtora', name: 'CONSTRUTORA' },
-        { key: 'estacao', name: 'ESTACÃO' },
-        { key: 'dataRecebimento', name: 'DATA RECEBIMENTO' },
-        { key: 'dataConstrucao', name: 'DATA CONSTRUÇÃO' },
-        { key: 'dataTeste', name: 'DATA TESTE' },
-        { key: 'cdo', name: 'CDO' },
-        { key: 'cabo', name: 'CABO' },
-        { key: 'celula', name: 'CELULA' },
-        { key: 'totalUMs', name: 'UMS' },
-        { key: 'tecnico', name: 'TECNICO' },
+        { key: 'uf', name: 'UF', width: '2%'},
+        { key: 'construtora', name: 'CONSTRUTORA', width: '10%'},
+        { key: 'siglaEstacao', name: 'SIGLA', width: '5%' },
+        { key: 'estacao', name: 'ESTACÃO', width: '10%'},
+        { key: 'dataRecebimento', name: 'DATA RECEBIMENTO',  width: '10%' },
+        { key: 'dataConstrucao', name: 'DATA CONSTRUÇÃO',  width: '10%' },
+        { key: 'dataTeste', name: 'DATA TESTE', width: '10%' },
+        { key: 'cdo', name: 'CDO',  width: '10%' },
+        { key: 'cabo', name: 'CABO',  width: '5%' },
+        { key: 'celula', name: 'CELULA', width: '5%' },
+        { key: 'totalUMs', name: 'UMS',  width: '5%' },
+        { key: 'tecnico', name: 'TECNICO',  width: '12%' },
       ];
 
       const handleFileChange = (event) => {

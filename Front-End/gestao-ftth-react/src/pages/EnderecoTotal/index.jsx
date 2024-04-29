@@ -689,7 +689,7 @@ function EnderecoTotal() {
 return (
       <>
       <Template>
-        <Header title={"EnderecoTotal"} />
+        <Header title={"Endereços Totais"} />
           <Content>
           <InfoDataBase />
           <DialogAlert 

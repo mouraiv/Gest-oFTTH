@@ -42,6 +42,15 @@ const DropEnderecoTotal = async () => {
   return response;
 };
 
+const GetGraficoPrincipal = async () => {
+  const response = await Api.get(`/EnderecoTotal/GraficoPrincipal`, {
+    headers:{
+      'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
+    },
+  });
+  return response;
+};
+
 const DropLocalidade = async (filtro) => {
   const response = await Api.get(`/EnderecoTotal/ListaUnicaLocalidade`, {
     params: filtro,
@@ -112,6 +121,7 @@ const ExportExcel = async (filtro) => {
   };
 
 export {
+  GetGraficoPrincipal,
   DropEnderecoTotal,
   DropLocalidade,
   GetBaseAcumulada,

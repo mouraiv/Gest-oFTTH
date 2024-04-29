@@ -630,122 +630,6 @@ namespace WebApiSwagger.Repository
                 }
         }
 
-        /*public async Task<IEnumerable<EnderecoTotal>> ListarGanhoDia(FiltroEnderecoTotal filtro, Paginacao paginacao, PainelGanho painelGanho)
-        {
-            try
-            {
-                var query = _context.EnderecosTotais
-                .Where(p => p.QuantidadeUMS_ganhoDia != null)
-                .Include(p => p.MaterialRede)
-                    .Select(et => new EnderecoTotal {
-                        Id_EnderecoTotal = et.Id_EnderecoTotal,
-                        Id_MaterialRede = et.Id_MaterialRede,
-                        StatusGanhoDia = et.StatusGanhoDia,
-                        Id_StatusGanhoDia = et.Id_StatusGanhoDia,
-                        Disponibilidade = et.Disponibilidade,
-                        Id_Disponibilidade = et.Id_Disponibilidade,
-                        UF = et.UF,
-                        Localidade = et.Localidade,
-                        Municipio = et.Municipio,
-                        SiglaEstacao = et.SiglaEstacao,
-                        Celula = et.Celula,
-                        NomeCdo = et.NomeCdo,
-                        Cod_Survey = et.Cod_Survey,
-                        QuantidadeUMS = et.QuantidadeUMS,
-                        QuantidadeUMS_old = et.QuantidadeUMS_old,
-                        QuantidadeUMS_ganhoDia = et.QuantidadeUMS_ganhoDia,
-                        Cod_Viabilidade = et.Cod_Viabilidade,
-                        TipoViabilidade = et.TipoViabilidade,
-                        MaterialRede = et.MaterialRede
-                    })
-                    .AsQueryable();
-
-                    if (filtro.Id_StatusGanhoDia != null)
-                    {
-                        query = query.Where(p => p.Id_StatusGanhoDia == filtro.Id_StatusGanhoDia);
-                    }
-
-                    if (filtro.Id_Disponibilidade != null)
-                    {
-                        query = query.Where(p => p.Id_Disponibilidade == filtro.Id_Disponibilidade);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.UF))
-                    {
-                        query = query.Where(p => p.UF == filtro.UF);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.SiglaEstacao))
-                    {
-                        query = query.Where(p => p.SiglaEstacao == filtro.SiglaEstacao);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.Estacao))
-                    {
-                        query = query.Where(p => p.MaterialRede.NomeAbastecedora_Mt == filtro.Estacao);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.Localidade))
-                    {
-                        query = query.Where(p => p.Localidade == filtro.Localidade);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.CodSurvey))
-                    {
-                        query = query.Where(p => p.Cod_Survey == filtro.CodSurvey);
-                    }
-
-                    paginacao.Total = query.Count();
-
-                    if(filtro != null && typeof(FiltroEnderecoTotal).GetProperties().Where(prop => prop.Name != "Pagina").Any(prop => prop.GetValue(filtro) != null)) {    
-                        var _query = await query.ToListAsync();
-
-                        painelGanho.ComGanhoTotal = _query.Where(p => p.Id_StatusGanhoDia == 1).Sum(p => p.QuantidadeUMS_ganhoDia) ?? 0;
-                        painelGanho.ComGanhoAtivo = _query.Where(p => p.Id_StatusGanhoDia == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS_ganhoDia) ?? 0;
-                        painelGanho.ComGanhoInativo =  _query.Where(p => p.Id_StatusGanhoDia == 1 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS_ganhoDia) ?? 0;
-                        painelGanho.ComGanhoForaCelula = _query.Where(p => p.Id_StatusGanhoDia == 1 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS_ganhoDia) ?? 0;
-
-                        painelGanho.SemGanhoTotal = _query.Where(p => p.Id_StatusGanhoDia == 2).Sum(p => p.QuantidadeUMS_ganhoDia) ?? 0;
-                        painelGanho.SemGanhoAtivo = _query.Where(p => p.Id_StatusGanhoDia == 2 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS_ganhoDia) ?? 0;
-                        painelGanho.SemGanhoInativo = _query.Where(p => p.Id_StatusGanhoDia == 2 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS_ganhoDia) ?? 0;
-                        painelGanho.SemGanhoForaCelula = _query.Where(p => p.Id_StatusGanhoDia == 2 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS_ganhoDia) ?? 0;
-
-                        _query = _query
-                        .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
-                        .Take(paginacao.Tamanho).ToList();
-
-                        return _query;       
-
-                    } else {
-                        var soma = _context.ViewStatusGanhosDias.ToList();
-
-                        painelGanho.ComGanhoTotal = soma.FirstOrDefault(r => r.Id_StatusGanhoDia == 1 && r.Id_Disponibilidade == 0)?.TotalPorStatus ?? 0;
-                        painelGanho.ComGanhoAtivo = soma.FirstOrDefault(p => p.Id_StatusGanhoDia == 1 && p.Id_Disponibilidade == 1)?.TotalPorStatus ?? 0;
-                        painelGanho.ComGanhoInativo =  soma.FirstOrDefault(p => p.Id_StatusGanhoDia == 1 && p.Id_Disponibilidade == 2)?.TotalPorStatus ?? 0;
-                        painelGanho.ComGanhoForaCelula = soma.FirstOrDefault(p => p.Id_StatusGanhoDia == 1 && p.Id_Disponibilidade == 3)?.TotalPorStatus ?? 0;
-
-                        painelGanho.SemGanhoTotal = soma.FirstOrDefault(p => p.Id_StatusGanhoDia == 2 && p.Id_Disponibilidade == 0)?.TotalPorStatus ?? 0;
-                        painelGanho.SemGanhoAtivo = soma.FirstOrDefault(p => p.Id_StatusGanhoDia == 2 && p.Id_Disponibilidade == 1)?.TotalPorStatus ?? 0;
-                        painelGanho.SemGanhoInativo = soma.FirstOrDefault(p => p.Id_StatusGanhoDia == 2 && p.Id_Disponibilidade == 2)?.TotalPorStatus ?? 0;
-                        painelGanho.SemGanhoForaCelula = soma.FirstOrDefault(p => p.Id_StatusGanhoDia == 2 && p.Id_Disponibilidade == 3)?.TotalPorStatus ?? 0;
-
-                        paginacao.Total = query.Count();
-
-                        query = query
-                            .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
-                            .Take(paginacao.Tamanho);
-
-                        return await  query.ToListAsync(); 
-
-                    }
-                              
-                }
-                catch (Exception ex)
-                {  
-                    throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
-                }
-        }*/
-
         public async Task<IEnumerable<EnderecoTotalDropFilter>> ListaUnica()
         {
             try
@@ -818,6 +702,33 @@ namespace WebApiSwagger.Repository
                 return await query.ToListAsync();
             }
             catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<GraficoPrincipalView>> GraficoPrincipal()
+        {
+              try
+            {
+                var resultado = await _context.EnderecosTotais
+                .Include(p => p.MaterialRede)
+                .Where(p =>
+                    p.Cod_Viabilidade != "0" && p.Cod_Viabilidade != "2" && p.Cod_Viabilidade != "4" && p.Cod_Viabilidade != "14" && p.Id_StatusGanho == 1 &&
+                    string.IsNullOrEmpty(p.MaterialRede.EstadoControle_Mt)
+                )
+                .GroupBy(p => p.UF)
+                .Select(p => new GraficoPrincipalView{
+                    UF = p.Key,
+                    QuantidadeSurvey = p.Sum(e => e.QuantidadeUMS ?? 0)
+                })
+                .OrderBy(p => p.UF)
+                .ToListAsync();
+
+                return resultado;
+
+            }
+             catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
             }

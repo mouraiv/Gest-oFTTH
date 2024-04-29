@@ -113,6 +113,88 @@ namespace WebApiSwagger.Repository
                 throw new Exception("Ocorreu um erro ao deletar: " + ex.Message);
             }
         }
+        public async Task<IEnumerable<TesteOptico>> ControleCampo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao)
+        {
+            try
+            {
+                progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
+                await Task.Delay(500);
+
+                var query = _context.TestesOpticos
+                    .Where(p => p.Sel == 0)
+                    .Include(p => p.Validacoes)
+                    .Include(p => p.Analises)
+                    .Include(p => p.MaterialRede)
+                    .ThenInclude(p => p.EnderecoTotal)
+                    .Include(p => p.MaterialRede)
+                    .ThenInclude(p => p.Ligacao)
+                    .AsQueryable();
+
+                progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
+                await Task.Delay(500);    
+
+                if (!string.IsNullOrEmpty(filtro.UF))
+                {
+                    query = query.Where(p => p.UF == filtro.UF);
+                }
+
+                if (!string.IsNullOrEmpty(filtro.Celula))
+                {
+                    query = query.Where(p => p.Celula == filtro.Celula);
+                }
+
+                if (!string.IsNullOrEmpty(filtro.Cabo))
+                {
+                    query = query.Where(p => p.Cabo == filtro.Cabo);
+                }
+
+                if (!string.IsNullOrEmpty(filtro.Estacao))
+                {
+                    query = query.Where(p => p.Estacao == filtro.Estacao);
+                }
+
+                if (!string.IsNullOrEmpty(filtro.SiglaEstacao))
+                {
+                    query = query.Where(p => p.SiglaEstacao == filtro.SiglaEstacao);
+                }
+
+                if (!string.IsNullOrEmpty(filtro.CDO))
+                {
+                    query = query.Where(p => p.CDO == filtro.CDO);
+                }
+
+                progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
+                await Task.Delay(500);
+
+                if (!string.IsNullOrEmpty(filtro.DataRecebimento) && filtro.DataRecebimento.Length == 10)
+                {
+                    query = query.Where(p => p.DataRecebimento == DateTime.Parse(filtro.DataRecebimento));
+                }
+
+                // Aplica a ordenação
+                query = query.OrderBy(p => p.Estacao).ThenBy(p => p.Celula).ThenBy(p => p.CDO);
+
+                paginacao.Total = await query.CountAsync();
+            
+                query = query
+                    .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
+                    .Take(paginacao.Tamanho);
+
+                progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);    
+
+                return await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao Listar: " + ex.Message);
+            }
+            finally
+            {
+                progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
+                await Task.Delay(1000);
+            }
+            
+        }
        
         public async Task<IEnumerable<TesteOptico>> Listar(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao)
         {

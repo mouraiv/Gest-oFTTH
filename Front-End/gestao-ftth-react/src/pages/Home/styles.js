@@ -9,9 +9,8 @@ export const Container = styled("div", {
 
     '.avisoInicial':{
         backgroundColor:'#FEF9E7',
-        padding: '1rem',
-        minWidth: '900px',
-        maxHeight: '375px',
+        padding: '4rem',
+        minWidth: '60%',
         border: '1px solid #F7DC6F',
         fontWeight: '500'
     }

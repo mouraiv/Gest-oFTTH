@@ -365,7 +365,7 @@ function Vizualizar(){
     };
 
     const handleImagens = () => {
-        navigate(`/TesteOptico/Imagem/${uf}/${enderecoTotal?.[0]?.siglaEstacao}/${cdo}`); 
+        navigate(`/TesteOptico/Imagem/${uf}/${testeOptico?.siglaEstacao}/${cdo}`); 
     };
 
     const Observacao = () => {

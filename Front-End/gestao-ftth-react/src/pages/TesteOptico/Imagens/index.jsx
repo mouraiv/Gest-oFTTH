@@ -269,10 +269,12 @@ function Imagem(){
                 />
             <NavArea>
             {userPrivate !== 1 ||  userPrivate === 3 ? 
+                <>
                 <ButtonImport onClick={handleImportar} >Importar</ButtonImport>
+                <LinhaVertical />
+                </>
                 :null
             }
-            <LinhaVertical />
             <ButtonImagem onClick={fetchLoading} >Atualizar</ButtonImagem>
             </NavArea>
             <SubMenu>            
