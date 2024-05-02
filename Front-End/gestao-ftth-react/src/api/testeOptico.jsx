@@ -79,7 +79,32 @@ const ImportarArquivo = async (arquivo) => {
   return response;
 };
 
+const ExportExcel = async (filtro) => {
+
+  const response = await Api.post('/TesteOptico/DownloadExcel', filtro, {
+    responseType: 'arraybuffer', 
+    });
+
+    const dataAtual = new Date().toLocaleDateString().split('/').join('-'); // Formatar a data atual como dd-mm-yyyy
+    const nomeArquivo = `SGF_Controle_de_Campo_${dataAtual}.xlsx`;
+
+    // Criar um URL temporário para o Blob e criar um link para iniciar o download
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', nomeArquivo);
+    document.body.appendChild(link);
+    link.click();
+
+    // Limpar o URL temporário após o download
+    window.URL.revokeObjectURL(url);
+
+    return response;
+
+};
+
 export {
+  ExportExcel,
   GetControleCampo,
   GetControleCdo,
   GetTesteOptico,

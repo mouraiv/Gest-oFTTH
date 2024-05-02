@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { DropTesteOptico, GetControleCampo } from "../../api/testeOptico";
+import { DropTesteOptico, GetControleCampo, ExportExcel } from "../../api/testeOptico";
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid/DataGridControleCampo';
@@ -10,10 +10,11 @@ import Header from "../../components/Header";
 import TextInput from '../../components/TextInput';
 import { DateMask } from "../../components/TextInput/mask/index";
 import DropBox from '../../components/dropbox';
-import { Filter, ButtonImport, SubMenu } from '../TesteOptico/styles';
+import { Filter, SubMenu, ButtonExportarExcel, ButtonImport } from './style';
 import InfoDataBase from '../../components/DbInfo';
 import ProgressComponent from '../../components/progress/ProgressComponent';
 import { UseAuth } from "../../contexts/auth";
+import DialogAlert from "../../components/Dialog";
 
 
 function ControleCampo() {
@@ -49,13 +50,28 @@ function ControleCampo() {
   const [dateInputRecebimento, setDateInputRecebimento] = useState('');
   const [submitClicked, setSubmitClicked] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [carregarExport, setCarregarExport] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [mensagem, setMensagem] = useState("");
 
   const navigate = useNavigate();
 
   const controller = new AbortController();
   const signal = controller.signal;
   const { user, ValidarToken } = UseAuth();
-  const userPrivate = user?.tipo ?? 1;
+  const totalRegistros = testeOptico?.paginacao?.total;
+  const _dateInputRecebimento = dateInputRecebimento.replace(/\D/g, '-');
+
+  const filtro = {
+    pagina : currentPage,
+    UF : "AC",
+    Celula : celula,
+    Estacao : estacao,
+    SiglaEstacao : siglaEstacao,
+    CDO: cdoInput,
+    Cabo: cabo,
+    DataRecebimento : _dateInputRecebimento,
+  };
 
   async function FetchDropFilter () {
     
@@ -114,22 +130,9 @@ function ControleCampo() {
     }
   }
 
-  const fetchTesteOptico = useCallback(async () => {
+  const FetchTesteOptico = useCallback(async () => {
 
     try {
-      const _dateInputRecebimento = dateInputRecebimento.replace(/\D/g, '-');
-
-      const filtro = {
-        pagina : currentPage,
-        UF : uf,
-        Celula : celula,
-        Estacao : estacao,
-        SiglaEstacao : siglaEstacao,
-        CDO: cdoInput,
-        Cabo: cabo,
-        DataRecebimento : _dateInputRecebimento,
-      };
-
       const response = await GetControleCampo(filtro, {signal});
 
       if(response.status == 200) {
@@ -147,6 +150,32 @@ function ControleCampo() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitClicked]);
+
+  async function FetchExportExcel(){
+    try {
+      if(totalRegistros === null || totalRegistros === 0){
+        setCarregarExport(false)
+        setMensagem('Nenhum registro para exportação.');
+        
+      }else if(totalRegistros >= 1000000){
+        setCarregarExport(false)
+        setMensagem('O filtro não pode exceder 1.000.000 de registros para exportação.');
+       
+      }else{
+        await ExportExcel(filtro).finally(() => {
+          setVisible(false);
+          setCarregarExport(false);
+
+        });
+      }
+
+    } catch (error) {
+      setMensagem(`Erro ao carregar : ${error}`);
+      setVisible(true);
+      
+    } 
+
+  }
 
   // Função para avançar para a próxima página
   const nextPage = () => {
@@ -178,11 +207,11 @@ function ControleCampo() {
   useEffect(() => {    
     if (initialLoad) {
       // Realiza a pesquisa inicial apenas uma vez ao carregar a página
-      fetchTesteOptico();
+      FetchTesteOptico();
 
     } else if (submitClicked) {
       // Realiza pesquisas apenas quando o botão de pesquisa é clicado
-      fetchTesteOptico();
+      FetchTesteOptico();
       setLoading(false);
       setSubmitClicked(false);
 
@@ -192,7 +221,7 @@ function ControleCampo() {
     }
     
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchTesteOptico]);
+  }, [FetchTesteOptico]);
 
   const columns = [
     { key: 'chave', name: 'CHAVE', width: '5%'},
@@ -264,6 +293,12 @@ function ControleCampo() {
     const formattedDate = DateMask(event);
     setDateInputRecebimento(formattedDate);
   };
+  
+  const handleExportExcel = () => {
+    setVisible(true);
+    //setCarregarExport(true);
+    //FetchExportExcel();
+  }
 
   const submit = () => {
     setSubmitClicked(true);
@@ -292,11 +327,50 @@ function ControleCampo() {
         <Header title={"Controle de Campo"} />
           <Content>
           <InfoDataBase />
-            {userPrivate !== 1 || userPrivate === 3 ?
             <SubMenu>
              </SubMenu>
-             : null
-            }
+             <DialogAlert 
+                    visibleDiag={visible} 
+                    visibleHide={() => setVisible(false)}
+                    header={carregarExport ? null : <h4>Exportação</h4>}
+                    colorType={carregarExport ? null : '#13293d'}
+                    ConfirmaButton={false}
+                    CancelaButton={carregarExport ?? false}
+                    textCloseButton={'Fechar'}
+                    text={
+                        <>
+                        <div style={{display: 'flex', height:'30px'}}>
+                        <label style={{paddingRight: '0.5rem'}}>Região:</label>
+                        <select>
+                          <option selected="selected">-Selecione-</option>
+                          <option value="Norte">Norte</option>
+                          <option value="Nordeste">Nordeste</option>
+                          <option value="Centro-Oeste">Centro-Oeste</option>
+                          <option value="Sudeste">Sudeste</option>
+                          <option value="Sul">Sul</option>
+                        </select>
+
+                        <ButtonImport>Exportar</ButtonImport>
+                        </div>
+
+                        { carregarExport ? (
+                          <>
+                          <div>
+                            <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem'}}>
+                              <div style={{padding: '0.5rem'}}>
+                                <p>Exportando registros.</p>
+                                <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
+                            </div>
+                                <ProgressComponent />
+                            </div>
+                        </div>
+                          </>
+                        ):(
+                        <p>{mensagem}</p>
+                        )}
+                        </>
+                    }
+                />
             <Filter>
               <div>
               <div style={{display: 'flex'}}>
@@ -357,7 +431,14 @@ function ControleCampo() {
               ):(null)
               }
               </div>
-              </div>          
+              <div style={{position:'absolute', right:0, top:0, marginTop:'0.3rem', marginRight:'0.4rem'}}>
+              { loading ? (
+                <>
+                <ButtonExportarExcel onClick={handleExportExcel}>Exportar Excel</ButtonExportarExcel>
+                </>
+              ):(null)}
+              </div>         
+              </div> 
             </Filter>
             { testeOptico.resultado !== undefined ? (
               loading ? (  

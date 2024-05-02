@@ -347,7 +347,7 @@ namespace WebApiSwagger.Controllers
             {
                 // Caminho completo para o arquivo XLSX na pasta "Downloads"
                 string pastaDoProjeto = Directory.GetCurrentDirectory();
-                string _templatePath = Path.Combine(pastaDoProjeto,"Downloads","TB_EnderecoTotais.xlsx");
+                string _templatePath = Path.Combine(pastaDoProjeto,"Downloads","TB_Controle_de_Campo.xlsx");
 
                 var dados = await _testeOpticoRepository.ControleCampo(_progressoRepository, filtro, _paginacao, 0);
                 
@@ -370,11 +370,12 @@ namespace WebApiSwagger.Controllers
             
                 using (var package = new ExcelPackage(fileInfo))
                 {
-                    var workSheet = package.Workbook.Worksheets[0]; // Assumindo que você deseja usar a primeira planilha
+                    var workSheet = package.Workbook.Worksheets[0]; 
    
                     // Preencha a planilha com os dados
                     // A partir da linha 2 para não sobrescrever o cabeçalho
-                    int row = 7; 
+                    workSheet.Cells[4, 3].Value = "RIO DE JANEIRO";
+                    int row = 8; 
                     foreach (var item in dados)
                     {
                         DateTime? dataRecebimento = item.DataRecebimento;
@@ -430,22 +431,39 @@ namespace WebApiSwagger.Controllers
                         }
 
                         // Preencha as células conforme necessário
-                        /*workSheet.Cells[row, 1].Value = item.UF ?? "-"; // Exemplo
-                        workSheet.Cells[row, 2].Value = item.Localidade ?? "-"; // Exemplo
-                        workSheet.Cells[row, 3].Value = item.Celula ?? "-"; // Exemplo
-                        workSheet.Cells[row, 4].Value = item.SiglaEstacao ?? "-"; // Exemplo
-                        workSheet.Cells[row, 5].Value = item.MaterialRede?.NomeAbastecedora_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 6].Value = item.NomeCdo ?? "-"; // Exemplo
-                        workSheet.Cells[row, 7].Value = item.Cod_Viabilidade; // Exemplo
-                        workSheet.Cells[row, 8].Value = item.TipoViabilidade ?? "-"; // Exemplo
-                        workSheet.Cells[row, 9].Value = item.Cod_Survey ?? "-"; // Exemplo
-                        workSheet.Cells[row, 10].Value = item.QuantidadeUMS; // Exemplo
-                        workSheet.Cells[row, 11].Value = item.Disp_Comercial ?? "-"; // Exemplo
-                        workSheet.Cells[row, 12].Value = item.MaterialRede?.GrupoOperacional_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 13].Value = item.MaterialRede?.EstadoControle_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 14].Value = item.MaterialRede?.EstadoOperacional_Mt ?? "-"; // Exemplo
+                        workSheet.Cells[row, 1].Value = item.CHAVE ?? "-"; // Exemplo
+                        workSheet.Cells[row, 2].Value = item.UF ?? "-"; // Exemplo
+                        workSheet.Cells[row, 3].Value = item.SiglaEstacao ?? "-"; // Exemplo
+                        workSheet.Cells[row, 4].Value = item.TipoObra ?? "-"; // Exemplo
+                        workSheet.Cells[row, 5].Value = item.Cabo ?? "-"; // Exemplo
+                        workSheet.Cells[row, 6].Value = item.Celula ?? "-"; // Exemplo
+                        workSheet.Cells[row, 7].Value = item.CDO; // Exemplo
+                        workSheet.Cells[row, 8].Value = item.Capacidade ?? "-"; // Exemplo
+                        workSheet.Cells[row, 9].Value = item.TotalUMs; // Exemplo
+                        workSheet.Cells[row, 10].Value = item.Endereco; // Exemplo
+                        workSheet.Cells[row, 11].Value = item.Construtora ?? "-"; // Exemplo
+                        workSheet.Cells[row, 12].Value = item.EstadoProjeto ?? "-"; // Exemplo
+                        workSheet.Cells[row, 13].Value = item.EstadoControle ?? "-"; // Exemplo
+                        workSheet.Cells[row, 14].Value = "-"; // Exemplo
+                        workSheet.Cells[row, 15].Value = baseAcumuladaFormatada ?? "-"; // Exemplo
+                        workSheet.Cells[row, 16].Value = dataRecebimentoBr; // Exemplo
+                        workSheet.Cells[row, 17].Value = dataAnaliseBr; // Exemplo
+                        workSheet.Cells[row, 18].Value = _tipo; // Exemplo
+                        workSheet.Cells[row, 19].Value = item.Analises?.FirstOrDefault()?.Status ?? "-"; // Exemplo
+                        workSheet.Cells[row, 20].Value = item.Analises?.FirstOrDefault()?.Analista ?? "-"; // Exemplo
+                        workSheet.Cells[row, 21].Value = item.Analises?.FirstOrDefault()?.AnaliseObservacao; // Exemplo
+                        workSheet.Cells[row, 22].Value = item.MaterialRede?.EnderecoTotal.FirstOrDefault()?.TipoViabilidade ?? "-"; // Exemplo
+                        workSheet.Cells[row, 23].Value = item.MaterialRede?.EnderecoTotal.FirstOrDefault()?.Cod_Viabilidade ?? "-"; // Exemplo
+                        workSheet.Cells[row, 24].Value = "-"; // Exemplo
+                        workSheet.Cells[row, 25].Value = item.MaterialRede?.EstadoOperacional_Mt ?? "-"; // Exemplo
+                        workSheet.Cells[row, 26].Value = item.MaterialRede?.GrupoOperacional_Mt ?? "-"; // Exemplo
+                        workSheet.Cells[row, 27].Value = item.MaterialRede?.EstadoControle_Mt ?? "-"; // Exemplo
+                        workSheet.Cells[row, 28].Value = "-"; // Exemplo
+                        workSheet.Cells[row, 29].Value = item.MaterialRede?.Ligacao.FirstOrDefault()?.DGO_ls ?? "-"; // Exemplo
+                        workSheet.Cells[row, 30].Value = item.MaterialRede?.Ligacao.FirstOrDefault()?.FibraDgo_ls ?? "-"; // Exemplo
+                        workSheet.Cells[row, 31].Value = ultimoNumeroPorta ?? "-"; // Exemplo
                         
-                        row++;*/
+                        row++;
                     }
 
                     package.SaveAs(stream);
@@ -458,7 +476,7 @@ namespace WebApiSwagger.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message ="Ocorreu um erro ao exportar o arquivo Excel: " + ex.Message });
+                return BadRequest(new { message ="Ocorreu um erro ao exportar o arquivo Excel: " + ex.StackTrace });
             }
         }
 
