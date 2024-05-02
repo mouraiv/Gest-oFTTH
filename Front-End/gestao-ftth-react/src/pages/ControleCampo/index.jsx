@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Content, GlobalStyle, Template } from "../../GlobalStyle";
-import { DropTesteOptico, GetTesteOptico } from "../../api/testeOptico";
+import { DropTesteOptico, GetControleCampo } from "../../api/testeOptico";
 import ButtonDefaut from '../../components/Button/ButtonDefaut';
 import ButtonSearch from '../../components/Button/ButtonSeach';
 import DataGridTable from '../../components/DataGrid/DataGridControleCampo';
@@ -47,8 +47,6 @@ function ControleCampo() {
   const [loading, setLoading] = useState();
   const [dropLoading, setDropLoading] = useState();
   const [dateInputRecebimento, setDateInputRecebimento] = useState('');
-  const [dateInputTeste, setDateInputTeste] = useState('');
-  const [dateInputConstrucao, setDateInputConstrucao] = useState('');
   const [submitClicked, setSubmitClicked] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
 
@@ -120,8 +118,6 @@ function ControleCampo() {
 
     try {
       const _dateInputRecebimento = dateInputRecebimento.replace(/\D/g, '-');
-      const _dateInputTeste = dateInputTeste.replace(/\D/g, '-');
-      const _dateInputConstrucao = dateInputConstrucao.replace(/\D/g, '-');
 
       const filtro = {
         pagina : currentPage,
@@ -131,12 +127,10 @@ function ControleCampo() {
         SiglaEstacao : siglaEstacao,
         CDO: cdoInput,
         Cabo: cabo,
-        DataTeste : _dateInputTeste,
         DataRecebimento : _dateInputRecebimento,
-        DataConstrucao : _dateInputConstrucao
       };
 
-      const response = await GetTesteOptico(filtro, {signal});
+      const response = await GetControleCampo(filtro, {signal});
 
       if(response.status == 200) {
         setTesteOptico(response.data);
@@ -202,7 +196,7 @@ function ControleCampo() {
 
   const columns = [
     { key: 'chave', name: 'CHAVE', width: '5%'},
-    { key: 'uf', name: 'UF', width: '2%'},
+    { key: 'uf', name: 'UF', width: '5%'},
     { key: 'siglaEstacao', name: 'SIGLA', width: '5%' },
     { key: 'tipoObra', name: 'TIPO OBRA', width: '5%'},
     { key: 'cabo', name: 'CABO',  width: '2%' },
@@ -211,20 +205,11 @@ function ControleCampo() {
     { key: 'capacidade', name: 'CAPACIDADE',  width: '2%' },
     { key: 'totalUMs', name: 'UMS',  width: '2%' },
     { key: 'construtora', name: 'CONSTRUTORA', width: '5%'},
-    { key: 'estadoProjeto', name: 'Estado Projeto', width: '8%'},
-    { key: 'estadoControle', name: 'Estado Controle', width: '8%'},
-    { key: 'aceitacaoData', name: 'Aceitação (Data)', width: '5%'},
-    
-    { key: 'Viab. Base Acum.', name: '', width: '5%'},
+    { key: 'estadoProjeto', name: 'ESTADO PROJETO', width: '8%'},
+    { key: 'estadoControle', name: 'ESTADO CONTROLE', width: '8%'},
+    { key: '-', name: 'ACEITACAO DATA', width: '5%'},
+    { key: 'baseAcumulada', name: 'BASE ACUM.', width: '5%'},
     { key: 'dataRecebimento', name: 'DATA RECEBIMENTO',  width: '5%' }, 
-
-    { key: 'dataAnalise', name: 'DATA',  width: '5%' },  
-    { key: 'status', name: 'STATUS',  width: '5%' },  
-    { key: 'analista', name: 'ANALISTA',  width: '5%' },  
-    { key: 'obs', name: 'OBS',  width: '5%' },  
-     
-
-    { key: 'tecnico', name: 'TECNICO',  width: '5%' },
   ];
 
   const handleUf = (event) => {
@@ -292,8 +277,6 @@ function ControleCampo() {
     setSiglaEstacao("");
     setCdoInput("");
     setDateInputRecebimento("");
-    setDateInputConstrucao("");
-    setDateInputTeste("");
     setCurrentPage(1);
     setSubmitClicked(true);
 

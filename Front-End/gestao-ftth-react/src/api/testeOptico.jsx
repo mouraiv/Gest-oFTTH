@@ -12,6 +12,18 @@ const GetTesteOptico = async (filtro, {signal}) => {
   return response;
 };
 
+const GetControleCampo = async (filtro, {signal}) => {
+  const response = await Api.get('/TesteOptico/ControleCampo', {
+    params: filtro,
+    headers:{
+      'Accept': 'application/json, text/plain','Content-Type': 'application/json;charset=UTF-8'
+    },
+    signal: signal
+  });
+
+  return response;
+};
+
 const GetControleCdo = async (filtro, {signal}) => {
   const response = await Api.get('/TesteOptico/ControleCdo', {
     params: filtro,
@@ -68,6 +80,7 @@ const ImportarArquivo = async (arquivo) => {
 };
 
 export {
+  GetControleCampo,
   GetControleCdo,
   GetTesteOptico,
   ImportarArquivo,

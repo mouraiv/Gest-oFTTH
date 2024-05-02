@@ -2,40 +2,38 @@ import { styled } from "@stitches/react";
 
 export const Container = styled("div", {
     backgroundColor: 'WhiteSmoke',
-    width: '100%',
+    minWidth: '100%',
 
     "#tableInfo" : {
         borderCollapse: 'collapse',
-        width: '100%',
+        minWidth: '100%',
         fontSize: '0.6rem',
         marginTop: '1rem',
         textAlign: 'center',
     },
-    
-    '#tableInfo tbody tr' : {
-        "&:nth-child(odd) td": {
-            backgroundColor: '#ffffff', 
-        },
-        "&:nth-child(even) td": {
-            backgroundColor: '#D6DBDF',
-        },
-    },
 
     "#tableInfo td ":{
-        fontWeight: '700',
-        cursor: 'pointer',
+        fontWeight: '600',
     },
 
     "#tableInfo th, td": {
-        height: '25px',
+        height: '14px',
     },
 
     "#tableInfo .th_column" : {
-        backgroundColor: '#13293d',
+        backgroundColor: '#D6DBDF',
+        fontWeight: '700',
         fontSize: '0.6rem',
-        color:'#ffffff',
-        height: '18px'
+        height: '12px'
     },
+
+    "#tableContainer tbody ":{
+        border: '2px solid #13293d',
+    },
+
+    "#tableContainer .th_title" : {
+        height: '3px'
+    }
 
 });
 

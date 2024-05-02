@@ -113,7 +113,7 @@ namespace WebApiSwagger.Repository
                 throw new Exception("Ocorreu um erro ao deletar: " + ex.Message);
             }
         }
-        public async Task<IEnumerable<TesteOptico>> ControleCampo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao)
+        public async Task<IEnumerable<TesteOptico>> ControleCampo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao, int pageOff)
         {
             try
             {
@@ -160,7 +160,7 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.CDO))
                 {
-                    query = query.Where(p => p.CDO == filtro.CDO);
+                    query = query.Where(p => p.CDO.Contains(filtro.CDO));
                 }
 
                 progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
@@ -174,15 +174,36 @@ namespace WebApiSwagger.Repository
                 // Aplica a ordenação
                 query = query.OrderBy(p => p.Estacao).ThenBy(p => p.Celula).ThenBy(p => p.CDO);
 
-                paginacao.Total = await query.CountAsync();
+                progressoRepository.UpdateProgress(true, 85, "CCarregando consulta...", 100);
+
+                var _registros = await query.CountAsync();
+
+                paginacao.Total = _registros;
+
+                if(pageOff == 1){   
+                        query = query
+                            .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
+                            .Take(paginacao.Tamanho);
+
+                    progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);    
+
+                    return await query.ToListAsync(); 
+
+                    }else{
+                        if(_registros <= 1000000){
+                            progressoRepository.UpdateProgress(true, 90, "Calculando soma de Ums...", 100);
+                            await Task.Delay(500);
+
+                            progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
+
+                            return await query.ToListAsync();
+
+                        }else{
+                            throw new Exception("O filtro não pode exceder 1.000.000 de registros para exportação.");
+                            
+                        }  
+                    }
             
-                query = query
-                    .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
-                    .Take(paginacao.Tamanho);
-
-                progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);    
-
-                return await query.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -240,7 +261,7 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.CDO))
                 {
-                    query = query.Where(p => p.CDO == filtro.CDO);
+                    query = query.Where(p => p.CDO.Contains(filtro.CDO));
                 }
 
                 progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);

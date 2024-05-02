@@ -260,7 +260,7 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.CDO))
                 {
-                    query = query.Where(p => p.NomeCdo == filtro.CDO);
+                    query = query.Where(p => p.NomeCdo.Contains(filtro.CDO));
                 }
 
                 progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
@@ -302,9 +302,9 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Total = filtro.TotalSurveyList;
 
-                     progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
+                    progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
 
-                        paginacao.Total = await query.CountAsync();
+                    paginacao.Total = await query.CountAsync();
 
                         if(filtro?.Pagina == 1) {    
 
@@ -340,6 +340,8 @@ namespace WebApiSwagger.Repository
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
+                     progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
+
                     var _registros = await query.CountAsync();
 
                     paginacao.PaginasCorrentes = _registros;
@@ -347,10 +349,6 @@ namespace WebApiSwagger.Repository
                     paginacao.Tamanho = _registros;
 
                     paginacao.Total = _registros;
-
-                    progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
-
-                    paginacao.Total = await query.CountAsync();
 
                         if(filtro?.Pagina == 1) {    
 
@@ -384,6 +382,8 @@ namespace WebApiSwagger.Repository
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
+                    progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
+
                     var _registros = await query.CountAsync();
 
                     paginacao.PaginasCorrentes = _registros;
@@ -391,10 +391,6 @@ namespace WebApiSwagger.Repository
                     paginacao.Tamanho = _registros;
 
                     paginacao.Total = _registros;
-
-                     progressoRepository.UpdateProgress(true, 80, "Calculando Ganho...", 100);
-
-                        paginacao.Total = await query.CountAsync();
 
                         if(filtro?.Pagina == 1) {    
 
@@ -422,17 +418,15 @@ namespace WebApiSwagger.Repository
                 }
                 else
                 {
-                    query = query.OrderBy(p => p.Cod_Viabilidade);    
+                    query = query.OrderBy(p => p.Cod_Viabilidade);
+
+                    progressoRepository.UpdateProgress(true, 85, "Calculando Ganho...", 100);    
 
                     var _registros = await query.CountAsync();
 
                     paginacao.Total = _registros;
 
                     paginacao.TotalUms = 0;
-
-                     progressoRepository.UpdateProgress(true, 85, "Calculando Ganho...", 100);
-
-                        paginacao.Total = await query.CountAsync();
 
                         if(filtro?.Pagina == 1) {    
 
