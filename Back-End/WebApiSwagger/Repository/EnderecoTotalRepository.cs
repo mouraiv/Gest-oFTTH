@@ -264,7 +264,7 @@ namespace WebApiSwagger.Repository
                 }
 
                 progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
-                await Task.Delay(500);
+                await Task.Delay(1000);
 
                 if (!string.IsNullOrEmpty(filtro.Cod_Viabilidade))
                 {

@@ -64,7 +64,7 @@ function ControleCampo() {
 
   const filtro = {
     pagina : currentPage,
-    UF : "AC",
+    UF : uf,
     Celula : celula,
     Estacao : estacao,
     SiglaEstacao : siglaEstacao,
@@ -296,8 +296,17 @@ function ControleCampo() {
   
   const handleExportExcel = () => {
     setVisible(true);
-    //setCarregarExport(true);
-    //FetchExportExcel();
+  }
+
+  const handleRegiao = (event) => {
+    const input = event.target.value;
+    console.log(input);
+    setUf(input);
+  };
+
+  const handleExport = () => {
+    setCarregarExport(true);
+    FetchExportExcel();
   }
 
   const submit = () => {
@@ -339,19 +348,21 @@ function ControleCampo() {
                     textCloseButton={'Fechar'}
                     text={
                         <>
-                        <div style={{display: 'flex', height:'30px'}}>
-                        <label style={{paddingRight: '0.5rem'}}>Região:</label>
-                        <select>
-                          <option selected="selected">-Selecione-</option>
-                          <option value="Norte">Norte</option>
-                          <option value="Nordeste">Nordeste</option>
-                          <option value="Centro-Oeste">Centro-Oeste</option>
-                          <option value="Sudeste">Sudeste</option>
-                          <option value="Sul">Sul</option>
-                        </select>
+                        { !carregarExport ? (
+                          <div style={{display: 'flex', height:'30px'}}>
+                          <label style={{paddingRight: '0.5rem'}}>Região:</label>
+                          <select onChange={handleRegiao} style={{fontSize: '0.9rem', fontWeight: '600', width: '200px'}}>
+                            <option selected="selected">-Selecione-</option>
+                            <option value="Norte">Norte</option>
+                            <option value="Nordeste">Nordeste</option>
+                            <option value="Centro-Oeste">Centro-Oeste</option>
+                            <option value="Sudeste">Sudeste</option>
+                            <option value="Sul">Sul</option>
+                          </select>
 
-                        <ButtonImport>Exportar</ButtonImport>
-                        </div>
+                          <ButtonImport onClick={handleExport}>Exportar</ButtonImport>
+                          </div>
+                        ):(null)}
 
                         { carregarExport ? (
                           <>
@@ -432,7 +443,7 @@ function ControleCampo() {
               }
               </div>
               <div style={{position:'absolute', right:0, top:0, marginTop:'0.3rem', marginRight:'0.4rem'}}>
-              { loading ? (
+              { loading && dropLoading ? (
                 <>
                 <ButtonExportarExcel onClick={handleExportExcel}>Exportar Excel</ButtonExportarExcel>
                 </>

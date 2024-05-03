@@ -59,23 +59,23 @@ export default function Header({title, navbar = true}) {
               { userPrivate === 3 &&
               <li style={{position: 'relative'}}><a style={{backgroundColor: '#CB4335'}}>Administrador</a>
                   <ul>
-                    <li style={{left: 0, marginTop: '32.5%', position:'absolute'}}><a onClick={handleUsuario}>Usuários</a></li>
+                    <li style={{left: 0, marginTop: '32%', position:'absolute'}}><a onClick={handleUsuario}>Usuários</a></li>
                   </ul>
                 </li>
                 }
                 <li style={{position: 'relative'}}><a>Operações</a>
                   <ul>
-                    <li style={{left:0, marginTop: '40%', position:'absolute'}}><a onClick={handleTesteOptico}>Teste Óptico</a></li>
+                    <li style={{left:0, marginTop: '39%', position:'absolute'}}><a onClick={handleTesteOptico}>Teste Óptico</a></li>
                   </ul>
                 </li>
                 <li style={{position: 'relative'}}><a>Monitoramento</a>
                   <ul>
-                    <li style={{left:0, marginTop: '30%', position:'absolute'}}><a onClick={handleControleCampo}>Controle de campo</a></li>
+                    <li style={{left:0, marginTop: '29%', position:'absolute'}}><a onClick={handleControleCampo}>Controle de campo</a></li>
                   </ul>
                 </li>
                 <li style={{position: 'relative'}}><a>Netwin</a>
                   <ul>
-                    <li style={{left:0, marginTop: '52%', position:'absolute'}}><a onClick={handleEnderecoTotal}>Endereços Totais</a></li>
+                    <li style={{left:0, marginTop: '51%', position:'absolute'}}><a onClick={handleEnderecoTotal}>Endereços Totais</a></li>
                   </ul>
                 </li>
               </ul>

@@ -135,7 +135,35 @@ namespace WebApiSwagger.Repository
 
                 if (!string.IsNullOrEmpty(filtro.UF))
                 {
-                    query = query.Where(p => p.UF == filtro.UF);
+                     if (filtro.UF == "Norte")
+                    {
+                        var _norte = new [] {"AM","PA","AC","RO","RR","AP", "TO"};
+                        query = query.Where(p => _norte.Contains(p.UF));
+                    }
+                    else if (filtro.UF == "Nordeste")
+                    {
+                        var _nordeste = new [] {"MA", "PI", "CE","RN", "PB", "PE","AL", "SE", "BA"};
+                        query = query.Where(p => _nordeste.Contains(p.UF));
+                    }
+                    else if (filtro.UF == "Centro-Oeste")
+                    {
+                        var _centroOeste = new [] {"MT","MS","GO","DF"};
+                        query = query.Where(p => _centroOeste.Contains(p.UF));
+                    }
+                    else if (filtro.UF == "Sudeste")
+                    {
+                        var _sudeste = new [] {"MG", "SP", "RJ", "ES"};
+                        query = query.Where(p => _sudeste.Contains(p.UF));
+                    }
+                    else if (filtro.UF == "Sul")
+                    {
+                        var _sul = new [] {"PR", "SC", "RS"};
+                        query = query.Where(p => _sul.Contains(p.UF));
+                    }
+                    else
+                    {
+                        query = query.Where(p => p.UF == filtro.UF);
+                    }    
                 }
 
                 if (!string.IsNullOrEmpty(filtro.Celula))

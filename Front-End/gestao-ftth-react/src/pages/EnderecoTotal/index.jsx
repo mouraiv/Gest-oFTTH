@@ -165,10 +165,10 @@ function EnderecoTotal() {
 
   }
 
-  const FetchDropFilter  = async () => {
+  const FetchDropFilter  = () => {
     
     try {
-      const dropList = await DropMaterialRede();
+      const dropList = DropMaterialRede();
 
       if (dropList.status == 200) {
         const _dropListUf = dropList.data
@@ -421,8 +421,6 @@ function EnderecoTotal() {
     setSurveyInput("");
   };
 
- 
-  
   const handleUf = (event) => {
     const input = event.target.value;
     setLoadingDrop(false);
@@ -634,15 +632,6 @@ function EnderecoTotal() {
       setCarregarListSurvey(false);
       
     }
-    setLoadingDrop(false);
-    FetchDropFilterMaterialExec(
-      uf, 
-      siglaEstacao, 
-      estacao,
-      bairro,
-      municipio
-    );
-    
   };
 
   const limparFiltro = () => {

@@ -374,7 +374,7 @@ namespace WebApiSwagger.Controllers
    
                     // Preencha a planilha com os dados
                     // A partir da linha 2 para não sobrescrever o cabeçalho
-                    workSheet.Cells[4, 3].Value = "RIO DE JANEIRO";
+                    workSheet.Cells[4, 3].Value = $"Região {filtro.UF}";
                     int row = 8; 
                     foreach (var item in dados)
                     {
