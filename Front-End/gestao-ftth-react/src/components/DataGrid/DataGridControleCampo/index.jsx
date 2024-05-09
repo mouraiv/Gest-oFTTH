@@ -62,6 +62,16 @@ export default function DataGrid({
                   ))}
                 </tr>
                 <tr>
+                  <td colSpan={5} className="th_column">CODIGO. VIABILIDADE</td>
+                  <td colSpan={5} className="th_column">TIPO VIABILIDADE</td>
+                  <td colSpan={5} className="th_column">PENDÊNCIA VIABILIDADE</td>
+                  </tr>
+                  <tr style={{padding : '0.3rem', fontSize: '0.8rem', borderTop: '1px solid'}}>
+                  <td colSpan={5}>{row.codNetwin}</td>
+                  <td colSpan={5}>{row.statusNetwin}</td>
+                  <td colSpan={5}>{row.pendenciaViab}</td>
+                  </tr>
+                <tr>
                   <td colSpan={columns.length + 1} style={{padding : '0.3rem', fontWeight: '750', borderTop: '1px dotted #D6DBDF'}}>
                   {row.endereco}
                   </td>
@@ -70,34 +80,28 @@ export default function DataGrid({
                   <td className="th_column">DATA ANÁLISE</td>
                   <td className="th_column">TIPO</td>
                   <td className="th_column">STATUS</td>
-                  <td className="th_column">ANALISTA</td>
-                  <td colSpan={2} className="th_column">TIPO VIA.</td>
-                  <td className="th_column">COD VIA.</td>
-                  <td className="th_column">PEND. VIA</td>
+                  <td colSpan={2} className="th_column">ANALISTA</td>
                   <td colSpan={2} className="th_column">ESTADO OPERACIONAL</td>
-                  <td className="th_column">GRUPO CONTROLE</td>
-                  <td className="th_column">ESTADO CONTROLE</td>
+                  <td colSpan={3} className="th_column">GRUPO CONTROLE</td>
+                  <td colSpan={2} className="th_column">ESTADO CONTROLE</td>
                   <td className="th_column">POSIÇÃO DGO</td>
                   <td className="th_column">FIBRA DGO</td>
                   <td className="th_column">PORTAS OCUPADAS</td>
                   </tr>
                   <tr style={{padding : '0.3rem', fontSize: '0.7rem', fontWeight: '750', borderTop: '1px solid'}}>
                   <td>{row.dataAnalise}</td>
-                  <td>{row.tipo}</td>
+                  <td style={{fontWeight: '750'}}>{row.tipo}</td>
                   <td>{row.status}</td>
-                  <td>{row.analista}</td>
-                  <td colSpan={2} >{row.statusNetwin}</td>
-                  <td>{row.codNetwin}</td>
-                  <td>-</td>
+                  <td colSpan={2}>{row.analista}</td>
                   <td colSpan={2} >{row.estadoOperacional}</td>
-                  <td>{row.grupoControle}</td>
-                  <td>{row.estadoControle_Mt}</td>
+                  <td colSpan={3}>{row.grupoControle}</td>
+                  <td colSpan={2}>{row.estadoControle_Mt}</td>
                   <td>{row.posicaoDGO}</td>
                   <td>{row.fibraDGO}</td>
                   <td>{row.portasOcupadas}</td>
-                  </tr> 
+                  </tr>
                   <tr>
-                  <td colSpan={columns.length + 1} style={{padding : '0.3rem', fontSize: '0.7rem', fontWeight: '750', borderTop: '1px dotted #D6DBDF'}}>
+                  <td colSpan={columns.length + 1} style={{padding : '0.3rem', fontWeight: '750', borderTop: '1px dotted #D6DBDF'}}>
                   {row.obsAnalise}
                   </td>
                   </tr>     

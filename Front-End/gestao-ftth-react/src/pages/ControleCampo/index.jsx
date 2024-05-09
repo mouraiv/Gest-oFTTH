@@ -26,6 +26,7 @@ function ControleCampo() {
   /* Estado filtro de seguimento */
   const [dropUf, setDropUf] = useState([]);
   const [uf, setUf] = useState("");
+  const [regiao, setRegiao] = useState("");
 
   const [listSiglaEstacao, setListSiglaEstacao] = useState([]);
   const [dropSiglaEstacao, setDropSiglaEstacao] = useState([""]);
@@ -52,6 +53,7 @@ function ControleCampo() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [carregarExport, setCarregarExport] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [exportSimple, setExportSimple] = useState(false);
   const [mensagem, setMensagem] = useState("");
 
   const navigate = useNavigate();
@@ -64,13 +66,13 @@ function ControleCampo() {
 
   const filtro = {
     pagina : currentPage,
-    UF : uf,
-    Celula : celula,
-    Estacao : estacao,
-    SiglaEstacao : siglaEstacao,
-    CDO: cdoInput,
-    Cabo: cabo,
-    DataRecebimento : _dateInputRecebimento,
+    UF : regiao === "" ? uf : regiao,
+    Celula : regiao === "" ? celula : null,
+    Estacao : regiao === "" ? estacao : null,
+    SiglaEstacao : regiao === "" ? siglaEstacao : null,
+    CDO: regiao === "" ? cdoInput : "",
+    Cabo: regiao === "" ? cabo : null,
+    DataRecebimento : regiao === "" ? _dateInputRecebimento : null,
   };
 
   async function FetchDropFilter () {
@@ -145,6 +147,7 @@ function ControleCampo() {
       
     } finally {
       setLoading(true)
+      initialLoad ? FetchDropFilter() : null;
       setInitialLoad(false);
     }
 
@@ -165,6 +168,8 @@ function ControleCampo() {
         await ExportExcel(filtro).finally(() => {
           setVisible(false);
           setCarregarExport(false);
+          setExportSimple(false)
+          setRegiao("");
 
         });
       }
@@ -198,11 +203,6 @@ function ControleCampo() {
       
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[user])
-
-  useEffect(() => {
-    FetchDropFilter()
-  
-  },[dropLoading])
 
   useEffect(() => {    
     if (initialLoad) {
@@ -244,6 +244,8 @@ function ControleCampo() {
   const handleUf = (event) => {
     const input = event.target.value;
     setUf(input);
+    setSiglaEstacao("");
+    setEstacao("");
  
     const _siglaEstacaoFilter = listSiglaEstacao.filter(([uf]) => { return uf === input})
     const _subSiglaEstacoes = _siglaEstacaoFilter
@@ -294,14 +296,19 @@ function ControleCampo() {
     setDateInputRecebimento(formattedDate);
   };
   
-  const handleExportExcel = () => {
+  const handleExportExcelRegiao = () => {
     setVisible(true);
+  }
+
+  const handleExportSimples = () => {
+    setExportSimple(true)
+    setVisible(true);
+    FetchExportExcel();
   }
 
   const handleRegiao = (event) => {
     const input = event.target.value;
-    console.log(input);
-    setUf(input);
+    setRegiao(input);
   };
 
   const handleExport = () => {
@@ -340,47 +347,68 @@ function ControleCampo() {
              </SubMenu>
              <DialogAlert 
                     visibleDiag={visible} 
-                    visibleHide={() => setVisible(false)}
-                    header={carregarExport ? null : <h4>Exportação</h4>}
+                    visibleHide={() => {
+                      setVisible(false);
+                      setRegiao("");
+                    }}
+                    header={<h5>Exportação: Controle de Campo</h5>}
                     colorType={carregarExport ? null : '#13293d'}
                     ConfirmaButton={false}
-                    CancelaButton={carregarExport ?? false}
+                    CancelaButton={carregarExport || exportSimple ? true : false}
                     textCloseButton={'Fechar'}
                     text={
                         <>
-                        { !carregarExport ? (
-                          <div style={{display: 'flex', height:'30px'}}>
-                          <label style={{paddingRight: '0.5rem'}}>Região:</label>
-                          <select onChange={handleRegiao} style={{fontSize: '0.9rem', fontWeight: '600', width: '200px'}}>
-                            <option selected="selected">-Selecione-</option>
-                            <option value="Norte">Norte</option>
-                            <option value="Nordeste">Nordeste</option>
-                            <option value="Centro-Oeste">Centro-Oeste</option>
-                            <option value="Sudeste">Sudeste</option>
-                            <option value="Sul">Sul</option>
-                          </select>
-
-                          <ButtonImport onClick={handleExport}>Exportar</ButtonImport>
-                          </div>
-                        ):(null)}
-
-                        { carregarExport ? (
+                         { !exportSimple ? (
                           <>
-                          <div>
-                            <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem'}}>
-                              <div style={{padding: '0.5rem'}}>
-                                <p>Exportando registros.</p>
-                                <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
+                            { !carregarExport ? (
+                              <div style={{display: 'flex', height:'30px'}}>
+                              <label style={{paddingRight: '0.5rem'}}>Região:</label>
+                              <select onChange={handleRegiao} style={{fontSize: '0.9rem', fontWeight: '600', width: '200px'}}>
+                                <option selected="selected">-Selecione-</option>
+                                <option value="Nordeste">Nordeste</option>
+                                <option value="Centro-Oeste">Centro-Oeste</option>
+                                <option value="Sudeste - (RJ)">{"Sudeste - (RJ)"}</option>
+                                <option value="Sudeste - (SP)">{"Sudeste - (SP)"}</option>
+                                <option value="Sudeste - (MG-ES)">{"Sudeste - (MG-ES))"}</option>
+                                <option value="Sul">Sul</option>
+                              </select>
+
+                              <ButtonImport onClick={handleExport}>Exportar</ButtonImport>
+                              </div>
+                            ):(null)}
+
+                            { carregarExport ? (
+                              <>
+                              <div>
+                                <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem'}}>
+                                  <div style={{padding: '0.5rem'}}>
+                                    <p>Exportando registros.</p>
+                                    <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
+                                </div>
+                                    <ProgressComponent exportar={true}/>
+                                </div>
                             </div>
-                                <ProgressComponent />
+                              </>
+                            ):(
+                            <p>{mensagem}</p>
+                            )}
+                            </>
+                          ):(
+                          <>
+                            <div>
+                                <div style={{border:'1px solid', borderRadius:'0.3rem', fontSize:'0.8rem'}}>
+                                  <div style={{padding: '0.5rem'}}>
+                                    <p>Exportando registros.</p>
+                                    <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
+                                </div>
+                                    <ProgressComponent exportar={true}/>
+                                </div>
                             </div>
-                        </div>
                           </>
-                        ):(
-                        <p>{mensagem}</p>
-                        )}
+                          )
+                          }
                         </>
-                    }
+                    } 
                 />
             <Filter>
               <div>
@@ -434,7 +462,7 @@ function ControleCampo() {
                 text={dateInputRecebimento}
                 placeholder={"__/__/____"} 
               />
-              { loading ? (
+              { loading && dropLoading ? (
                 <>
                 <ButtonSearch event={submit} />
                 <ButtonDefaut event={limparFiltro} text={"Limpar"} />
@@ -445,14 +473,15 @@ function ControleCampo() {
               <div style={{position:'absolute', right:0, top:0, marginTop:'0.3rem', marginRight:'0.4rem'}}>
               { loading && dropLoading ? (
                 <>
-                <ButtonExportarExcel onClick={handleExportExcel}>Exportar Excel</ButtonExportarExcel>
+                <ButtonExportarExcel style={{width: "100px"}} onClick={handleExportSimples}>Exportar</ButtonExportarExcel>
+                <ButtonExportarExcel style={{width: "150px", marginLeft: "0.3rem"}} onClick={handleExportExcelRegiao}>Exportar Região</ButtonExportarExcel>
                 </>
               ):(null)}
               </div>         
               </div> 
             </Filter>
             { testeOptico.resultado !== undefined ? (
-              loading ? (  
+              loading && dropLoading ? (  
             <DataGridTable 
               columns={columns} 
               rows={testeOptico.resultado} 

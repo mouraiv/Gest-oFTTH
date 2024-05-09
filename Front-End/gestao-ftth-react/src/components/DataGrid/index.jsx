@@ -69,6 +69,24 @@ export default function DataGrid({
     const keys = key.split('.');
     return keys.reduce((acc, currentKey) => (acc && acc[currentKey] ? acc[currentKey] : undefined), obj);
   }
+
+  const mesAbreviado = (numeroMes) => {
+    const meses = {
+      '01': 'JAN',
+      '02': 'FEV',
+      '03': 'MAR',
+      '04': 'ABR',
+      '05': 'MAI',
+      '06': 'JUN',
+      '07': 'JUL',
+      '08': 'AGO',
+      '09': 'SET',
+      '10': 'OUT',
+      '11': 'NOV',
+      '12': 'DEZ'
+    };
+    return meses[numeroMes] || 'ERR'; // Retorna a versão abreviada correspondente ou 'DESC' se o número do mês não for reconhecido
+  };
   
   return (
     <>
@@ -130,11 +148,15 @@ export default function DataGrid({
                     </tr>
                   }
                 <tr>
+                <td className="th_column" style={{width: '2%'}}>UF</td>
+                <td className="th_column" style={{width: '7%'}}>BASE. ACUM</td>  
                 {columns.map((column) => (
                 <td className="th_column" key={column.name} style={{width : column.width}}>{column.name}</td>
                 ))}
                 </tr>
                 <tr>
+                <td>{row.uf}</td>
+                <td>{row.anoMes !== null ? `(${row.anoMes.slice(-2)}) ${mesAbreviado(row.anoMes.slice(4, 6))}/${row.anoMes.slice(0, -4)}` : null}</td>  
                   {columns.map((column) => (
                     <td key={column.key}
                       style={{width : column.width}}>
@@ -145,7 +167,7 @@ export default function DataGrid({
                   ))}
                 </tr>
                 <tr>
-                  <td className="th_column" colSpan={columns.length + 1}>ENDEREÇO</td>
+                  <td className="th_column" colSpan={columns.length + 3}>ENDEREÇO</td>
                 </tr>
                 <tr>
                   <td colSpan={columns.length + 1}>

@@ -6,7 +6,6 @@ export const ButtonExportarExcel = styled("button", {
     border: '1px solid #005A05',
     fontSize: '0.8rem',
     fontWeight: '500',
-    width: '100px',
     color: '#ffffff',
 
     '&:active':{

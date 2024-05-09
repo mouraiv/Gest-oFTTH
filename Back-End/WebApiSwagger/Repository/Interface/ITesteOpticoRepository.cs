@@ -1,6 +1,7 @@
 using WebApiSwagger.Models;
 using WebApiSwagger.Filters;
 using WebApiSwagger.Utils;
+using WebApiSwagger.Models.ViewModel;
 
 namespace WebApiSwagger.Repository.Interface
 {
@@ -13,7 +14,8 @@ namespace WebApiSwagger.Repository.Interface
         Task<TesteOptico> CarregarId(int id);
         Task<IEnumerable<TesteOptico>> ListaUnica();
         Task<IEnumerable<TesteOptico>> Listar(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao);
-        Task<IEnumerable<TesteOptico>> ControleCampo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao, int pageOff);
+        Task<IEnumerable<ControleCampoViewModel>> ControleCampo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao, int pageOff);
         Task<IEnumerable<TesteOptico>> ControlerCdo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao);
+        string ObterViabilidade(string viabCodigo);
     }
 }

@@ -4,6 +4,7 @@ using WebApiSwagger.Repository.Interface;
 using WebApiSwagger.Filters;
 using Microsoft.EntityFrameworkCore;
 using WebApiSwagger.Utils;
+using WebApiSwagger.Models.ViewModel;
 
 namespace WebApiSwagger.Repository
 {
@@ -113,51 +114,98 @@ namespace WebApiSwagger.Repository
                 throw new Exception("Ocorreu um erro ao deletar: " + ex.Message);
             }
         }
-        public async Task<IEnumerable<TesteOptico>> ControleCampo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao, int pageOff)
+        public async Task<IEnumerable<ControleCampoViewModel>> ControleCampo(IProgressoRepository progressoRepository,FiltroTesteOptico filtro, Paginacao paginacao, int pageOff)
         {
             try
             {
                 progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
                 await Task.Delay(500);
 
-                var query = _context.TestesOpticos
+                 var query = _context.TestesOpticos
                     .Where(p => p.Sel == 0)
-                    .Include(p => p.Validacoes)
-                    .Include(p => p.Analises)
-                    .Include(p => p.MaterialRede)
-                    .ThenInclude(p => p.EnderecoTotal)
-                    .Include(p => p.MaterialRede)
-                    .ThenInclude(p => p.Ligacao)
-                    .AsQueryable();
+                    .Select(p => new ControleCampoViewModel
+                    {
+                        CHAVE = p.CHAVE,
+                        UF = p.UF,
+                        SiglaEstacao = p.SiglaEstacao,
+                        Estacao = p.Estacao,
+                        TipoObra = p.TipoObra,
+                        Cabo = p.Cabo,
+                        Celula = p.Celula,
+                        CDO = p.CDO,
+                        Capacidade = p.Capacidade,
+                        TotalUMs = p.TotalUMs,
+                        Endereco = p.Endereco,
+                        Construtora = p.Construtora,
+                        EstadoProjeto = p.EstadoProjeto,
+                        EstadoControle = p.EstadoControle,
+                        DataRecebimento = p.DataRecebimento,
+                        
+                        Analises = p.Analises.Select(a => new ControleCampoViewModel.AnaliseViewModel
+                        {
+                            DataAnalise = a.DataAnalise,
+                            Status = a.Status,
+                            Analista = a.Analista,
+                            AnaliseObservacao = a.AnaliseObservacao
+                            
+                        }),
+                        MaterialRede = new ControleCampoViewModel.MaterialRedeViewModel
+                        {
+                            EstadoOperacional_Mt = p.MaterialRede.EstadoOperacional_Mt,
+                            GrupoOperacional_Mt = p.MaterialRede.GrupoOperacional_Mt,
+                            EstadoControle_Mt = p.MaterialRede.EstadoControle_Mt,
+                            Endereco_Mt = p.MaterialRede.Endereco_Mt,
+                            
+                            EnderecoTotal = p.MaterialRede.EnderecoTotal.Select(e => new ControleCampoViewModel.EnderecoTotalViewModel
+                            {
+                                AnoMes = e.AnoMes,
+                                TipoViabilidade = e.TipoViabilidade,
+                                Cod_Viabilidade = e.Cod_Viabilidade
+                            }),
 
+                            Ligacao = p.MaterialRede.Ligacao.Select(l => new ControleCampoViewModel.LigacaoViewModel
+                            {
+                                DGO_ls = l.DGO_ls,
+                                FibraDgo_ls = l.FibraDgo_ls,
+                                PortaCdo_ls = l.PortaCdo_ls,
+                                EstadoCicloVida_ls = l.EstadoCicloVida_ls
+                                
+                            })
+
+                        }}).AsNoTracking()
+                        .AsQueryable();
+                    
                 progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
                 await Task.Delay(500);    
 
                 if (!string.IsNullOrEmpty(filtro.UF))
                 {
-                     if (filtro.UF == "Norte")
+                    if (filtro.UF == "Nordeste")
                     {
-                        var _norte = new [] {"AM","PA","AC","RO","RR","AP", "TO"};
-                        query = query.Where(p => _norte.Contains(p.UF));
-                    }
-                    else if (filtro.UF == "Nordeste")
-                    {
-                        var _nordeste = new [] {"MA", "PI", "CE","RN", "PB", "PE","AL", "SE", "BA"};
+                        var _nordeste = new [] {"MA", "PA", "RR", "AP", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA"};
                         query = query.Where(p => _nordeste.Contains(p.UF));
                     }
                     else if (filtro.UF == "Centro-Oeste")
                     {
-                        var _centroOeste = new [] {"MT","MS","GO","DF"};
+                        var _centroOeste = new [] {"AC", "RO", "TO", "MT", "MS", "GO", "DF"};
                         query = query.Where(p => _centroOeste.Contains(p.UF));
                     }
-                    else if (filtro.UF == "Sudeste")
+                    else if (filtro.UF == "Sudeste - (RJ)")
                     {
-                        var _sudeste = new [] {"MG", "SP", "RJ", "ES"};
+                        query = query.Where(p => p.UF == "RJ");
+                    }
+                     else if (filtro.UF == "Sudeste - (SP)")
+                    {
+                        query = query.Where(p => p.UF == "SP");
+                    }
+                     else if (filtro.UF == "Sudeste - (MG-ES)")
+                    {
+                        var _sudeste = new [] {"MG", "ES"};
                         query = query.Where(p => _sudeste.Contains(p.UF));
                     }
                     else if (filtro.UF == "Sul")
                     {
-                        var _sul = new [] {"PR", "SC", "RS"};
+                        var _sul = new [] {"PR","SC","RS"};
                         query = query.Where(p => _sul.Contains(p.UF));
                     }
                     else
@@ -202,7 +250,7 @@ namespace WebApiSwagger.Repository
                 // Aplica a ordenação
                 query = query.OrderBy(p => p.Estacao).ThenBy(p => p.Celula).ThenBy(p => p.CDO);
 
-                progressoRepository.UpdateProgress(true, 85, "CCarregando consulta...", 100);
+                progressoRepository.UpdateProgress(true, 85, "Carregando consulta...", 100);
 
                 var _registros = await query.CountAsync();
 
@@ -217,20 +265,21 @@ namespace WebApiSwagger.Repository
 
                     return await query.ToListAsync(); 
 
+                }else{
+                    if(_registros <= 1000000){
+                        query = query
+                            .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
+                            .Take(paginacao.Tamanho);
+
+                        progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
+
+                        return await query.ToListAsync();
+
                     }else{
-                        if(_registros <= 1000000){
-                            progressoRepository.UpdateProgress(true, 90, "Calculando soma de Ums...", 100);
-                            await Task.Delay(500);
-
-                            progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
-
-                            return await query.ToListAsync();
-
-                        }else{
-                            throw new Exception("O filtro não pode exceder 1.000.000 de registros para exportação.");
+                        throw new Exception("O filtro não pode exceder 1.000.000 de registros para exportação.");
                             
-                        }  
-                    }
+                    }  
+                }
             
             }
             catch (Exception ex)
@@ -239,8 +288,14 @@ namespace WebApiSwagger.Repository
             }
             finally
             {
-                progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
-                await Task.Delay(1000);
+                if(pageOff == 1){   
+                    progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
+                    await Task.Delay(1000);
+
+                }else{
+                    progressoRepository.UpdateProgress(false, 0, "Carregando dados...", 0);
+                    await Task.Delay(1000);
+                }
             }
             
         }
@@ -416,6 +471,63 @@ namespace WebApiSwagger.Repository
             {
                 progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
                 await Task.Delay(1000);
+            }
+        }
+
+        public string ObterViabilidade(string viabCodigo)
+        {
+            switch (viabCodigo)
+            {
+                case "0":
+                    return ("Viabilidade técnica confirmada");
+                case "1":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "2":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "3":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "4":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "5":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "6":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "7":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "8":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "9":
+                    return ("O apartamento ou sala dentro da edificação não foi encontrado. Confira se o endereço foi preenchido corretamente");
+                case "10":
+                    return ("Este endereço não possui viabilidade técnica por obstrução interna");
+                case "11":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "12":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "13":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "14":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "15":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "16":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "17":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "18":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "19":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "20":
+                    return ("Em Análise - Viabilidade técnica Parcial. Solicitar construção etapa final de rede");
+                case "21":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "22":
+                    return ("Este endereço não possui viabilidade técnica");
+                case "23":
+                    return ("Este endereço não possui viabilidade técnica");                                         
+                default:
+                    return ("-");
             }
         }
     }

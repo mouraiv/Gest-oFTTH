@@ -7,7 +7,7 @@ export const Container = styled("div", {
     "#tableInfo" : {
         borderCollapse: 'collapse',
         minWidth: '100%',
-        fontSize: '0.6rem',
+        fontSize: '0.7rem',
         marginTop: '1rem',
         textAlign: 'center',
     },
@@ -17,7 +17,7 @@ export const Container = styled("div", {
     },
 
     "#tableInfo th, td": {
-        height: '14px',
+        height: '25px',
     },
 
     "#tableInfo .th_column" : {

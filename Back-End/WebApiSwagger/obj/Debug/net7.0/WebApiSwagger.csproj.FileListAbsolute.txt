@@ -95,3 +95,4 @@ C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\obj\Debug\net7
 C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\obj\Debug\net7.0\WebApiSwagger.pdb
 C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\obj\Debug\net7.0\WebApiSwagger.genruntimeconfig.cache
 C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\obj\Debug\net7.0\ref\WebApiSwagger.dll
+C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\bin\Debug\net7.0\CsvHelper.dll

@@ -59,6 +59,19 @@
           }
         }
       },
+      "CsvHelper/32.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/CsvHelper.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/CsvHelper.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "EPPlus/6.2.8": {
         "type": "package",
         "dependencies": {
@@ -2104,6 +2117,34 @@
         "azureicon.png",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "CsvHelper/32.0.2": {
+      "sha512": "h+Ilvdqr2kE2+SMJiRB6Cerf4CCXR5pFgcNsCLj2t3TgzIDuGlchqJaVLHqL8ZIyBdDyMq125LL6shC0ZtFnUw==",
+      "type": "package",
+      "path": "csvhelper/32.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "csvhelper.32.0.2.nupkg.sha512",
+        "csvhelper.nuspec",
+        "lib/net462/CsvHelper.dll",
+        "lib/net462/CsvHelper.xml",
+        "lib/net47/CsvHelper.dll",
+        "lib/net47/CsvHelper.xml",
+        "lib/net48/CsvHelper.dll",
+        "lib/net48/CsvHelper.xml",
+        "lib/net6.0/CsvHelper.dll",
+        "lib/net6.0/CsvHelper.xml",
+        "lib/net7.0/CsvHelper.dll",
+        "lib/net7.0/CsvHelper.xml",
+        "lib/net8.0/CsvHelper.dll",
+        "lib/net8.0/CsvHelper.xml",
+        "lib/netstandard2.0/CsvHelper.dll",
+        "lib/netstandard2.0/CsvHelper.xml",
+        "lib/netstandard2.1/CsvHelper.dll",
+        "lib/netstandard2.1/CsvHelper.xml"
       ]
     },
     "EPPlus/6.2.8": {
@@ -5877,6 +5918,7 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
+      "CsvHelper >= 32.0.2",
       "EPPlus >= 6.2.8",
       "GroupDocs.Conversion >= 23.7.0",
       "Microsoft.AspNetCore.Authentication >= 2.2.0",
@@ -5896,11 +5938,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
+      "projectUniqueName": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\WebApiSwagger.csproj",
       "projectName": "WebApiSwagger",
-      "projectPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
+      "projectPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\WebApiSwagger.csproj",
       "packagesPath": "C:\\Users\\wesley.moura\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\obj\\",
+      "outputPath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\back-end\\WebApiSwagger\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\wesley.moura\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -5929,6 +5971,10 @@
       "net7.0": {
         "targetAlias": "net7.0",
         "dependencies": {
+          "CsvHelper": {
+            "target": "Package",
+            "version": "[32.0.2, )"
+          },
           "EPPlus": {
             "target": "Package",
             "version": "[6.2.8, )"

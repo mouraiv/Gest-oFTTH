@@ -88,6 +88,7 @@ function EnderecoTotal() {
   const [listLocalSurvey, setListLocalSurvey] = useState(false);
   const [carregarListsurvey, setCarregarListSurvey] = useState(false);
   const [carregarExport, setCarregarExport] = useState(false);
+  const [loadingDropState, setLoadingDropState] = useState(false);
 
   const { user, ValidarToken } = UseAuth();
   const controller = new AbortController();
@@ -165,38 +166,38 @@ function EnderecoTotal() {
 
   }
 
-  const FetchDropFilter  = () => {
+  const FetchDropFilter  = async () => {
     
     try {
-      const dropList = DropMaterialRede();
+      const dropList = await DropMaterialRede();
 
       if (dropList.status == 200) {
-        const _dropListUf = dropList.data
+        const _dropListUf = [... new Set(dropList.data
             .map((value) => value.uf)
             .filter((value, index, self) => {
                 return self.indexOf(value) === index;
-        });
+        }))];
         setDropUf(_dropListUf);
 
-        const _dropListGrupoOperacional = dropList.data
+        const _dropListGrupoOperacional = [... new Set(dropList.data
             .map((value) => value.grupoOperacional)
             .filter((value, index, self) => {
                   return self.indexOf(value) === index;
-          });
+          }))];
           setDropGrupoOperacional(_dropListGrupoOperacional);
 
-          const _dropListEstadoOperacional = dropList.data
+          const _dropListEstadoOperacional = [... new Set(dropList.data
           .map((value) => value.estadoOperacional)
           .filter((value, index, self) => {
                 return self.indexOf(value) === index;
-          });
+          }))];
           setDropEstadoOperacional(_dropListEstadoOperacional);
           
-          const _dropListEstadoControle = dropList.data
+          const _dropListEstadoControle = [... new Set(dropList.data
           .map((value) => value.estadoControle)
           .filter((value, index, self) => {
                 return self.indexOf(value) === index;
-          });
+          }))];
           setDropEstadoControle(_dropListEstadoControle);
           
           const _dropListViab = [... new Set(dropList.data
@@ -214,6 +215,7 @@ function EnderecoTotal() {
       setLoadingDrop(true);
 
     } finally{
+      initialLoad ? setLoadingDropState(true) : null;
       setLoadingDrop(true);
     }
 
@@ -334,8 +336,9 @@ function EnderecoTotal() {
       } else {
         const response = await GetEnderecoTotal(filtro, {signal});
 
-        if(response.status == 200) {
-          setEnderecoTotal(response.data);
+        if(response.status == 200) {       
+        setEnderecoTotal(response.data);
+        
         }
         
       }
@@ -345,14 +348,35 @@ function EnderecoTotal() {
       
     } finally {
       setLoading(true)
+      initialLoad ? FetchDropFilter() : null; 
       setInitialLoad(false);
       setCarregarListSurvey(false);
       countListSurvey > 0 ? setListLocalSurvey(true) : setListLocalSurvey(false);
+      
             
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitClicked]);
+
+  const mesAbreviado = (numeroMes) => {
+    const meses = {
+      '01': 'JAN',
+      '02': 'FEV',
+      '03': 'MAR',
+      '04': 'ABR',
+      '05': 'MAI',
+      '06': 'JUN',
+      '07': 'JUL',
+      '08': 'AGO',
+      '09': 'SET',
+      '10': 'OUT',
+      '11': 'NOV',
+      '12': 'DEZ'
+    };
+  
+    return meses[numeroMes] || 'ERR'; // Retorna a versão abreviada correspondente ou 'DESC' se o número do mês não for reconhecido
+  };
 
   // Função para avançar para a próxima página
   const nextPage = () => {
@@ -376,12 +400,12 @@ function EnderecoTotal() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[user])
 
-  useEffect(() => {    
-    if (initialLoad) {
-      // Realiza a pesquisa inicial apenas uma vez ao carregar a página
-      FetchDropFilter();
-      fetchEnderecoTotal();
+  useEffect(() => {  
 
+    if (initialLoad) {
+      // Realiza a pesquisa inicial apenas uma vez ao carregar a página 
+      fetchEnderecoTotal();
+      
     } else if (submitClicked) {
       // Realiza pesquisas apenas quando o botão de pesquisa é clicado
       fetchEnderecoTotal();
@@ -397,8 +421,6 @@ function EnderecoTotal() {
   }, [fetchEnderecoTotal]);
 
   const columns = [
-    { key: 'uf', name: 'UF', width: '2%' },
-    { key: 'anoMes', name: 'BASE ACUM.', width: '7%' },
     { key: 'localidade', name: 'LOCALIDADE', width: '8%' },
     { key: 'celula', name: 'CELULA', width: '8%' },
     { key: 'siglaEstacao', name: 'SIGLA', width: '6%' },
@@ -425,6 +447,8 @@ function EnderecoTotal() {
     const input = event.target.value;
     setLoadingDrop(false);
     setUf(input);
+    setSiglaEstacao("");
+    setEstacao("");
     FetchDropFilterMaterialExec(
       input, 
       "", 
@@ -667,7 +691,6 @@ function EnderecoTotal() {
     setCheckedCheckbox('');
     setBaseAcumulada(false);
     setSemCdo(false);
-    FetchDropFilter();
 
   };
 
@@ -970,7 +993,7 @@ return (
               </div>
               </div>           
             </Filter>
-            { enderecoTotal.resultado !== undefined ? (
+            { enderecoTotal.resultado !== undefined && loadingDropState ? (
               <>
               {carregarListsurvey ? (
                 <>  

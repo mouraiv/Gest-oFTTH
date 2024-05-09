@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "olHcNtpo/srt0wttSfz4ZcFsIR1kAb5mf8uW73QeAV6qLaqJeZmdXhVz9IDrKOjQQfm2MNGIXZ4/JUGSr+xanQ==",
+  "dgSpecHash": "noW7qZHpaoJOdqY7LEvh7m2RuVE28zhV39RHx4Gxm+uZxSxQFD8p0v8dVsqX2CRRyED2g6neHHMU1QV24TCG3g==",
   "success": true,
   "projectFilePath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\wesley.moura\\.nuget\\packages\\aspose.drawing.common\\23.5.0\\aspose.drawing.common.23.5.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
+    "C:\\Users\\wesley.moura\\.nuget\\packages\\csvhelper\\32.0.2\\csvhelper.32.0.2.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\epplus\\6.2.8\\epplus.6.2.8.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\epplus.interfaces\\6.1.1\\epplus.interfaces.6.1.1.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\epplus.system.drawing\\6.1.1\\epplus.system.drawing.6.1.1.nupkg.sha512",

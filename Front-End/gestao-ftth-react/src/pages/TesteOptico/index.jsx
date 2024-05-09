@@ -148,6 +148,7 @@ function TesteOptico() {
       
     } finally {
       setLoading(true)
+      initialLoad ? FetchDropFilter() : null;
       setInitialLoad(false);
     }
 
@@ -175,11 +176,6 @@ function TesteOptico() {
       
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[user])
-
-  useEffect(() => {
-    FetchDropFilter()
-  
-  },[dropLoading])
 
   useEffect(() => {    
     if (initialLoad) {
@@ -218,6 +214,8 @@ function TesteOptico() {
   const handleUf = (event) => {
     const input = event.target.value;
     setUf(input);
+    setSiglaEstacao("");
+    setEstacao("");
  
     const _siglaEstacaoFilter = listSiglaEstacao.filter(([uf]) => { return uf === input})
     const _subSiglaEstacoes = _siglaEstacaoFilter
@@ -313,7 +311,9 @@ function TesteOptico() {
           <InfoDataBase />
             {userPrivate !== 1 || userPrivate === 3 ?
             <SubMenu>
+              { dropLoading &&
               <ButtonImport onClick={handleImportar} >Controle CDOs</ButtonImport>
+              }
              </SubMenu>
              : null
             }
@@ -381,7 +381,7 @@ function TesteOptico() {
                 text={dateInputTeste}
                 placeholder={"__/__/____"} 
               />
-              { loading ? (
+              { loading && dropLoading ? (
                 <>
                 <ButtonSearch event={submit} />
                 <ButtonDefaut event={limparFiltro} text={"Limpar"} />
@@ -392,7 +392,7 @@ function TesteOptico() {
               </div>          
             </Filter>
             { testeOptico.resultado !== undefined ? (
-              loading ? (  
+              loading && dropLoading ? (  
             <DataGridTable 
               columns={columns} 
               rows={testeOptico.resultado} 

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="32.0.2" />
     <PackageReference Include="EPPlus" Version="6.2.8" />
     <PackageReference Include="GroupDocs.Conversion" Version="23.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
@@ -21,7 +22,7 @@
     <PackageReference Include="Microsoft.NET.Build.Containers" Version="8.0.100" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.0" />
-    <Content Include="Downloads\**" CopyToPublishDirectory="PreserveNewest"/>
+    <Content Include="Downloads\**" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

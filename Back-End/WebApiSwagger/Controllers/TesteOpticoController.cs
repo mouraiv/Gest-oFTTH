@@ -341,142 +341,107 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpPost("DownloadExcel")]
-        public async Task<IActionResult> DownloadExcel(FiltroTesteOptico filtro)
+        public async Task<IActionResult> DownloadExcel(IProgressoRepository progressoRepository, FiltroTesteOptico filtro)
         {
             try
             {
+                _paginacao.Pagina = 1;
+                _paginacao.Tamanho = 50000;
+                
                 // Caminho completo para o arquivo XLSX na pasta "Downloads"
                 string pastaDoProjeto = Directory.GetCurrentDirectory();
-                string _templatePath = Path.Combine(pastaDoProjeto,"Downloads","TB_Controle_de_Campo.xlsx");
+                string _templatePath = Path.Combine(pastaDoProjeto, "Downloads", "TB_Controle_de_Campo.xlsx");
 
-                var dados = await _testeOpticoRepository.ControleCampo(_progressoRepository, filtro, _paginacao, 0);
-                
                 var stream = new MemoryStream();
-
-                if (dados == null || dados.Count() == 0)
-                {
-                    return BadRequest(new { message = "Nenhum Registro para exportação." });
-                }
-                else if (dados.Count() > 1000000)
-                {
-                    return BadRequest(new { message = "A consulta excede o limite máximo de 1.000.000 de linhas para exportação."});
-                }
-                else
-                {
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                 var fileInfo = new FileInfo(_templatePath);
-            
+
+                int rows = 1;
+                
                 using (var package = new ExcelPackage(fileInfo))
                 {
-                    var workSheet = package.Workbook.Worksheets[0]; 
-   
-                    // Preencha a planilha com os dados
-                    // A partir da linha 2 para não sobrescrever o cabeçalho
-                    workSheet.Cells[4, 3].Value = $"Região {filtro.UF}";
-                    int row = 8; 
-                    foreach (var item in dados)
-                    {
-                        DateTime? dataRecebimento = item.DataRecebimento;
-                        DateTime? dataAnalise = item.Analises?.FirstOrDefault()?.DataAnalise;
+                        var workSheet = package.Workbook.Worksheets[0]; 
+    
+                        workSheet.Cells[4, 3].Value = $"REGIÃO {filtro.UF?.ToUpper() ?? ""}";
+                        int row = 8; 
 
-                        string dataRecebimentoBr = dataRecebimento != null ? dataRecebimento.Value.ToString("dd-MM-yyyy") : "";
-                        string dataAnaliseBr = dataAnalise != null ? dataAnalise.Value.ToString("dd-MM-yyyy") : "";
-
-                        string baseAcumuladaOriginal = item.MaterialRede?.EnderecoTotal.FirstOrDefault()?.AnoMes ?? "";
-                        string baseAcumuladaFormatada = "";
-
-                        if (!string.IsNullOrEmpty(baseAcumuladaOriginal)){
-                            // Extrai o mês e o ano da string original
-                            int ano = int.Parse(baseAcumuladaOriginal.Substring(0, 4));
-                            int mes = int.Parse(baseAcumuladaOriginal.Substring(4, 2));
-                            string nomeMes = new DateTime(ano, mes, 1).ToString("MMM").ToUpper();
-                            baseAcumuladaFormatada = $"({baseAcumuladaOriginal.Substring(6)}) {nomeMes}/{ano}";
-                            
-                        }
-
-                        string _tipo = item.Analises?.Count > 1 ? "RE-TESTE" : "TESTE";
-                        
-                        string _cicloVida = item.MaterialRede?.Ligacao.FirstOrDefault()?.EstadoCicloVida_ls ?? "";
-                        string portasOcupadas = item.MaterialRede?.Ligacao.Reverse().FirstOrDefault()?.PortaCdo_ls ?? "";
-                        string ultimoNumeroPorta = "-";
-
-                        if (!string.IsNullOrEmpty(portasOcupadas))
+                        do
                         {
-                            if(_cicloVida == "Em Projeto"){
-                                ultimoNumeroPorta = "0";
-                            
-                            }else{
-                                // Divide a string em uma lista de números
-                                var numerosPortas = portasOcupadas
-                                    .Split("|").Select(n =>
-                                    {
-                                        int numero;
-                                        if (int.TryParse(n.Trim(), out numero))
-                                        {
-                                            return numero;
-                                        }
-                                        else
-                                        {
-                                            return 0;
-                                        }
-                                    }).OrderBy(n => n).ToList();
-                            
-                                // Extrai o último número da lista
-                                ultimoNumeroPorta = numerosPortas[0] != 0 ? numerosPortas.Last().ToString() : "";
-                            
+                            var dados = await _testeOpticoRepository.ControleCampo(_progressoRepository, filtro, _paginacao, 0);
+                           
+                            _paginacao.TotalPaginas = _paginacao.Total / _paginacao.Tamanho;
+
+                            if (dados != null)
+                            {
+
+                                foreach (var item in dados)
+                                {
+                                    var _analises = item.Analises?.FirstOrDefault() ?? new ControleCampoViewModel.AnaliseViewModel();
+                                    var _enderecosTotais = item.MaterialRede?.EnderecoTotal.FirstOrDefault() ?? new ControleCampoViewModel.EnderecoTotalViewModel();
+                                    var _ligacoes = item.MaterialRede?.Ligacao.FirstOrDefault() ?? new ControleCampoViewModel.LigacaoViewModel();                        
+
+                                    var dataRecebimentoBr = FormatDateTime(item.DataRecebimento);
+                                    var dataAnaliseBr = FormatDateTime(_analises?.DataAnalise);
+                                    var tipo = item.Analises?.Count() > 1 ? "RE-TESTE" : "TESTE";
+
+                                    // Preencha as células conforme necessário
+                                    workSheet.Cells[row, 1].Value = item.CHAVE ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 2].Value = item.UF ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 3].Value = item.SiglaEstacao ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 4].Value = item.TipoObra ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 5].Value = item.Cabo ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 6].Value = item.Celula ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 7].Value = item.CDO; // Exemplo
+                                    workSheet.Cells[row, 8].Value = item.Capacidade ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 9].Value = item.TotalUMs; // Exemplo
+                                    workSheet.Cells[row, 10].Value = item.Endereco; // Exemplo
+                                    workSheet.Cells[row, 11].Value = item.Construtora ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 12].Value = item.EstadoProjeto ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 13].Value = item.EstadoControle ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 14].Value = "-"; // Exemplo
+                                    workSheet.Cells[row, 15].Value =  FormatBaseAcumulada(_enderecosTotais?.AnoMes ?? "") ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 16].Value = dataRecebimentoBr; // Exemplo
+                                    workSheet.Cells[row, 17].Value = dataAnaliseBr; // Exemplo
+                                    workSheet.Cells[row, 18].Value = tipo; // Exemplo
+                                    workSheet.Cells[row, 19].Value = _analises?.Status ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 20].Value = _analises?.Analista ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 21].Value = _analises?.AnaliseObservacao; // Exemplo
+                                    workSheet.Cells[row, 22].Value = _enderecosTotais?.TipoViabilidade ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 23].Value = _enderecosTotais?.Cod_Viabilidade ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 24].Value = _testeOpticoRepository.ObterViabilidade(_enderecosTotais?.Cod_Viabilidade ?? ""); // Exemplo
+                                    workSheet.Cells[row, 25].Value = item.MaterialRede?.EstadoOperacional_Mt ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 26].Value = item.MaterialRede?.GrupoOperacional_Mt ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 27].Value = item.MaterialRede?.EstadoControle_Mt ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 28].Value = "-"; // Exemplo
+                                    workSheet.Cells[row, 29].Value = _ligacoes?.DGO_ls ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 30].Value = _ligacoes?.FibraDgo_ls ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 31].Value = UltimaPorta(_ligacoes ?? new ControleCampoViewModel.LigacaoViewModel()) ?? "-"; // Exemplo
+
+                                    row++;    
+                                    rows ++;
+                                    
+                                    progressoRepository.UpdateProgress(true, (rows - 1), $"Transferindo dados...", _paginacao.Total);
+                                    await Task.Delay(0);
+
+                                }
                             }
+                            _paginacao.Pagina++;
 
-                        }
+                            package.SaveAs(stream);
+                            stream.Position = 0;
+                            
+                        } while((_paginacao.Pagina - 1) <= _paginacao.TotalPaginas);
+                    
 
-                        // Preencha as células conforme necessário
-                        workSheet.Cells[row, 1].Value = item.CHAVE ?? "-"; // Exemplo
-                        workSheet.Cells[row, 2].Value = item.UF ?? "-"; // Exemplo
-                        workSheet.Cells[row, 3].Value = item.SiglaEstacao ?? "-"; // Exemplo
-                        workSheet.Cells[row, 4].Value = item.TipoObra ?? "-"; // Exemplo
-                        workSheet.Cells[row, 5].Value = item.Cabo ?? "-"; // Exemplo
-                        workSheet.Cells[row, 6].Value = item.Celula ?? "-"; // Exemplo
-                        workSheet.Cells[row, 7].Value = item.CDO; // Exemplo
-                        workSheet.Cells[row, 8].Value = item.Capacidade ?? "-"; // Exemplo
-                        workSheet.Cells[row, 9].Value = item.TotalUMs; // Exemplo
-                        workSheet.Cells[row, 10].Value = item.Endereco; // Exemplo
-                        workSheet.Cells[row, 11].Value = item.Construtora ?? "-"; // Exemplo
-                        workSheet.Cells[row, 12].Value = item.EstadoProjeto ?? "-"; // Exemplo
-                        workSheet.Cells[row, 13].Value = item.EstadoControle ?? "-"; // Exemplo
-                        workSheet.Cells[row, 14].Value = "-"; // Exemplo
-                        workSheet.Cells[row, 15].Value = baseAcumuladaFormatada ?? "-"; // Exemplo
-                        workSheet.Cells[row, 16].Value = dataRecebimentoBr; // Exemplo
-                        workSheet.Cells[row, 17].Value = dataAnaliseBr; // Exemplo
-                        workSheet.Cells[row, 18].Value = _tipo; // Exemplo
-                        workSheet.Cells[row, 19].Value = item.Analises?.FirstOrDefault()?.Status ?? "-"; // Exemplo
-                        workSheet.Cells[row, 20].Value = item.Analises?.FirstOrDefault()?.Analista ?? "-"; // Exemplo
-                        workSheet.Cells[row, 21].Value = item.Analises?.FirstOrDefault()?.AnaliseObservacao; // Exemplo
-                        workSheet.Cells[row, 22].Value = item.MaterialRede?.EnderecoTotal.FirstOrDefault()?.TipoViabilidade ?? "-"; // Exemplo
-                        workSheet.Cells[row, 23].Value = item.MaterialRede?.EnderecoTotal.FirstOrDefault()?.Cod_Viabilidade ?? "-"; // Exemplo
-                        workSheet.Cells[row, 24].Value = "-"; // Exemplo
-                        workSheet.Cells[row, 25].Value = item.MaterialRede?.EstadoOperacional_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 26].Value = item.MaterialRede?.GrupoOperacional_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 27].Value = item.MaterialRede?.EstadoControle_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 28].Value = "-"; // Exemplo
-                        workSheet.Cells[row, 29].Value = item.MaterialRede?.Ligacao.FirstOrDefault()?.DGO_ls ?? "-"; // Exemplo
-                        workSheet.Cells[row, 30].Value = item.MaterialRede?.Ligacao.FirstOrDefault()?.FibraDgo_ls ?? "-"; // Exemplo
-                        workSheet.Cells[row, 31].Value = ultimoNumeroPorta ?? "-"; // Exemplo
-                        
-                        row++;
-                    }
-
-                    package.SaveAs(stream);
-                    stream.Position = 0;
-                }
-
-                    string excelName = $"EnderecosTotais-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                    string excelName = $"TB_Controle_de_Campo-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
                     return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message ="Ocorreu um erro ao exportar o arquivo Excel: " + ex.StackTrace });
+                return BadRequest(new { message ="Ocorreu um erro ao exportar o arquivo CSV: " + ex.StackTrace });
             }
         }
 
@@ -493,57 +458,14 @@ namespace WebApiSwagger.Controllers
                 var resultado = new List<object>();
 
                 foreach(var optico in lista){
-                    DateTime? dataRecebimento = optico.DataRecebimento;
-                    DateTime? dataAnalise = optico.Analises?.FirstOrDefault()?.DataAnalise;
+                    var _analises = optico.Analises?.FirstOrDefault() ?? new ControleCampoViewModel.AnaliseViewModel();
+                    var _enderecosTotais = optico.MaterialRede?.EnderecoTotal.FirstOrDefault() ?? new ControleCampoViewModel.EnderecoTotalViewModel();
+                    var _ligacoes = optico.MaterialRede?.Ligacao.FirstOrDefault() ?? new ControleCampoViewModel.LigacaoViewModel();                        
 
-                    string dataRecebimentoBr = dataRecebimento != null ? dataRecebimento.Value.ToString("dd-MM-yyyy") : "";
-                    string dataAnaliseBr = dataAnalise != null ? dataAnalise.Value.ToString("dd-MM-yyyy") : "";
-
-                    string baseAcumuladaOriginal = optico.MaterialRede?.EnderecoTotal.FirstOrDefault()?.AnoMes ?? "";
-                    string baseAcumuladaFormatada = "";
-
-                    if (!string.IsNullOrEmpty(baseAcumuladaOriginal)){
-                        // Extrai o mês e o ano da string original
-                        int ano = int.Parse(baseAcumuladaOriginal.Substring(0, 4));
-                        int mes = int.Parse(baseAcumuladaOriginal.Substring(4, 2));
-                        string nomeMes = new DateTime(ano, mes, 1).ToString("MMM").ToUpper();
-                        baseAcumuladaFormatada = $"({baseAcumuladaOriginal.Substring(6)}) {nomeMes}/{ano}";
-                        
-                    }
-
-                    string _tipo = optico.Analises?.Count > 1 ? "RE-TESTE" : "TESTE";
+                    var dataRecebimentoBr = FormatDateTime(optico.DataRecebimento);
+                    var dataAnaliseBr = FormatDateTime(_analises?.DataAnalise);
+                    var tipo = optico.Analises?.Count() > 1 ? "RE-TESTE" : "TESTE";
                     
-                    string _cicloVida = optico.MaterialRede?.Ligacao.FirstOrDefault()?.EstadoCicloVida_ls ?? "";
-                    string portasOcupadas = optico.MaterialRede?.Ligacao.Reverse().FirstOrDefault()?.PortaCdo_ls ?? "";
-                    string ultimoNumeroPorta = "-";
-
-                    if (!string.IsNullOrEmpty(portasOcupadas))
-                    {
-                        if(_cicloVida == "Em Projeto"){
-                            ultimoNumeroPorta = "0";
-                        
-                        }else{
-                            // Divide a string em uma lista de números
-                            var numerosPortas = portasOcupadas
-                                .Split("|").Select(n =>
-                                {
-                                    int numero;
-                                    if (int.TryParse(n.Trim(), out numero))
-                                    {
-                                        return numero;
-                                    }
-                                    else
-                                    {
-                                        return 0;
-                                    }
-                                }).OrderBy(n => n).ToList();
-                        
-                            // Extrai o último número da lista
-                            ultimoNumeroPorta = numerosPortas[0] != 0 ? numerosPortas.Last().ToString() : "";
-                        
-                        }
-
-                    }
 
                     var modelo = new {
                         CHAVE = optico.CHAVE,    
@@ -560,22 +482,22 @@ namespace WebApiSwagger.Controllers
                         EstadoProjeto = optico.EstadoProjeto,
                         EstadoControle = optico.EstadoControle,
                         AceitacaoData = optico.AceitacaoData,
-                        BaseAcumulada = baseAcumuladaFormatada,
+                        BaseAcumulada = FormatBaseAcumulada(_enderecosTotais?.AnoMes ?? ""),
                         DataRecebimento = dataRecebimentoBr,
                         DataAnalise = dataAnaliseBr,
-                        Tipo = _tipo,
-                        Status = optico.Analises?.FirstOrDefault()?.Status,
-                        Analista = optico.Analises?.FirstOrDefault()?.Analista,
-                        ObsAnalise = optico.Analises?.FirstOrDefault()?.AnaliseObservacao,
-                        StatusNetwin = optico.MaterialRede?.EnderecoTotal.FirstOrDefault()?.TipoViabilidade,
-                        CodNetwin = optico.MaterialRede?.EnderecoTotal.FirstOrDefault()?.Cod_Viabilidade,
-                        PendenciaViab = "",
+                        Tipo = tipo,
+                        Status = _analises?.Status,
+                        Analista = _analises?.Analista,
+                        ObsAnalise = _analises?.AnaliseObservacao,
+                        StatusNetwin = _enderecosTotais?.TipoViabilidade,
+                        CodNetwin = _enderecosTotais?.Cod_Viabilidade,
+                        PendenciaViab = _testeOpticoRepository.ObterViabilidade(_enderecosTotais?.Cod_Viabilidade ?? ""),
                         EstadoOperacional = optico.MaterialRede?.EstadoOperacional_Mt,
                         GrupoControle = optico.MaterialRede?.GrupoOperacional_Mt,
                         EstadoControle_Mt = optico.MaterialRede?.EstadoControle_Mt,
-                        PosicaoDGO = optico.MaterialRede?.Ligacao.FirstOrDefault()?.DGO_ls,
-                        FibraDGO = optico.MaterialRede?.Ligacao.FirstOrDefault()?.FibraDgo_ls,
-                        PortasOcupadas = ultimoNumeroPorta
+                        PosicaoDGO = _ligacoes?.DGO_ls,
+                        FibraDGO = _ligacoes?.FibraDgo_ls,
+                        PortasOcupadas = UltimaPorta(_ligacoes ?? new ControleCampoViewModel.LigacaoViewModel())
                     };
                     resultado.Add(modelo);
                 };
@@ -595,9 +517,62 @@ namespace WebApiSwagger.Controllers
             }
             catch (Exception ex)
             {
-               return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
+               return BadRequest("Ocorreu um erro ao listar: " + ex.StackTrace);
             }
             
+        }
+
+        private string FormatDateTime(DateTime? dateTime)
+        {
+            return dateTime?.ToString("dd-MM-yyyy") ?? "";
+        }
+
+        private string FormatBaseAcumulada(string baseAcumuladaOriginal)
+        {
+            if (string.IsNullOrEmpty(baseAcumuladaOriginal))
+                return "";
+
+            int ano = int.Parse(baseAcumuladaOriginal.Substring(0, 4));
+            int mes = int.Parse(baseAcumuladaOriginal.Substring(4, 2));
+            string nomeMes = new DateTime(ano, mes, 1).ToString("MMM").ToUpper();
+            return $"({baseAcumuladaOriginal.Substring(6)}) {nomeMes}/{ano}";
+        }
+
+        private string UltimaPorta (ControleCampoViewModel.LigacaoViewModel ligacoes)
+        {
+            string _cicloVida = ligacoes?.EstadoCicloVida_ls ?? "";
+            string portasOcupadas = ligacoes?.PortaCdo_ls ?? "";
+            string ultimoNumeroPorta = "-";
+
+            if (!string.IsNullOrEmpty(portasOcupadas))
+            {
+                if (_cicloVida == "Em Projeto")
+                {
+                    ultimoNumeroPorta = "0";
+                }
+                else
+                {
+                // Divide a string em uma lista de números
+                    var numerosPortas = portasOcupadas
+                        .Split("|").Select(n =>
+                            {
+                                int numero;
+                                if (int.TryParse(n.Trim(), out numero))
+                                {
+                                    return numero;
+                                }
+                                else
+                                {
+                                    return 0;
+                                }
+                            }).OrderBy(n => n).ToList();
+                            
+                            // Extrai o último número da lista
+                            ultimoNumeroPorta = numerosPortas[0] != 0 ? numerosPortas.Last().ToString() : "";
+                            
+                }
+            }
+            return ultimoNumeroPorta;
         }
 
         [HttpGet("ControleCdo")]
@@ -702,6 +677,6 @@ namespace WebApiSwagger.Controllers
                return BadRequest("Ocorreu um erro ao listar: " + ex.Message);
             }
 
-        }
+        }        
     }
 }
