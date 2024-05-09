@@ -78,72 +78,83 @@ namespace WebApiSwagger.Controllers
            
         }
         [HttpPost("DownloadExcel")]
-        public async Task<IActionResult> DownloadExcel(FiltroEnderecoTotal filtro, Paginacao paginacao)
+        public async Task<IActionResult> DownloadExcel(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao)
         {
             try
             {
+                _paginacao.Pagina = 1;
+                _paginacao.Tamanho = 50000;
+                
                 // Caminho completo para o arquivo XLSX na pasta "Downloads"
                 string pastaDoProjeto = Directory.GetCurrentDirectory();
-                string _templatePath = Path.Combine(pastaDoProjeto,"Downloads","TB_EnderecoTotais.xlsx");
-                
-                var dados = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro, _painelGanho, paginacao, 0);
+                string _templatePath = Path.Combine(pastaDoProjeto, "Downloads", "TB_EnderecoTotais.xlsx");
 
                 var stream = new MemoryStream();
-
-                if (dados == null || dados.Count() == 0)
-                {
-                    return BadRequest(new { message = "Nenhum Registro para exportação." });
-                }
-                else if (dados.Count() > 1000000)
-                {
-                    return BadRequest(new { message = "A consulta excede o limite máximo de 1.000.000 de linhas para exportação."});
-                }
-                else
-                {
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                 var fileInfo = new FileInfo(_templatePath);
-            
+
+                int rows = 1;
+                
                 using (var package = new ExcelPackage(fileInfo))
                 {
-                    var workSheet = package.Workbook.Worksheets[0]; // Assumindo que você deseja usar a primeira planilha
-   
-                    // Preencha a planilha com os dados
-                    // A partir da linha 2 para não sobrescrever o cabeçalho
-                    int row = 7; 
-                    foreach (var item in dados)
-                    {
-                        // Preencha as células conforme necessário
-                        workSheet.Cells[row, 1].Value = item.UF ?? "-"; // Exemplo
-                        workSheet.Cells[row, 2].Value = item.Localidade ?? "-"; // Exemplo
-                        workSheet.Cells[row, 3].Value = item.Celula ?? "-"; // Exemplo
-                        workSheet.Cells[row, 4].Value = item.SiglaEstacao ?? "-"; // Exemplo
-                        workSheet.Cells[row, 5].Value = item.MaterialRede?.NomeAbastecedora_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 6].Value = item.NomeCdo ?? "-"; // Exemplo
-                        workSheet.Cells[row, 7].Value = item.Cod_Viabilidade; // Exemplo
-                        workSheet.Cells[row, 8].Value = item.TipoViabilidade ?? "-"; // Exemplo
-                        workSheet.Cells[row, 9].Value = item.Cod_Survey ?? "-"; // Exemplo
-                        workSheet.Cells[row, 10].Value = item.QuantidadeUMS; // Exemplo
-                        workSheet.Cells[row, 11].Value = item.Disp_Comercial ?? "-"; // Exemplo
-                        workSheet.Cells[row, 12].Value = item.MaterialRede?.GrupoOperacional_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 13].Value = item.MaterialRede?.EstadoControle_Mt ?? "-"; // Exemplo
-                        workSheet.Cells[row, 14].Value = item.MaterialRede?.EstadoOperacional_Mt ?? "-"; // Exemplo
-                        
-                        row++;
-                    }
+                        var workSheet = package.Workbook.Worksheets[0]; 
+    
+                        workSheet.Cells[3, 3].Value = $"ENDEREÇOS TOTAIS";
+                        int row = 7; 
 
-                    package.SaveAs(stream);
-                    stream.Position = 0;
-                }
+                        do
+                        {
+                            var dados = await _enderecoTotalRepository.Listar(_progressoRepository ,filtro, _painelGanho, paginacao, 0);
+                           
+                            _paginacao.TotalPaginas = _paginacao.Total / _paginacao.Tamanho;
 
-                    string excelName = $"EnderecosTotais-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                            if (dados != null)
+                            {
+
+                                foreach (var item in dados)
+                                {
+                                    
+                                    // Preencha as células conforme necessário
+                                    workSheet.Cells[row, 1].Value = item.UF ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 2].Value = item.Localidade ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 3].Value = item.Celula ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 4].Value = item.SiglaEstacao ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 5].Value = item.MaterialRede?.NomeAbastecedora_Mt ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 6].Value = item.NomeCdo ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 7].Value = item.Cod_Viabilidade; // Exemplo
+                                    workSheet.Cells[row, 8].Value = item.TipoViabilidade ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 9].Value = item.Cod_Survey ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 10].Value = item.QuantidadeUMS; // Exemplo
+                                    workSheet.Cells[row, 11].Value = item.Disp_Comercial ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 12].Value = item.MaterialRede?.GrupoOperacional_Mt ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 13].Value = item.MaterialRede?.EstadoControle_Mt ?? "-"; // Exemplo
+                                    workSheet.Cells[row, 14].Value = item.MaterialRede?.EstadoOperacional_Mt ?? "-"; // Exemplo
+
+                                    row++;    
+                                    rows ++;
+                                    
+                                    progressoRepository.UpdateProgress(true, (rows - 1), $"Transferindo dados...", _paginacao.Total);
+                                    await Task.Delay(0);
+
+                                }
+                            }
+                            _paginacao.Pagina++;
+
+                            package.SaveAs(stream);
+                            stream.Position = 0;
+                            
+                        } while((_paginacao.Pagina - 1) <= _paginacao.TotalPaginas);
+                    
+
+                    string excelName = $"TB_EnderecoTotais-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
                     return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message ="Ocorreu um erro ao exportar o arquivo Excel: " + ex.Message });
+                return BadRequest(new { message ="Ocorreu um erro ao exportar o arquivo CSV: " + ex.StackTrace });
             }
         }
         [HttpGet("BaseAcumulada")]

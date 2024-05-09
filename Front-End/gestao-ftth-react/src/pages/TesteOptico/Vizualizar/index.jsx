@@ -576,7 +576,7 @@ function Vizualizar(){
                     <>
                     <tr>
                     <th colSpan={2} style={
-                                analises?.[0]?.status === 'APROVADO' ? {
+                                analises?.[analises?.length - 1]?.status === 'APROVADO' ? {
                                 backgroundColor: '#D4EFDF',
                                 color: '#145A32',
                                 border: '1px solid #145A32'

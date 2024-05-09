@@ -761,7 +761,7 @@ return (
                                 <p>Exportando registros.</p>
                                 <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
                             </div>
-                                <ProgressComponent />
+                                <ProgressComponent exportar={true}/>
                             </div>
                         </div>
                           </>

@@ -26,6 +26,7 @@ namespace WebApiSwagger.Repository
                 await Task.Delay(500);
 
                 var query = _context.EnderecosTotais
+                    .AsNoTracking()
                     .Include(p => p.MaterialRede)
                     .Where(p => p.Id_StatusGanho == 1)
                     .Select(et => new EnderecoTotal {
@@ -144,11 +145,13 @@ namespace WebApiSwagger.Repository
                 if(!filterSurvey){
 
                 return await _context.EnderecosTotais
+                        .AsNoTracking()
                            .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
                 }else{
                 
                 return await _context.EnderecosTotais
+                        .AsNoTracking()
                            .Where(p => p.Cod_Survey == survey)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
                 }
@@ -172,6 +175,7 @@ namespace WebApiSwagger.Repository
                 await Task.Delay(500);
 
                 var query = _context.EnderecosTotais
+                .AsNoTracking()
                     .Include(p => p.MaterialRede)
                     .Where(p =>  p.Id_StatusGanho == filtro.Id_StatusGanho || p.Id_Disponibilidade == filtro.Id_Disponibilidade || 
                                  (filtro.AnoMesBool ? !string.IsNullOrEmpty(p.AnoMes) : true) && (filtro.SemCdo ? p.NomeCdo == "" : true))
@@ -306,7 +310,7 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Total = await query.CountAsync();
 
-                        if(filtro?.Pagina == 1) {    
+                        if(filtro?.Pagina == 1 && pageOff == 1) {    
 
                         painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
                         painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
@@ -350,7 +354,7 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Total = _registros;
 
-                        if(filtro?.Pagina == 1) {    
+                        if(filtro?.Pagina == 1 && pageOff == 1) {    
 
                         painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
                         painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
@@ -392,7 +396,7 @@ namespace WebApiSwagger.Repository
 
                     paginacao.Total = _registros;
 
-                        if(filtro?.Pagina == 1) {    
+                        if(filtro?.Pagina == 1 && pageOff == 1) {    
 
                         painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
                         painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
@@ -428,7 +432,7 @@ namespace WebApiSwagger.Repository
 
                     paginacao.TotalUms = 0;
 
-                        if(filtro?.Pagina == 1) {    
+                        if(filtro?.Pagina == 1 && pageOff == 1) {    
 
                         painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
                         painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
@@ -457,6 +461,10 @@ namespace WebApiSwagger.Repository
                             await Task.Delay(500);
 
                             paginacao.TotalUms = query.Where(p => p.Id_StatusGanho != 3).Sum(p => p.QuantidadeUMS) ?? 0;
+
+                            query = query
+                            .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
+                            .Take(paginacao.Tamanho);
 
                             progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
 
@@ -489,6 +497,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.EnderecosTotais
+                .AsNoTracking()
                 .Where(p => p.Id_MaterialRede == id_MaterialRede)
                 .ToListAsync();             
             }
@@ -629,6 +638,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = await (from endt in _context.EnderecosTotais
+                            .AsNoTracking()
                             group endt by new
                             {
                                 endt.UF,
@@ -641,7 +651,8 @@ namespace WebApiSwagger.Repository
                                 SiglaEstacao = g.Key.SiglaEstacao,
                                 Cod_Viabilidade = g.Key.Cod_Viabilidade,
 
-                            }).ToListAsync();
+                            })
+                            .ToListAsync();
 
                 return query;
             }
@@ -655,6 +666,7 @@ namespace WebApiSwagger.Repository
             try
             {
                 var query = (from endt in _context.EnderecosTotais
+                            .AsNoTracking()
                             group endt by new
                             {
                                 endt.UF,
@@ -671,7 +683,8 @@ namespace WebApiSwagger.Repository
                                 Bairro = g.Key.Bairro,
                                 Municipio = g.Key.Municipio,
 
-                            }).AsQueryable();
+                            })
+                            .AsQueryable();
 
                 if (filtro != null)
                 {
@@ -706,6 +719,7 @@ namespace WebApiSwagger.Repository
               try
             {
                 var resultado = await _context.EnderecosTotais
+                .AsNoTracking()
                 .Include(p => p.MaterialRede)
                 .Where(p =>
                     p.Cod_Viabilidade != "0" && p.Cod_Viabilidade != "2" && p.Cod_Viabilidade != "4" && p.Cod_Viabilidade != "14" && p.Id_StatusGanho == 1 &&

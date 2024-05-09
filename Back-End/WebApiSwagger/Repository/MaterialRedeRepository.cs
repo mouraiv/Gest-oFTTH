@@ -26,14 +26,6 @@ namespace WebApiSwagger.Repository
                     .Include(p => p.Ligacao)
                         .FirstOrDefaultAsync(p => p.Id_MaterialRede == id_MaterialRede) ?? new MaterialRede();
 
-                            /*await _context.Entry(query)
-                                .Collection(p => p.Ligacao)
-                                .LoadAsync();    
-
-                            await _context.Entry(query)
-                                .Collection(p => p.EnderecoTotal)
-                                .LoadAsync();*/   
-                                                                    
                 return query;
 
             }
@@ -43,7 +35,7 @@ namespace WebApiSwagger.Repository
             }
             
         }
-         public async Task<MaterialRede> CarregarChave(string? chave)
+        public async Task<MaterialRede> CarregarChave(string? chave)
         {
             try
             {
@@ -68,7 +60,9 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                    var query = _context.DropEnderecosTotais.AsQueryable();
+                    var query = _context.DropEnderecosTotais
+                    .AsNoTracking()
+                    .AsQueryable();
 
                     if (!string.IsNullOrEmpty(uf))
                     {
@@ -107,7 +101,8 @@ namespace WebApiSwagger.Repository
                         EstadoControle = endt.EstadoControle,
                         EstadoOperacional = endt.EstadoOperacional
 
-                    }).Distinct()
+                    })
+                    .Distinct()
                     .ToListAsync();
 
                     return result;

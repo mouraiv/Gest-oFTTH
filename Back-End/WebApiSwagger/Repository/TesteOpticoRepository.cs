@@ -172,7 +172,7 @@ namespace WebApiSwagger.Repository
                                 
                             })
 
-                        }}).AsNoTracking()
+                        }})
                         .AsQueryable();
                     
                 progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
