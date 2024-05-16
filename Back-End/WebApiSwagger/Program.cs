@@ -8,11 +8,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IEnderecoTotalRepository, EnderecoTotalRepository>();
+builder.Services.AddScoped<IServicoAssociadoRepository, ServicoAssociadoRepository>();
+builder.Services.AddScoped<IMaisDeUmaCDORepository, MaisDeUmaCDORepository>();
 builder.Services.AddScoped<IInfoRepository, InfoRepository>();
 builder.Services.AddScoped<ITesteOpticoRepository, TesteOpticoRepository>();
 builder.Services.AddScoped<IMaterialRedeRepository, MaterialRedeRepository>();
@@ -90,6 +93,10 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = false,
         ValidateAudience = false
     };
+});
+
+builder.Services.Configure<FormOptions>(options => {
+    options.MultipartBodyLengthLimit = 10737418240;
 });
 
 builder.Services.AddSignalR();

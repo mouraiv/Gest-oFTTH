@@ -120,7 +120,16 @@ const ExportExcel = async (filtro) => {
   
   };
 
+  const FazerUploadMultiplaAssociacao = async (files, source) => {
+      const formData = new FormData();
+      formData.append('arquivo', files);
+    
+      const response = await Api.post("/EnderecoTotal/ImportarMultiplaAssociacao", formData, { cancelToken: source });
+      return response;
+  };
+
 export {
+  FazerUploadMultiplaAssociacao,
   GetGraficoPrincipal,
   DropEnderecoTotal,
   DropLocalidade,

@@ -359,7 +359,7 @@ namespace WebApiSwagger.Controllers
         }
 
         [HttpPost("DownloadExcel")]
-        public async Task<IActionResult> DownloadExcel(IProgressoRepository progressoRepository, FiltroTesteOptico filtro)
+        public async Task<IActionResult> DownloadExcel(FiltroTesteOptico filtro)
         {
             try
             {
@@ -440,7 +440,7 @@ namespace WebApiSwagger.Controllers
                                     row++;    
                                     rows ++;
                                     
-                                    progressoRepository.UpdateProgress(true, (rows - 1), $"Transferindo dados...", _paginacao.Total);
+                                    _progressoRepository.UpdateProgress(true, (rows - 1), $"Transferindo dados...", _paginacao.Total);
                                     await Task.Delay(0);
 
                                 }

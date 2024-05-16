@@ -18,6 +18,116 @@ namespace WebApiSwagger.Repository
             _context = context;
         }
 
+        
+        public async Task<EnderecoTotal> CarregarEnderecoTotalId(int? id_EnderecoTotal)
+        {
+            try
+            {
+                return await _context.EnderecosTotais
+                        .AsNoTracking()
+                           .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
+                           .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
+            }
+            catch (Exception ex)
+            {  
+                throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
+            }
+            
+        }
+        public async Task<bool> Deletar(int id)
+        {
+            try
+            {
+                EnderecoTotal db = await CarregarEnderecoTotalId(id);
+
+                _context.EnderecosTotais.Remove(db);
+                await _context.SaveChangesAsync();
+                return true;
+
+            }
+            catch (Exception ex)  
+            {
+                throw new Exception("Ocorreu um erro ao deletar: " + ex.Message);
+            }
+        }
+
+        public async Task<EnderecoTotal> Editar(int id, EnderecoTotal enderecoTotal)
+        {
+            try
+            {
+                EnderecoTotal db = await CarregarEnderecoTotalId(id);
+
+                db.StatusGanho = enderecoTotal.StatusGanho;
+                db.Id_StatusGanho = enderecoTotal.Id_StatusGanho;
+                db.ChaveCelula = enderecoTotal.ChaveCelula;
+                db.Disponibilidade = enderecoTotal.Disponibilidade;
+                db.Id_Disponibilidade = enderecoTotal.Id_Disponibilidade;
+                db.AnoMes = enderecoTotal.AnoMes;
+                db.Celula = enderecoTotal.Celula;
+                db.SiglaEstacao = enderecoTotal.SiglaEstacao;
+                db.UF = enderecoTotal.UF;
+                db.Municipio = enderecoTotal.Municipio;
+                db.Localidade = enderecoTotal.Localidade;
+                db.Cod_Localidade = enderecoTotal.Cod_Localidade;
+                db.LocalidadeAbrev = enderecoTotal.LocalidadeAbrev;
+                db.Logradouro = enderecoTotal.Logradouro;
+                db.Cod_Logradouro = enderecoTotal.Cod_Logradouro;
+                db.NumeroFachada = enderecoTotal.NumeroFachada;
+                db.Complemento = enderecoTotal.Complemento;
+                db.ComplementoDois = enderecoTotal.ComplementoDois;
+                db.ComplementoTres = enderecoTotal.ComplementoTres;
+                db.CEP = enderecoTotal.CEP;
+                db.Bairro = enderecoTotal.Bairro;
+                db.Cod_Survey = enderecoTotal.Cod_Survey;
+                db.QuantidadeUMS = enderecoTotal.QuantidadeUMS;
+                db.Cod_Viabilidade = enderecoTotal.Cod_Viabilidade;
+                db.TipoViabilidade = enderecoTotal.TipoViabilidade;
+                db.TipoRede = enderecoTotal.TipoRede;
+                db.UCS_Residenciais = enderecoTotal.UCS_Residenciais;
+                db.UCS_Comerciais = enderecoTotal.UCS_Comerciais;
+                db.NomeCdo = enderecoTotal.NomeCdo;
+                db.Id_Endereco = enderecoTotal.Id_Endereco;
+                db.Latitude = enderecoTotal.Latitude;
+                db.Longitude = enderecoTotal.Longitude;
+                db.TipoSurvey = enderecoTotal.TipoSurvey;
+                db.RedeInterna = enderecoTotal.RedeInterna;
+                db.UMS_Certificadas = enderecoTotal.UMS_Certificadas;
+                db.RedeEdificio_Certificados = enderecoTotal.RedeEdificio_Certificados;
+                db.NumeroPiso = enderecoTotal.NumeroPiso;
+                db.Disp_Comercial = enderecoTotal.Disp_Comercial;
+                db.Id_Celula = enderecoTotal.Id_Celula;
+                db.EstadoControle = enderecoTotal.EstadoControle;
+                db.DataEstadoControle = enderecoTotal.DataEstadoControle;
+                db.DataAssociacao = enderecoTotal.DataAssociacao;
+                db.Quantidade_HCS = enderecoTotal.Quantidade_HCS;
+                db.Projeto = enderecoTotal.Projeto;
+                db.Id_Associacao = enderecoTotal.Id_Associacao;
+                db.Id_MaterialRede = enderecoTotal.Id_MaterialRede;
+            
+                _context.EnderecosTotais.Update(db);
+                await _context.SaveChangesAsync();
+
+                return db;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao editar: " + ex.Message);
+            }
+        }
+
+        public async Task<EnderecoTotal> Inserir(EnderecoTotal enderecoTotal)
+        {
+            try
+            {
+                _context.EnderecosTotais.Add(enderecoTotal);
+                await _context.SaveChangesAsync();
+                return enderecoTotal;    
+            }
+            catch (Exception ex)
+            {  
+                throw new Exception("Ocorreu um erro ao inserir: " + ex.Message);
+            }
+        }
         public async Task<IEnumerable<EnderecoTotal>> BaseAcumulada(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao)
         {
             try
@@ -177,6 +287,7 @@ namespace WebApiSwagger.Repository
                 var query = _context.EnderecosTotais
                 .AsNoTracking()
                     .Include(p => p.MaterialRede)
+                    .Include(p => p.maisDeUmaCDOs)
                     .Where(p =>  p.Id_StatusGanho == filtro.Id_StatusGanho || p.Id_Disponibilidade == filtro.Id_Disponibilidade || 
                                  (filtro.AnoMesBool ? !string.IsNullOrEmpty(p.AnoMes) : true) && (filtro.SemCdo ? p.NomeCdo == "" : true))
                     .Select(et => new EnderecoTotal {
@@ -205,6 +316,7 @@ namespace WebApiSwagger.Repository
                         Id_MaterialRede = et.Id_MaterialRede,
                         Id_Associacao = et.Id_Associacao,
                         DataAssociacao = et.DataAssociacao,
+                        maisDeUmaCDOs = et.maisDeUmaCDOs,
                         MaterialRede = new MaterialRede
                             {
                                 CHAVE = et.MaterialRede.CHAVE,
@@ -740,6 +852,16 @@ namespace WebApiSwagger.Repository
             {
                 throw new Exception("Ocorreu um erro ao carregar: " + ex.Message);
             }
+        }
+
+        public async Task<int> ChaveEstrangeira(string survey)
+        {
+            var result = await _context.EnderecosTotais
+                                .Where(p => p.Cod_Survey == survey)
+                                .Select(p => p.Id_EnderecoTotal)
+                                .FirstOrDefaultAsync();
+
+            return result;
         }
     }
 }

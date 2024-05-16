@@ -29,6 +29,7 @@ namespace WebApiSwagger.Context
         public DbSet<EnderecoTotalDropListView> DropEnderecosTotais  => Set<EnderecoTotalDropListView>();
         public DbSet<Ligacao> Ligacoes => Set<Ligacao>();
         public DbSet<ServicoAssociado> ServicoAssociados => Set<ServicoAssociado>();
+        public DbSet<MaisDeUmaCDO> MaisDeUmaCDOs => Set<MaisDeUmaCDO>();
         public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
         public DbSet<Validacao> Validacoes => Set<Validacao>();
         public DbSet<TesteOptico> TestesOpticos => Set<TesteOptico>();
@@ -98,7 +99,12 @@ namespace WebApiSwagger.Context
             modelBuilder.Entity<ServicoAssociado>()
                 .HasOne(t => t.EnderecosTotais)
                 .WithMany(p => p.ServicosAssociados)
-                .HasForeignKey(p => p.Id_EnderecoTotal);    
+                .HasForeignKey(p => p.Id_EnderecoTotal);
+
+            modelBuilder.Entity<MaisDeUmaCDO>()
+                .HasOne(t => t.EnderecosTotais)
+                .WithMany(p => p.maisDeUmaCDOs)
+                .HasForeignKey(p => p.Id_EnderecoTotal);         
                    
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)

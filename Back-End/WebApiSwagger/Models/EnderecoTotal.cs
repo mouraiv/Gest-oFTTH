@@ -29,8 +29,6 @@ namespace WebApiSwagger.Models
       public string? Bairro { get; set; }
       public string? Cod_Survey { get; set; }
       public int? QuantidadeUMS { get; set; }
-      //public int? QuantidadeUMS_old { get; set; }
-      //public int? QuantidadeUMS_ganhoDia { get; set; }
       public string? Cod_Viabilidade { get; set; }
       public string? TipoViabilidade { get; set; }
       public string? TipoRede { get; set; }
@@ -56,6 +54,7 @@ namespace WebApiSwagger.Models
       public int? Id_MaterialRede { get; set; }
       public MaterialRede MaterialRede { get; set; } = null!;
       public ICollection<ServicoAssociado> ServicosAssociados { get; set; } = new List<ServicoAssociado>();
+      public ICollection<MaisDeUmaCDO> maisDeUmaCDOs { get; set; } = new List<MaisDeUmaCDO>();
        
     }
 }

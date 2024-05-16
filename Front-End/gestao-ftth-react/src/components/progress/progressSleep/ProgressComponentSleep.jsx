@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container } from './styles';
 
-const ProgressComponentSleep = ({status}) => {
+const ProgressComponentSleep = ({status, width, border}) => {
   const [contador, setContador] = useState(0);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const ProgressComponentSleep = ({status}) => {
 
   return (
     <Container>
-        <div className="progress-bar" ></div>
+        <div className="progress-bar" style={{width: `${width}`, border: `${border}`}} ></div>
         <div className="sleep" style={{ left: `${contador}%`, width: `${contador <= 50 ? contador : 100 - contador}px` }} ></div>
     </Container>
   );

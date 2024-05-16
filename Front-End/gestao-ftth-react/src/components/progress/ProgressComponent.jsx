@@ -56,7 +56,7 @@ const ProgressComponent = ({exportar}) => {
               <ProgressComponentSleep status={true} />
               <progress value={expor.contador} max={expor.total} style={{marginBottom: '0.2rem', marginTop : '0.3rem'}}/>
               <div style={{ position: 'absolute', fontSize:'0.8rem', marginLeft: 'auto', marginRight: 'auto', marginTop: '0.6rem', textAlign: 'center', left: '0', right: '0', top: '0', width: '500px', fontWeight: '600' }}>
-                <p>{expor.contador === 0 ? `[ Iniciando... ]` : `[ ${formatarNumero(expor.contador)} / ${formatarNumero(expor.total)} ] Carregando Registros...`}</p>
+                <p>{expor.contador === 0 ? `[ Iniciando... ]` : `[ ${formatarNumero(expor.contador)} / ${formatarNumero(expor.total)} ] [ ${(parseFloat(expor.contador) / parseFloat(expor.total) * 100).toFixed(1)}% ] Carregando Registros...`}</p>
               </div>
               </div>
             </>

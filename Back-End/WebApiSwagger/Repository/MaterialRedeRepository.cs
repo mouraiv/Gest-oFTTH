@@ -35,6 +35,78 @@ namespace WebApiSwagger.Repository
             }
             
         }
+        public async Task<bool> Deletar(int id)
+        {
+            try
+            {
+                MaterialRede db = await CarregarId(id);
+
+                _context.MateriaisRedes.Remove(db);
+                await _context.SaveChangesAsync();
+                return true;
+
+            }
+            catch (Exception ex)  
+            {
+                throw new Exception("Ocorreu um erro ao deletar: " + ex.Message);
+            }
+        }
+
+        public async Task<MaterialRede> Editar(int id, MaterialRede materialRede)
+        {
+            try
+            {
+                MaterialRede db = await CarregarId(id);
+
+                db.SiglaFederativa_Mt = materialRede.SiglaFederativa_Mt;
+                db.NomeFederativa_Mt = materialRede.NomeFederativa_Mt;
+                db.Municipio_Mt = materialRede.Municipio_Mt;
+                db.SiglaLocalidade_Mt = materialRede.SiglaLocalidade_Mt;
+                db.NomeLocalidade_Mt = materialRede.NomeLocalidade_Mt;
+                db.NomeAbastecedora_Mt = materialRede.NomeAbastecedora_Mt;
+                db.SiglaAbastecedora_Mt = materialRede.SiglaAbastecedora_Mt;
+                db.InfraestruturaRede_Mt = materialRede.InfraestruturaRede_Mt;
+                db.Codigo_Mt = materialRede.Codigo_Mt;
+                db.ElementoRede_Mt = materialRede.ElementoRede_Mt;
+                db.Tipo_Mt = materialRede.Tipo_Mt;
+                db.Fabricante_Mt = materialRede.Fabricante_Mt;
+                db.Modelo_Mt = materialRede.Modelo_Mt;
+                db.CodigoSap_Mt = materialRede.CodigoSap_Mt;
+                db.EstadoOperacional_Mt = materialRede.EstadoOperacional_Mt;
+                db.DataEstadoOperacional_Mt = materialRede.DataEstadoOperacional_Mt;
+                db.Endereco_Mt = materialRede.Endereco_Mt;
+                db.GrupoOperacional_Mt = materialRede.GrupoOperacional_Mt;
+                db.EstadoControle_Mt = materialRede.EstadoControle_Mt;
+                db.DataEstadoControle_Mt = materialRede.DataEstadoControle_Mt;
+                db.Latitude_Mt = materialRede.Latitude_Mt;
+                db.Longitude_Mt = materialRede.Longitude_Mt;
+                db.CHAVE = materialRede.CHAVE;
+            
+                _context.MateriaisRedes.Update(db);
+                await _context.SaveChangesAsync();
+
+                return db;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao editar: " + ex.Message);
+            }
+        }
+
+        public async Task<MaterialRede> Inserir(MaterialRede materialRede)
+        {
+            try
+            {
+                _context.MateriaisRedes.Add(materialRede);
+                await _context.SaveChangesAsync();
+                return materialRede;    
+            }
+            catch (Exception ex)
+            {  
+                throw new Exception("Ocorreu um erro ao inserir: " + ex.Message);
+            }
+        }
+
         public async Task<MaterialRede> CarregarChave(string? chave)
         {
             try

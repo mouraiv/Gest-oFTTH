@@ -172,9 +172,8 @@ namespace WebApiSwagger.Repository
                                 
                             })
 
-                        }})
-                        .AsQueryable();
-                    
+                        }}).AsQueryable();
+                           
                 progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
                 await Task.Delay(500);    
 

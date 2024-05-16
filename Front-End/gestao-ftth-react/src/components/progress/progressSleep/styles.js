@@ -19,7 +19,6 @@ export const Container = styled("div", {
     marginLeft: '0.1rem',
     marginRight: '0.1rem',
     background: `linear-gradient(to right, rgba(19, 41, 61, 0), #13293d, rgba(19, 41, 61, 0))`,
-    //width: '200px',
     height: '3px',
   },
 
