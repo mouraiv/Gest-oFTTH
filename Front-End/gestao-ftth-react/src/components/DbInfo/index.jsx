@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import axios from 'axios';
 import { InfoData, InputImport, ButtonUpload, ImportArea } from "./styles";
 import { GetInfo, UpdateInfo } from "../../api/info";
-import {FazerUploadMultiplaAssociacao} from "../../api/enterecoTotais"
+import {FazerUploadMultiplaAssociacao, FazerUploadEnderecoTotal} from "../../api/enterecoTotais"
 import { FaDatabase } from 'react-icons/fa6';
 import DialogAlert from "../../components/Dialog";
 import ProgressComponent from '../../components/progress/ProgressComponent';
@@ -69,7 +69,6 @@ export default function InfoDataBase() {
             
         }
     }
-    console.log(checkedCheckbox);
 
     async function FetchUpaloadBase(arquivo){
         try {
@@ -77,6 +76,7 @@ export default function InfoDataBase() {
 
 
             if(checkedCheckbox === "Multipla Associação"){
+                console.log("Multipla Associação")
                 const importar = await FazerUploadMultiplaAssociacao(arquivo, cancelToken.current.token);
         
                 if(importar.status == 200) {
@@ -88,7 +88,16 @@ export default function InfoDataBase() {
                 }
 
             }else if(checkedCheckbox === "Endereço Total"){
-                
+                console.log("Endereço Total")
+                const importar = await FazerUploadEnderecoTotal(arquivo, cancelToken.current.token);
+        
+                if(importar.status == 200) {
+                    setFile(null);
+                    setCarregarExport(false);
+                    setMensagem(importar.data);
+                    FetchUpdateInfo(0, true)
+                    
+                }
             }
           
         } catch (error) {

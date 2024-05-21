@@ -128,7 +128,17 @@ const ExportExcel = async (filtro) => {
       return response;
   };
 
+  const FazerUploadEnderecoTotal = async (files, source) => {
+    const formData = new FormData();
+    formData.append('arquivo', files);
+  
+    const response = await Api.post("/EnderecoTotal/ImportarEnderecoTotal", formData, { cancelToken: source });
+    return response;
+};
+
+
 export {
+  FazerUploadEnderecoTotal,
   FazerUploadMultiplaAssociacao,
   GetGraficoPrincipal,
   DropEnderecoTotal,

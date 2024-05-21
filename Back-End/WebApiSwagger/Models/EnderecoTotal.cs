@@ -50,11 +50,11 @@ namespace WebApiSwagger.Models
       public string? DataAssociacao { get; set; }
       public string? Quantidade_HCS { get; set; }
       public string? Projeto { get; set; }
+      public string? AssociacaoCDO { get; set; }
       public string? Id_Associacao { get; set; }
       public int? Id_MaterialRede { get; set; }
-      public MaterialRede MaterialRede { get; set; } = null!;
+      public MaterialRede MaterialRede { get; set; } = new MaterialRede();
       public ICollection<ServicoAssociado> ServicosAssociados { get; set; } = new List<ServicoAssociado>();
-      public ICollection<MaisDeUmaCDO> maisDeUmaCDOs { get; set; } = new List<MaisDeUmaCDO>();
        
     }
 }

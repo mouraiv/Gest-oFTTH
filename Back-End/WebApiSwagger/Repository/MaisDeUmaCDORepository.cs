@@ -62,7 +62,7 @@ namespace WebApiSwagger.Repository
                 db.Associacao_CDO = maisDeUmaCDO.Associacao_CDO;
                 db.Nome_CDO = maisDeUmaCDO.Nome_CDO;
                 db.Data_de_associacao = maisDeUmaCDO.Data_de_associacao;
-                db.Id_EnderecoTotal = maisDeUmaCDO.Id_EnderecoTotal;
+
             
                 _context.MaisDeUmaCDOs.Update(db);
                 await _context.SaveChangesAsync();

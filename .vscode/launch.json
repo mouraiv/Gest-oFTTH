@@ -9,7 +9,7 @@
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "",
             "console": "integratedTerminal",
             "program": "${workspaceFolder}/Back-End/WebApiSwagger/bin/Debug/net7.0/WebApiSwagger.dll",
             "args": [],

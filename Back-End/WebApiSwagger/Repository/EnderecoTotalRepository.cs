@@ -23,7 +23,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                return await _context.EnderecosTotais
+                return await _context.EnderecosTotaisTeste
                         .AsNoTracking()
                            .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
@@ -40,7 +40,7 @@ namespace WebApiSwagger.Repository
             {
                 EnderecoTotal db = await CarregarEnderecoTotalId(id);
 
-                _context.EnderecosTotais.Remove(db);
+                _context.EnderecosTotaisTeste.Remove(db);
                 await _context.SaveChangesAsync();
                 return true;
 
@@ -104,7 +104,7 @@ namespace WebApiSwagger.Repository
                 db.Id_Associacao = enderecoTotal.Id_Associacao;
                 db.Id_MaterialRede = enderecoTotal.Id_MaterialRede;
             
-                _context.EnderecosTotais.Update(db);
+                _context.EnderecosTotaisTeste.Update(db);
                 await _context.SaveChangesAsync();
 
                 return db;
@@ -119,7 +119,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                _context.EnderecosTotais.Add(enderecoTotal);
+                _context.EnderecosTotaisTeste.Add(enderecoTotal);
                 await _context.SaveChangesAsync();
                 return enderecoTotal;    
             }
@@ -135,7 +135,7 @@ namespace WebApiSwagger.Repository
                 progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
                 await Task.Delay(500);
 
-                var query = _context.EnderecosTotais
+                var query = _context.EnderecosTotaisTeste
                     .AsNoTracking()
                     .Include(p => p.MaterialRede)
                     .Where(p => p.Id_StatusGanho == 1)
@@ -254,13 +254,13 @@ namespace WebApiSwagger.Repository
             {
                 if(!filterSurvey){
 
-                return await _context.EnderecosTotais
+                return await _context.EnderecosTotaisTeste
                         .AsNoTracking()
                            .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
                 }else{
                 
-                return await _context.EnderecosTotais
+                return await _context.EnderecosTotaisTeste
                         .AsNoTracking()
                            .Where(p => p.Cod_Survey == survey)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
@@ -284,10 +284,8 @@ namespace WebApiSwagger.Repository
                 progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
                 await Task.Delay(500);
 
-                var query = _context.EnderecosTotais
-                .AsNoTracking()
+                var query = _context.EnderecosTotaisTeste
                     .Include(p => p.MaterialRede)
-                    .Include(p => p.maisDeUmaCDOs)
                     .Where(p =>  p.Id_StatusGanho == filtro.Id_StatusGanho || p.Id_Disponibilidade == filtro.Id_Disponibilidade || 
                                  (filtro.AnoMesBool ? !string.IsNullOrEmpty(p.AnoMes) : true) && (filtro.SemCdo ? p.NomeCdo == "" : true))
                     .Select(et => new EnderecoTotal {
@@ -316,7 +314,6 @@ namespace WebApiSwagger.Repository
                         Id_MaterialRede = et.Id_MaterialRede,
                         Id_Associacao = et.Id_Associacao,
                         DataAssociacao = et.DataAssociacao,
-                        maisDeUmaCDOs = et.maisDeUmaCDOs,
                         MaterialRede = new MaterialRede
                             {
                                 CHAVE = et.MaterialRede.CHAVE,
@@ -608,7 +605,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                return await _context.EnderecosTotais
+                return await _context.EnderecosTotaisTeste
                 .AsNoTracking()
                 .Where(p => p.Id_MaterialRede == id_MaterialRede)
                 .ToListAsync();             
@@ -626,7 +623,7 @@ namespace WebApiSwagger.Repository
                 progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
                 await Task.Delay(500);
 
-                var query = _context.EnderecosTotais
+                var query = _context.EnderecosTotaisTeste
                 .Include(p => p.MaterialRede)
                     .Select(et => new EnderecoTotal {
                         Id_EnderecoTotal = et.Id_EnderecoTotal,
@@ -749,7 +746,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                var query = await (from endt in _context.EnderecosTotais
+                var query = await (from endt in _context.EnderecosTotaisTeste
                             .AsNoTracking()
                             group endt by new
                             {
@@ -777,7 +774,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                var query = (from endt in _context.EnderecosTotais
+                var query = (from endt in _context.EnderecosTotaisTeste
                             .AsNoTracking()
                             group endt by new
                             {
@@ -830,7 +827,7 @@ namespace WebApiSwagger.Repository
         {
               try
             {
-                var resultado = await _context.EnderecosTotais
+                var resultado = await _context.EnderecosTotaisTeste
                 .AsNoTracking()
                 .Include(p => p.MaterialRede)
                 .Where(p =>
@@ -856,11 +853,96 @@ namespace WebApiSwagger.Repository
 
         public async Task<int> ChaveEstrangeira(string survey)
         {
-            var result = await _context.EnderecosTotais
+            var result = await _context.EnderecosTotaisTeste
                                 .Where(p => p.Cod_Survey == survey)
                                 .Select(p => p.Id_EnderecoTotal)
                                 .FirstOrDefaultAsync();
 
+            return result;
+        }
+
+        public async Task<int> SurveyExistMultiplaAssociacao(string associacao, string survey, string cdo, string data)
+        {
+            var result = await _context.EnderecosTotaisTeste
+                                .Where(p => p.AssociacaoCDO == associacao && p.Cod_Survey == survey && p.NomeCdo == cdo && p.DataAssociacao == data)
+                                .Select(p => p.Id_EnderecoTotal)
+                                .FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<bool> IgnoreKeyMultiplaAssociacao(
+            string uf,
+            string estacao_Mc,
+            string nomeCDO,
+            string survey_Mc,
+            string associacao_CDO,
+            string data_de_associacao
+        )
+        {
+            bool result = await _context.EnderecosTotaisTeste
+                                .AnyAsync(
+                                    p => p.UF == uf && 
+                                    p.SiglaEstacao == estacao_Mc && 
+                                    p.NomeCdo == nomeCDO &&
+                                    p.Cod_Survey == survey_Mc && 
+                                    p.AssociacaoCDO == associacao_CDO && 
+                                    p.DataAssociacao == data_de_associacao
+                                    );
+                              
+            return result;
+        }
+
+        public async Task<int> SurveyExistEnderecoTotal(string survey, string CDO)
+        {
+            var result = await _context.EnderecosTotaisTeste
+                                .Where(p => p.Cod_Survey == survey && p.NomeCdo == CDO)
+                                .Select(p => p.Id_EnderecoTotal)
+                                .FirstOrDefaultAsync();
+
+            return result;
+        }
+
+         public async Task<bool> IgnoreKeyEnderecoTotal(
+            string anoMes,     
+            string uf,
+            string logradouro,
+            string numeroFachada,
+            string bairro,
+            string CEP,
+            string siglaEstacao,
+            string nomeCDO,
+            string cod_Survey,
+            int quantidadeUMS,
+            string cod_Viabilidade,
+            string tipoViabilidade,
+            string tipoRede,
+            string disp_Comercial,
+            string UCS_Residenciais,
+            string UCS_Comerciais
+
+        )
+        {
+            bool result = await _context.EnderecosTotaisTeste
+                                .AnyAsync(
+                                    p => p.AnoMes == anoMes && 
+                                    p.UF == uf && 
+                                    p.Logradouro == logradouro && 
+                                    p.NumeroFachada == numeroFachada && 
+                                    p.Bairro == bairro && 
+                                    p.CEP == CEP &&
+                                    p.SiglaEstacao == siglaEstacao &&
+                                    p.NomeCdo == nomeCDO &&
+                                    p.Cod_Survey == cod_Survey &&
+                                    p.QuantidadeUMS == quantidadeUMS &&
+                                    p.Cod_Viabilidade == cod_Viabilidade &&
+                                    p.TipoViabilidade == tipoViabilidade &&
+                                    p.TipoRede == tipoRede &&
+                                    p.Disp_Comercial == disp_Comercial &&
+                                    p.UCS_Residenciais == UCS_Residenciais &&
+                                    p.UCS_Comerciais == UCS_Comerciais 
+                                );
+                              
             return result;
         }
     }

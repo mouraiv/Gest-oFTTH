@@ -181,7 +181,7 @@ namespace WebApiSwagger.Repository
                 {
                     if (filtro.UF == "Nordeste")
                     {
-                        var _nordeste = new [] {"MA", "PA", "RR", "AP", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA"};
+                        var _nordeste = new [] {"AM", "PA", "RR", "AP", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA"};
                         query = query.Where(p => _nordeste.Contains(p.UF));
                     }
                     else if (filtro.UF == "Centro-Oeste")

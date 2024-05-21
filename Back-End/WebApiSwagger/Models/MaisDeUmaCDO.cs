@@ -15,8 +15,6 @@ namespace WebApiSwagger.Models
       public string? Associacao_CDO { get; set; }
       public string? Nome_CDO { get; set; }
       public string? Data_de_associacao { get; set; }
-      public int? Id_EnderecoTotal { get; set; }
-      public EnderecoTotal EnderecosTotais { get; set; } = null!;
       
     }
 }

@@ -20,5 +20,34 @@ namespace WebApiSwagger.Repository.Interface
         Task<IEnumerable<LocalidadeDropFilter>> ListaUnicaLocalidade(FiltroEnderecoTotal filtro);
         Task<IEnumerable<GraficoPrincipalView>> GraficoPrincipal();
         Task<int> ChaveEstrangeira(string survey);
+        Task<int> SurveyExistMultiplaAssociacao(string associacao, string survey, string cdo, string data);
+        Task<bool> IgnoreKeyMultiplaAssociacao(
+            string uf,
+            string estacao_Mc,
+            string nomeCDO,
+            string survey_Mc,
+            string associacao_CDO,
+            string data_de_associacao
+        );
+        Task<int> SurveyExistEnderecoTotal(string survey, string CDO);
+        Task<bool> IgnoreKeyEnderecoTotal(
+            string anoMes,     
+            string uf,
+            string logradouro,
+            string numeroFachada,
+            string bairro,
+            string CEP,
+            string siglaEstacao,
+            string nomeCDO,
+            string cod_Survey,
+            int quantidadeUMS,
+            string cod_Viabilidade,
+            string tipoViabilidade,
+            string tipoRede,
+            string disp_Comercial,
+            string UCS_Residenciais,
+            string UCS_Comerciais
+
+        );
     }
 }

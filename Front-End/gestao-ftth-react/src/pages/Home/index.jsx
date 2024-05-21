@@ -14,6 +14,7 @@ function Home() {
     //const [graficoPrincipal, setGraficoPrincial] = useState({});
 
     const [chartData, setChartData] = useState({});
+    const [mensagem, setMensagem] = useState("");
 
     const { user, ValidarToken } = UseAuth();
 
