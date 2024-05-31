@@ -5,7 +5,8 @@ import { GetInfo, UpdateInfo } from "../../api/info";
 import {FazerUploadMultiplaAssociacao, FazerUploadEnderecoTotal} from "../../api/enterecoTotais"
 import { FaDatabase } from 'react-icons/fa6';
 import DialogAlert from "../../components/Dialog";
-import ProgressComponent from '../../components/progress/ProgressComponent';
+import { useCancelToken } from '../../contexts/CancelTokenContext';
+import ProgressComponentBase from '../../components/progress/ProgressComponentBase';
 import ProgressComponentSleep from '../../components/progress/progressSleep/ProgressComponentSleep';
 
 export default function InfoDataBase() {
@@ -21,7 +22,7 @@ export default function InfoDataBase() {
     const [checkedCheckbox, setCheckedCheckbox] = useState("");
     const [dataAtual] = useState(new Date());
 
-    const cancelToken = useRef();
+    const cancelToken = useCancelToken();
     const _dataAtual = dataAtual.toISOString();
 
     async function fecthInfo(){
@@ -30,6 +31,7 @@ export default function InfoDataBase() {
 
             if(detalheInfo.status == 200) {
                 setInfo(detalheInfo.data);
+                
             }
 
         } catch (error) {
@@ -40,7 +42,7 @@ export default function InfoDataBase() {
         }
     }
 
-    async function FetchUpdateInfo(indice, date) {
+    async function FetchUpdateInfo(indice, date, id) {
         try {
             const infoView = info.filter(p => p.id_info === id);
             const infoData = {
@@ -72,9 +74,8 @@ export default function InfoDataBase() {
 
     async function FetchUpaloadBase(arquivo){
         try {
-          cancelToken.current = axios.CancelToken.source();  
-
-
+          cancelToken.current = axios.CancelToken.source();
+  
             if(checkedCheckbox === "Multipla Associação"){
                 console.log("Multipla Associação")
                 const importar = await FazerUploadMultiplaAssociacao(arquivo, cancelToken.current.token);
@@ -83,19 +84,18 @@ export default function InfoDataBase() {
                     setFile(null);
                     setCarregarExport(false);
                     setMensagem(importar.data);
-                    FetchUpdateInfo(0, true)
+                    FetchUpdateInfo(0, true, id)
                     
                 }
 
             }else if(checkedCheckbox === "Endereço Total"){
-                console.log("Endereço Total")
                 const importar = await FazerUploadEnderecoTotal(arquivo, cancelToken.current.token);
         
                 if(importar.status == 200) {
                     setFile(null);
                     setCarregarExport(false);
                     setMensagem(importar.data);
-                    FetchUpdateInfo(0, true)
+                    FetchUpdateInfo(0, true, id)
                     
                 }
             }
@@ -105,13 +105,13 @@ export default function InfoDataBase() {
                 setFile(null);
                 setCarregarExport(false);
                 setMensagem("Requisição cancelada.");
-                FetchUpdateInfo(0, false)
+                FetchUpdateInfo(0, false, id)
                 setLoading(true);
             }else{
                 setFile(null);
                 setCarregarExport(false);
                 setMensagem(error.request.responseText);
-                FetchUpdateInfo(0, false)
+                FetchUpdateInfo(0, false, id)
                 setLoading(true);
             }
                
@@ -121,15 +121,16 @@ export default function InfoDataBase() {
     }
 
     // Função para cancelar a solicitação
-    const CancelarSolicitacao = () => {
-        setFile(null);
-        setAtualizar(0);
-        setCarregarExport(false);
-        cancelToken.current.cancel("Requisição cancelada.");
-
+    const CancelarSolicitacao = (id) => {
+            setFile(null);
+            setAtualizar(0);
+            setCarregarExport(false);
+            FetchUpdateInfo(0, false, id);
+            cancelToken.current.cancel("Requisição cancelada."); 
     }
 
     const handleUpdate = (base, id, atualizar) => {
+        fecthInfo();
         setMensagem("");
         setId(id);
         setNameBase(base);
@@ -145,7 +146,7 @@ export default function InfoDataBase() {
         if(file){ 
           setCarregarExport(true);
           FetchUpaloadBase(file)
-          FetchUpdateInfo(1, false);
+          FetchUpdateInfo(1, false, id);
           setLoading(false);
           setMensagem("");
 
@@ -164,8 +165,8 @@ export default function InfoDataBase() {
       };
 
     useEffect(() => {
-        setCheckedCheckbox("Endereço Total");
         fecthInfo();
+        setCheckedCheckbox("Endereço Total");
     },[])
 
       return (
@@ -173,13 +174,13 @@ export default function InfoDataBase() {
         <DialogAlert 
                     visibleDiag={visible} 
                     visibleHide={() => {
-                        if(!carregarExport){
+                        if(!carregarExport && atualizar === 0){
                             setVisible(false);
                             setMensagem("");
                             setFile(null);
 
                         }else{
-                            CancelarSolicitacao();
+                            CancelarSolicitacao(id);
                             
                         }
                     }}
@@ -220,12 +221,17 @@ export default function InfoDataBase() {
                                   </>
                                 }
                                 {checkedCheckbox !== "" &&
+                                <>
+                                {id === 1 || id === 2 ?
                                 <ImportArea>
                                     <InputImport onChange={handleFileChange} type="file"
                                         accept=".csv, text/csv" 
                                      />
                                     <ButtonUpload onClick={handleUpload}>Upload</ButtonUpload>
                                 </ImportArea>
+                                : <p>Em Breve!</p>
+                                }
+                                </>
                                 }
                                 </div>                        
                               </>
@@ -239,7 +245,7 @@ export default function InfoDataBase() {
                                     <p>Atualizando Base {nameBase}.</p>
                                     <p>Esse processo pode demora de acordo com da quantidade de registros.</p>
                                 </div>
-                                    <ProgressComponent exportar={true}/>
+                                    <ProgressComponentBase exportar={true}/>
                                 </div>
                             </div>
                               </>

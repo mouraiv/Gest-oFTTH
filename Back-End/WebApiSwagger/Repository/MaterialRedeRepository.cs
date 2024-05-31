@@ -20,7 +20,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                var query = await _context.MateriaisRedes
+                var query = await _context.MateriaisRedesTeste
                     .Include(p => p.EnderecoTotal)
                     .ThenInclude(p => p.ServicosAssociados)
                     .Include(p => p.Ligacao)
@@ -41,7 +41,7 @@ namespace WebApiSwagger.Repository
             {
                 MaterialRede db = await CarregarId(id);
 
-                _context.MateriaisRedes.Remove(db);
+                _context.MateriaisRedesTeste.Remove(db);
                 await _context.SaveChangesAsync();
                 return true;
 
@@ -82,7 +82,7 @@ namespace WebApiSwagger.Repository
                 db.Longitude_Mt = materialRede.Longitude_Mt;
                 db.CHAVE = materialRede.CHAVE;
             
-                _context.MateriaisRedes.Update(db);
+                _context.MateriaisRedesTeste.Update(db);
                 await _context.SaveChangesAsync();
 
                 return db;
@@ -97,7 +97,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                _context.MateriaisRedes.Add(materialRede);
+                _context.MateriaisRedesTeste.Add(materialRede);
                 await _context.SaveChangesAsync();
                 return materialRede;    
             }
@@ -111,7 +111,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                return await _context.MateriaisRedes
+                return await _context.MateriaisRedesTeste
                             .FirstOrDefaultAsync(p => p.CHAVE == chave) ?? new MaterialRede();
 
 
@@ -133,7 +133,6 @@ namespace WebApiSwagger.Repository
             try
             {
                     var query = _context.DropEnderecosTotais
-                    .AsNoTracking()
                     .AsQueryable();
 
                     if (!string.IsNullOrEmpty(uf))

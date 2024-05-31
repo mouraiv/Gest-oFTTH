@@ -7,6 +7,8 @@ using WebApiSwagger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSwagger.Models.ViewModel;
 using System.Linq;
+using WebApiSwagger.Models.Base;
+using System.Data.SqlTypes;
 
 namespace WebApiSwagger.Repository
 {
@@ -24,7 +26,6 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.EnderecosTotaisTeste
-                        .AsNoTracking()
                            .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
             }
@@ -59,7 +60,6 @@ namespace WebApiSwagger.Repository
 
                 db.StatusGanho = enderecoTotal.StatusGanho;
                 db.Id_StatusGanho = enderecoTotal.Id_StatusGanho;
-                db.ChaveCelula = enderecoTotal.ChaveCelula;
                 db.Disponibilidade = enderecoTotal.Disponibilidade;
                 db.Id_Disponibilidade = enderecoTotal.Id_Disponibilidade;
                 db.AnoMes = enderecoTotal.AnoMes;
@@ -98,12 +98,13 @@ namespace WebApiSwagger.Repository
                 db.Id_Celula = enderecoTotal.Id_Celula;
                 db.EstadoControle = enderecoTotal.EstadoControle;
                 db.DataEstadoControle = enderecoTotal.DataEstadoControle;
-                db.DataAssociacao = enderecoTotal.DataAssociacao;
                 db.Quantidade_HCS = enderecoTotal.Quantidade_HCS;
                 db.Projeto = enderecoTotal.Projeto;
+                db.ChaveCelula = enderecoTotal.ChaveCelula;
+                db.DataAssociacao = enderecoTotal.DataAssociacao;
                 db.Id_Associacao = enderecoTotal.Id_Associacao;
                 db.Id_MaterialRede = enderecoTotal.Id_MaterialRede;
-            
+
                 _context.EnderecosTotaisTeste.Update(db);
                 await _context.SaveChangesAsync();
 
@@ -128,126 +129,7 @@ namespace WebApiSwagger.Repository
                 throw new Exception("Ocorreu um erro ao inserir: " + ex.Message);
             }
         }
-        public async Task<IEnumerable<EnderecoTotal>> BaseAcumulada(IProgressoRepository progressoRepository, FiltroEnderecoTotal filtro, Paginacao paginacao)
-        {
-            try
-            {
-                progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
-                await Task.Delay(500);
-
-                var query = _context.EnderecosTotaisTeste
-                    .AsNoTracking()
-                    .Include(p => p.MaterialRede)
-                    .Where(p => p.Id_StatusGanho == 1)
-                    .Select(et => new EnderecoTotal {
-                        Id_EnderecoTotal = et.Id_EnderecoTotal,
-                        Id_MaterialRede = et.Id_MaterialRede,
-                        AnoMes = et.AnoMes,
-                        UF = et.UF,
-                        Localidade = et.Localidade,
-                        Municipio = et.Municipio,
-                        SiglaEstacao = et.SiglaEstacao,
-                        Celula = et.Celula,
-                        NomeCdo = et.NomeCdo,
-                        Cod_Survey = et.Cod_Survey,
-                        QuantidadeUMS = et.QuantidadeUMS,
-                        Cod_Viabilidade = et.Cod_Viabilidade,
-                        TipoViabilidade = et.TipoViabilidade,
-                        TipoRede = et.TipoRede,
-                        UCS_Residenciais = et.UCS_Residenciais,
-                        UCS_Comerciais = et.UCS_Comerciais,
-                        MaterialRede = new MaterialRede
-                            {
-                                NomeAbastecedora_Mt = et.MaterialRede.NomeAbastecedora_Mt,
-                                GrupoOperacional_Mt = et.MaterialRede.GrupoOperacional_Mt,
-                                EstadoControle_Mt = et.MaterialRede.EstadoControle_Mt,
-                                EstadoOperacional_Mt = et.MaterialRede.EstadoOperacional_Mt
-                            }
-
-                    })
-                    .AsQueryable();
-
-                    progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
-                    await Task.Delay(500);
-
-                    if (!string.IsNullOrEmpty(filtro.AnoMes))
-                    {
-                        query = query.Where(p => p.AnoMes == filtro.AnoMes);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.UF))
-                    {
-                        query = query.Where(p => p.UF == filtro.UF);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.SiglaEstacao))
-                    {
-                        query = query.Where(p => p.SiglaEstacao == filtro.SiglaEstacao);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.Estacao))
-                    {
-                        query = query.Where(p => p.MaterialRede.NomeAbastecedora_Mt == filtro.Estacao);
-                    }
-
-                    progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
-                    await Task.Delay(500);
-
-                    if (filtro.Cod_Survey != null && filtro.Cod_Survey.Any())
-                    {
-                        query = query.Where(p => filtro.Cod_Survey.Contains(p.Cod_Survey));
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.CDO))
-                    {
-                        query = query.Where(p => p.NomeCdo == filtro.CDO);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.Cod_Viabilidade))
-                    {
-                        query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.GrupoOperacional))
-                    {
-                        query = query.Where(p => p.MaterialRede.GrupoOperacional_Mt == filtro.GrupoOperacional);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.EstadoOperacional))
-                    {
-                        query = query.Where(p => p.MaterialRede.EstadoOperacional_Mt == filtro.EstadoOperacional);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.EstadoControle))
-                    {
-                        query = query.Where(p => p.MaterialRede.EstadoControle_Mt == filtro.EstadoControle);
-                    }
-
-                    // Aplica a ordenação
-                    query = query.OrderBy(p => p.Cod_Viabilidade);
-
-                    paginacao.Total = await query.CountAsync();
-
-                    query = query
-                        .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
-                        .Take(paginacao.Tamanho);
-
-                    progressoRepository.UpdateProgress(true, 85, "Preenchendo Lista...", 100);
-                    await Task.Delay(500);    
-
-                    return await query.ToListAsync();             
-                }
-                catch (Exception ex)
-                {  
-                    throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
-                }
-                finally 
-                {
-                    progressoRepository.UpdateProgress(true, 100, "Finalizando...", 100);
-                    await Task.Delay(1000);
-                }
-        }
-
+        
         public async Task<EnderecoTotal> CarregarId(int? id_EnderecoTotal, string? survey, bool filterSurvey)
         {
             try
@@ -255,13 +137,11 @@ namespace WebApiSwagger.Repository
                 if(!filterSurvey){
 
                 return await _context.EnderecosTotaisTeste
-                        .AsNoTracking()
                            .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
                 }else{
                 
                 return await _context.EnderecosTotaisTeste
-                        .AsNoTracking()
                            .Where(p => p.Cod_Survey == survey)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
                 }
@@ -439,7 +319,7 @@ namespace WebApiSwagger.Repository
 
                     paginacao.TotalUms = query.Where(p => p.Id_StatusGanho != 3).Sum(p => p.QuantidadeUMS) ?? 0;
 
-                     progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
+                    progressoRepository.UpdateProgress(true, 95, "Preenchendo Lista...", 100);
 
                     return await query.ToListAsync();    
 
@@ -491,7 +371,7 @@ namespace WebApiSwagger.Repository
                     progressoRepository.UpdateProgress(true, 75, "Carregando chave celulas...", 100);
                     await Task.Delay(500);
 
-                    query = query.Where(p => _chaveCelula.Contains(p.ChaveCelula));
+                    query = query.Where(p => _chaveCelula.Contains("p.ChaveCelula"));
 
                     query = query.OrderBy(p => p.Cod_Viabilidade);
 
@@ -601,12 +481,12 @@ namespace WebApiSwagger.Repository
                           
         }
 
-        public async Task<IEnumerable<EnderecoTotal>> ListarCarregarId(int? id_MaterialRede)
+        public async Task<IEnumerable<MaterialRede>> ListarCarregarId(int? id_MaterialRede)
         {
             try
             {
-                return await _context.EnderecosTotaisTeste
-                .AsNoTracking()
+                return await _context.MateriaisRedesTeste
+                .Include(p => p.EnderecoTotal)
                 .Where(p => p.Id_MaterialRede == id_MaterialRede)
                 .ToListAsync();             
             }
@@ -614,132 +494,6 @@ namespace WebApiSwagger.Repository
             {  
                 throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
             }
-        }
-
-        public async Task<IEnumerable<EnderecoTotal>> ListarGanho(IProgressoRepository progressoRepository,FiltroEnderecoTotal filtro, Paginacao paginacao,PainelGanho painelGanho)
-        {
-            try
-            {
-                progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
-                await Task.Delay(500);
-
-                var query = _context.EnderecosTotaisTeste
-                .Include(p => p.MaterialRede)
-                    .Select(et => new EnderecoTotal {
-                        Id_EnderecoTotal = et.Id_EnderecoTotal,
-                        Id_MaterialRede = et.Id_MaterialRede,
-                        StatusGanho = et.StatusGanho,
-                        Id_StatusGanho = et.Id_StatusGanho,
-                        Disponibilidade = et.Disponibilidade,
-                        Id_Disponibilidade = et.Id_Disponibilidade,
-                        UF = et.UF,
-                        Localidade = et.Localidade,
-                        Municipio = et.Municipio,
-                        SiglaEstacao = et.SiglaEstacao,
-                        Celula = et.Celula,
-                        NomeCdo = et.NomeCdo,
-                        Cod_Survey = et.Cod_Survey,
-                        QuantidadeUMS = et.QuantidadeUMS,
-                        Cod_Viabilidade = et.Cod_Viabilidade,
-                        TipoViabilidade = et.TipoViabilidade,
-                        MaterialRede = new MaterialRede
-                            {
-                                NomeAbastecedora_Mt = et.MaterialRede.NomeAbastecedora_Mt,
-                                GrupoOperacional_Mt = et.MaterialRede.GrupoOperacional_Mt,
-                                EstadoControle_Mt = et.MaterialRede.EstadoControle_Mt,
-                                EstadoOperacional_Mt = et.MaterialRede.EstadoOperacional_Mt
-                            }
-
-                    })
-                    .AsQueryable();
-
-                    progressoRepository.UpdateProgress(true, 35, "Verificando filtros...", 100);
-                    await Task.Delay(500);
-
-                    if (filtro != null)
-                    {
-
-                    if (filtro.Id_StatusGanho != null)
-                    {
-                        query = query.Where(p => p.Id_StatusGanho == filtro.Id_StatusGanho);
-                    }
-
-                    if (filtro.Id_Disponibilidade != null)
-                    {
-                        query = query.Where(p => p.Id_Disponibilidade == filtro.Id_Disponibilidade);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.UF))
-                    {
-                        query = query.Where(p => p.UF == filtro.UF);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.SiglaEstacao))
-                    {
-                        query = query.Where(p => p.SiglaEstacao == filtro.SiglaEstacao);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.Estacao))
-                    {
-                        query = query.Where(p => p.MaterialRede.NomeAbastecedora_Mt == filtro.Estacao);
-                    }
-
-                    progressoRepository.UpdateProgress(true, 50, "Carregando consulta...", 100);
-                     await Task.Delay(500);
-
-                    if (!string.IsNullOrEmpty(filtro.Cod_Survey))
-                    {
-                        query = query.Where(p => p.Cod_Survey == filtro.Cod_Survey);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.CDO))
-                    {
-                        query = query.Where(p => p.NomeCdo == filtro.CDO);
-                    }
-
-                    if (!string.IsNullOrEmpty(filtro.Cod_Viabilidade))
-                    {
-                        query = query.Where(p => p.Cod_Viabilidade == filtro.Cod_Viabilidade);
-                    }
-
-                    }
-
-                    progressoRepository.UpdateProgress(true, 75, "Calculando Ganho...", 100);
-
-                        paginacao.Total = await query.CountAsync();
-
-                        if(filtro?.Pagina == 1) {    
-
-                        painelGanho.ComGanhoTotal = query.Where(p => p.Id_StatusGanho == 1).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.ComGanhoAtivo = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.ComGanhoInativo =  query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.ComGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 1 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
-
-                        painelGanho.SemGanhoTotal = query.Where(p => p.Id_StatusGanho == 2).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.SemGanhoAtivo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 1).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.SemGanhoInativo = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 2).Sum(p => p.QuantidadeUMS) ?? 0;
-                        painelGanho.SemGanhoForaCelula = query.Where(p => p.Id_StatusGanho == 2 && p.Id_Disponibilidade == 3).Sum(p => p.QuantidadeUMS) ?? 0;
-                        
-                        }
-
-                        query = query.OrderBy(p => p.Cod_Viabilidade)
-                        .Skip((paginacao.Pagina - 1) * paginacao.Tamanho)
-                        .Take(paginacao.Tamanho);
-
-                        progressoRepository.UpdateProgress(true, 85, "Prrenchendo lista...", 100);
-
-                        return await query.ToListAsync();   
-
-                }
-                catch (Exception ex)
-                {  
-                    throw new Exception("Ocorreu um erro ao listar: " + ex.Message);
-                }
-                finally
-                {
-                    progressoRepository.UpdateProgress(false, 100, "Finalizando...", 100);
-                    await Task.Delay(1000);
-                }
         }
 
         public async Task<IEnumerable<EnderecoTotalDropFilter>> ListaUnica()
@@ -828,7 +582,6 @@ namespace WebApiSwagger.Repository
               try
             {
                 var resultado = await _context.EnderecosTotaisTeste
-                .AsNoTracking()
                 .Include(p => p.MaterialRede)
                 .Where(p =>
                     p.Cod_Viabilidade != "0" && p.Cod_Viabilidade != "2" && p.Cod_Viabilidade != "4" && p.Cod_Viabilidade != "14" && p.Id_StatusGanho == 1 &&
@@ -851,20 +604,22 @@ namespace WebApiSwagger.Repository
             }
         }
 
-        public async Task<int> ChaveEstrangeira(string survey)
+        public async Task<int> ChaveEstrangeira(string uf, string sigla, string cdo)
         {
-            var result = await _context.EnderecosTotaisTeste
-                                .Where(p => p.Cod_Survey == survey)
-                                .Select(p => p.Id_EnderecoTotal)
+            var result = await _context.MateriaisRedesTeste
+                                .Where(p => p.SiglaFederativa_Mt == uf && p.SiglaAbastecedora_Mt == sigla && p.Codigo_Mt == cdo)
+                                .Select(p => p.Id_MaterialRede)
                                 .FirstOrDefaultAsync();
 
             return result;
         }
 
-        public async Task<int> SurveyExistMultiplaAssociacao(string associacao, string survey, string cdo, string data)
+        public async Task<int> SurveyExistMultiplaAssociacao(BaseMultiplaAssociacao value)
         {
             var result = await _context.EnderecosTotaisTeste
-                                .Where(p => p.AssociacaoCDO == associacao && p.Cod_Survey == survey && p.NomeCdo == cdo && p.DataAssociacao == data)
+                                .Where(p => 
+                                    p.Cod_Survey == value.Survey && 
+                                    p.NomeCdo == value.NomeCdo)
                                 .Select(p => p.Id_EnderecoTotal)
                                 .FirstOrDefaultAsync();
 
@@ -872,78 +627,93 @@ namespace WebApiSwagger.Repository
         }
 
         public async Task<bool> IgnoreKeyMultiplaAssociacao(
-            string uf,
-            string estacao_Mc,
-            string nomeCDO,
-            string survey_Mc,
-            string associacao_CDO,
-            string data_de_associacao
+            BaseMultiplaAssociacao value
         )
         {
             bool result = await _context.EnderecosTotaisTeste
                                 .AnyAsync(
-                                    p => p.UF == uf && 
-                                    p.SiglaEstacao == estacao_Mc && 
-                                    p.NomeCdo == nomeCDO &&
-                                    p.Cod_Survey == survey_Mc && 
-                                    p.AssociacaoCDO == associacao_CDO && 
-                                    p.DataAssociacao == data_de_associacao
+                                    p => p.UF == value.UF &&
+                                    p.Celula == value.Celula &&
+                                    p.Municipio == value.Municipio && 
+                                    p.SiglaEstacao == value.Estacao && 
+                                    p.NomeCdo == value.NomeCdo &&
+                                    p.Cod_Survey == value.Survey 
                                     );
                               
             return result;
         }
 
-        public async Task<int> SurveyExistEnderecoTotal(string survey, string CDO)
+        public async Task<EnderecoTotal> SurveyExistEnderecoTotal(string survey)
         {
             var result = await _context.EnderecosTotaisTeste
-                                .Where(p => p.Cod_Survey == survey && p.NomeCdo == CDO)
-                                .Select(p => p.Id_EnderecoTotal)
-                                .FirstOrDefaultAsync();
+                                .Where(p => p.Cod_Survey == survey)
+                                .Select(p => new EnderecoTotal {
+                                    Id_EnderecoTotal = p.Id_EnderecoTotal,
+                                    Id_StatusGanho = p.Id_StatusGanho,
+                                    AnoMes = p.AnoMes
+                                    })
+                                .FirstOrDefaultAsync() ?? new EnderecoTotal();
 
             return result;
         }
 
-         public async Task<bool> IgnoreKeyEnderecoTotal(
-            string anoMes,     
-            string uf,
-            string logradouro,
-            string numeroFachada,
-            string bairro,
-            string CEP,
-            string siglaEstacao,
-            string nomeCDO,
-            string cod_Survey,
-            int quantidadeUMS,
-            string cod_Viabilidade,
-            string tipoViabilidade,
-            string tipoRede,
-            string disp_Comercial,
-            string UCS_Residenciais,
-            string UCS_Comerciais
+         public async Task<bool> IgnoreKeyEnderecoTotal(    
+            BaseEnderecoTotal value, string anoMes
 
         )
         {
-            bool result = await _context.EnderecosTotaisTeste
-                                .AnyAsync(
-                                    p => p.AnoMes == anoMes && 
-                                    p.UF == uf && 
-                                    p.Logradouro == logradouro && 
-                                    p.NumeroFachada == numeroFachada && 
-                                    p.Bairro == bairro && 
-                                    p.CEP == CEP &&
-                                    p.SiglaEstacao == siglaEstacao &&
-                                    p.NomeCdo == nomeCDO &&
-                                    p.Cod_Survey == cod_Survey &&
-                                    p.QuantidadeUMS == quantidadeUMS &&
-                                    p.Cod_Viabilidade == cod_Viabilidade &&
-                                    p.TipoViabilidade == tipoViabilidade &&
-                                    p.TipoRede == tipoRede &&
-                                    p.Disp_Comercial == disp_Comercial &&
-                                    p.UCS_Residenciais == UCS_Residenciais &&
-                                    p.UCS_Comerciais == UCS_Comerciais 
+
+            if(value.COD_VIABILIDADE == "0" && string.IsNullOrEmpty(anoMes))
+            {
+                    return false;
+
+            }else if((value.COD_VIABILIDADE == "2" || value.COD_VIABILIDADE == "4") && value.DISP_COMERCIAL == "Sim" && string.IsNullOrEmpty(anoMes)){
+                    return false;
+
+            }else{
+                    return await _context.EnderecosTotaisTeste
+                                .AnyAsync(p =>
+                                    p.Localidade == value.LOCALIDADE &&
+                                    p.Cod_Localidade == value.COD_LOCALIDADE &&
+                                    p.LocalidadeAbrev == value.LOCALIDADE_ABREV &&
+                                    p.UF == value.UF &&
+                                    p.SiglaEstacao == value.ESTACAO_ABASTECEDORA &&
+                                    p.Celula == value.CELULA &&
+                                    p.Municipio == value.MUNICIPIO &&
+                                    p.Logradouro == value.LOGRADOURO &&
+                                    p.Cod_Logradouro == value.COD_LOGRADOURO &&
+                                    p.NumeroFachada == value.NUM_FACHADA &&
+                                    p.Complemento == value.COMPLEMENTO &&
+                                    p.ComplementoDois == value.COMPLEMENTO2 &&
+                                    p.ComplementoTres == value.COMPLEMENTO3 &&
+                                    p.CEP == value.CEP &&
+                                    p.Bairro == value.BAIRRO &&
+                                    p.Cod_Survey == value.COD_SURVEY &&
+                                    p.NomeCdo == value.NOME_CDO &&
+                                    p.QuantidadeUMS == (string.IsNullOrEmpty(value.QUANTIDADE_UMS) ? (int?)null : int.Parse(value.QUANTIDADE_UMS)) &&
+                                    p.Cod_Viabilidade == value.COD_VIABILIDADE &&
+                                    p.TipoViabilidade == value.TIPO_VIABILIDADE &&
+                                    p.TipoRede == value.TIPO_REDE &&
+                                    p.UCS_Residenciais == value.UCS_RESIDENCIAIS &&
+                                    p.UCS_Comerciais == value.UCS_COMERCIAIS &&
+                                    p.Id_Endereco == value.ID_ENDERECO &&
+                                    p.Latitude == value.LATITUDE &&
+                                    p.Longitude == value.LONGITUDE &&
+                                    p.TipoSurvey == value.TIPO_SURVEY &&
+                                    p.RedeInterna == value.REDE_INTERNA &&
+                                    p.UMS_Certificadas == value.UMS_CERTIFICADAS &&
+                                    p.RedeEdificio_Certificados == value.REDE_EDIF_CERT &&
+                                    p.NumeroPiso == value.NUM_PISOS &&
+                                    p.Disp_Comercial == value.DISP_COMERCIAL &&
+                                    p.Id_Celula == value.ID_CELULA &&
+                                    p.EstadoControle == value.ESTADO_CONTROLE &&
+                                    p.DataEstadoControle == value.DATA_ESTADO_CONTROLE &&
+                                    p.Quantidade_HCS == value.QUANTIDADE_HCS &&
+                                    p.Projeto == value.PROJETO
                                 );
-                              
-            return result;
+
+            }
+            
         }
     }
 }

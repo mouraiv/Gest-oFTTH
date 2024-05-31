@@ -5,10 +5,10 @@ import './progressBar.css';
 import { formatarNumero } from "../../util/formatarNumeros";
 import ProgressComponentSleep from './progressSleep/ProgressComponentSleep';
 
-const ProgressComponent = ({exportar}) => {
+const ProgressComponentBase = ({exportar}) => {
   const [progress, setProgress] = useState({ start: false, contador: 5, descricao: 'Carregando...', total: 100});
   const [expor, setExpor] = useState({contador : 0, total: 0});
-  const connection = useSignalR("http://localhost:5226/progressoHub");
+  const connection = useSignalR("http://localhost:5226/progressoBase");
 
   const progressRun = async () => {
     if (connection) {
@@ -79,4 +79,4 @@ const ProgressComponent = ({exportar}) => {
   );
 };
 
-export default ProgressComponent;
+export default ProgressComponentBase;

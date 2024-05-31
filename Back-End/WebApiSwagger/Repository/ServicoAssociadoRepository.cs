@@ -20,7 +20,6 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.ServicoAssociados
-                        .AsNoTracking()
                            .Where(p => p.Id_ServicoAssociados == id_ServicoAssociado)
                            .FirstOrDefaultAsync() ?? new ServicoAssociado(); 
             }
@@ -89,7 +88,6 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.ServicoAssociados
-                .AsNoTracking()
                 .Where(p => p.CodigoSurvey == survey)
                 .ToListAsync();             
             }

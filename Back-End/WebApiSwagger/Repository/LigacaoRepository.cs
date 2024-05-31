@@ -20,7 +20,6 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.Ligacoes
-                        .AsNoTracking()
                            .Where(p => p.Id_Ligacao == id_Ligacao)
                            .FirstOrDefaultAsync() ?? new Ligacao(); 
             }
@@ -115,7 +114,6 @@ namespace WebApiSwagger.Repository
             try
             {
                 return await _context.Ligacoes
-                .AsNoTracking()
                 .Where(p => p.Id_MaterialRede == id_MaterialRede)
                 .ToListAsync();             
             }

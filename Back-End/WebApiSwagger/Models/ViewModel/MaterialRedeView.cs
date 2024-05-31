@@ -3,16 +3,8 @@ namespace WebApiSwagger.Models.ViewModel
 {
     public class MaterialRedeView
     {
-        public string? CHAVE { get; set; }
-        public string? NomeFederativa_Mt { get; set; }
-        public string? NomeAbastecedora_Mt { get; set; }
-        public string? GrupoOperacional_Mt { get; set; }
-        public string? EstadoControle_Mt { get; set; }
-        public string? EstadoOperacional_Mt { get; set; }
-        public List<EnderecoTotal> EnderecosTotais { get; set; } = new List<EnderecoTotal>();
-
-        public class EnderecoTotal
-        {
+            public int? Id { get; set; }
+            public string? CHAVE { get; set; }
             public string? UF { get; set; }
             public string? AnoMes { get; set; }
             public int? Id_StatusGanho { get; set; }
@@ -35,15 +27,12 @@ namespace WebApiSwagger.Models.ViewModel
             public string? Disp_Comercial { get; set; }
             public string? UCS_Residenciais { get; set; }
             public string? UCS_Comerciais { get; set; }
-            public List<MaisDeUmaCDO> MaisDeUmaCDOs { get; set; } = new List<MaisDeUmaCDO>();
-        }
-
-        public class MaisDeUmaCDO
-        {
-            public int? Id_Associacao { get; set;}
+            public string? NomeFederativa_Mt { get; set; }
+            public string? NomeAbastecedora_Mt { get; set; }
+            public string? GrupoOperacional_Mt { get; set; }
+            public string? EstadoControle_Mt { get; set; }
+            public string? EstadoOperacional_Mt { get; set; }
             public string? Associacao_CDO { get; set; }
             public string? Data_de_associacao { get; set; }
         }
-    }
-
 }

@@ -142,7 +142,7 @@ export default function DataGrid({
 
                   <table id="tableContainer">
                   <tbody>
-                  {row.id_Associacao === '2' && row.cod_Survey !== '-' &&
+                  {row.id_Associacao === 2 && row.cod_Survey !== '-' &&
                     <tr>
                       <td className="td_ass" colSpan={15}><a>{`SURVEY COM MULTIPLAS ASSOCIAÇÕES | DATA DA ASSOCIAÇÃO: ${row.dataAssociacao ?? ""}`}</a></td>  
                     </tr>
@@ -156,7 +156,7 @@ export default function DataGrid({
                 </tr>
                 <tr>
                 <td>{row.uf}</td>
-                <td>{row.anoMes !== null ? `(${row.anoMes.slice(-2)}) ${mesAbreviado(row.anoMes.slice(4, 6))}/${row.anoMes.slice(0, -4)}` : null}</td>  
+                <td>{row.anoMes !== null && row.anoMes !== '' ? `(${row.anoMes.slice(-2)}) ${mesAbreviado(row.anoMes.slice(4, 6))}/${row.anoMes.slice(0, -4)}` : '-'}</td>  
                   {columns.map((column) => (
                     <td key={column.key}
                       style={{width : column.width}}>

@@ -137,6 +137,8 @@ app.UseAuthorization();
 
 app.MapHub<ProgressoHub>("/progressoHub");
 
+app.MapHub<ProgressoHubBase>("/progressoBase");
+
 app.MapControllers();
 
 app.Run();

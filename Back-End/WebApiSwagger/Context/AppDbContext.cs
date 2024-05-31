@@ -25,7 +25,7 @@ namespace WebApiSwagger.Context
         public DbSet<Analise> Analises => Set<Analise>();
         public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<EnderecoTotal> EnderecosTotaisTeste => Set<EnderecoTotal>();
-        public DbSet<MaterialRede> MateriaisRedes => Set<MaterialRede>();
+        public DbSet<MaterialRede> MateriaisRedesTeste => Set<MaterialRede>();
         public DbSet<EnderecoTotalDropListView> DropEnderecosTotais  => Set<EnderecoTotalDropListView>();
         public DbSet<Ligacao> Ligacoes => Set<Ligacao>();
         public DbSet<ServicoAssociado> ServicoAssociados => Set<ServicoAssociado>();
@@ -41,8 +41,7 @@ namespace WebApiSwagger.Context
         public DbSet<StatusNetwin> StatusNetwins => Set<StatusNetwin>();
         public DbSet<StatusProjeto> StatusProjetos => Set<StatusProjeto>();
         public DbSet<ViewStatusGanho> ViewStatusGanhos => Set<ViewStatusGanho>();
-        public DbSet<ViewStatusGanhoDia> ViewStatusGanhosDias => Set<ViewStatusGanhoDia>();
-
+        
         public override int SaveChanges()
         {
             // converte todas as propriedades de string em caixa alta antes de salvar
@@ -63,6 +62,7 @@ namespace WebApiSwagger.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //ENTIDADES TESTE OPTICOS
             modelBuilder.Entity<TesteOptico>()
                 .HasOne(t => t.MaterialRede)
                 .WithOne()
@@ -86,21 +86,23 @@ namespace WebApiSwagger.Context
                 .HasForeignKey(a => a.Id_TesteOptico)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            //ENTIDADES DO NETWIN
             modelBuilder.Entity<EnderecoTotal>()
                 .HasOne(t => t.MaterialRede)
-                .WithMany(p => p.EnderecoTotal)
-                .HasForeignKey(p => p.Id_MaterialRede);  
+                .WithMany(t => t.EnderecoTotal)
+                .HasForeignKey(p => p.Id_MaterialRede);      
+
+            modelBuilder.Entity<ServicoAssociado>()
+                .HasOne(t => t.EnderecosTotais)
+                .WithMany(p => p.ServicosAssociados)
+                .HasForeignKey(p => p.Id_EnderecoTotal);      
 
             modelBuilder.Entity<Ligacao>()
                 .HasOne(t => t.MaterialRede)
                 .WithMany(p => p.Ligacao)
                 .HasForeignKey(p => p.Id_MaterialRede);
 
-            modelBuilder.Entity<ServicoAssociado>()
-                .HasOne(t => t.EnderecosTotais)
-                .WithMany(p => p.ServicosAssociados)
-                .HasForeignKey(p => p.Id_EnderecoTotal);
-                   
+            //ENTIDADES DO SISTEMA
             modelBuilder.Entity<Usuario>()
                  .HasOne(p => p.GetTecnico)
                  .WithOne()
@@ -125,8 +127,6 @@ namespace WebApiSwagger.Context
             .HasKey(p => p.Id_DropEnderecosTotais);
 
             modelBuilder.Entity<ViewStatusGanho>().HasNoKey();
-            
-            modelBuilder.Entity<ViewStatusGanhoDia>().HasNoKey();
             
             modelBuilder.Entity<Diretorio>().HasKey(k => k.Id_Diretorio);
 

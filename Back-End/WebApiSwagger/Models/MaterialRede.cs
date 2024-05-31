@@ -29,8 +29,8 @@ namespace WebApiSwagger.Models
       public string? Latitude_Mt { get; set; }
       public string? Longitude_Mt { get; set; }
       public string? CHAVE { get; set; }
-      public ICollection<Ligacao> Ligacao { get; set; } = new List<Ligacao>();
       public ICollection<EnderecoTotal> EnderecoTotal { get; set; } = new List<EnderecoTotal>();
+      public ICollection<Ligacao> Ligacao { get; set; } = new List<Ligacao>();
        
     }
 }

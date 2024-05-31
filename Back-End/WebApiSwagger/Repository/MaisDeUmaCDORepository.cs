@@ -54,14 +54,13 @@ namespace WebApiSwagger.Repository
                 MaisDeUmaCDO db = await CarregarId(id);
 
                 db.UF = maisDeUmaCDO.UF;
-                db.Municipio_Mc = maisDeUmaCDO.Municipio_Mc;
-                db.Localidade_Mc = maisDeUmaCDO.Localidade_Mc;
                 db.Estacao_Mc = maisDeUmaCDO.Estacao_Mc;
                 db.Celula_Mc = maisDeUmaCDO.Celula_Mc;
                 db.Survey_Mc = maisDeUmaCDO.Survey_Mc;
                 db.Associacao_CDO = maisDeUmaCDO.Associacao_CDO;
                 db.Nome_CDO = maisDeUmaCDO.Nome_CDO;
                 db.Data_de_associacao = maisDeUmaCDO.Data_de_associacao;
+                db.Id_EnderecoTotal = maisDeUmaCDO.Id_EnderecoTotal;
 
             
                 _context.MaisDeUmaCDOs.Update(db);
