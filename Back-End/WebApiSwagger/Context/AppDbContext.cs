@@ -24,8 +24,8 @@ namespace WebApiSwagger.Context
         public DbSet<Diretorio> Diretorios => Set<Diretorio>();
         public DbSet<Analise> Analises => Set<Analise>();
         public DbSet<Empresa> Empresas => Set<Empresa>();
-        public DbSet<EnderecoTotal> EnderecosTotaisTeste => Set<EnderecoTotal>();
-        public DbSet<MaterialRede> MateriaisRedesTeste => Set<MaterialRede>();
+        public DbSet<EnderecoTotal> EnderecosTotais => Set<EnderecoTotal>();
+        public DbSet<MaterialRede> MateriaisRedes => Set<MaterialRede>();
         public DbSet<EnderecoTotalDropListView> DropEnderecosTotais  => Set<EnderecoTotalDropListView>();
         public DbSet<Ligacao> Ligacoes => Set<Ligacao>();
         public DbSet<ServicoAssociado> ServicoAssociados => Set<ServicoAssociado>();

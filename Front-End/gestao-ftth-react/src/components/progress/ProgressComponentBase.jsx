@@ -6,9 +6,15 @@ import { formatarNumero } from "../../util/formatarNumeros";
 import ProgressComponentSleep from './progressSleep/ProgressComponentSleep';
 
 const ProgressComponentBase = ({exportar}) => {
+
+  const interno_IP = "http://192.168.4.10:8000";
+  const externo_IP = "http://201.59.13.102";
+
+  const url_Valida = window.location.hostname === '192.168.4.10' ? interno_IP : externo_IP;
+
   const [progress, setProgress] = useState({ start: false, contador: 5, descricao: 'Carregando...', total: 100});
   const [expor, setExpor] = useState({contador : 0, total: 0});
-  const connection = useSignalR("http://localhost:5226/progressoBase");
+  const connection = useSignalR(`${url_Valida}/progressoBase`);
 
   const progressRun = async () => {
     if (connection) {

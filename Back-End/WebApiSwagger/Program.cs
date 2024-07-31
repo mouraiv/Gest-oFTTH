@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Features;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +74,8 @@ builder.Services.AddSwaggerGen(options =>
             });
 
 builder.Services.AddDbContext<AppDbContext>
-    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext")));
+    (options => options.UseMySql(builder.Configuration.GetConnectionString("AppDbContext"), 
+        new MySqlServerVersion(new Version(8, 0, 38))));
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Secret").Value ?? "");    
 
@@ -99,6 +101,27 @@ builder.Services.Configure<FormOptions>(options => {
     options.MultipartBodyLengthLimit = 10737418240;
 });
 
+// Configura CORS
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+if (allowedOrigins == null || allowedOrigins.Length == 0)
+{
+    throw new Exception("Nenhum IP configurado no CORS");
+}
+
+// Adiciona a configuração CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+        policy =>
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 builder.Services.AddSignalR();
 
 var app = builder.Build();
@@ -119,19 +142,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors(options =>
-{
-    options.WithOrigins("http://192.168.0.39:5173", 
-                        "http://192.168.0.39:5226",
-                        "http://192.168.4.10:8000",
-                        "http://192.168.4.10",
-                        "http://localhost:5173",
-                        "http://localhost:5226"
-                        )
-           .AllowAnyHeader()
-           .AllowAnyMethod()
-           .AllowCredentials();
-});
+app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthorization();
 

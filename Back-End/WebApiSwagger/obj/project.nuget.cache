@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "noW7qZHpaoJOdqY7LEvh7m2RuVE28zhV39RHx4Gxm+uZxSxQFD8p0v8dVsqX2CRRyED2g6neHHMU1QV24TCG3g==",
+  "dgSpecHash": "BVyd46xUQiYfek1Xx7lA0FOZ58B53ZVkykP5hVm3cd/IUjSxmdgIs+LEmj8waDUSB7oJBTZ5+BYuoE40HetZSQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\wesley.moura\\Projetos\\GestãoFTTH\\Back-End\\WebApiSwagger\\WebApiSwagger.csproj",
   "expectedPackageFiles": [
@@ -76,6 +76,8 @@
     "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\wesley.moura\\.nuget\\packages\\mysqlconnector\\2.2.0\\mysqlconnector.2.2.0.nupkg.sha512",
+    "C:\\Users\\wesley.moura\\.nuget\\packages\\pomelo.entityframeworkcore.mysql\\7.0.0-alpha.1\\pomelo.entityframeworkcore.mysql.7.0.0-alpha.1.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\skiasharp\\2.88.3\\skiasharp.2.88.3.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\skiasharp.nativeassets.linux.nodependencies\\2.88.3\\skiasharp.nativeassets.linux.nodependencies.2.88.3.nupkg.sha512",
     "C:\\Users\\wesley.moura\\.nuget\\packages\\skiasharp.nativeassets.macos\\2.88.3\\skiasharp.nativeassets.macos.2.88.3.nupkg.sha512",

@@ -879,7 +879,7 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
-                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === 2 && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
+                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
                                             <td style={{width: '15%'}}>{valueEndereco.statusGanho ?? '--'}</td>
                                             <td style={{width: '15%'}}>{valueEndereco.celula ?? '--'}</td>
                                             <td style={{width: '10%'}}>{valueEndereco.cod_Survey ?? '--'}</td>
@@ -939,7 +939,7 @@ function Vizualizar(){
                                             onClick={valueEndereco.cod_Survey === "-" || valueEndereco.cod_Survey === null ? null : handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
-                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === 2 && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
+                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
                                             <td style={{width: '15%'}}>{valueEndereco.statusGanho ?? '--'}</td>
                                             <td style={{width: '15%'}}>{valueEndereco.celula ?? '--'}</td>
                                             <td style={{width: '10%'}}>{valueEndereco.cod_Survey ?? '--'}</td>
@@ -1427,7 +1427,7 @@ function Vizualizar(){
                                             onClick={valueEndereco.cod_Survey === "-" ? null : handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
-                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === 2 && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
+                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
                                             <td style={{width: '15%'}}>{valueEndereco.statusGanho ?? '--'}</td>
                                             <td style={{width: '15%'}}>{valueEndereco.celula ?? '--'}</td>
                                             <td style={{width: '10%'}}>{valueEndereco.cod_Survey ?? '--'}</td>
@@ -1486,7 +1486,7 @@ function Vizualizar(){
                                             onClick={handleTesteOpticoDetalhe}
                                             className="enderecoTr"
                                         >
-                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === 2 && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
+                                            <td style={{width: '15%'}}>{`${valueEndereco.dataAssociacao ?? '--'} ${valueEndereco.id_Associacao === '2' && valueEndereco.cod_Survey !== '-' ? "(M)" : ''}`}</td>
                                             <td style={{width: '15%'}}>{valueEndereco.statusGanho ?? '--'}</td>
                                             <td style={{width: '15%'}}>{valueEndereco.celula ?? '--'}</td>
                                             <td style={{width: '10%'}}>{valueEndereco.cod_Survey ?? '--'}</td>

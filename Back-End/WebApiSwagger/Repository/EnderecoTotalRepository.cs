@@ -25,7 +25,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                return await _context.EnderecosTotaisTeste
+                return await _context.EnderecosTotais
                            .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
             }
@@ -41,7 +41,7 @@ namespace WebApiSwagger.Repository
             {
                 EnderecoTotal db = await CarregarEnderecoTotalId(id);
 
-                _context.EnderecosTotaisTeste.Remove(db);
+                _context.EnderecosTotais.Remove(db);
                 await _context.SaveChangesAsync();
                 return true;
 
@@ -105,7 +105,7 @@ namespace WebApiSwagger.Repository
                 db.Id_Associacao = enderecoTotal.Id_Associacao;
                 db.Id_MaterialRede = enderecoTotal.Id_MaterialRede;
 
-                _context.EnderecosTotaisTeste.Update(db);
+                _context.EnderecosTotais.Update(db);
                 await _context.SaveChangesAsync();
 
                 return db;
@@ -120,7 +120,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                _context.EnderecosTotaisTeste.Add(enderecoTotal);
+                _context.EnderecosTotais.Add(enderecoTotal);
                 await _context.SaveChangesAsync();
                 return enderecoTotal;    
             }
@@ -136,12 +136,12 @@ namespace WebApiSwagger.Repository
             {
                 if(!filterSurvey){
 
-                return await _context.EnderecosTotaisTeste
+                return await _context.EnderecosTotais
                            .Where(p => p.Id_EnderecoTotal == id_EnderecoTotal)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
                 }else{
                 
-                return await _context.EnderecosTotaisTeste
+                return await _context.EnderecosTotais
                            .Where(p => p.Cod_Survey == survey)
                            .FirstOrDefaultAsync() ?? new EnderecoTotal(); 
                 }
@@ -164,7 +164,7 @@ namespace WebApiSwagger.Repository
                 progressoRepository.UpdateProgress(true, 10, "Iniciando consulta...", 100);
                 await Task.Delay(500);
 
-                var query = _context.EnderecosTotaisTeste
+                var query = _context.EnderecosTotais
                     .Include(p => p.MaterialRede)
                     .Where(p =>  p.Id_StatusGanho == filtro.Id_StatusGanho || p.Id_Disponibilidade == filtro.Id_Disponibilidade || 
                                  (filtro.AnoMesBool ? !string.IsNullOrEmpty(p.AnoMes) : true) && (filtro.SemCdo ? p.NomeCdo == "" : true))
@@ -485,7 +485,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                return await _context.MateriaisRedesTeste
+                return await _context.MateriaisRedes
                 .Include(p => p.EnderecoTotal)
                 .Where(p => p.Id_MaterialRede == id_MaterialRede)
                 .ToListAsync();             
@@ -500,7 +500,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                var query = await (from endt in _context.EnderecosTotaisTeste
+                var query = await (from endt in _context.EnderecosTotais
                             .AsNoTracking()
                             group endt by new
                             {
@@ -528,7 +528,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                var query = (from endt in _context.EnderecosTotaisTeste
+                var query = (from endt in _context.EnderecosTotais
                             .AsNoTracking()
                             group endt by new
                             {
@@ -581,7 +581,7 @@ namespace WebApiSwagger.Repository
         {
               try
             {
-                var resultado = await _context.EnderecosTotaisTeste
+                var resultado = await _context.EnderecosTotais
                 .Include(p => p.MaterialRede)
                 .Where(p =>
                     p.Cod_Viabilidade != "0" && p.Cod_Viabilidade != "2" && p.Cod_Viabilidade != "4" && p.Cod_Viabilidade != "14" && p.Id_StatusGanho == 1 &&
@@ -606,7 +606,7 @@ namespace WebApiSwagger.Repository
 
         public async Task<int> ChaveEstrangeira(string uf, string sigla, string cdo)
         {
-            var result = await _context.MateriaisRedesTeste
+            var result = await _context.MateriaisRedes
                                 .Where(p => p.SiglaFederativa_Mt == uf && p.SiglaAbastecedora_Mt == sigla && p.Codigo_Mt == cdo)
                                 .Select(p => p.Id_MaterialRede)
                                 .FirstOrDefaultAsync();
@@ -616,7 +616,7 @@ namespace WebApiSwagger.Repository
 
         public async Task<int> SurveyExistMultiplaAssociacao(BaseMultiplaAssociacao value)
         {
-            var result = await _context.EnderecosTotaisTeste
+            var result = await _context.EnderecosTotais
                                 .Where(p => 
                                     p.Cod_Survey == value.Survey && 
                                     p.NomeCdo == value.NomeCdo)
@@ -630,7 +630,7 @@ namespace WebApiSwagger.Repository
             BaseMultiplaAssociacao value
         )
         {
-            bool result = await _context.EnderecosTotaisTeste
+            bool result = await _context.EnderecosTotais
                                 .AnyAsync(
                                     p => p.UF == value.UF &&
                                     p.Celula == value.Celula &&
@@ -645,7 +645,7 @@ namespace WebApiSwagger.Repository
 
         public async Task<EnderecoTotal> SurveyExistEnderecoTotal(string survey)
         {
-            var result = await _context.EnderecosTotaisTeste
+            var result = await _context.EnderecosTotais
                                 .Where(p => p.Cod_Survey == survey)
                                 .Select(p => new EnderecoTotal {
                                     Id_EnderecoTotal = p.Id_EnderecoTotal,
@@ -671,7 +671,7 @@ namespace WebApiSwagger.Repository
                     return false;
 
             }else{
-                    return await _context.EnderecosTotaisTeste
+                    return await _context.EnderecosTotais
                                 .AnyAsync(p =>
                                     p.Localidade == value.LOCALIDADE &&
                                     p.Cod_Localidade == value.COD_LOCALIDADE &&

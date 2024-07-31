@@ -204,7 +204,7 @@ export default function InfoDataBase() {
                                         <input
                                         type="checkbox"
                                         checked={checkedCheckbox === 'Endereço Total'}
-                                        onChange={() => handleCheckboxChange('Endereço Total')}
+                                        /*onChange={() => handleCheckboxChange('Endereço Total')}*/
                                         />
                                         {" Endereço Total"}
                                     </label>
@@ -213,7 +213,7 @@ export default function InfoDataBase() {
                                         <input
                                         type="checkbox"
                                         checked={checkedCheckbox === 'Multipla Associação'}
-                                        onChange={() => handleCheckboxChange('Multipla Associação')}
+                                        /*onChange={() => handleCheckboxChange('Multipla Associação')}*/
                                         />
                                         {" Multipla Associação"}
                                     </label>
@@ -259,7 +259,7 @@ export default function InfoDataBase() {
             <InfoData>
                 { info?.map((value, index) => (
                     <>
-                     <div key={index} className="info" onClick={() => handleUpdate(value?.base, value?.id_info, value?.atualizar)}>
+                     <div key={index} className="info" /*onClick={() => handleUpdate(value?.base, value?.id_info, value?.atualizar)}*/>
                         <div>
                             <FaDatabase style={{fontSize:"2.5em", marginRight: '0.3rem', color:"#13293d", fill:"#13293d"}} />
                         </div>

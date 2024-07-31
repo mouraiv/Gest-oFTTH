@@ -43,6 +43,20 @@ function Home() {
             }
             
           } catch (error) {
+            setChartData({
+              labels: [], 
+              datasets: [
+                {
+                  label: "Users Gained ",
+                  data: [],
+                  backgroundColor: [
+                    "#2a71d0"
+                  ],
+                  borderColor: "black",
+                  borderWidth: 2
+                }
+              ]
+            })
             setMensagem(`Erro ao carregar : ${error}`)
             
           } finally {

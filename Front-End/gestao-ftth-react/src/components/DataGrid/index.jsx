@@ -142,7 +142,7 @@ export default function DataGrid({
 
                   <table id="tableContainer">
                   <tbody>
-                  {row.id_Associacao === 2 && row.cod_Survey !== '-' &&
+                  {row.id_Associacao === '2' && row.cod_Survey !== '-' &&
                     <tr>
                       <td className="td_ass" colSpan={15}><a>{`SURVEY COM MULTIPLAS ASSOCIAÇÕES | DATA DA ASSOCIAÇÃO: ${row.dataAssociacao ?? ""}`}</a></td>  
                     </tr>

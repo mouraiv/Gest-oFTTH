@@ -96,3 +96,5 @@ C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\obj\Debug\net7
 C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\obj\Debug\net7.0\WebApiSwagger.genruntimeconfig.cache
 C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\obj\Debug\net7.0\ref\WebApiSwagger.dll
 C:\Users\wesley.moura\Projetos\GestãoFTTH\Back-End\WebApiSwagger\bin\Debug\net7.0\CsvHelper.dll
+C:\Users\wesley.moura\Projetos\GestãoFTTH\back-end\WebApiSwagger\bin\Debug\net7.0\MySqlConnector.dll
+C:\Users\wesley.moura\Projetos\GestãoFTTH\back-end\WebApiSwagger\bin\Debug\net7.0\Pomelo.EntityFrameworkCore.MySql.dll

@@ -136,7 +136,6 @@ function ControleCampo() {
 
     try {
       const response = await GetControleCampo(filtro, {signal});
-
       if(response.status == 200) {
         setTesteOptico(response.data);
       }
@@ -471,7 +470,7 @@ function ControleCampo() {
               }
               </div>
               <div style={{position:'absolute', right:0, top:0, marginTop:'0.3rem', marginRight:'0.4rem'}}>
-              { loading && dropLoading ? (
+              { loading && !dropLoading ? (
                 <>
                 <ButtonExportarExcel style={{width: "100px"}} onClick={handleExportSimples}>Exportar</ButtonExportarExcel>
                 <ButtonExportarExcel style={{width: "150px", marginLeft: "0.3rem"}} onClick={handleExportExcelRegiao}>Exportar Região</ButtonExportarExcel>
@@ -480,8 +479,7 @@ function ControleCampo() {
               </div>         
               </div> 
             </Filter>
-            { testeOptico.resultado !== undefined ? (
-              loading && dropLoading ? (  
+           {loading && dropLoading ? (  
             <DataGridTable 
               columns={columns} 
               rows={testeOptico.resultado} 
@@ -492,8 +490,7 @@ function ControleCampo() {
               right={nextPage}
               atualizar={fetchLoading} 
             />
-              ):( <ProgressComponent />)
-            ) : (  <ProgressComponent /> )
+            ) : ( <ProgressComponent /> )
             }
           </Content>
         <Footer />

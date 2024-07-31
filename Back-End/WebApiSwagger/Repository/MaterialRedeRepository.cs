@@ -20,7 +20,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                var query = await _context.MateriaisRedesTeste
+                var query = await _context.MateriaisRedes
                     .Include(p => p.EnderecoTotal)
                     .ThenInclude(p => p.ServicosAssociados)
                     .Include(p => p.Ligacao)
@@ -41,7 +41,7 @@ namespace WebApiSwagger.Repository
             {
                 MaterialRede db = await CarregarId(id);
 
-                _context.MateriaisRedesTeste.Remove(db);
+                _context.MateriaisRedes.Remove(db);
                 await _context.SaveChangesAsync();
                 return true;
 
@@ -82,7 +82,7 @@ namespace WebApiSwagger.Repository
                 db.Longitude_Mt = materialRede.Longitude_Mt;
                 db.CHAVE = materialRede.CHAVE;
             
-                _context.MateriaisRedesTeste.Update(db);
+                _context.MateriaisRedes.Update(db);
                 await _context.SaveChangesAsync();
 
                 return db;
@@ -97,7 +97,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                _context.MateriaisRedesTeste.Add(materialRede);
+                _context.MateriaisRedes.Add(materialRede);
                 await _context.SaveChangesAsync();
                 return materialRede;    
             }
@@ -111,7 +111,7 @@ namespace WebApiSwagger.Repository
         {
             try
             {
-                return await _context.MateriaisRedesTeste
+                return await _context.MateriaisRedes
                             .FirstOrDefaultAsync(p => p.CHAVE == chave) ?? new MaterialRede();
 
 

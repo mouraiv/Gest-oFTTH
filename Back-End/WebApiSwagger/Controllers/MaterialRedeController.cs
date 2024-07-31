@@ -78,7 +78,7 @@ namespace WebApiSwagger.Controllers
            
         }
 
-        [HttpPost("ImportarMaterialRede")]
+        /*[HttpPost("ImportarMaterialRede")]
         [RequestSizeLimit(10_000_000_000)]
         public async Task<IActionResult> ImportarMaterialRede(IFormFile arquivo, CancellationToken cancellationToken)
         {
@@ -192,6 +192,6 @@ namespace WebApiSwagger.Controllers
                 return BadRequest($"Ocorreu um erro ao importar a CSV.{ex.StackTrace}");
             }
 
-        }
+        }*/
     }
 }

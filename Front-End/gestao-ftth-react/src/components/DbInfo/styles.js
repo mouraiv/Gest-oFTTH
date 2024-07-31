@@ -20,7 +20,7 @@ export const InfoData = styled("div", {
         padding: '0.2rem',
         borderRadius: '0.3rem',
         border: '1px solid #616A6B',
-        cursor: 'pointer'
+
    }
 });
 

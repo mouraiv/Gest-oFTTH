@@ -11,9 +11,9 @@ export default function DataGrid({
   right,
   atualizar
 }) {
-  const _paginasCorrente = paginacao.total < paginacao.paginasCorrentes ? paginacao.total : paginacao.paginasCorrentes; 
-  const _paginasTotal = paginacao.totalPaginas == (paginacao.paginasCorrentes - 1) ? (paginacao.paginasCorrentes - 1) : paginacao.total;
-  const _pagina = pagina == 1 ? 1 : (((pagina * 100) - 100) + 1);
+  const _paginasCorrente = paginacao === undefined ? 0 :  paginacao.total < paginacao.paginasCorrentes ? paginacao.total : paginacao.paginasCorrentes; 
+  const _paginasTotal = paginacao === undefined ? 0 : paginacao.totalPaginas == (paginacao.paginasCorrentes - 1) ? (paginacao.paginasCorrentes - 1) : paginacao.total;
+  const _pagina = paginacao === undefined ? 0 : pagina == 1 ? 1 : (((pagina * 100) - 100) + 1);
 
   function getNestedValue(obj, key) {
     const keys = key.split('.');
@@ -25,7 +25,7 @@ export default function DataGrid({
     <Container>
         <TableGridMenu>
           <div className="total">
-            <p>{formatarNumero(paginacao.total)} Registros</p>
+            <p>{formatarNumero(paginacao === undefined ? 0 : paginacao.total)} Registros</p>
           </div>
           <p>{_paginasCorrente == 0 ? 0 : formatarNumero(_pagina)}</p>
           <p>&nbsp;-&nbsp;</p>
@@ -37,7 +37,7 @@ export default function DataGrid({
         </TableGridMenu>
           <table id="tableInfo">
           <tbody>
-            {rows.length === 0 ? (<tr><td colSpan={columns.length + 1}>Nenhum Resultado.</td></tr>) : (
+            {rows === undefined ? (<tr><td style={{fontWeight: '700', fontSize: '0.8rem', backgroundColor: 'white'}} colSpan={columns.length + 1}>Nenhum Resultado.</td></tr>) : (
               rows.map((row, rowIndex) => ( 
                 <>     
                 <tr key={rowIndex} 

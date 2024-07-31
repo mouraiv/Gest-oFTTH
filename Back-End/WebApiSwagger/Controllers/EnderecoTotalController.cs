@@ -34,7 +34,7 @@ namespace WebApiSwagger.Controllers
             _painelGanho = painelGanho;
 
         }
-        [HttpPost("ImportarMultiplaAssociacao")]
+        /*[HttpPost("ImportarMultiplaAssociacao")]
         [RequestSizeLimit(10_000_000_000)]
         public async Task<IActionResult> ImportarMultiplaAssociacao(IFormFile arquivo, CancellationToken cancellationToken)
         {
@@ -419,7 +419,7 @@ namespace WebApiSwagger.Controllers
                 return "";
 
             }
-        }
+        }*/
 
         [HttpGet("GraficoPrincipal")]
         public async Task<IActionResult> GraficoPrincipal()
